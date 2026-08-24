@@ -108,8 +108,22 @@
   }
 
   /* ---------- HEADER / CATALOG ---------- */
-  .header{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+  /* Bereich "Fließen" (24.08.2026): jeder neu gerenderte Inhalt blendet sanft ein,
+     statt hart zu wechseln -- .page-content und .player-wrap sind bei jedem Render
+     frisch erzeugte DOM-Knoten, daher spielt die Animation bei jedem Wechsel neu ab. */
+  @keyframes contentIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
+  .page-content{animation:contentIn .28s ease;}
+  .player-wrap{animation:contentIn .3s ease;}
+  #admin-content{animation:contentIn .28s ease;}
+
+  .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
   .header .logo-img{width:44px;height:44px;flex-shrink:0;}
+  .logo-center-btn{background:none;border:none;padding:4px;cursor:pointer;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;transition:transform .15s ease;}
+  .logo-center-btn:active{transform:scale(0.92);}
+  .header-spacer{width:34px;flex-shrink:0;}
+  .header-txt-center{text-align:center;margin-bottom:16px;}
+  .header-txt-center h1{font-size:21px;margin:0;}
   .header-txt{flex:1;}
   .header-txt h1{font-size:21px;}
   .progress-line{color:var(--muted);font-size:12.5px;margin-top:2px;}
@@ -1095,7 +1109,23 @@ function renderDashboardHtml(){
 // bewusst nur Themen listen, zu denen es wirklich ein geprüftes PDF gibt.
 const NUETZLICHE_PDFS = [
   { titel: "Vorfahrt — § 8 StVO", datei: "pdf/Vorfahrt_Paragraph8_StVO.pdf",
-    meta: "Rechts vor Links, Vorfahrtschilder, Kreisverkehr · Stand 30.01.2026" }
+    meta: "Rechts vor Links, Vorfahrtschilder, Kreisverkehr · Stand 30.01.2026" },
+  { titel: "Geschwindigkeit — § 3 StVO", datei: "pdf/Geschwindigkeit_Paragraph3_StVO.pdf",
+    meta: "Angepasste Geschwindigkeit, Sichtweite bei Nebel · Stand 30.01.2026" },
+  { titel: "Abstand — § 4 StVO", datei: "pdf/Abstand_Paragraph4_StVO.pdf",
+    meta: "Halber Tacho, Sicherheitsabstand · Stand 30.01.2026" },
+  { titel: "Überholen — § 5 StVO", datei: "pdf/Ueberholen_Paragraph5_StVO.pdf",
+    meta: "Seitenabstand, Ankündigung, Wiedereinordnen · Stand 30.01.2026" },
+  { titel: "Abbiegen, Wenden, Rückwärtsfahren — § 9 StVO", datei: "pdf/Abbiegen_Paragraph9_StVO.pdf",
+    meta: "Einordnen, Schulterblick, Linksabbieger-Regel · Stand 30.01.2026" },
+  { titel: "Autobahnen und Kraftfahrstraßen — § 18 StVO", datei: "pdf/Autobahn_Paragraph18_StVO.pdf",
+    meta: "Einfädeln, Ausfahren, Vorfahrt der durchgehenden Fahrbahn · Stand 30.01.2026" },
+  { titel: "Beleuchtung — § 17 StVO", datei: "pdf/Beleuchtung_Paragraph17_StVO.pdf",
+    meta: "Abblendlicht, Fernlicht, wann welches Licht Pflicht ist · Stand 30.01.2026" },
+  { titel: "Pflichten des Fahrzeugführers — § 23 StVO", datei: "pdf/Pflichten_Fahrzeugfuehrer_Paragraph23_StVO.pdf",
+    meta: "Sicht, Zustand, Kennzeichen, Beleuchtung am Tag · Stand 30.01.2026" },
+  { titel: "Fußgängerüberwege — § 26 StVO", datei: "pdf/Fussgaengerueberwege_Paragraph26_StVO.pdf",
+    meta: "Zebrastreifen, Wartepflicht, Überholverbot · Stand 30.01.2026" }
 ];
 function renderNuetzlichesHtml(){
   const karten = NUETZLICHE_PDFS.map(function(p){
@@ -1183,17 +1213,41 @@ function renderCatalog(){
     drawerHtml +
     '<div class="header">' +
       '<button class="menu-btn" id="drawer-open-btn" aria-label="Menü">' + icon("menu") + "</button>" +
-      '<img class="logo-img" src="' + LOGO + '" alt="Logo">' +
-      '<div class="header-txt"><h1>Fahr-Akademie</h1><div class="progress-line">' + seenCount + " von " + totalVideos + " Videos gesehen" + (totalVideos ? " · " + Math.round(seenCount/totalVideos*100) + "%" : "") + "</div></div>" +
+      '<button class="logo-center-btn" id="logo-home-btn" aria-label="Zum Start">' +
+        '<img class="logo-img" src="' + LOGO + '" alt="Logo"></button>' +
+      '<div class="header-spacer"></div>' +
     "</div>" +
+    '<div class="header-txt-center"><h1>Fahr-Akademie</h1><div class="progress-line">' + seenCount + " von " + totalVideos + " Videos gesehen" + (totalVideos ? " · " + Math.round(seenCount/totalVideos*100) + "%" : "") + "</div></div>" +
     (DEMO_MODE ? '<div class="demo-badge">Demo-Modus — Beispieldaten</div>' : "") +
     '<div class="page-content">' + content + "</div>" +
     bottomNav;
 
-  document.getElementById("drawer-open-btn").addEventListener("click", function(){ drawerOpen = true; renderCatalog(); });
-  document.getElementById("drawer-backdrop").addEventListener("click", function(){ drawerOpen = false; renderCatalog(); });
+  document.getElementById("logo-home-btn").addEventListener("click", function(){
+    drawerView = null; mainView = "start"; renderCatalog();
+  });
+  document.getElementById("drawer-open-btn").addEventListener("click", function(){
+    // Direktes Klassen-Umschalten statt Neu-Rendern -- nur so kann die Drawer-Öffnung
+    // per CSS-Transition sanft einfahren (ein frisch erzeugtes Element kann nicht "von
+    // sich selbst weg" transitionieren).
+    drawerOpen = true;
+    document.querySelector(".drawer").classList.add("open");
+    document.getElementById("drawer-backdrop").classList.add("open");
+  });
+  document.getElementById("drawer-backdrop").addEventListener("click", function(){
+    drawerOpen = false;
+    document.querySelector(".drawer").classList.remove("open");
+    document.getElementById("drawer-backdrop").classList.remove("open");
+  });
   document.querySelectorAll("[data-drawer]").forEach(function(b){
-    b.addEventListener("click", function(){ drawerView = b.dataset.drawer; drawerOpen = false; renderCatalog(); });
+    b.addEventListener("click", function(){
+      // Erst sichtbar zuklappen, dann den Inhalt wechseln -- fühlt sich als ein
+      // zusammenhängender Fluss an statt als zwei harte Sprünge.
+      document.querySelector(".drawer").classList.remove("open");
+      document.getElementById("drawer-backdrop").classList.remove("open");
+      setTimeout(function(){
+        drawerView = b.dataset.drawer; drawerOpen = false; renderCatalog();
+      }, 180);
+    });
   });
   document.querySelectorAll("[data-view]").forEach(function(t){
     t.addEventListener("click", function(){ drawerView = null; mainView = t.dataset.view; renderCatalog(); });
