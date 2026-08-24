@@ -3,20 +3,29 @@
 // 2) Empfängt Web-Push-Nachrichten und zeigt sie als Systembenachrichtigung an
 // 3) Öffnet beim Antippen der Benachrichtigung den passenden Deep-Link
 //
-// Stand 20.08.2026: Push-Teil neu ergänzt für die "Neues Video"-Benachrichtigung
-// und die Kompass-Push-Brücke. Cache-Teil bewusst minimal gehalten (nur App-Shell),
-// damit Video-Inhalte (Bunny Stream) nie versehentlich alt zwischengespeichert werden.
+// WICHTIGE KORREKTUR 24.08.2026:
+// Die Vorversion (v1) hat ALLE Anfragen "cache-first" beantwortet -- also immer zuerst
+// die gespeicherte Kopie genutzt. Dadurch bekam jedes Gerät, das die App einmal geöffnet
+// hatte, dauerhaft die ALTE index.html ausgeliefert, egal wie oft auf GitHub Pages eine
+// neue Version hochgeladen wurde. Symptom: Datenbank-Inhalte (Videoanzahl) waren aktuell,
+// aber neue Bereiche/Funktionen tauchten nie auf.
+//
+// Jetzt: HTML/Navigation immer NETWORK-FIRST (frisch aus dem Netz, Cache nur als
+// Notfall-Rückfall bei Offline). Nur statische Beiwerk-Dateien (Icons, manifest)
+// bleiben cache-first, die ändern sich praktisch nie.
+// CACHE_NAME wurde auf v2 erhöht -> der alte, verklebte Cache wird beim Aktivieren gelöscht.
 
-const CACHE_NAME = "fahr-akademie-shell-v1";
-const APP_SHELL = [
-  "./",
-  "./index.html",
-  "./manifest.json"
+const CACHE_NAME = "fahr-akademie-shell-v2";
+const STATIC_ASSETS = [
+  "./manifest.json",
+  "./icon-192.png",
+  "./icon-512.png",
+  "./apple-touch-icon.png"
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)).catch(() => {})
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS)).catch(() => {})
   );
   self.skipWaiting();
 });
@@ -30,12 +39,32 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Nur die App-Shell aus dem Cache bedienen, alles andere (API-Calls, Videos) geht
-// immer live ins Netz -- kein Offline-Zwischenspeichern von Schülerdaten/Videos.
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
+
+  const istSeitenAufruf =
+    event.request.mode === "navigate" ||
+    url.pathname === "/" ||
+    url.pathname.endsWith("/") ||
+    url.pathname.endsWith(".html");
+
+  if (istSeitenAufruf) {
+    // NETWORK-FIRST: immer die aktuelle Version holen, Cache nur wenn offline.
+    event.respondWith(
+      fetch(event.request)
+        .then((res) => {
+          const kopie = res.clone();
+          caches.open(CACHE_NAME).then((c) => c.put(event.request, kopie)).catch(() => {});
+          return res;
+        })
+        .catch(() => caches.match(event.request).then((cached) => cached || caches.match("./")))
+    );
+    return;
+  }
+
+  // Statisches Beiwerk: cache-first ist hier unproblematisch.
   event.respondWith(
     caches.match(event.request).then((cached) => cached || fetch(event.request))
   );
