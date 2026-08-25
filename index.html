@@ -63,8 +63,10 @@
     max-width:720px;margin:0 auto;z-index:40;padding:6px 4px calc(6px + env(safe-area-inset-bottom));
   }
   .bottom-nav-item{
-    flex:1;text-align:center;padding:8px 2px;border-radius:14px;color:var(--muted);
+    flex:1;text-align:center;padding:13px 2px;border-radius:14px;color:var(--muted);
     font-size:11.5px;font-weight:700;cursor:pointer;font-family:'Barlow',sans-serif;
+    min-height:44px;display:flex;align-items:center;justify-content:center;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
   .bottom-nav-item.active{background:var(--surface-tint);color:var(--gruen);}
 
@@ -174,6 +176,10 @@
     border-color:var(--gold);box-shadow:0 0 0 2px rgba(217,149,76,.35);
     animation:dlPulse 1.8s ease-in-out 2;
   }
+  .vg-card.highlight-target{
+    outline:3px solid var(--gold); outline-offset:2px;
+    animation:dlPulse 1.8s ease-in-out 2;
+  }
   @keyframes dlPulse{
     0%,100%{box-shadow:0 0 0 2px rgba(217,149,76,.35);}
     50%{box-shadow:0 0 0 5px rgba(217,149,76,.15);}
@@ -256,7 +262,7 @@
     border:1px solid var(--border);border-radius:var(--r-pill);padding:9px var(--sp-m);
     margin-bottom:var(--sp-s);}
   .suchzeile input{flex:1;border:none;background:none;outline:none;font-family:inherit;
-    font-size:var(--fs-body);color:var(--text);min-width:0;}
+    font-size:16px;color:var(--text);min-width:0;}
   .suchzeile input::placeholder{color:var(--faint);}
   .such-clear{background:none;border:none;color:var(--faint);cursor:pointer;padding:0;display:none;}
   .such-clear.sichtbar{display:block;}
@@ -268,9 +274,10 @@
   .sf-chip.aktiv{background:var(--gold);border-color:var(--gold);color:#2B2A22;font-weight:600;}
 
   /* --- Breadcrumb im Player (Punkt 1.1 / 1.7) --- */
-  .krumen{display:flex;align-items:center;gap:6px;background:none;border:none;padding:6px 0;
+  .krumen{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);
+    padding:10px 15px;border-radius:var(--r-pill);min-height:40px;
     color:var(--muted);font-size:var(--fs-body);font-family:inherit;cursor:pointer;}
-  .krumen:hover{color:var(--gruen);}
+  .krumen:active{background:var(--surface-tint);color:var(--gruen);}
 
   /* --- "Weiter"-Button nach Videoende (Punkt 1.8) --- */
   .weiter-naechstes{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-m);
@@ -295,6 +302,62 @@
   /* --- Leerer Suchtreffer (Punkt 1.4, freundlich abfangen) --- */
   .leer-hinweis{text-align:center;color:var(--muted);padding:var(--sp-xl) var(--sp-m);
     font-size:var(--fs-body);}
+
+  /* ================= BEREICHS-KACHELN & EIGENE BEREICHSSEITE (24.08.2026) ================= */
+
+  /* --- Große, gestapelte 3D-Kacheln auf dem Start-Tab (ersetzen die wegscrollenden Kreise) --- */
+  .bereich-stack{display:flex;flex-direction:column;gap:var(--sp-m);}
+  .bereich-tile{position:relative;display:flex;align-items:center;gap:var(--sp-m);
+    padding:16px var(--sp-l);border-radius:var(--r-l);border:none;text-align:left;
+    cursor:pointer;font-family:inherit;color:#fff;overflow:hidden;
+    background:linear-gradient(135deg, var(--gruen) 0%, var(--gruen-hell) 100%);
+    box-shadow:0 8px 0 rgba(20,30,22,.18), 0 10px 18px rgba(20,30,22,.22);
+    transform:translateY(0); transition:transform .12s ease, box-shadow .12s ease;}
+  .bereich-tile:active{transform:translateY(4px); box-shadow:0 4px 0 rgba(20,30,22,.18), 0 6px 10px rgba(20,30,22,.2);}
+  .bereich-tile.voll{background:linear-gradient(135deg, #B87830 0%, var(--gold) 100%);
+    box-shadow:0 8px 0 rgba(120,80,20,.22), 0 10px 18px rgba(120,80,20,.25);}
+  .bereich-tile.voll:active{box-shadow:0 4px 0 rgba(120,80,20,.22), 0 6px 10px rgba(120,80,20,.22);}
+  .bt-icon{width:48px;height:48px;border-radius:var(--r-m);background:rgba(255,255,255,.16);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .bt-icon .ic{width:26px;height:26px;}
+  .bt-body{flex:1;min-width:0;}
+  .bt-titel{font-size:16.5px;font-weight:700;margin-bottom:5px;}
+  .bt-bar{height:6px;border-radius:var(--r-pill);background:rgba(255,255,255,.28);overflow:hidden;margin-bottom:4px;}
+  .bt-bar-fill{height:100%;background:#fff;border-radius:var(--r-pill);}
+  .bt-meta{font-size:11.5px;opacity:.85;}
+  .bt-arrow{flex-shrink:0;opacity:.75;}
+
+  /* --- Eigene Bereichsseite (Netflix-artige Videoauswahl) --- */
+  .bereich-detail-head{display:flex;align-items:center;gap:var(--sp-m);margin-bottom:var(--sp-m);}
+  .bereich-detail-head .bdh-icon{width:52px;height:52px;border-radius:var(--r-m);
+    background:var(--surface-tint);color:var(--gruen);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .bereich-detail-head .bdh-icon .ic{width:28px;height:28px;}
+  .bereich-detail-head h2{font-size:19px;margin:0 0 4px;color:var(--text);}
+  .bdh-bar{height:6px;border-radius:var(--r-pill);background:var(--border);overflow:hidden;width:100%;max-width:220px;}
+  .bdh-bar-fill{height:100%;background:var(--gruen-hell);border-radius:var(--r-pill);}
+
+  .video-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-m);}
+  @media (min-width:520px){ .video-grid{grid-template-columns:1fr 1fr 1fr;} }
+  .vg-card{position:relative;border-radius:var(--r-l);overflow:hidden;cursor:pointer;
+    aspect-ratio:2/3;display:flex;flex-direction:column;justify-content:flex-end;
+    box-shadow:0 4px 12px rgba(20,18,12,.18);transition:transform .12s ease;}
+  .vg-card:active{transform:scale(0.96);}
+  .vg-card .vg-bg{position:absolute;inset:0;}
+  .vg-card .vg-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.92);
+    display:flex;align-items:center;justify-content:center;color:var(--gruen);}
+  .vg-card .vg-play .ic{width:20px;height:20px;}
+  .vg-card .vg-info{position:relative;padding:10px;background:linear-gradient(180deg, rgba(20,18,12,0) 0%, rgba(20,18,12,.78) 65%);}
+  .vg-card .vg-code{font-size:9.5px;color:rgba(255,255,255,.7);font-weight:700;letter-spacing:.06em;}
+  .vg-card .vg-titel{color:#fff;font-size:12.5px;font-weight:700;line-height:1.25;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .vg-card .vg-check{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;
+    background:var(--gruen);color:#fff;display:flex;align-items:center;justify-content:center;}
+  .vg-card .vg-check .ic{width:13px;height:13px;}
+  .vg-card .vg-ergebnis{position:absolute;top:8px;left:8px;font-size:15px;}
+
+  /* --- Kleine "Zurück"-Zeile, einheitlich auf allen Unterseiten --- */
+  .zurueck-zeile{margin-bottom:var(--sp-m);}
   /* ================= SEITENMENÜ (Drawer), Dashboard, Nützliches ================= */
   .menu-btn{background:none;border:none;color:var(--text);cursor:pointer;padding:6px;
     display:flex;align-items:center;}
@@ -605,6 +668,7 @@ let suchBegriff = "";        // Bereich 1.4: Volltextsuche über Titel/Kategorie
 let statusFilter = "alle";   // Bereich 1.6: "alle" | "offen" | "fertig"
 let drawerOpen = false;      // neues Seitenmenü (☰)
 let drawerView = null;       // null | "dashboard" | "nuetzliches" | "hilfe" | "ueber"
+let selectedBereich = null;  // welcher Bereich gerade als eigene "Netflix-Seite" offen ist
 let deepLinkTagId = null; // gesetzt bei ?tag=..., steuert einmaligen Scroll+Highlight
 
 function esc(s){
@@ -755,21 +819,14 @@ async function showApp(){
     const deepLinkTag = parseDeepLinkTag();
     const deepLinkStufe = parseDeepLinkStufe();
     if(deepLinkTag){
-      // Neues Verhalten: ?tag=... springt direkt zur Stufe UND markiert das passende Video
-      mainView = "lernpfad";
-      openStufen = new Set([deepLinkTag.stufe]);
+      // Kompass-Link mit Tag: direkt auf die Bereichsseite, das passende Video markiert
+      mainView = "bereichdetail";
+      selectedBereich = deepLinkTag.stufe;
       deepLinkTagId = deepLinkTag.id;
     } else if(deepLinkStufe){
-      // Altes Verhalten unverändert: nur ?stufe=... klappt die Stufe auf
-      mainView = "lernpfad";
-      openStufen = new Set([deepLinkStufe]);
-    } else if(openStufen.size === 0){
-      // Beim allerersten Öffnen: die erste Stufe mit noch ungesehenen Videos aufklappen
-      const pfad = buildLernpfad();
-      const ersteOffene = pfad.find(function(g){
-        return g.videos.some(function(x){ return !seenVideoIds.has(x.video.id); });
-      });
-      openStufen = new Set([ersteOffene ? ersteOffene.stufe : (pfad[0] ? pfad[0].stufe : null)]);
+      // Kompass-Link nur mit Stufe: Bereichsseite ohne Einzel-Markierung
+      mainView = "bereichdetail";
+      selectedBereich = deepLinkStufe;
     }
     renderCatalog();
     maybeShowPushBanner();
@@ -847,19 +904,7 @@ function buildPruefungsstrecken(){
 }
 
 function renderLernpfadHtml(){
-  const pfadRoh = buildLernpfad();
-  let dlTargetSet = false; // nur die erste passende Karte bekommt das Scroll-Ziel
-
-  // Bereich 1.4 + 1.6: Suche und Statusfilter vor dem Rendern anwenden.
-  const pfad = pfadRoh.map(function(g){
-    return { stufe: g.stufe, videos: g.videos.filter(function(x){ return passtZurSuche(x.video, x.tag); }), alle: g.videos };
-  }).filter(function(g){
-    if(g.videos.length === 0) return false;
-    if(statusFilter === "alle") return true;
-    const gesehen = g.alle.filter(function(x){ return seenVideoIds.has(x.video.id); }).length;
-    if(statusFilter === "fertig") return gesehen === g.alle.length && g.alle.length > 0;
-    return gesehen < g.alle.length; // "offen"
-  });
+  const pfad = buildLernpfad();
 
   const suchLeiste =
     '<div class="suchzeile">' + icon("suche") +
@@ -874,70 +919,53 @@ function renderLernpfadHtml(){
       }).join("") +
     "</div>";
 
-  const sections = pfad.map(function(gruppe){
-    const isOpen = openStufen.has(gruppe.stufe);
-    const istPruefungStufe = gruppe.stufe === "Prüfung";
-    const sichtbareVideos = istPruefungStufe
-      ? gruppe.videos.filter(function(x){
-          if(pruefungFilter === "alle") return true;
-          return x.video.pruefung_ergebnis === pruefungFilter;
-        })
-      : gruppe.videos;
-    const basisVideos = gruppe.alle || gruppe.videos;
-    const seenInStufe = basisVideos.filter(function(x){ return seenVideoIds.has(x.video.id); }).length;
-    const fertig = seenInStufe === basisVideos.length && basisVideos.length > 0;
+  const sucheAktiv = !!suchBegriff || statusFilter !== "alle";
 
-    const pruefungFilterBar = istPruefungStufe
-      ? '<div class="pruefung-filter-bar" style="display:flex;gap:6px;padding:8px 4px;flex-wrap:wrap;">' +
-          ['alle','bestanden','nicht_bestanden'].map(function(f){
-            const label = f === 'alle' ? 'Alle' : (f === 'bestanden' ? '✅ Bestanden' : '❌ Nicht bestanden');
-            const aktiv = pruefungFilter === f;
-            return '<button class="chip-btn' + (aktiv ? ' chip-active' : '') + '" data-pruefungfilter="' + f + '" style="padding:5px 12px;border-radius:14px;border:1px solid var(--gold,#D9954C);background:' + (aktiv ? 'var(--gold,#D9954C)' : 'transparent') + ';color:' + (aktiv ? '#2B2A22' : 'var(--text)') + ';font-size:12.5px;">' + label + '</button>';
-          }).join('') +
-        '</div>'
-      : '';
-
-    const videoRows = sichtbareVideos.map(function(x){
-      const desc = x.video.beschreibung ? '<div class="video-desc">' + esc(x.video.beschreibung) + "</div>" : "";
-      const check = seenVideoIds.has(x.video.id) ? '<span class="video-check">✓</span>' : "";
-      const ergebnisBadge = x.video.pruefung_ergebnis === 'bestanden' ? ' <span title="Bestanden">✅</span>'
-        : x.video.pruefung_ergebnis === 'nicht_bestanden' ? ' <span title="Nicht bestanden">❌</span>' : '';
-      const isHighlighted = deepLinkTagId && x.tag.id === deepLinkTagId;
-      const targetId = (isHighlighted && !dlTargetSet) ? (dlTargetSet = true, ' id="dl-target"') : "";
-      // Kategoriezeile weglassen, wenn sie inhaltlich dasselbe sagt wie der Titel --
-      // sonst steht z.B. "Reifen prüfen: Profiltiefe" über "Reifen: Profil, Druck prüfen".
-      const titelWorte = new Set((x.video.titel||"").toLowerCase().split(/[^a-zäöüß]+/).filter(w=>w.length>3));
-      const tagWorte = (x.tag.label||"").toLowerCase().split(/[^a-zäöüß]+/).filter(w=>w.length>3);
-      const ueberlappung = tagWorte.length ? tagWorte.filter(w=>titelWorte.has(w)).length / tagWorte.length : 0;
-      const zeigeKategorie = ueberlappung < 0.5;
-      const metaZeile = (zeigeKategorie || x.tag.ort)
-        ? '<div class="video-desc" style="opacity:.7;">' + (zeigeKategorie ? esc(x.tag.label) : "") +
-          (zeigeKategorie && x.tag.ort ? " · " : "") + (x.tag.ort ? esc(x.tag.ort) : "") + "</div>"
-        : "";
-      return '<div class="video-card glass' + (isHighlighted ? " highlight-target" : "") + '"' + targetId + ' data-vid="' + esc(x.video.id) + '">' +
-        '<div class="video-code">' + esc(x.code) + "</div>" +
-        '<div><div class="video-title">' + esc(x.video.titel) + ergebnisBadge + "</div>" +
-          metaZeile +
-          desc +
-        "</div>" + check +
-      "</div>";
+  if(!sucheAktiv){
+    // Kein Suchbegriff aktiv: gleiche Bereichs-Kacheln wie auf dem Start-Tab -- EIN
+    // einheitliches Prinzip, um "in einen Bereich zu gehen", statt zweier verschiedener.
+    const kacheln = pfad.map(function(g){
+      const gesamt = g.videos.length;
+      const gesehen = g.videos.filter(function(x){ return seenVideoIds.has(x.video.id); }).length;
+      const pct = gesamt ? Math.round(gesehen/gesamt*100) : 0;
+      return '<button class="bereich-tile' + (pct>=100?" voll":"") + '" data-gotostufe="' + esc(g.stufe) + '">' +
+        '<div class="bt-icon">' + bereichIcon(g.stufe) + "</div>" +
+        '<div class="bt-body"><div class="bt-titel">' + esc(g.stufe) + "</div>" +
+          '<div class="bt-bar"><div class="bt-bar-fill" style="width:' + pct + '%;"></div></div>' +
+          '<div class="bt-meta">' + gesehen + " von " + gesamt + " Videos · " + pct + "%</div></div>" +
+        '<span class="bt-arrow">' + icon("weiter") + "</span>" +
+      "</button>";
     }).join("");
+    return suchLeiste + statusChips + '<div class="bereich-stack">' + kacheln + "</div>";
+  }
 
-    return '<div class="stufe-section" id="bereich-' + esc(gruppe.stufe.replace(/[^a-zA-Z0-9]/g,"")) + '">' +
-      '<div class="stufe-header' + (isOpen ? " open" : "") + '" data-stufe="' + esc(gruppe.stufe) + '">' +
-        '<div class="stufe-header-left">' +
-          '<span class="stufe-caret">' + (isOpen ? "▾" : "▸") + "</span>" +
-          '<span style="color:var(--gruen-hell);display:flex;">' + bereichIcon(gruppe.stufe) + "</span>" +
-          '<span class="stufe-name">' + esc(gruppe.stufe) + "</span>" +
-        "</div>" +
-        '<span class="admin-badge ' + (fertig ? "badge-aktiv" : "badge-gesperrt") + '">' + seenInStufe + "/" + (gruppe.alle ? gruppe.alle.length : gruppe.videos.length) + "</span>" +
-      "</div>" +
-      (isOpen ? pruefungFilterBar + '<div class="video-list">' + videoRows + "</div>" : "") +
+  // Suche/Statusfilter aktiv: flaches Ergebnis-Raster über alle Bereiche hinweg,
+  // jede Karte öffnet direkt das Video (Zurück führt danach in dessen Bereichsseite).
+  let treffer = [];
+  pfad.forEach(function(g){
+    const passend = g.videos.filter(function(x){ return passtZurSuche(x.video, x.tag); });
+    const gefiltert = passend.filter(function(x){
+      if(statusFilter === "alle") return true;
+      const gesehen = seenVideoIds.has(x.video.id);
+      return statusFilter === "fertig" ? gesehen : !gesehen;
+    });
+    treffer = treffer.concat(gefiltert);
+  });
+
+  const karten = treffer.map(function(x){
+    const check = seenVideoIds.has(x.video.id) ? '<span class="vg-check">' + icon("check","ic-s") + "</span>" : "";
+    const ergebnisIcon = x.video.pruefung_ergebnis === "bestanden" ? '<span class="vg-ergebnis">✅</span>'
+      : x.video.pruefung_ergebnis === "nicht_bestanden" ? '<span class="vg-ergebnis">❌</span>' : "";
+    return '<div class="vg-card" data-vid="' + esc(x.video.id) + '">' +
+      '<div class="vg-bg" style="background:' + vgGradientFuer(x.video.id) + ';"></div>' +
+      '<div class="vg-play">' + icon("play") + "</div>" +
+      ergebnisIcon + check +
+      '<div class="vg-info"><div class="vg-code">' + esc(x.tag.label) + '</div><div class="vg-titel">' + esc(x.video.titel) + "</div></div>" +
     "</div>";
-  }).join("") || '<div class="leer-hinweis">' + (suchBegriff
-      ? 'Nichts gefunden für „' + esc(suchBegriff) + '". Versuch es mit einem anderen Begriff.'
-      : (statusFilter === "fertig" ? "Noch kein Bereich vollständig abgeschlossen." : "Noch keine Videos verfügbar.")) + "</div>";
-  return suchLeiste + statusChips + sections;
+  }).join("");
+
+  return suchLeiste + statusChips + '<div class="video-grid">' + (karten || '<div class="leer-hinweis">' +
+    (suchBegriff ? 'Nichts gefunden für „' + esc(suchBegriff) + '".' : "Nichts in diesem Filter.") + "</div>") + "</div>";
 }
 
 function renderPruefungsstreckenHtml(){
@@ -1012,23 +1040,20 @@ function renderStartHtml(){
         '<div class="admin-sub">Schau gern nochmal bei den Prüfungsstrecken vorbei.</div>' +
       "</div>";
 
-  // Bereich 1.5: Bereichs-Chips mit Fortschrittsring -- alle Bereiche auf einen Blick,
-  // eine einzige horizontal scrollbare Zeile statt eines erschlagenden Rasters.
-  const chips = pfad.map(function(g){
+  // Große, gestapelte 3D-Kacheln statt der wegscrollenden Kreise -- jede Kachel öffnet
+  // die eigene "Netflix-artige" Bereichsseite (renderBereichDetailHtml).
+  const kacheln = pfad.map(function(g){
     const gesamt = g.videos.length;
     const gesehen = g.videos.filter(function(x){ return seenVideoIds.has(x.video.id); }).length;
-    const anteil = gesamt ? gesehen / gesamt : 0;
-    const umfang = 2 * Math.PI * 20;
-    const voll = anteil >= 1;
-    return '<button class="bereich-chip' + (voll ? " aktiv" : "") + '" data-gotostufe="' + esc(g.stufe) + '">' +
-      '<span class="ring">' +
-        '<svg width="46" height="46" viewBox="0 0 46 46">' +
-          '<circle cx="23" cy="23" r="20" fill="none" stroke="var(--border)" stroke-width="3"/>' +
-          '<circle cx="23" cy="23" r="20" fill="none" stroke="' + (voll ? "var(--gold)" : "var(--gruen-hell)") + '" stroke-width="3" stroke-linecap="round" stroke-dasharray="' + umfang.toFixed(1) + '" stroke-dashoffset="' + (umfang * (1 - anteil)).toFixed(1) + '"/>' +
-        "</svg>" +
-        '<span class="ring-icon">' + bereichIcon(g.stufe) + "</span>" +
-      "</span>" +
-      '<span class="chip-name">' + esc(g.stufe) + "</span>" +
+    const pct = gesamt ? Math.round(gesehen/gesamt*100) : 0;
+    return '<button class="bereich-tile' + (pct>=100?" voll":"") + '" data-gotostufe="' + esc(g.stufe) + '">' +
+      '<div class="bt-icon">' + bereichIcon(g.stufe) + "</div>" +
+      '<div class="bt-body">' +
+        '<div class="bt-titel">' + esc(g.stufe) + "</div>" +
+        '<div class="bt-bar"><div class="bt-bar-fill" style="width:' + pct + '%;"></div></div>' +
+        '<div class="bt-meta">' + gesehen + " von " + gesamt + " Videos · " + pct + "%</div>" +
+      "</div>" +
+      '<span class="bt-arrow">' + icon("weiter") + "</span>" +
     "</button>";
   }).join("");
 
@@ -1036,7 +1061,63 @@ function renderStartHtml(){
     '<div class="tagline" style="font-size:22px;margin-bottom:var(--sp-m);">Willkommen zurück' + (name ? ", " + esc(name) : "") + "</div>" +
     weiterKarte +
     '<div class="section-label" style="margin-top:0;">Deine Bereiche</div>' +
-    '<div class="bereich-leiste">' + chips + "</div>"
+    '<div class="bereich-stack">' + kacheln + "</div>"
+  );
+}
+
+// ---- EIGENE BEREICHSSEITE (Netflix-artige Videoauswahl, 24.08.2026) ----
+function renderBereichDetailHtml(){
+  const pfad = buildLernpfad();
+  const gruppe = pfad.find(function(g){ return g.stufe === selectedBereich; });
+  if(!gruppe){
+    return '<button class="krumen" data-zurueckstart>' + icon("zurueck") + "<span>Start</span></button>" +
+      '<div class="leer-hinweis">Dieser Bereich ist noch leer.</div>';
+  }
+  const gesamt = gruppe.videos.length;
+  const gesehen = gruppe.videos.filter(function(x){ return seenVideoIds.has(x.video.id); }).length;
+  const pct = gesamt ? Math.round(gesehen/gesamt*100) : 0;
+
+  const istPruefung = selectedBereich === "Prüfung";
+  const filterBar = istPruefung
+    ? '<div class="pruefung-filter-bar" style="padding:0 0 var(--sp-m);flex-wrap:wrap;display:flex;gap:6px;">' +
+        ['alle','bestanden','nicht_bestanden'].map(function(f){
+          const label = f === 'alle' ? 'Alle' : (f === 'bestanden' ? '✅ Bestanden' : '❌ Nicht bestanden');
+          const aktiv = pruefungFilter === f;
+          return '<button class="chip-btn' + (aktiv?" chip-active":"") + '" data-pruefungfilter="' + f + '" style="padding:5px 12px;border-radius:14px;border:1px solid var(--gold);background:' + (aktiv?"var(--gold)":"transparent") + ';color:' + (aktiv?"#2B2A22":"var(--text)") + ';font-size:12.5px;">' + label + "</button>";
+        }).join("") +
+      "</div>"
+    : "";
+
+  const sichtbar = istPruefung
+    ? gruppe.videos.filter(function(x){ return pruefungFilter==="alle" || x.video.pruefung_ergebnis===pruefungFilter; })
+    : gruppe.videos;
+
+  const karten = sichtbar.map(function(x){
+    const ergebnisIcon = x.video.pruefung_ergebnis === "bestanden" ? '<span class="vg-ergebnis">✅</span>'
+      : x.video.pruefung_ergebnis === "nicht_bestanden" ? '<span class="vg-ergebnis">❌</span>' : "";
+    const check = seenVideoIds.has(x.video.id) ? '<span class="vg-check">' + icon("check","ic-s") + "</span>" : "";
+    const isHighlighted = deepLinkTagId && x.tag.id === deepLinkTagId;
+    const targetId = isHighlighted ? ' id="dl-target"' : "";
+    return '<div class="vg-card' + (isHighlighted ? " highlight-target" : "") + '"' + targetId + ' data-vid="' + esc(x.video.id) + '">' +
+      '<div class="vg-bg" style="background:' + vgGradientFuer(x.video.id) + ';"></div>' +
+      '<div class="vg-play">' + icon("play") + "</div>" +
+      ergebnisIcon + check +
+      '<div class="vg-info"><div class="vg-code">' + esc(x.code) + '</div><div class="vg-titel">' + esc(x.video.titel) + "</div></div>" +
+    "</div>";
+  }).join("");
+
+  return (
+    '<button class="krumen zurueck-zeile" data-zurueckstart>' + icon("zurueck") + "<span>Start</span></button>" +
+    '<div class="bereich-detail-head">' +
+      '<div class="bdh-icon">' + bereichIcon(selectedBereich) + "</div>" +
+      '<div style="flex:1;">' +
+        "<h2>" + esc(selectedBereich) + "</h2>" +
+        '<div class="bdh-bar"><div class="bdh-bar-fill" style="width:' + pct + '%;"></div></div>' +
+        '<div class="admin-sub" style="margin-top:4px;">' + gesehen + " von " + gesamt + " Videos gesehen</div>" +
+      "</div>" +
+    "</div>" +
+    filterBar +
+    '<div class="video-grid">' + (karten || '<div class="leer-hinweis">Noch keine Videos in diesem Bereich.</div>') + "</div>"
   );
 }
 
@@ -1091,7 +1172,7 @@ function renderDashboardHtml(){
     const gesehen = g.videos.filter(function(x){ return seenVideoIds.has(x.video.id); }).length;
     const gesamt = g.videos.length;
     const pct = gesamt ? Math.round(gesehen/gesamt*100) : 0;
-    return '<div class="dash-row' + (pct>=100?" voll":"") + '">' +
+    return '<div class="dash-row' + (pct>=100?" voll":"") + '" data-gotostufe="' + esc(g.stufe) + '" style="cursor:pointer;">' +
       bereichIcon(g.stufe) +
       '<div style="flex:1;min-width:0;">' +
         '<div class="dr-name">' + esc(g.stufe) + "</div>" +
@@ -1100,8 +1181,9 @@ function renderDashboardHtml(){
       '<div class="dr-pct">' + gesehen + "/" + gesamt + "</div>" +
     "</div>";
   }).join("");
-  return '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Dashboard</div>' +
-    '<div class="admin-sub" style="margin-bottom:14px;">Alle Bereiche auf einen Blick.</div>' +
+  return '<button class="krumen zurueck-zeile" data-zurueckstart>' + icon("zurueck") + "<span>Start</span></button>" +
+    '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Dashboard</div>' +
+    '<div class="admin-sub" style="margin-bottom:14px;">Alle Bereiche auf einen Blick — antippen öffnet den Bereich.</div>' +
     '<div class="karte">' + (rows || '<div class="leer-hinweis">Noch keine Bereiche verfügbar.</div>') + "</div>";
 }
 
@@ -1136,14 +1218,16 @@ function renderNuetzlichesHtml(){
       '<a href="' + esc(p.datei) + '" target="_blank" rel="noopener" aria-label="PDF öffnen">' + icon("download") + "</a>" +
     "</div>";
   }).join("");
-  return '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Nützliches</div>' +
+  return '<button class="krumen zurueck-zeile" data-zurueckstart>' + icon("zurueck") + "<span>Start</span></button>" +
+    '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Nützliches</div>' +
     '<div class="admin-sub" style="margin-bottom:14px;">Gesetzestexte zu den Themen aus den Videos, zum Nachlesen und Herunterladen.</div>' +
     karten +
     '<div class="leer-hinweis" style="text-align:left;padding:var(--sp-m) 0;">Weitere Themen kommen laufend dazu.</div>';
 }
 
 function renderHilfeHtml(){
-  return '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Hilfe &amp; Kontakt</div>' +
+  return '<button class="krumen zurueck-zeile" data-zurueckstart>' + icon("zurueck") + "<span>Start</span></button>" +
+    '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Hilfe &amp; Kontakt</div>' +
     '<div class="karte info-block">' +
       '<p><b>Frage zu einem Video oder deinem Zugang?</b><br>Wende dich direkt an deine Fahrschule bzw. deinen Fahrlehrer — dort wurde dein Zugang eingerichtet.</p>' +
       '<p><b>PIN vergessen?</b><br>Deine Fahrschule kann dir die PIN erneut zuschicken.</p>' +
@@ -1152,7 +1236,8 @@ function renderHilfeHtml(){
 }
 
 function renderUeberHtml(){
-  return '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Über diese App</div>' +
+  return '<button class="krumen zurueck-zeile" data-zurueckstart>' + icon("zurueck") + "<span>Start</span></button>" +
+    '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Über diese App</div>' +
     '<div class="karte info-block">' +
       '<p>Fahr-Akademie ist eine <b>Ergänzung zur amtlichen Fahrausbildung</b> — kein Ersatz für den Unterricht bei deiner Fahrschule.</p>' +
       '<p>Deine Daten (Name, Telefonnummer, Fortschritt) werden ausschließlich auf Servern in Deutschland gespeichert (Frankfurt am Main).</p>' +
@@ -1169,6 +1254,7 @@ function renderCatalog(){
   else if(drawerView === "nuetzliches") content = renderNuetzlichesHtml();
   else if(drawerView === "hilfe") content = renderHilfeHtml();
   else if(drawerView === "ueber") content = renderUeberHtml();
+  else if(mainView === "bereichdetail") content = renderBereichDetailHtml();
   else if(mainView === "start") content = renderStartHtml();
   else if(mainView === "lernpfad") content = renderLernpfadHtml();
   else if(mainView === "pruefungsstrecken") content = renderPruefungsstreckenHtml();
@@ -1176,7 +1262,7 @@ function renderCatalog(){
   else content = renderKontoHtml();
 
   const tabs = [
-    ["start","Start"],["lernpfad","Lernpfad"],["pruefungsstrecken","Nach Prüfer"],
+    ["start","Start"],["lernpfad","Lernpfad"],["pruefungsstrecken","Prüfer"],
     ["verlauf","Verlauf"],["konto","Konto"]
   ];
   const bottomNav = '<div class="bottom-nav">' +
@@ -1223,7 +1309,7 @@ function renderCatalog(){
     bottomNav;
 
   document.getElementById("logo-home-btn").addEventListener("click", function(){
-    drawerView = null; mainView = "start"; renderCatalog();
+    drawerView = null; mainView = "start"; selectedBereich = null; renderCatalog();
   });
   document.getElementById("drawer-open-btn").addEventListener("click", function(){
     // Direktes Klassen-Umschalten statt Neu-Rendern -- nur so kann die Drawer-Öffnung
@@ -1250,20 +1336,18 @@ function renderCatalog(){
     });
   });
   document.querySelectorAll("[data-view]").forEach(function(t){
-    t.addEventListener("click", function(){ drawerView = null; mainView = t.dataset.view; renderCatalog(); });
-  });
-  document.querySelectorAll(".stufe-header[data-stufe]").forEach(function(h){
-    h.addEventListener("click", function(){
-      const s = h.dataset.stufe;
-      if(openStufen.has(s)){ openStufen.delete(s); } else { openStufen.add(s); }
-      renderCatalog();
-    });
+    t.addEventListener("click", function(){ drawerView = null; mainView = t.dataset.view; selectedBereich = null; renderCatalog(); });
   });
   document.querySelectorAll(".stufe-header[data-pruefer]").forEach(function(h){
     h.addEventListener("click", function(){
       const p = h.dataset.pruefer;
       if(openPruefer.has(p)){ openPruefer.delete(p); } else { openPruefer.add(p); }
       renderCatalog();
+    });
+  });
+  document.querySelectorAll("[data-zurueckstart]").forEach(function(b){
+    b.addEventListener("click", function(){
+      drawerView = null; mainView = "start"; selectedBereich = null; renderCatalog();
     });
   });
   const suchInput = document.getElementById("such-input");
@@ -1282,15 +1366,13 @@ function renderCatalog(){
   }
   document.querySelectorAll("[data-gotostufe]").forEach(function(b){
     b.addEventListener("click", function(){
-      const stufe = b.dataset.gotostufe;
-      openStufen.add(stufe);
-      suchBegriff = ""; statusFilter = "alle";
-      mainView = "lernpfad";
+      // Jeder Bereich hat jetzt EINE eigene "Netflix-artige" Seite -- egal ob der
+      // Klick vom Start-Tab, dem Lernpfad oder dem Dashboard kommt.
+      selectedBereich = b.dataset.gotostufe;
+      drawerView = null; mainView = "bereichdetail";
+      pruefungFilter = "alle";
       renderCatalog();
-      setTimeout(function(){
-        const ziel = document.getElementById("bereich-" + stufe.replace(/[^a-zA-Z0-9]/g,""));
-        if(ziel) ziel.scrollIntoView({ behavior:"smooth", block:"start" });
-      }, 60);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
   });
   document.querySelectorAll("[data-statusfilter]").forEach(function(b){
@@ -1342,6 +1424,21 @@ function findeNaechstesOffenes(aktuellId){
     if(offen) return offen;
   }
   return null;
+}
+
+// Kein Zugriff auf echte Bunny-Thumbnails (CDN-Adresse nicht bekannt) -- stattdessen
+// hochwertige Farbverlauf-"Kinoplakate", stabil pro Video (gleiche Farbe bei jedem Aufruf).
+const VG_GRADIENTS = [
+  "linear-gradient(160deg,#2F4A34,#4B7A56)",
+  "linear-gradient(160deg,#8A5A2A,#D9954C)",
+  "linear-gradient(160deg,#2F4A34,#1A2A1E)",
+  "linear-gradient(160deg,#6B4423,#B87830)",
+  "linear-gradient(160deg,#3A5A42,#2F4A34)",
+];
+function vgGradientFuer(videoId){
+  let h = 0;
+  for(let i=0;i<videoId.length;i++) h = (h*31 + videoId.charCodeAt(i)) >>> 0;
+  return VG_GRADIENTS[h % VG_GRADIENTS.length];
 }
 
 async function openVideo(videoId){
@@ -1408,7 +1505,12 @@ async function openVideo(videoId){
       '<div class="player-wrap"><iframe src="' + embedUrl + '" loading="lazy" ' +
       'style="border:0;width:100%;aspect-ratio:16/9;display:block;" allow="autoplay; fullscreen"></iframe></div>' +
       weiterBtn;
-    document.getElementById("back-btn").addEventListener("click", renderCatalog);
+    document.getElementById("back-btn").addEventListener("click", function(){
+      // Konsistent: von JEDEM Video führt "Zurück" in dessen eigene Bereichsseite --
+      // unabhängig davon, ob man vom Start, vom Lernpfad oder per Suche hierhergekommen ist.
+      if(kontext){ selectedBereich = kontext.stufe; mainView = "bereichdetail"; }
+      renderCatalog();
+    });
     const wb = document.querySelector("[data-weiter]");
     if(wb) wb.addEventListener("click", function(){ openVideo(wb.dataset.weiter); });
   } catch(e){
