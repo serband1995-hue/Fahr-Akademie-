@@ -305,27 +305,31 @@
 
   /* ================= BEREICHS-KACHELN & EIGENE BEREICHSSEITE (24.08.2026) ================= */
 
-  /* --- Große, gestapelte 3D-Kacheln auf dem Start-Tab (ersetzen die wegscrollenden Kreise) --- */
+  /* --- Große, gestapelte Kacheln auf dem Start-Tab -- helle, ruhige Karten statt
+     vollflächiger Farbblöcke. Farbe (Grün/Gold) ist nur noch Akzent: Icon-Kreis,
+     Fortschrittsbalken, ein dünner Rand bei 100%. So bleibt es harmonisch, auch wenn
+     (fast) alle Bereiche fertig sind, statt zu einer Wand aus einer Farbe zu werden. */
   .bereich-stack{display:flex;flex-direction:column;gap:var(--sp-m);}
   .bereich-tile{position:relative;display:flex;align-items:center;gap:var(--sp-m);
-    padding:16px var(--sp-l);border-radius:var(--r-l);border:none;text-align:left;
-    cursor:pointer;font-family:inherit;color:#fff;overflow:hidden;
-    background:linear-gradient(135deg, var(--gruen) 0%, var(--gruen-hell) 100%);
-    box-shadow:0 8px 0 rgba(20,30,22,.18), 0 10px 18px rgba(20,30,22,.22);
+    padding:15px var(--sp-l);border-radius:var(--r-l);text-align:left;
+    cursor:pointer;font-family:inherit;color:var(--text);overflow:hidden;
+    background:var(--surface);border:1px solid var(--border);
+    box-shadow:0 2px 0 var(--border), 0 4px 12px rgba(43,40,30,.06);
     transform:translateY(0); transition:transform .12s ease, box-shadow .12s ease;}
-  .bereich-tile:active{transform:translateY(4px); box-shadow:0 4px 0 rgba(20,30,22,.18), 0 6px 10px rgba(20,30,22,.2);}
-  .bereich-tile.voll{background:linear-gradient(135deg, #B87830 0%, var(--gold) 100%);
-    box-shadow:0 8px 0 rgba(120,80,20,.22), 0 10px 18px rgba(120,80,20,.25);}
-  .bereich-tile.voll:active{box-shadow:0 4px 0 rgba(120,80,20,.22), 0 6px 10px rgba(120,80,20,.22);}
-  .bt-icon{width:48px;height:48px;border-radius:var(--r-m);background:rgba(255,255,255,.16);
-    display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .bereich-tile:active{transform:translateY(2px); box-shadow:0 0 0 var(--border), 0 2px 6px rgba(43,40,30,.08);}
+  .bereich-tile.voll{border-color:var(--gold-rand); box-shadow:0 2px 0 var(--gold-rand), 0 4px 12px rgba(217,149,76,.12);}
+  .bt-icon{width:48px;height:48px;border-radius:var(--r-m);background:var(--surface-tint);
+    color:var(--gruen);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .bereich-tile.voll .bt-icon{background:var(--gold-schwach);color:var(--gold);}
   .bt-icon .ic{width:26px;height:26px;}
   .bt-body{flex:1;min-width:0;}
-  .bt-titel{font-size:16.5px;font-weight:700;margin-bottom:5px;}
-  .bt-bar{height:6px;border-radius:var(--r-pill);background:rgba(255,255,255,.28);overflow:hidden;margin-bottom:4px;}
-  .bt-bar-fill{height:100%;background:#fff;border-radius:var(--r-pill);}
-  .bt-meta{font-size:11.5px;opacity:.85;}
-  .bt-arrow{flex-shrink:0;opacity:.75;}
+  .bt-titel{font-size:16.5px;font-weight:700;margin-bottom:5px;color:var(--text);}
+  .bt-bar{height:6px;border-radius:var(--r-pill);background:var(--border);overflow:hidden;margin-bottom:4px;}
+  .bt-bar-fill{height:100%;background:var(--gruen-hell);border-radius:var(--r-pill);}
+  .bereich-tile.voll .bt-bar-fill{background:var(--gold);}
+  .bt-meta{font-size:11.5px;color:var(--muted);}
+  .bt-arrow{flex-shrink:0;color:var(--faint);}
+  .bereich-tile.voll .bt-arrow{color:var(--gold);}
 
   /* --- Eigene Bereichsseite (Netflix-artige Videoauswahl) --- */
   .bereich-detail-head{display:flex;align-items:center;gap:var(--sp-m);margin-bottom:var(--sp-m);}
