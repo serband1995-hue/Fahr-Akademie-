@@ -362,6 +362,64 @@
 
   /* --- Kleine "Zurück"-Zeile, einheitlich auf allen Unterseiten --- */
   .zurueck-zeile{margin-bottom:var(--sp-m);}
+
+  /* ================= ADMIN: DASHBOARD, ASSISTENT, HISTORIE (25.08.2026) ================= */
+
+  /* --- Kennzahlen-Kacheln --- */
+  .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-s);margin-bottom:var(--sp-l);}
+  @media (min-width:560px){ .kpi-grid{grid-template-columns:repeat(4,1fr);} }
+  .kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-m);
+    padding:var(--sp-m);}
+  .kpi .kpi-zahl{font-size:24px;font-weight:700;color:var(--gruen);line-height:1.1;}
+  .kpi .kpi-label{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.25;}
+  .kpi.warn{border-color:var(--gold-rand);background:var(--gold-schwach);}
+  .kpi.warn .kpi-zahl{color:var(--gold);}
+
+  /* --- Handlungsbedarf-Liste --- */
+  .todo-zeile{display:flex;align-items:center;gap:var(--sp-s);padding:10px 0;
+    border-bottom:1px solid var(--border);font-size:13.5px;}
+  .todo-zeile:last-child{border-bottom:none;}
+  .todo-zeile .td-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .todo-zeile.rot .td-dot{background:#B5573F;}
+  .todo-zeile.gelb .td-dot{background:var(--gold);}
+  .todo-zeile.gruen .td-dot{background:var(--gruen-hell);}
+
+  /* --- Schritt-Assistent (Video anlegen) --- */
+  .schritt-kopf{display:flex;align-items:center;gap:var(--sp-s);margin-bottom:var(--sp-s);}
+  .schritt-nr{width:26px;height:26px;border-radius:50%;background:var(--gruen);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+  .schritt-titel{font-size:15px;font-weight:700;color:var(--text);}
+  .schritt-hilfe{font-size:12.5px;color:var(--muted);line-height:1.45;margin-bottom:var(--sp-s);
+    background:var(--surface-tint);border-radius:var(--r-s);padding:9px 11px;}
+  .schritt-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-m);
+    padding:var(--sp-m);margin-bottom:var(--sp-m);}
+
+  /* --- Themen-Auswahl mit Suche (statt 60 Checkboxen am Stück) --- */
+  .themen-suche{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:var(--r-s);
+    font-size:16px;font-family:inherit;background:var(--surface-strong);color:var(--text);
+    margin-bottom:var(--sp-s);}
+  .themen-box{max-height:230px;overflow-y:auto;border:1px solid var(--border);
+    border-radius:var(--r-s);padding:4px;background:var(--surface);}
+  .themen-gewaehlt{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:var(--sp-s);min-height:4px;}
+  .themen-chip{display:inline-flex;align-items:center;gap:5px;background:var(--gruen);color:#fff;
+    border-radius:var(--r-pill);padding:5px 10px;font-size:12px;}
+  .themen-chip button{background:none;border:none;color:#fff;cursor:pointer;padding:0;
+    display:flex;opacity:.75;}
+  .thema-zeile{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:var(--r-s);
+    cursor:pointer;font-size:13.5px;color:var(--text);}
+  .thema-zeile:active{background:var(--surface-tint);}
+  .thema-zeile input{width:17px;height:17px;flex:none;accent-color:var(--gruen);}
+  .thema-bereich{font-size:10.5px;color:var(--faint);margin-left:auto;flex-shrink:0;}
+
+  /* --- Schülerhistorie --- */
+  .hist-zeile{display:flex;align-items:center;gap:var(--sp-s);padding:9px 0;
+    border-bottom:1px solid var(--border);font-size:13px;}
+  .hist-zeile:last-child{border-bottom:none;}
+  .hist-titel{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;}
+  .hist-anzahl{background:var(--surface-tint);color:var(--gruen);border-radius:var(--r-pill);
+    padding:2px 9px;font-size:11.5px;font-weight:700;flex-shrink:0;}
+  .hist-anzahl.oft{background:var(--gold-schwach);color:var(--gold);}
+  .hist-datum{font-size:11px;color:var(--faint);flex-shrink:0;}
   /* ================= SEITENMENÜ (Drawer), Dashboard, Nützliches ================= */
   .menu-btn{background:none;border:none;color:var(--text);cursor:pointer;padding:6px;
     display:flex;align-items:center;}
@@ -457,7 +515,8 @@ const ICONS = {
   frage:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 3.5"/><path d="M12 17h.01"/>',
   info:'<circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/>',
   logout:'<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>',
-  download:'<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/>'
+  download:'<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/>',
+  hashtag:'<path d="M5 9h14M5 15h14M10 4L8 20M16 4l-2 16"/>'
 };
 function icon(name, extraClass){
   return '<svg class="ic ' + (extraClass||"") + '" viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[name]||"") + "</svg>";
@@ -552,11 +611,17 @@ function buildLernpfad(){
     if(tagsInStufe.length === 0) return;
     let counter = 0;
     const videos = [];
+    // Ein Video kann mehrere Themen desselben Bereichs haben (z.B. "Stoppschilder"
+    // UND "Zebrastreifen"). Ohne diese Sperre erschiene es mehrfach untereinander --
+    // deshalb pro Bereich nur beim ERSTEN passenden Thema aufnehmen.
+    const bereitsAufgenommen = new Set();
     tagsInStufe.forEach(function(tag){
       const vids = videoTags.filter(function(vt){ return vt.tag_id === tag.id; })
         .map(function(vt){ return allVideos.find(function(v){ return v.id === vt.video_id; }); })
         .filter(Boolean);
       vids.forEach(function(v){
+        if(bereitsAufgenommen.has(v.id)) return;
+        bereitsAufgenommen.add(v.id);
         counter++;
         videos.push({ video:v, tag:tag, code: STUFE_PREFIX[stufe] + "-" + counter });
       });
@@ -652,7 +717,9 @@ let adminSession = JSON.parse(localStorage.getItem("academy_admin_session") || "
 let myRole = null;
 let mySchule = null;
 let allSchulen = [];
-let adminTab = "schueler";
+let adminTab = "dashboard";
+let adminFortschritt = [];      // alle Videoaufrufe, für Dashboard + Schülerhistorie
+let historieSchuelerId = null;  // welcher Schüler gerade in der Historie offen ist
 let allFahrlehrer = [];
 let allPruefer = [];
 let allSchueler = [];
@@ -673,6 +740,7 @@ let statusFilter = "alle";   // Bereich 1.6: "alle" | "offen" | "fertig"
 let drawerOpen = false;      // neues Seitenmenü (☰)
 let drawerView = null;       // null | "dashboard" | "nuetzliches" | "hilfe" | "ueber"
 let selectedBereich = null;  // welcher Bereich gerade als eigene "Netflix-Seite" offen ist
+let selectedHashtag = null;  // welches # gerade angetippt wurde (bereichsübergreifende Themensuche)
 let deepLinkTagId = null; // gesetzt bei ?tag=..., steuert einmaligen Scroll+Highlight
 
 function esc(s){
@@ -817,6 +885,14 @@ async function maybeShowPushBanner(){
 
 async function showApp(){
   document.getElementById("app").innerHTML = '<div class="skel-karte"></div><div class="skel-karte"></div><div class="skel-karte"></div>';
+
+  // Echte Zustimmungs-Sperre (25.08.2026): Ohne agb_akzeptiert_am kommt niemand am
+  // Zustimmungsbildschirm vorbei -- kein Zurück-Button, keine Bottom-Nav, kein Umgehen.
+  if(session && !session.demo && !session.agb_akzeptiert_am){
+    renderZustimmung();
+    return;
+  }
+
   try{
     await loadCatalog();
     await loadVerlauf();
@@ -844,6 +920,64 @@ async function showApp(){
   } catch(e){
     document.getElementById("app").innerHTML = '<div class="err">Katalog konnte nicht geladen werden</div>';
   }
+}
+
+// ---- ZUSTIMMUNGS-SPERRE (25.08.2026) ----
+// Rechtlich als Nachweis gedacht: der "Weiter"-Button bleibt deaktiviert, bis die
+// Checkbox angehakt ist. Kein Zurück, keine Bottom-Nav -- echte Sperre, kein Vorbeiklicken.
+function renderZustimmung(){
+  document.getElementById("app").innerHTML =
+    '<div style="padding-top:10px;">' +
+      '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Bevor es losgeht</div>' +
+      '<div class="admin-sub" style="margin-bottom:16px;">Bitte einmal bestätigen, dann kann\'s weitergehen.</div>' +
+      '<div class="karte info-block">' +
+        '<p>Die Videos der Fahr-Akademie sind eine <b>freiwillige, ergänzende Lernhilfe</b> zu deiner ' +
+        'Fahrausbildung und <b>ersetzen nicht</b> den Unterricht bei deiner Fahrschule.</p>' +
+        '<p>Es gibt <b>keine Garantie</b>, dass du mit diesen Videos die Führerscheinprüfung bestehst — ' +
+        'der Lernerfolg hängt von vielen Faktoren ab, die außerhalb unserer Kontrolle liegen.</p>' +
+        '<p>Dein Zugang (Telefonnummer + PIN) ist <b>persönlich und nicht übertragbar</b>. Die Weitergabe ' +
+        'an Dritte verstößt gegen die Nutzungsbedingungen und kann ohne Vorankündigung zur ' +
+        '<b>sofortigen Sperrung</b> deines Zugangs führen, ohne Anspruch auf Erstattung.</p>' +
+      "</div>" +
+      '<label style="display:flex;align-items:flex-start;gap:10px;padding:14px 4px;font-size:14px;color:var(--text);">' +
+        '<input type="checkbox" id="zustimmung-cb" style="width:20px;height:20px;flex:none;margin-top:1px;accent-color:var(--gruen);">' +
+        '<span>Ich habe das gelesen und bin einverstanden.</span>' +
+      "</label>" +
+      '<button id="zustimmung-weiter" disabled style="width:100%;padding:14px;border:none;border-radius:14px;' +
+        'background:var(--border);color:var(--faint);font-family:inherit;font-size:15px;font-weight:700;">Weiter</button>' +
+      '<div id="zustimmung-err" style="color:#B5573F;font-size:13px;margin-top:8px;text-align:center;"></div>' +
+    "</div>";
+
+  const cb = document.getElementById("zustimmung-cb");
+  const btn = document.getElementById("zustimmung-weiter");
+  cb.addEventListener("change", function(){
+    btn.disabled = !cb.checked;
+    btn.style.background = cb.checked ? "var(--gruen)" : "var(--border)";
+    btn.style.color = cb.checked ? "#fff" : "var(--faint)";
+  });
+  btn.addEventListener("click", async function(){
+    if(!cb.checked) return;
+    btn.disabled = true; btn.textContent = "Einen Moment …";
+    try{
+      const res = await fetch(SUPABASE_URL + "/functions/v1/academy-accept-terms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + SUPABASE_ANON_KEY },
+        body: JSON.stringify({ session_token: session.session_token })
+      });
+      const data = await res.json();
+      if(!res.ok || !data.ok){
+        document.getElementById("zustimmung-err").textContent = "Das hat leider nicht geklappt — bitte nochmal versuchen.";
+        btn.disabled = false; btn.textContent = "Weiter";
+        return;
+      }
+      session.agb_akzeptiert_am = data.agb_akzeptiert_am;
+      localStorage.setItem("academy_session", JSON.stringify(session));
+      showApp();
+    } catch(e){
+      document.getElementById("zustimmung-err").textContent = "Verbindungsfehler — bitte Internet prüfen.";
+      btn.disabled = false; btn.textContent = "Weiter";
+    }
+  });
 }
 
 async function loadVerlauf(){
@@ -945,13 +1079,20 @@ function renderLernpfadHtml(){
 
   // Suche/Statusfilter aktiv: flaches Ergebnis-Raster über alle Bereiche hinweg,
   // jede Karte öffnet direkt das Video (Zurück führt danach in dessen Bereichsseite).
+  // Ein Video kann Themen in MEHREREN Bereichen haben -- daher hier zusätzlich
+  // entdoppeln, sonst erschiene es im Suchergebnis mehrfach.
   let treffer = [];
+  const gesehenIds = new Set();
   pfad.forEach(function(g){
     const passend = g.videos.filter(function(x){ return passtZurSuche(x.video, x.tag); });
     const gefiltert = passend.filter(function(x){
-      if(statusFilter === "alle") return true;
-      const gesehen = seenVideoIds.has(x.video.id);
-      return statusFilter === "fertig" ? gesehen : !gesehen;
+      if(gesehenIds.has(x.video.id)) return false;
+      if(statusFilter !== "alle"){
+        const gesehen = seenVideoIds.has(x.video.id);
+        if(statusFilter === "fertig" ? !gesehen : gesehen) return false;
+      }
+      gesehenIds.add(x.video.id);
+      return true;
     });
     treffer = treffer.concat(gefiltert);
   });
@@ -1249,13 +1390,70 @@ function renderUeberHtml(){
     "</div>";
 }
 
+function renderRechtlichesHtml(){
+  const status = (session && session.agb_akzeptiert_am)
+    ? '<div class="admin-sub" style="margin-bottom:14px;">Zugestimmt am ' + fmtDateTime(session.agb_akzeptiert_am) + "</div>"
+    : "";
+  return '<button class="krumen zurueck-zeile" data-zurueckstart>' + icon("zurueck") + "<span>Start</span></button>" +
+    '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Rechtliches</div>' +
+    status +
+    '<div class="karte info-block">' +
+      '<p><b>1. Ergänzender Charakter</b><br>Die Videos der Fahr-Akademie sind eine freiwillige Ergänzung zu deiner Fahrausbildung und ersetzen nicht den Unterricht bei deiner Fahrschule.</p>' +
+      '<p><b>2. Keine Erfolgsgarantie</b><br>Es gibt keine Garantie, dass du mit diesen Videos die Führerscheinprüfung bestehst. Der Lernerfolg hängt von vielen Faktoren ab, die außerhalb unserer Kontrolle liegen.</p>' +
+      '<p><b>3. Persönlicher Zugang</b><br>Dein Zugang (Telefonnummer + PIN) ist persönlich und nicht übertragbar. Die Weitergabe an Dritte verstößt gegen diese Nutzungsbedingungen und kann ohne Vorankündigung zur sofortigen Sperrung deines Zugangs führen, ohne Anspruch auf Erstattung bereits gezahlter Beträge.</p>' +
+      '<p><b>4. Minderjährige</b><br>Bist du unter 18, bestätigst du mit der Nutzung, dass die Einwilligung deiner Erziehungsberechtigten vorliegt.</p>' +
+      '<p><b>5. Datenschutz</b><br>Deine Daten werden ausschließlich auf Servern in Deutschland gespeichert. Details siehe „Über diese App".</p>' +
+    "</div>";
+}
+
+// ---- # THEMEN (25.08.2026) ----
+// Bereichsübergreifende Suche: ein Video kann mehrere Themen gleichzeitig haben
+// (z.B. ein Video zeigt "Stoppschilder" UND "Engstellen"). Antippt man ein #,
+// sieht man ALLE Videos mit diesem Thema, egal aus welchem Bereich sie stammen.
+function renderThemenHtml(){
+  if(!selectedHashtag){
+    // Übersicht: alle Themen als # -- wie oft genutzt, damit man sieht was sich lohnt
+    const nutzung = {};
+    videoTags.forEach(function(vt){ nutzung[vt.tag_id] = (nutzung[vt.tag_id]||0) + 1; });
+    const genutzteTags = allTags.filter(function(t){ return nutzung[t.id] > 0; })
+      .sort(function(a,b){ return nutzung[b.id] - nutzung[a.id]; });
+    const chips = genutzteTags.map(function(t){
+      return '<button class="sf-chip" data-hashtag="' + esc(t.id) + '" style="margin:3px;">#' + esc(t.label) + ' · ' + nutzung[t.id] + "</button>";
+    }).join("");
+    return '<button class="krumen zurueck-zeile" data-zurueckstart>' + icon("zurueck") + "<span>Start</span></button>" +
+      '<div class="tagline" style="font-size:20px;margin-bottom:4px;"># Themen</div>' +
+      '<div class="admin-sub" style="margin-bottom:14px;">Ein Video kann mehrere Themen haben — tippe eins an, um alle passenden Videos zu sehen.</div>' +
+      '<div style="display:flex;flex-wrap:wrap;">' + (chips || '<div class="leer-hinweis">Noch keine Themen vergeben.</div>') + "</div>";
+  }
+
+  const tag = allTags.find(function(t){ return t.id === selectedHashtag; });
+  const treffer = videoTags.filter(function(vt){ return vt.tag_id === selectedHashtag; })
+    .map(function(vt){ return allVideos.find(function(v){ return v.id === vt.video_id; }); })
+    .filter(Boolean);
+
+  const karten = treffer.map(function(v){
+    const check = seenVideoIds.has(v.id) ? '<span class="vg-check">' + icon("check","ic-s") + "</span>" : "";
+    return '<div class="vg-card" data-vid="' + esc(v.id) + '">' +
+      '<div class="vg-bg" style="background:' + vgGradientFuer(v.id) + ';"></div>' +
+      '<div class="vg-play">' + icon("play") + "</div>" + check +
+      '<div class="vg-info"><div class="vg-titel">' + esc(v.titel) + "</div></div>" +
+    "</div>";
+  }).join("");
+
+  return '<button class="krumen zurueck-zeile" data-hashtag-zurueck>' + icon("zurueck") + "<span># Themen</span></button>" +
+    '<div class="tagline" style="font-size:19px;margin-bottom:14px;">#' + esc(tag ? tag.label : "") + "</div>" +
+    '<div class="video-grid">' + (karten || '<div class="leer-hinweis">Keine Videos gefunden.</div>') + "</div>";
+}
+
 function renderCatalog(){
   const totalVideos = allVideos.length;
   const seenCount = allVideos.filter(function(v){ return seenVideoIds.has(v.id); }).length;
 
   let content;
   if(drawerView === "dashboard") content = renderDashboardHtml();
+  else if(drawerView === "themen") content = renderThemenHtml();
   else if(drawerView === "nuetzliches") content = renderNuetzlichesHtml();
+  else if(drawerView === "rechtliches") content = renderRechtlichesHtml();
   else if(drawerView === "hilfe") content = renderHilfeHtml();
   else if(drawerView === "ueber") content = renderUeberHtml();
   else if(mainView === "bereichdetail") content = renderBereichDetailHtml();
@@ -1279,7 +1477,9 @@ function renderCatalog(){
   // braucht, damit die Bottom-Nav nicht überladen wird.
   const drawerLinks = [
     ["dashboard","dashboard","Dashboard"],
+    ["themen","hashtag","# Themen"],
     ["nuetzliches","buch","Nützliches"],
+    ["rechtliches","schild","Rechtliches"],
     ["hilfe","frage","Hilfe & Kontakt"],
     ["ueber","info","Über diese App"]
   ];
@@ -1335,7 +1535,7 @@ function renderCatalog(){
       document.querySelector(".drawer").classList.remove("open");
       document.getElementById("drawer-backdrop").classList.remove("open");
       setTimeout(function(){
-        drawerView = b.dataset.drawer; drawerOpen = false; renderCatalog();
+        drawerView = b.dataset.drawer; drawerOpen = false; selectedHashtag = null; renderCatalog();
       }, 180);
     });
   });
@@ -1349,9 +1549,15 @@ function renderCatalog(){
       renderCatalog();
     });
   });
+  document.querySelectorAll("[data-hashtag]").forEach(function(b){
+    b.addEventListener("click", function(){ selectedHashtag = b.dataset.hashtag; renderCatalog(); window.scrollTo({top:0,behavior:"smooth"}); });
+  });
+  document.querySelectorAll("[data-hashtag-zurueck]").forEach(function(b){
+    b.addEventListener("click", function(){ selectedHashtag = null; renderCatalog(); });
+  });
   document.querySelectorAll("[data-zurueckstart]").forEach(function(b){
     b.addEventListener("click", function(){
-      drawerView = null; mainView = "start"; selectedBereich = null; renderCatalog();
+      drawerView = null; mainView = "start"; selectedBereich = null; selectedHashtag = null; renderCatalog();
     });
   });
   const suchInput = document.getElementById("such-input");
@@ -1663,6 +1869,9 @@ async function loadAdminData(){
   const vdRes = await supa.from("academy_videos").select("*").order("reihenfolge");
   const vtRes = await supa.from("academy_video_tags").select("*");
   const vprRes = await supa.from("academy_video_pruefer").select("*");
+  // Fortschritt für Dashboard/Historie: jede Zeile ist EIN Videoaufruf, Wiederholungen
+  // sind also mit drin -- genau das macht die Historie aussagekräftig.
+  const fsRes = await supa.from("academy_fortschritt").select("*").order("gesehen_am", {ascending:false});
   allFahrlehrer = flRes.data || [];
   allPruefer = prRes.data || [];
   allSchueler = scRes.data || [];
@@ -1670,6 +1879,7 @@ async function loadAdminData(){
   allVideos = vdRes.data || [];
   videoTags = vtRes.data || [];
   videoPruefer = vprRes.data || [];
+  adminFortschritt = fsRes.data || [];
   if(myRole === "super_admin"){
     const schRes = await supa.from("academy_schulen").select("*").order("name");
     allSchulen = schRes.data || [];
@@ -1679,8 +1889,8 @@ async function loadAdminData(){
 function renderAdmin(){
   const isSuperAdmin = myRole === "super_admin";
   const tabs = isSuperAdmin
-    ? [["schueler","Schüler"],["fahrlehrer","Fahrlehrer"],["videos","Videos"],["pruefer","Prüfer"],["schulen","Schulen"]]
-    : [["schueler","Schüler"],["fahrlehrer","Fahrlehrer"]];
+    ? [["dashboard","Übersicht"],["schueler","Schüler"],["fahrlehrer","Fahrlehrer"],["videos","Videos"],["pruefer","Prüfer"],["schulen","Schulen"]]
+    : [["dashboard","Übersicht"],["schueler","Schüler"],["fahrlehrer","Fahrlehrer"]];
 
   const tabsHtml = '<div class="admin-tabs">' +
     tabs.map(function(t){
@@ -1711,9 +1921,11 @@ function renderAdmin(){
     t.addEventListener("click", function(){ adminTab = t.dataset.tab; renderAdmin(); });
   });
 
-  if(!tabs.find(function(t){ return t[0] === adminTab; })) adminTab = "schueler";
+  if(!tabs.find(function(t){ return t[0] === adminTab; }) && adminTab !== "historie") adminTab = "dashboard";
 
+  if(adminTab === "dashboard") renderAdminDashboard();
   if(adminTab === "schueler") renderAdminSchueler();
+  if(adminTab === "historie") renderAdminHistorie();
   if(adminTab === "fahrlehrer") renderAdminFahrlehrer();
   if(adminTab === "videos") renderAdminVideos();
   if(adminTab === "pruefer") renderAdminPruefer();
@@ -1721,23 +1933,153 @@ function renderAdmin(){
 }
 
 /* ---------- SCHÜLER-TAB ---------- */
+// ---- ADMIN-DASHBOARD (25.08.2026) ----
+// Beantwortet in wenigen Sekunden: "Muss ich heute etwas tun?" -- statt sofort in
+// Formularen und Listen zu landen.
+function renderAdminDashboard(){
+  const jetzt = new Date();
+  const sichtbareSchueler = myRole === "super_admin"
+    ? allSchueler : allSchueler.filter(function(s){ return s.schule_id === mySchule; });
+
+  const aktiv = sichtbareSchueler.filter(function(s){ return s.aktiv && new Date(s.ablauf_am) > jetzt; });
+  const ohneZustimmung = sichtbareSchueler.filter(function(s){ return !s.agb_akzeptiert_am; });
+  const laeuftAb = aktiv.filter(function(s){
+    const tage = (new Date(s.ablauf_am) - jetzt) / 86400000;
+    return tage > 0 && tage <= 14;
+  });
+  const videosOhneId = allVideos.filter(function(v){ return !v.bunny_video_id; });
+
+  // Letzte Aktivität je Schüler ermitteln
+  const letzteAktivitaet = {};
+  adminFortschritt.forEach(function(f){
+    if(!letzteAktivitaet[f.schueler_id] || f.gesehen_am > letzteAktivitaet[f.schueler_id]){
+      letzteAktivitaet[f.schueler_id] = f.gesehen_am;
+    }
+  });
+  const inaktiv = aktiv.filter(function(s){
+    const letzte = letzteAktivitaet[s.id];
+    if(!letzte) return true;
+    return (jetzt - new Date(letzte)) / 86400000 > 14;
+  });
+
+  const kpis =
+    '<div class="kpi-grid">' +
+      '<div class="kpi"><div class="kpi-zahl">' + aktiv.length + '</div><div class="kpi-label">Aktive Schüler</div></div>' +
+      '<div class="kpi"><div class="kpi-zahl">' + allVideos.length + '</div><div class="kpi-label">Videos</div></div>' +
+      '<div class="kpi' + (laeuftAb.length ? " warn" : "") + '"><div class="kpi-zahl">' + laeuftAb.length + '</div><div class="kpi-label">Läuft in 14 Tagen ab</div></div>' +
+      '<div class="kpi' + (inaktiv.length ? " warn" : "") + '"><div class="kpi-zahl">' + inaktiv.length + '</div><div class="kpi-label">Inaktiv &gt; 14 Tage</div></div>' +
+    "</div>";
+
+  const todos = [];
+  if(videosOhneId.length) todos.push(["rot", videosOhneId.length + " Video(s) ohne Bunny-ID — für Schüler nicht abspielbar"]);
+  if(ohneZustimmung.length) todos.push(["gelb", ohneZustimmung.length + " Schüler haben die Nutzungsbedingungen noch nicht bestätigt"]);
+  laeuftAb.forEach(function(s){
+    const tage = Math.ceil((new Date(s.ablauf_am) - jetzt) / 86400000);
+    todos.push(["gelb", esc(s.name) + ": Zugang läuft in " + tage + " Tag(en) ab"]);
+  });
+  inaktiv.slice(0,5).forEach(function(s){
+    const letzte = letzteAktivitaet[s.id];
+    todos.push(["gelb", esc(s.name) + ": " + (letzte ? "zuletzt aktiv " + fmtDate(letzte) : "noch nie ein Video geschaut")]);
+  });
+  if(todos.length === 0) todos.push(["gruen", "Alles im grünen Bereich — nichts zu tun."]);
+
+  const todoHtml = '<div class="admin-card glass"><div class="admin-form-title" style="margin-bottom:6px;">Handlungsbedarf</div>' +
+    todos.map(function(t){
+      return '<div class="todo-zeile ' + t[0] + '"><span class="td-dot"></span><span>' + t[1] + "</span></div>";
+    }).join("") + "</div>";
+
+  // Meistgesehene Videos -- zeigt dir, welche Inhalte wirklich genutzt werden
+  const proVideo = {};
+  adminFortschritt.forEach(function(f){ proVideo[f.video_id] = (proVideo[f.video_id]||0)+1; });
+  const topVideos = Object.keys(proVideo).map(function(vid){
+    const v = allVideos.find(function(x){ return x.id === vid; });
+    return { titel: v ? v.titel : "(gelöscht)", anzahl: proVideo[vid] };
+  }).sort(function(a,b){ return b.anzahl - a.anzahl; }).slice(0,5);
+
+  const topHtml = '<div class="admin-card glass"><div class="admin-form-title" style="margin-bottom:6px;">Meistgesehene Videos</div>' +
+    (topVideos.length ? topVideos.map(function(t){
+      return '<div class="hist-zeile"><span class="hist-titel">' + esc(t.titel) + '</span><span class="hist-anzahl">' + t.anzahl + "×</span></div>";
+    }).join("") : '<div class="admin-sub">Noch keine Aufrufe.</div>') + "</div>";
+
+  document.getElementById("admin-content").innerHTML = kpis + todoHtml + topHtml;
+}
+
+// ---- SCHÜLER-HISTORIE (25.08.2026) ----
+// Zeigt pro Schüler: welches Video wie oft, wann zuletzt, und was noch offen ist.
+// Häufige Wiederholungen sind bewusst hervorgehoben -- das ist ein Signal dafür,
+// dass ein Thema noch nicht sitzt, nicht nur eine Zahl.
+function renderAdminHistorie(){
+  const s = allSchueler.find(function(x){ return x.id === historieSchuelerId; });
+  if(!s){
+    adminTab = "schueler"; renderAdmin(); return;
+  }
+  const eigene = adminFortschritt.filter(function(f){ return f.schueler_id === s.id; });
+
+  const proVideo = {};
+  eigene.forEach(function(f){
+    if(!proVideo[f.video_id]) proVideo[f.video_id] = { anzahl:0, zuletzt:f.gesehen_am };
+    proVideo[f.video_id].anzahl++;
+    if(f.gesehen_am > proVideo[f.video_id].zuletzt) proVideo[f.video_id].zuletzt = f.gesehen_am;
+  });
+
+  const gesehen = Object.keys(proVideo).map(function(vid){
+    const v = allVideos.find(function(x){ return x.id === vid; });
+    return { titel: v ? v.titel : "(gelöschtes Video)", anzahl: proVideo[vid].anzahl, zuletzt: proVideo[vid].zuletzt };
+  }).sort(function(a,b){ return b.anzahl - a.anzahl; });
+
+  const offen = allVideos.filter(function(v){ return !proVideo[v.id]; });
+
+  const kopf =
+    '<button class="krumen zurueck-zeile" id="hist-zurueck">' + icon("zurueck") + "<span>Schülerliste</span></button>" +
+    '<div class="admin-form-title" style="font-size:17px;">' + esc(s.name) + "</div>" +
+    '<div class="admin-sub" style="margin-bottom:14px;">' + eigene.length + " Aufrufe · " + gesehen.length + " von " + allVideos.length + " Videos gesehen" +
+      (eigene.length ? " · zuletzt " + fmtDateTime(eigene[0].gesehen_am) : "") + "</div>";
+
+  const gesehenHtml = '<div class="admin-card glass"><div class="admin-form-title" style="margin-bottom:6px;">Angeschaut</div>' +
+    (gesehen.length ? gesehen.map(function(g){
+      return '<div class="hist-zeile">' +
+        '<span class="hist-titel">' + esc(g.titel) + "</span>" +
+        '<span class="hist-anzahl' + (g.anzahl >= 3 ? " oft" : "") + '">' + g.anzahl + "×</span>" +
+        '<span class="hist-datum">' + fmtDate(g.zuletzt) + "</span>" +
+      "</div>";
+    }).join("") : '<div class="admin-sub">Noch kein Video angeschaut.</div>') + "</div>";
+
+  const offenHtml = '<div class="admin-card glass"><div class="admin-form-title" style="margin-bottom:6px;">Noch offen (' + offen.length + ")</div>" +
+    (offen.length ? offen.slice(0,15).map(function(v){
+      return '<div class="hist-zeile"><span class="hist-titel">' + esc(v.titel) + "</span></div>";
+    }).join("") + (offen.length > 15 ? '<div class="admin-sub" style="padding-top:8px;">… und ' + (offen.length-15) + " weitere</div>" : "")
+    : '<div class="admin-sub">Alles gesehen 🎉</div>') + "</div>";
+
+  document.getElementById("admin-content").innerHTML = kopf + gesehenHtml + offenHtml;
+  document.getElementById("hist-zurueck").addEventListener("click", function(){
+    historieSchuelerId = null; adminTab = "schueler"; renderAdmin();
+  });
+}
+
 function renderAdminSchueler(){
   const rows = allSchueler.map(function(s){
     const status = schuelerStatus(s);
     const badgeClass = status === "aktiv" ? "badge-aktiv" : status === "abgelaufen" ? "badge-abgelaufen" : "badge-gesperrt";
     const badgeText = status === "aktiv" ? "Aktiv" : status === "abgelaufen" ? "Abgelaufen" : "Gesperrt";
     const fl = allFahrlehrer.find(function(f){ return f.id === s.fahrlehrer_id; });
+    const sperrgrundZeile = (!s.aktiv && s.sperrgrund)
+      ? '<div class="admin-sub" style="color:#B5573F;">🔒 Grund: ' + esc(s.sperrgrund) + "</div>" : "";
+    const agbZeile = s.agb_akzeptiert_am
+      ? '<div class="admin-sub" style="opacity:.7;">Nutzungsbedingungen akzeptiert: ' + fmtDate(s.agb_akzeptiert_am) + "</div>"
+      : '<div class="admin-sub" style="opacity:.7;color:var(--gold);">Nutzungsbedingungen noch nicht akzeptiert</div>';
     return '<div class="admin-card glass">' +
       '<div class="admin-row">' +
         '<div>' +
           '<div class="admin-name">' + esc(s.name) + "</div>" +
           '<div class="admin-sub">' + esc(s.telefon) + " · Klasse " + esc(s.klasse) + " · " + esc(fl ? fl.name : "—") + "</div>" +
           '<div class="admin-sub">PIN: <span class="pin-display">' + esc(s.pin) + '</span> · gültig bis ' + fmtDate(s.ablauf_am) + "</div>" +
+          agbZeile + sperrgrundZeile +
         "</div>" +
         '<div style="text-align:right;">' +
           '<div class="admin-badge ' + badgeClass + '">' + badgeText + "</div>" +
           '<div style="margin-top:8px;">' +
             '<button class="icon-btn" data-mail="' + esc(s.id) + '" title="PIN erneut senden">✉️</button>' +
+            '<button class="icon-btn" data-hist="' + esc(s.id) + '" title="Verlauf ansehen">' + icon("dashboard") + "</button>" +
             '<button class="icon-btn" data-toggle="' + esc(s.id) + '" title="Sperren/Entsperren">' + (s.aktiv ? icon("schloss") : icon("schlossOffen")) + "</button>" +
             '<button class="icon-btn danger" data-del="' + esc(s.id) + '" title="Löschen">' + icon("papierkorb") + '</button>' +
           "</div>" +
@@ -1768,6 +2110,11 @@ function renderAdminSchueler(){
   document.getElementById("ns-btn").addEventListener("click", createSchueler);
   document.querySelectorAll("[data-mail]").forEach(function(b){
     b.addEventListener("click", function(){ resendPin(b.dataset.mail); });
+  });
+  document.querySelectorAll("[data-hist]").forEach(function(b){
+    b.addEventListener("click", function(){
+      historieSchuelerId = b.dataset.hist; adminTab = "historie"; renderAdmin();
+    });
   });
   document.querySelectorAll("[data-toggle]").forEach(function(b){
     b.addEventListener("click", function(){ toggleSchueler(b.dataset.toggle); });
@@ -1853,13 +2200,22 @@ async function resendPin(id){
 async function toggleSchueler(id){
   const s = allSchueler.find(function(x){ return x.id === id; });
   if(!s) return;
+
+  // Nur beim SPERREN nach einem Grund fragen (beim Entsperren nicht nötig) --
+  // dient dir als Nachweis, falls es wegen Weitergabe/Missbrauch zum Streit kommt.
+  let grund = s.sperrgrund || null;
+  if(s.aktiv){
+    grund = prompt("Grund für die Sperrung (optional, z. B. \"Zugangsdaten weitergegeben\"):", "");
+    if(grund === null) return; // Abgebrochen -> nichts ändern
+  }
   s.aktiv = !s.aktiv;
+  s.sperrgrund = s.aktiv ? null : (grund || "Kein Grund angegeben");
 
   if(DEMO_MODE){
     renderAdminSchueler();
     return;
   }
-  const { error } = await supa.from("academy_schueler").update({ aktiv: s.aktiv }).eq("id", id);
+  const { error } = await supa.from("academy_schueler").update({ aktiv: s.aktiv, sperrgrund: s.sperrgrund }).eq("id", id);
   if(error){ showToast("Fehler: " + error.message); return; }
   renderAdminSchueler();
 }
@@ -1926,7 +2282,19 @@ function renderAdminVideos(){
     "</div>";
   }).join("") || '<div class="empty">Noch keine Videos angelegt.</div>';
 
-  const tagOptions = allTags.map(function(t){ return '<option value="' + esc(t.id) + '">' + esc(t.label) + "</option>"; }).join("");
+  // Themen als flache, durchsuchbare Liste (statt gruppierter Checkbox-Wand):
+  // Bereich steht rechts als kleiner Hinweis, gesucht wird über Thema UND Bereich.
+  const themenZeilen = allTags.slice()
+    .sort(function(a,b){ return (a.reihenfolge||0)-(b.reihenfolge||0); })
+    .map(function(t){
+      const such = ((t.label||"") + " " + (t.stufe||"")).toLowerCase();
+      return '<label class="thema-zeile" data-such="' + esc(such) + '">' +
+        '<input type="checkbox" value="' + esc(t.id) + '" class="nv-tag-cb" data-label="' + esc(t.label) + '">' +
+        "<span>" + esc(t.label) + "</span>" +
+        '<span class="thema-bereich">' + esc(t.stufe) + "</span>" +
+      "</label>";
+    }).join("");
+
   const prueferCheckboxes = allPruefer.map(function(p){
     return '<label style="display:flex;align-items:flex-start;gap:8px;font-weight:400;text-transform:none;letter-spacing:0;font-size:14px;color:var(--text);margin-bottom:0;padding:6px;border-radius:8px;">' +
       '<input type="checkbox" value="' + esc(p.id) + '" class="nv-pruefer-cb" style="margin-top:2px;flex:none;width:18px;height:18px;">' +
@@ -1936,19 +2304,82 @@ function renderAdminVideos(){
 
   document.getElementById("admin-content").innerHTML =
     '<div class="admin-form glass">' +
-      '<div class="admin-form-title">Neues Video anlegen</div>' +
-      '<label>Titel</label><input id="nv-titel" placeholder="z. B. Kreisverkehr Bürgel">' +
-      '<label>Beschreibung (optional)</label><input id="nv-desc" placeholder="Kurzbeschreibung">' +
-      '<label>Zugehöriger Tag / Situation</label><select id="nv-tag">' + tagOptions + "</select>" +
-      '<label>Prüfungsergebnis (nur bei Kategorie „Prüfung" relevant)</label><select id="nv-pruefungsergebnis"><option value="">— kein Prüfungsvideo —</option><option value="bestanden">✅ Bestanden</option><option value="nicht_bestanden">❌ Nicht bestanden</option></select>' +
-      '<label>Bunny-Video-ID (optional, kann auch später ergänzt werden)</label><input id="nv-bunny" placeholder="z. B. 3a1f9c2e-...">' +
-      '<label>Prüfer, zu deren Strecke dieses Video gehört (optional, Mehrfachauswahl möglich)</label>' +
-      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:4px 10px;">' + (prueferCheckboxes || '<span class="admin-sub">Noch keine Prüfer angelegt</span>') + "</div>" +
-      '<button class="btn-primary" id="nv-btn" style="margin-top:6px;">Video anlegen</button>' +
-      '<div class="admin-sub" style="margin-top:4px;">Die Bunny-Video-ID findest du im Bunny-Stream-Dashboard, nachdem du das Video dort hochgeladen hast (unter dem Video: „Video GUID"). Du kannst sie auch später über das Stift-Symbol bei jedem Video eintragen.</div>' +
+      '<div class="admin-form-title" style="font-size:17px;">Neues Video anlegen</div>' +
+      '<div class="admin-sub" style="margin-bottom:14px;">So kommt ein Video von deinem Handy zu den Schülern — 4 Schritte.</div>' +
+
+      // Schritt 1
+      '<div class="schritt-block">' +
+        '<div class="schritt-kopf"><span class="schritt-nr">1</span><span class="schritt-titel">Video zu Bunny hochladen</span></div>' +
+        '<div class="schritt-hilfe">Öffne <b>bunny.net</b> → links „Stream" → deine Library → Button <b>„Upload Video"</b>. ' +
+        'Warte, bis der Balken bei 100 % ist. Tipp danach auf das Video — dort steht eine lange Zeichenfolge namens ' +
+        '<b>„Video GUID"</b>. Die kopierst du und fügst sie unten in Schritt 3 ein.</div>' +
+      "</div>" +
+
+      // Schritt 2
+      '<div class="schritt-block">' +
+        '<div class="schritt-kopf"><span class="schritt-nr">2</span><span class="schritt-titel">Titel und Beschreibung</span></div>' +
+        '<div class="schritt-hilfe">Kurz und klar, so wie es die Schüler in der Liste sehen sollen — z. B. „Kreisverkehr Bürgel".</div>' +
+        '<label>Titel (Pflicht)</label><input id="nv-titel" placeholder="z. B. Kreisverkehr Bürgel">' +
+        '<label>Beschreibung (optional)</label><input id="nv-desc" placeholder="Worum geht es in dem Video?">' +
+      "</div>" +
+
+      // Schritt 3
+      '<div class="schritt-block">' +
+        '<div class="schritt-kopf"><span class="schritt-nr">3</span><span class="schritt-titel">Video-ID einfügen</span></div>' +
+        '<div class="schritt-hilfe">Die „Video GUID" aus Schritt 1 hier einfügen. Ohne sie ist das Video für Schüler ' +
+        'nicht abspielbar — du kannst sie aber auch später über das Stift-Symbol nachtragen.</div>' +
+        '<label>Bunny-Video-ID</label><input id="nv-bunny" placeholder="z. B. 3a1f9c2e-8b4d-...">' +
+      "</div>" +
+
+      // Schritt 4
+      '<div class="schritt-block">' +
+        '<div class="schritt-kopf"><span class="schritt-nr">4</span><span class="schritt-titel">Themen zuordnen</span></div>' +
+        '<div class="schritt-hilfe">Wähle <b>alle</b> Situationen aus, die im Video vorkommen — nicht nur eine. ' +
+        'Kommen im Video z. B. ein Zebrastreifen UND eine Engstelle vor, hak beide an. So finden die Schüler ' +
+        'das Video später über jedes dieser Themen. Tipp: oben ins Suchfeld tippen, statt zu scrollen.</div>' +
+        '<div class="themen-gewaehlt" id="nv-tag-chips"></div>' +
+        '<input class="themen-suche" id="nv-tag-suche" placeholder="Thema suchen, z. B. Zebra">' +
+        '<div class="themen-box" id="nv-tag-box">' + (themenZeilen || '<span class="admin-sub">Noch keine Themen angelegt</span>') + "</div>" +
+
+        '<label style="margin-top:12px;">Ist das eine Originalprüfung?</label>' +
+        '<select id="nv-pruefungsergebnis"><option value="">Nein, normales Lernvideo</option><option value="bestanden">Ja — bestanden</option><option value="nicht_bestanden">Ja — nicht bestanden</option></select>' +
+
+        '<label style="margin-top:12px;">Prüfer (optional, Mehrfachauswahl)</label>' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:4px 10px;">' + (prueferCheckboxes || '<span class="admin-sub">Noch keine Prüfer angelegt</span>') + "</div>" +
+      "</div>" +
+
+      '<button class="btn-primary" id="nv-btn" style="margin-top:6px;">Video anlegen &amp; Schüler benachrichtigen</button>' +
+      '<div class="admin-sub" style="margin-top:6px;">Nach dem Anlegen erscheint das Video sofort bei allen Schülern — und alle mit aktivierten Benachrichtigungen bekommen automatisch eine Push-Nachricht.</div>' +
     "</div>" +
     '<div class="section-label">Alle Videos (' + allVideos.length + ")</div>" +
     rows;
+
+  // Themen-Suche: filtert die Liste live, damit man bei 60+ Themen nicht scrollen muss
+  const tagSuche = document.getElementById("nv-tag-suche");
+  function aktualisiereChips(){
+    const gewaehlt = Array.from(document.querySelectorAll(".nv-tag-cb:checked"));
+    document.getElementById("nv-tag-chips").innerHTML = gewaehlt.map(function(cb){
+      return '<span class="themen-chip">' + esc(cb.dataset.label) + '<button data-chipoff="' + esc(cb.value) + '">' + icon("x","ic-s") + "</button></span>";
+    }).join("");
+    document.querySelectorAll("[data-chipoff]").forEach(function(b){
+      b.addEventListener("click", function(){
+        const cb = document.querySelector('.nv-tag-cb[value="' + b.dataset.chipoff + '"]');
+        if(cb){ cb.checked = false; aktualisiereChips(); }
+      });
+    });
+  }
+  if(tagSuche){
+    tagSuche.addEventListener("input", function(){
+      const q = tagSuche.value.toLowerCase().trim();
+      document.querySelectorAll(".thema-zeile").forEach(function(z){
+        const treffer = !q || z.dataset.such.indexOf(q) !== -1;
+        z.style.display = treffer ? "" : "none";
+      });
+    });
+  }
+  document.querySelectorAll(".nv-tag-cb").forEach(function(cb){
+    cb.addEventListener("change", aktualisiereChips);
+  });
 
   document.getElementById("nv-btn").addEventListener("click", createVideo);
   document.querySelectorAll("[data-delv]").forEach(function(b){
@@ -2022,18 +2453,19 @@ async function editVideoBunnyId(id){
 async function createVideo(){
   const titel = document.getElementById("nv-titel").value.trim();
   const desc = document.getElementById("nv-desc").value.trim();
-  const tagId = document.getElementById("nv-tag").value;
+  const gewaehlteTags = Array.from(document.querySelectorAll(".nv-tag-cb:checked")).map(function(cb){ return cb.value; });
   const pruefungsergebnis = document.getElementById("nv-pruefungsergebnis").value || null;
   const bunnyId = document.getElementById("nv-bunny").value.trim();
   const gewaehltePruefer = Array.from(document.querySelectorAll(".nv-pruefer-cb:checked")).map(function(cb){ return cb.value; });
   if(!titel){ showToast("Titel ist Pflicht"); return; }
+  if(gewaehlteTags.length === 0){ showToast("Bitte mindestens ein Thema auswählen"); return; }
 
   const neu = { id:"v" + Date.now(), titel:titel, beschreibung: desc || null, bunny_video_id: bunnyId || null, pruefung_ergebnis: pruefungsergebnis };
-  const neuVt = { video_id: neu.id, tag_id: tagId };
+  const neuVts = gewaehlteTags.map(function(tagId){ return { video_id: neu.id, tag_id: tagId }; });
 
   if(DEMO_MODE){
     DEMO_VIDEOS.unshift(neu);
-    DEMO_VIDEO_TAGS.push(neuVt);
+    neuVts.forEach(function(vt){ DEMO_VIDEO_TAGS.push(vt); });
     gewaehltePruefer.forEach(function(pid){ videoPruefer.push({ video_id:neu.id, pruefer_id:pid }); });
     allVideos = DEMO_VIDEOS; videoTags = DEMO_VIDEO_TAGS;
     renderAdminVideos();
@@ -2042,13 +2474,13 @@ async function createVideo(){
   }
   const { error } = await supa.from("academy_videos").insert(neu);
   if(error){ showToast("Fehler: " + error.message); return; }
-  await supa.from("academy_video_tags").insert(neuVt);
+  await supa.from("academy_video_tags").insert(neuVts);
   if(gewaehltePruefer.length){
     await supa.from("academy_video_pruefer").insert(gewaehltePruefer.map(function(pid){ return { video_id:neu.id, pruefer_id:pid }; }));
   }
   await loadAdminData();
   renderAdminVideos();
-  showToast("Video angelegt");
+  showToast("Video angelegt (" + gewaehlteTags.length + " Thema/Themen)");
   notifyNeuesVideo(neu.id); // löst im Hintergrund Push an alle aktiven Schüler aus, blockiert die Admin-Ansicht nicht
 }
 
