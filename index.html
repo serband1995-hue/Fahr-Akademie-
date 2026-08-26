@@ -1335,23 +1335,23 @@ function renderDashboardHtml(){
 // Bibliothek der StVO-Referenz-PDFs. Wächst nach und nach, wie die Videos --
 // bewusst nur Themen listen, zu denen es wirklich ein geprüftes PDF gibt.
 const NUETZLICHE_PDFS = [
-  { titel: "Vorfahrt — § 8 StVO", datei: "pdf/Vorfahrt_Paragraph8_StVO.pdf",
+  { titel: "Vorfahrt — § 8 StVO", datei: "Vorfahrt_Paragraph8_StVO.pdf",
     meta: "Rechts vor Links, Vorfahrtschilder, Kreisverkehr · Stand 30.01.2026" },
-  { titel: "Geschwindigkeit — § 3 StVO", datei: "pdf/Geschwindigkeit_Paragraph3_StVO.pdf",
+  { titel: "Geschwindigkeit — § 3 StVO", datei: "Geschwindigkeit_Paragraph3_StVO.pdf",
     meta: "Angepasste Geschwindigkeit, Sichtweite bei Nebel · Stand 30.01.2026" },
-  { titel: "Abstand — § 4 StVO", datei: "pdf/Abstand_Paragraph4_StVO.pdf",
+  { titel: "Abstand — § 4 StVO", datei: "Abstand_Paragraph4_StVO.pdf",
     meta: "Halber Tacho, Sicherheitsabstand · Stand 30.01.2026" },
-  { titel: "Überholen — § 5 StVO", datei: "pdf/Ueberholen_Paragraph5_StVO.pdf",
+  { titel: "Überholen — § 5 StVO", datei: "Ueberholen_Paragraph5_StVO.pdf",
     meta: "Seitenabstand, Ankündigung, Wiedereinordnen · Stand 30.01.2026" },
-  { titel: "Abbiegen, Wenden, Rückwärtsfahren — § 9 StVO", datei: "pdf/Abbiegen_Paragraph9_StVO.pdf",
+  { titel: "Abbiegen, Wenden, Rückwärtsfahren — § 9 StVO", datei: "Abbiegen_Paragraph9_StVO.pdf",
     meta: "Einordnen, Schulterblick, Linksabbieger-Regel · Stand 30.01.2026" },
-  { titel: "Autobahnen und Kraftfahrstraßen — § 18 StVO", datei: "pdf/Autobahn_Paragraph18_StVO.pdf",
+  { titel: "Autobahnen und Kraftfahrstraßen — § 18 StVO", datei: "Autobahn_Paragraph18_StVO.pdf",
     meta: "Einfädeln, Ausfahren, Vorfahrt der durchgehenden Fahrbahn · Stand 30.01.2026" },
-  { titel: "Beleuchtung — § 17 StVO", datei: "pdf/Beleuchtung_Paragraph17_StVO.pdf",
+  { titel: "Beleuchtung — § 17 StVO", datei: "Beleuchtung_Paragraph17_StVO.pdf",
     meta: "Abblendlicht, Fernlicht, wann welches Licht Pflicht ist · Stand 30.01.2026" },
-  { titel: "Pflichten des Fahrzeugführers — § 23 StVO", datei: "pdf/Pflichten_Fahrzeugfuehrer_Paragraph23_StVO.pdf",
+  { titel: "Pflichten des Fahrzeugführers — § 23 StVO", datei: "Pflichten_Fahrzeugfuehrer_Paragraph23_StVO.pdf",
     meta: "Sicht, Zustand, Kennzeichen, Beleuchtung am Tag · Stand 30.01.2026" },
-  { titel: "Fußgängerüberwege — § 26 StVO", datei: "pdf/Fussgaengerueberwege_Paragraph26_StVO.pdf",
+  { titel: "Fußgängerüberwege — § 26 StVO", datei: "Fussgaengerueberwege_Paragraph26_StVO.pdf",
     meta: "Zebrastreifen, Wartepflicht, Überholverbot · Stand 30.01.2026" }
 ];
 function renderNuetzlichesHtml(){
@@ -1948,6 +1948,7 @@ function renderAdminDashboard(){
     return tage > 0 && tage <= 14;
   });
   const videosOhneId = allVideos.filter(function(v){ return !v.bunny_video_id; });
+  const ungesendeteVideos = allVideos.filter(function(v){ return v.push_gesendet === false; });
 
   // Letzte Aktivität je Schüler ermitteln
   const letzteAktivitaet = {};
@@ -1972,6 +1973,9 @@ function renderAdminDashboard(){
 
   const todos = [];
   if(videosOhneId.length) todos.push(["rot", videosOhneId.length + " Video(s) ohne Bunny-ID — für Schüler nicht abspielbar"]);
+  if(ungesendeteVideos.length) todos.push(["gelb",
+    ungesendeteVideos.length + " neue(s) Video(s) noch nicht angekündigt " +
+    '<button id="sammel-push-btn" class="btn-primary" style="margin-left:8px;padding:5px 12px;font-size:12px;width:auto;display:inline-block;">' + icon("glocke","ic-s") + " Jetzt ankündigen</button>"]);
   if(ohneZustimmung.length) todos.push(["gelb", ohneZustimmung.length + " Schüler haben die Nutzungsbedingungen noch nicht bestätigt"]);
   laeuftAb.forEach(function(s){
     const tage = Math.ceil((new Date(s.ablauf_am) - jetzt) / 86400000);
@@ -2002,6 +2006,34 @@ function renderAdminDashboard(){
     }).join("") : '<div class="admin-sub">Noch keine Aufrufe.</div>') + "</div>";
 
   document.getElementById("admin-content").innerHTML = kpis + todoHtml + topHtml;
+  const sammelBtn = document.getElementById("sammel-push-btn");
+  if(sammelBtn){
+    sammelBtn.addEventListener("click", async function(){
+      sammelBtn.disabled = true; sammelBtn.textContent = "Sende …";
+      try{
+        const { data: sessionData } = await supa.auth.getSession();
+        const token = sessionData && sessionData.session ? sessionData.session.access_token : SUPABASE_ANON_KEY;
+        const res = await fetch(SUPABASE_URL + "/functions/v1/academy-notify-batch", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token }
+        });
+        const data = await res.json();
+        if(res.ok && data.ok){
+          showToast(data.push_gesendet_an > 0
+            ? data.videos + " Video(s) angekündigt, " + data.push_gesendet_an + " Push(es) verschickt"
+            : "Angekündigt (kein Schüler hat Push aktiviert)");
+          await loadAdminData();
+          renderAdminDashboard();
+        } else {
+          showToast("Fehler: " + (data.error || "unbekannt"));
+          sammelBtn.disabled = false; sammelBtn.innerHTML = icon("glocke","ic-s") + " Jetzt ankündigen";
+        }
+      } catch(e){
+        showToast("Verbindungsfehler beim Senden");
+        sammelBtn.disabled = false; sammelBtn.innerHTML = icon("glocke","ic-s") + " Jetzt ankündigen";
+      }
+    });
+  }
 }
 
 // ---- SCHÜLER-HISTORIE (25.08.2026) ----
