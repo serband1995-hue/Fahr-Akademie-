@@ -347,6 +347,7 @@
     box-shadow:0 4px 12px rgba(20,18,12,.18);transition:transform .12s ease;}
   .vg-card:active{transform:scale(0.96);}
   .vg-card .vg-bg{position:absolute;inset:0;}
+  .vg-card .vg-thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
   .vg-card .vg-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
     width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.92);
     display:flex;align-items:center;justify-content:center;color:var(--gruen);}
@@ -1102,7 +1103,7 @@ function renderLernpfadHtml(){
     const ergebnisIcon = x.video.pruefung_ergebnis === "bestanden" ? '<span class="vg-ergebnis">✅</span>'
       : x.video.pruefung_ergebnis === "nicht_bestanden" ? '<span class="vg-ergebnis">❌</span>' : "";
     return '<div class="vg-card" data-vid="' + esc(x.video.id) + '">' +
-      '<div class="vg-bg" style="background:' + vgGradientFuer(x.video.id) + ';"></div>' +
+      '<div class="vg-bg" style="background:' + vgGradientFuer(x.video.id) + ';"></div>' + vgBildLayer(x.video) +
       '<div class="vg-play">' + icon("play") + "</div>" +
       ergebnisIcon + check +
       '<div class="vg-info"><div class="vg-code">' + esc(x.tag.label) + '</div><div class="vg-titel">' + esc(x.video.titel) + "</div></div>" +
@@ -1244,7 +1245,7 @@ function renderBereichDetailHtml(){
     const isHighlighted = deepLinkTagId && x.tag.id === deepLinkTagId;
     const targetId = isHighlighted ? ' id="dl-target"' : "";
     return '<div class="vg-card' + (isHighlighted ? " highlight-target" : "") + '"' + targetId + ' data-vid="' + esc(x.video.id) + '">' +
-      '<div class="vg-bg" style="background:' + vgGradientFuer(x.video.id) + ';"></div>' +
+      '<div class="vg-bg" style="background:' + vgGradientFuer(x.video.id) + ';"></div>' + vgBildLayer(x.video) +
       '<div class="vg-play">' + icon("play") + "</div>" +
       ergebnisIcon + check +
       '<div class="vg-info"><div class="vg-code">' + esc(x.code) + '</div><div class="vg-titel">' + esc(x.video.titel) + "</div></div>" +
@@ -1434,7 +1435,7 @@ function renderThemenHtml(){
   const karten = treffer.map(function(v){
     const check = seenVideoIds.has(v.id) ? '<span class="vg-check">' + icon("check","ic-s") + "</span>" : "";
     return '<div class="vg-card" data-vid="' + esc(v.id) + '">' +
-      '<div class="vg-bg" style="background:' + vgGradientFuer(v.id) + ';"></div>' +
+      '<div class="vg-bg" style="background:' + vgGradientFuer(v.id) + ';"></div>' + vgBildLayer(v) +
       '<div class="vg-play">' + icon("play") + "</div>" + check +
       '<div class="vg-info"><div class="vg-titel">' + esc(v.titel) + "</div></div>" +
     "</div>";
@@ -1634,6 +1635,24 @@ function findeNaechstesOffenes(aktuellId){
     if(offen) return offen;
   }
   return null;
+}
+
+// Echte Video-Vorschaubilder von Bunny Stream (26.08.2026).
+// Hostname steht im Bunny-Dashboard unter Stream > deine Library > API.
+// Leer lassen = alle Kacheln nutzen weiterhin die Farbverläufe unten.
+// Lädt ein Bild nicht (z.B. wegen Token-Schutz), fällt die Kachel automatisch
+// auf den Farbverlauf zurück -- es kann also nichts "kaputt" aussehen.
+const BUNNY_PULL_ZONE = "vz-d3992a0e-19f.b-cdn.net";
+function vgThumbnail(video){
+  if(!BUNNY_PULL_ZONE || !video.bunny_video_id) return "";
+  return "https://" + BUNNY_PULL_ZONE + "/" + video.bunny_video_id + "/thumbnail.jpg";
+}
+// Erzeugt den Bild-Layer einer Kachel (leer, wenn kein Thumbnail verfügbar).
+function vgBildLayer(video){
+  const url = vgThumbnail(video);
+  if(!url) return "";
+  return '<img class="vg-thumb" src="' + esc(url) + '" alt="" loading="lazy" ' +
+    'onerror="this.style.display=\'none\';">';
 }
 
 // Kein Zugriff auf echte Bunny-Thumbnails (CDN-Adresse nicht bekannt) -- stattdessen
