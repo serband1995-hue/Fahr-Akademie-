@@ -35,6 +35,9 @@
     --fw-titel:700; --fw-karte:600; --fw-body:400;
     /* Schatten */
     --schatten-karte:0 2px 10px rgba(43,40,30,.05);
+    /* Papierbogen (Bereich 2, 27.08.2026): Außenfläche etwas tiefer als das
+       "Papier" selbst, damit auf breiten Bildschirmen eine sichtbare Kante entsteht. */
+    --bogen-aussen:#EAE3D2; --bogen-kante:rgba(43,40,30,.10);
   }
   /* Dark Mode (Punkt 10): folgt der Systemeinstellung des Geräts.
      Bewusst als eigenes Farbschema, nicht als reine Invertierung. */
@@ -46,6 +49,9 @@
       --gruen-hell:#7FA98A;
       --gold:#E0A868; --gold-schwach:rgba(224,168,104,.18); --gold-rand:rgba(224,168,104,.4);
       --schatten-karte:0 2px 10px rgba(0,0,0,.3);
+      /* Im Dunkelmodus umgekehrt: Außen dunkler als das Papier, sonst würde der
+         Bogen im Dunkeln "leuchten" statt sich ruhig abzusetzen. */
+      --bogen-aussen:#12150F; --bogen-kante:rgba(245,240,227,.10);
     }
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -56,6 +62,46 @@
   }
   #app{max-width:720px;margin:0 auto;padding:20px 16px 0;min-height:100vh;}
   .page-content{padding-bottom:90px;}
+
+  /* ---- Bereich 10.5: Sprachauswahl im Konto ---- */
+  .sprach-reihe{display:flex;flex-wrap:wrap;gap:8px;}
+  .sprach-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);
+    border-radius:var(--r-m);padding:11px 16px;font-size:14px;font-weight:600;
+    font-family:inherit;cursor:pointer;min-height:44px;}
+  .sprach-btn.aktiv{background:var(--gruen);color:#fff;border-color:var(--gruen);}
+  /* Bereich 10.9 vorbereitet: bei Arabisch dreht sich die Leserichtung. Nur die
+     Ausrichtung anpassen -- Zahlen, Fortschrittsbalken und Symbole bleiben wie sie sind. */
+  [dir="rtl"] body{ text-align:right; }
+  [dir="rtl"] .admin-row, [dir="rtl"] .sprach-reihe{ flex-direction:row-reverse; }
+
+  /* ---- Bereich 2 (27.08.2026): "Papierbogen"-Layout auf breiten Bildschirmen ----
+     Problem vorher: Auf Tablet/Desktop stand der Inhalt in einer 720px-Spalte, aber
+     der Bereich links und rechts hatte GENAU dieselbe Farbe. Ohne Kante wirkten die
+     Kacheln, als würden sie im Nichts schweben.
+     Lösung: Außenfläche bekommt einen eigenen, etwas tieferen Ton, die Spalte wird
+     zur sichtbaren Fläche mit Rändern -- wie ein Blatt Papier auf einem Tisch.
+     Gilt für ALLE Ansichten (Start, Bereiche, Lernpfad, Prüfer, Verlauf, Konto,
+     Admin, Login), weil #app der gemeinsame Container von allem ist.
+     Greift bewusst erst ab 760px: am Handy füllt die Spalte ohnehin den Bildschirm,
+     dort wäre ein Rahmen nur störend. */
+  @media (min-width:760px){
+    body{ background:var(--bogen-aussen); }
+    #app{
+      background:var(--bg);
+      border-left:1px solid var(--bogen-kante);
+      border-right:1px solid var(--bogen-kante);
+      box-shadow:0 0 34px rgba(43,40,30,.07);
+      padding-left:28px; padding-right:28px;
+    }
+    /* Die feste Fußleiste ist Teil des Bogens, nicht des Hintergrunds --
+       sonst liefe sie optisch über die Papierkante hinaus. */
+    .bottom-nav{
+      border-left:1px solid var(--bogen-kante);
+      border-right:1px solid var(--bogen-kante);
+    }
+    /* Der Admin-Balken sitzt ganz oben im Bogen und darf nicht breiter sein. */
+    .admin-balken{ max-width:720px; margin-left:auto; margin-right:auto; }
+  }
 
   .bottom-nav{
     position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--surface);
@@ -244,6 +290,27 @@
   .admin-form label{font-size:11.5px;color:var(--faint);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:-4px;}
   .admin-form-title{font-weight:700;font-size:15px;margin-bottom:2px;}
   .icon-btn{background:none;border:none;color:var(--faint);font-size:16px;cursor:pointer;padding:4px 8px;}
+
+  /* ---- Bereich 10.7 (27.08.2026): Tap-Ziele mindestens 44px ----
+     Empfehlung von Apple und Google: alles Antippbare mind. 44x44px, sonst
+     trifft man mit dem Daumen daneben. Kritisch war .icon-btn (~24px) -- das
+     sind ausgerechnet Sperren und Löschen im Admin, wo ein Fehlgriff wehtut.
+     Die Fläche wächst, das Symbol bleibt optisch gleich groß. */
+  .icon-btn{
+    min-width:44px; min-height:44px;
+    display:inline-flex; align-items:center; justify-content:center;
+  }
+  .btn-klein{ min-height:44px; }
+  .logout{ min-height:44px; }
+  .krumen{ min-height:44px; }
+  /* Ankreuzfelder sind im Original winzig -- vergrößern, ohne das Layout zu sprengen */
+  input[type="checkbox"]{ width:22px; height:22px; accent-color:var(--gruen); }
+  .bulk-pick, .klasse-cb-label{ min-height:44px; }
+  /* A–Z-Leiste: 26 Buchstaben nebeneinander können keine 44px haben, sonst passt
+     die Leiste auf keinen Bildschirm. Kompromiss: deutlich größer als vorher und
+     lückenlos aneinander, sodass kein toter Raum zwischen den Zielen bleibt. */
+  .az-buchstabe{ min-width:30px; min-height:34px; display:inline-flex;
+    align-items:center; justify-content:center; padding:0; }
   .icon-btn.danger{color:#b5573f;}
   .pin-display{font-family:monospace;font-size:15px;letter-spacing:.1em;color:var(--gold);}
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--gruen);color:#fff;
@@ -772,6 +839,114 @@ let allPruefer = [];
 let allSchueler = [];
 
 let session = JSON.parse(localStorage.getItem("academy_session") || "null");
+
+/* =========================================================
+   Bereich 10.5 (27.08.2026) — Mehrsprachige Oberfläche.
+   WICHTIG zum Verständnis: Übersetzt wird die BEDIENOBERFLÄCHE
+   (Knöpfe, Menü, Meldungen). Inhalte wie Bereichsnamen
+   ("Grundstufe"), Themen und Videotitel kommen aus der Datenbank
+   und bleiben deutsch. Für Inhalts-Übersetzungen bräuchte es
+   zusätzliche Spalten je Sprache -- bewusst später, nicht jetzt.
+   Aufbau so gewählt, dass genau das ohne Umbau ergänzt werden kann.
+   Fehlt ein Schlüssel in einer Sprache, fällt t() auf Deutsch
+   zurück -- es bleibt also nie ein leerer Knopf stehen.
+   ========================================================= */
+const SPRACHEN = [
+  { code:"de", name:"Deutsch" },
+  { code:"tr", name:"Türkçe" },
+  { code:"en", name:"English" },
+  { code:"ar", name:"العربية", rtl:true }
+];
+
+const I18N = {
+  de:{
+    start:"Start", lernpfad:"Lernpfad", pruefung:"Prüfer", verlauf:"Verlauf", konto:"Konto",
+    willkommen:"Willkommen zurück", weiterSchauen:"WEITER SCHAUEN", alsNaechstes:"Als Nächstes",
+    deineBereiche:"Deine Bereiche", videosGesehen:"von {gesamt} Videos gesehen",
+    allesGesehen:"Alles gesehen — stark!", allesGesehenSub:"Schau gern nochmal bei den Prüfungsstrecken vorbei.",
+    empfohlen:"EMPFOHLEN FÜR DICH", empfohlenSub:"Dein nächstes Thema — tippen zum Öffnen",
+    deinePruefung:"Deine Prüfung", heute:"heute", morgen:"morgen", inTagen:"in {n} Tagen",
+    deinZugang:"Dein Zugang", name:"Name", gueltigBis:"Zugang gültig bis", abmelden:"Abmelden",
+    sprache:"Sprache", spracheHinweis:"Videos und Themenbezeichnungen bleiben auf Deutsch.",
+    zurueck:"Zurück", zumStart:"Start", laedt:"Wird geladen …",
+    gesperrtKlasse:"Nur Klasse {klasse} — bei der Fahrschule freischalten lassen",
+    telefon:"Telefonnummer", pin:"PIN", anmelden:"Anmelden",
+    loginFehler:"Telefonnummer oder PIN falsch", keineVerbindung:"Keine Verbindung — versuch es gleich nochmal"
+  },
+  tr:{
+    start:"Başlangıç", lernpfad:"Öğrenme yolu", pruefung:"Sınav görevlisi", verlauf:"Geçmiş", konto:"Hesap",
+    willkommen:"Tekrar hoş geldin", weiterSchauen:"İZLEMEYE DEVAM ET", alsNaechstes:"Sırada",
+    deineBereiche:"Alanların", videosGesehen:"/ {gesamt} video izlendi",
+    allesGesehen:"Hepsi izlendi — harika!", allesGesehenSub:"Sınav güzergâhlarına tekrar göz at.",
+    empfohlen:"SENİN İÇİN ÖNERİLEN", empfohlenSub:"Sıradaki konun — açmak için dokun",
+    deinePruefung:"Sınavın", heute:"bugün", morgen:"yarın", inTagen:"{n} gün sonra",
+    deinZugang:"Erişimin", name:"İsim", gueltigBis:"Erişim şu tarihe kadar geçerli", abmelden:"Çıkış yap",
+    sprache:"Dil", spracheHinweis:"Videolar ve konu adları Almanca kalır.",
+    zurueck:"Geri", zumStart:"Başlangıç", laedt:"Yükleniyor …",
+    gesperrtKlasse:"Sadece {klasse} sınıfı — sürücü kursundan açtır",
+    telefon:"Telefon numarası", pin:"PIN", anmelden:"Giriş yap",
+    loginFehler:"Telefon numarası veya PIN hatalı", keineVerbindung:"Bağlantı yok — birazdan tekrar dene"
+  },
+  en:{
+    start:"Home", lernpfad:"Learning path", pruefung:"Examiners", verlauf:"History", konto:"Account",
+    willkommen:"Welcome back", weiterSchauen:"CONTINUE WATCHING", alsNaechstes:"Up next",
+    deineBereiche:"Your areas", videosGesehen:"of {gesamt} videos watched",
+    allesGesehen:"All watched — great!", allesGesehenSub:"Have another look at the exam routes.",
+    empfohlen:"RECOMMENDED FOR YOU", empfohlenSub:"Your next topic — tap to open",
+    deinePruefung:"Your test", heute:"today", morgen:"tomorrow", inTagen:"in {n} days",
+    deinZugang:"Your access", name:"Name", gueltigBis:"Access valid until", abmelden:"Sign out",
+    sprache:"Language", spracheHinweis:"Videos and topic names stay in German.",
+    zurueck:"Back", zumStart:"Home", laedt:"Loading …",
+    gesperrtKlasse:"Class {klasse} only — ask your driving school to unlock",
+    telefon:"Phone number", pin:"PIN", anmelden:"Sign in",
+    loginFehler:"Phone number or PIN incorrect", keineVerbindung:"No connection — please try again shortly"
+  },
+  ar:{
+    start:"الرئيسية", lernpfad:"مسار التعلم", pruefung:"الممتحنون", verlauf:"السجل", konto:"الحساب",
+    willkommen:"مرحباً بعودتك", weiterSchauen:"متابعة المشاهدة", alsNaechstes:"التالي",
+    deineBereiche:"مجالاتك", videosGesehen:"من {gesamt} فيديو تمت مشاهدته",
+    allesGesehen:"شاهدت كل شيء — ممتاز!", allesGesehenSub:"ألقِ نظرة أخرى على مسارات الامتحان.",
+    empfohlen:"موصى به لك", empfohlenSub:"موضوعك التالي — اضغط للفتح",
+    deinePruefung:"امتحانك", heute:"اليوم", morgen:"غداً", inTagen:"خلال {n} أيام",
+    deinZugang:"حسابك", name:"الاسم", gueltigBis:"صالح حتى", abmelden:"تسجيل الخروج",
+    sprache:"اللغة", spracheHinweis:"تبقى مقاطع الفيديو وأسماء المواضيع بالألمانية.",
+    zurueck:"رجوع", zumStart:"الرئيسية", laedt:"جارٍ التحميل …",
+    gesperrtKlasse:"الفئة {klasse} فقط — اطلب من مدرسة القيادة تفعيلها",
+    telefon:"رقم الهاتف", pin:"رقم التعريف", anmelden:"تسجيل الدخول",
+    loginFehler:"رقم الهاتف أو رقم التعريف غير صحيح", keineVerbindung:"لا يوجد اتصال — حاول مرة أخرى قريباً"
+  }
+};
+
+let sprache = localStorage.getItem("academy_sprache") || "de";
+if(!I18N[sprache]) sprache = "de"; // unbekannter gespeicherter Wert -> sicher auf Deutsch
+
+// t("schluessel", {platzhalter:wert}) -- fällt bei fehlender Übersetzung auf Deutsch zurück.
+function t(schluessel, werte){
+  let text = (I18N[sprache] && I18N[sprache][schluessel]) || I18N.de[schluessel] || schluessel;
+  if(werte){
+    Object.keys(werte).forEach(function(k){
+      text = text.split("{" + k + "}").join(werte[k]);
+    });
+  }
+  return text;
+}
+
+function setzeSprache(code){
+  if(!I18N[code]) return;
+  sprache = code;
+  localStorage.setItem("academy_sprache", code);
+  wendeSprachRichtungAn();
+  renderCatalog();
+}
+
+// Bereich 10.9 vorbereitet: Arabisch läuft von rechts nach links. lang/dir werden am
+// <html>-Element gesetzt, damit Browser und Screenreader die Sprache korrekt erkennen.
+function wendeSprachRichtungAn(){
+  const def = SPRACHEN.find(function(s){ return s.code === sprache; });
+  document.documentElement.setAttribute("lang", sprache);
+  document.documentElement.setAttribute("dir", (def && def.rtl) ? "rtl" : "ltr");
+}
+wendeSprachRichtungAn();
 let allTags = [];
 let allVideos = [];
 let videoTags = [];
@@ -1215,10 +1390,10 @@ function renderStartHtml(){
   let fortsetzen = null;
   if(verlaufData.length > 0){
     const letztesVideo = allVideos.find(function(v){ return v.id === verlaufData[0].video_id; });
-    if(letztesVideo) fortsetzen = { id: letztesVideo.id, titel: letztesVideo.titel, label: "Weiter schauen" };
+    if(letztesVideo) fortsetzen = { id: letztesVideo.id, titel: letztesVideo.titel, label: t("weiterSchauen") };
   }
   if(!fortsetzen && naechste){
-    fortsetzen = { id: naechste.x.video.id, titel: naechste.x.video.titel, label: "Als Nächstes: " + naechste.gruppe };
+    fortsetzen = { id: naechste.x.video.id, titel: naechste.x.video.titel, label: t("alsNaechstes") + ": " + naechste.gruppe };
   }
 
   const weiterKarte = fortsetzen
@@ -1228,7 +1403,7 @@ function renderStartHtml(){
         '<div class="wk-titel">' + esc(fortsetzen.titel) + "</div></div>" +
       "</div>"
     : '<div class="karte" style="margin-bottom:var(--sp-l);text-align:center;">' +
-        '<div style="font-size:var(--fs-karte);font-weight:var(--fw-karte);">Alles gesehen — stark!</div>' +
+        '<div style="font-size:var(--fs-karte);font-weight:var(--fw-karte);">' + esc(t("allesGesehen")) + "</div>" +
         '<div class="admin-sub">Schau gern nochmal bei den Prüfungsstrecken vorbei.</div>' +
       "</div>";
 
@@ -1266,7 +1441,7 @@ function renderStartHtml(){
     if(treffer){
       empfKarte =
         '<div class="karte empf-card" data-vid="' + esc(treffer.x.video.id) + '" style="cursor:pointer;margin-bottom:var(--sp-l);">' +
-          '<div class="empf-badge">EMPFOHLEN FÜR DICH</div>' +
+          '<div class="empf-badge">' + esc(t("empfohlen")) + "</div>" +
           '<div style="font-size:var(--fs-karte);font-weight:var(--fw-karte);">' + esc(treffer.x.video.titel) + "</div>" +
           '<div class="admin-sub">' + esc(empf.nachricht || treffer.gruppe) + "</div>" +
         "</div>";
@@ -1275,7 +1450,7 @@ function renderStartHtml(){
       // sonst bliebe ein toter Hinweis stehen.
       empfKarte =
         '<div class="karte empf-card" data-gotostufe="' + esc(empf.stufe) + '" style="cursor:pointer;margin-bottom:var(--sp-l);">' +
-          '<div class="empf-badge">EMPFOHLEN FÜR DICH</div>' +
+          '<div class="empf-badge">' + esc(t("empfohlen")) + "</div>" +
           '<div style="font-size:var(--fs-karte);font-weight:var(--fw-karte);">' + esc(empf.stufe) + "</div>" +
           '<div class="admin-sub">' + esc(empf.nachricht || "Dein nächstes Thema — tippen zum Öffnen") + "</div>" +
         "</div>";
@@ -1292,7 +1467,7 @@ function renderStartHtml(){
       const wann = tage === 0 ? "heute" : (tage === 1 ? "morgen" : "in " + tage + " Tagen");
       terminKarte =
         '<div class="karte" style="margin-top:var(--sp-l);">' +
-          '<div class="section-label" style="margin:0 0 6px;">Deine Prüfung</div>' +
+          '<div class="section-label" style="margin:0 0 6px;">' + esc(t("deinePruefung")) + "</div>" +
           '<div style="font-size:var(--fs-karte);font-weight:var(--fw-karte);">' + esc(wann) + "</div>" +
           '<div class="admin-sub">' + esc(termin.toLocaleDateString("de-DE")) + "</div>" +
         "</div>";
@@ -1300,10 +1475,10 @@ function renderStartHtml(){
   }
 
   return (
-    '<div class="tagline" style="font-size:22px;margin-bottom:var(--sp-m);">Willkommen zurück' + (name ? ", " + esc(name) : "") + "</div>" +
+    '<div class="tagline" style="font-size:22px;margin-bottom:var(--sp-m);">' + esc(t("willkommen")) + (name ? ", " + esc(name) : "") + "</div>" +
     empfKarte +
     weiterKarte +
-    '<div class="section-label" style="margin-top:0;">Deine Bereiche</div>' +
+    '<div class="section-label" style="margin-top:0;">' + esc(t("deineBereiche")) + "</div>" +
     '<div class="bereich-stack">' + kacheln + "</div>" +
     terminKarte
   );
@@ -1350,7 +1525,7 @@ function renderBereichDetailHtml(){
         '<div class="vg-play">' + icon("schloss") + "</div>" +
         '<div class="vg-info"><div class="vg-code">' + esc(x.code) + '</div>' +
           '<div class="vg-titel">' + esc(x.video.titel) + "</div>" +
-          '<div class="lock-hint">Nur Klasse ' + esc(x.tag.nur_klasse) + ' — bei der Fahrschule freischalten lassen</div>' +
+          '<div class="lock-hint">' + esc(t("gesperrtKlasse",{klasse:x.tag.nur_klasse})) + "</div>" +
         "</div>" +
       "</div>";
     }
@@ -1410,13 +1585,24 @@ function renderVerlaufHtml(){
 function renderKontoHtml(){
   const name = (session && session.name) ? session.name : "—";
   const ablauf = (session && session.ablauf_am) ? fmtDate(session.ablauf_am) : "—";
+  // Bereich 10.5: Sprachauswahl. Bewusst im Konto und nicht im Hauptmenü --
+  // man stellt sie einmal ein, nicht täglich.
+  const sprachKnoepfe = SPRACHEN.map(function(s){
+    return '<button class="sprach-btn' + (s.code === sprache ? " aktiv" : "") + '" data-sprache="' + esc(s.code) + '">' +
+      esc(s.name) + "</button>";
+  }).join("");
   return (
     '<div class="admin-card glass">' +
-      '<div class="section-label" style="margin:0 0 10px;">Dein Zugang</div>' +
-      '<div class="admin-sub">Name</div><div class="admin-name" style="margin-bottom:12px;">' + esc(name) + "</div>" +
-      '<div class="admin-sub">Zugang gültig bis</div><div class="admin-name">' + esc(ablauf) + "</div>" +
+      '<div class="section-label" style="margin:0 0 10px;">' + esc(t("deinZugang")) + "</div>" +
+      '<div class="admin-sub">' + esc(t("name")) + '</div><div class="admin-name" style="margin-bottom:12px;">' + esc(name) + "</div>" +
+      '<div class="admin-sub">' + esc(t("gueltigBis")) + '</div><div class="admin-name">' + esc(ablauf) + "</div>" +
     "</div>" +
-    '<button id="konto-logout-btn" class="btn-primary" style="width:100%;margin-top:16px;">Abmelden</button>'
+    '<div class="admin-card glass" style="margin-top:16px;">' +
+      '<div class="section-label" style="margin:0 0 10px;">' + esc(t("sprache")) + "</div>" +
+      '<div class="sprach-reihe">' + sprachKnoepfe + "</div>" +
+      '<div class="admin-sub" style="margin-top:10px;">' + esc(t("spracheHinweis")) + "</div>" +
+    "</div>" +
+    '<button id="konto-logout-btn" class="btn-primary" style="width:100%;margin-top:16px;">' + esc(t("abmelden")) + "</button>"
   );
 }
 
@@ -1575,8 +1761,8 @@ function renderCatalog(){
   else content = renderKontoHtml();
 
   const tabs = [
-    ["start","Start"],["lernpfad","Lernpfad"],["pruefungsstrecken","Prüfer"],
-    ["verlauf","Verlauf"],["konto","Konto"]
+    ["start",t("start")],["lernpfad",t("lernpfad")],["pruefungsstrecken",t("pruefung")],
+    ["verlauf",t("verlauf")],["konto",t("konto")]
   ];
   const bottomNav = '<div class="bottom-nav">' +
     tabs.map(function(t){
@@ -1711,6 +1897,10 @@ function renderCatalog(){
   });
   const kontoLogout = document.getElementById("konto-logout-btn");
   if(kontoLogout) kontoLogout.addEventListener("click", doLogout);
+  // Bereich 10.5: Sprachwechsel -- setzeSprache rendert selbst neu
+  document.querySelectorAll("[data-sprache]").forEach(function(b){
+    b.addEventListener("click", function(){ setzeSprache(b.dataset.sprache); });
+  });
 }
 
 function markSeen(videoId){
@@ -1817,8 +2007,14 @@ async function openVideo(videoId){
       return;
     }
 
+    // Bereich 10.4 (27.08.2026): Untertitel im Player aktivieren.
+    // captions=de zeigt die deutsche Untertitelspur automatisch an, wenn zu diesem
+    // Video eine hinterlegt ist. Fehlt die Spur, ignoriert Bunny den Parameter --
+    // es geht also nichts kaputt bei Videos ohne Untertitel.
+    // WICHTIG: Die Untertiteldateien selbst müssen in Bunny Stream je Video
+    // hochgeladen werden (Video > Captions). Das kann ich nicht für dich tun.
     const embedUrl = "https://iframe.mediadelivery.net/embed/" + data.library_id + "/" + data.bunny_video_id +
-      "?token=" + data.token + "&expires=" + data.expires;
+      "?token=" + data.token + "&expires=" + data.expires + "&captions=" + encodeURIComponent(sprache);
 
     // Server hat den Fortschritt schon gespeichert — lokal sofort mitziehen,
     // damit Häkchen/Verlauf auch ohne Neu-Login sofort aktuell sind.
