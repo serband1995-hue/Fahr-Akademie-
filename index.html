@@ -63,6 +63,14 @@
   #app{max-width:720px;margin:0 auto;padding:20px 16px 0;min-height:100vh;}
   .page-content{padding-bottom:90px;}
 
+  /* PIN-Fenster nach der Freischaltung (Bereich 8.4) */
+  .pin-overlay{position:fixed;inset:0;background:rgba(20,18,12,.55);z-index:120;
+    display:flex;align-items:center;justify-content:center;padding:20px;}
+  .pin-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-l);
+    padding:22px;max-width:400px;width:100%;box-shadow:0 12px 44px rgba(0,0,0,.25);}
+  .pin-gross{font-size:26px;font-weight:700;letter-spacing:2px;color:var(--text);}
+  .pin-gross.pin-hervor{color:var(--gold);font-size:34px;}
+
   /* ---- Bereich 10.5: Sprachauswahl im Konto ---- */
   .sprach-reihe{display:flex;flex-wrap:wrap;gap:8px;}
   .sprach-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);
@@ -3271,10 +3279,13 @@ function renderAdminKandidaten(){
     const badge = hatZugang
       ? '<span class="admin-badge badge-aktiv">Zugang aktiv</span>'
       : '<span class="admin-badge badge-gesperrt">offen</span>';
+    // E-Mail ist bewusst KEINE Voraussetzung: die meisten Schüler aus Kompass haben
+    // keine hinterlegt. Freischalten geht immer -- die PIN erscheint danach auf dem
+    // Bildschirm und lässt sich per WhatsApp/SMS weitergeben. Die E-Mail ist nur die
+    // bequemere Variante, kein Muss.
     const aktion = hatZugang ? ""
-      : (!k.email
-          ? '<button class="btn-klein btn-warn" data-kmail="' + esc(k.id) + '">E-Mail nachtragen</button>'
-          : '<button class="btn-klein" data-kfrei="' + esc(k.id) + '">Zugang freischalten</button>');
+      : '<button class="btn-klein" data-kfrei="' + esc(k.id) + '">Zugang freischalten</button>' +
+        (!k.email ? ' <button class="btn-klein btn-warn" data-kmail="' + esc(k.id) + '">E-Mail ergänzen</button>' : "");
     return kopf +
       '<div class="admin-card glass">' +
         '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
@@ -3328,19 +3339,34 @@ function renderAdminKandidaten(){
   });
   const syncBtn = document.getElementById("kand-sync");
   if(syncBtn) syncBtn.addEventListener("click", function(){ kandidatenAbgleichen(syncBtn); });
+
+  // Wenn der letzte Abgleich lange her ist, einmal still im Hintergrund nachziehen.
+  // So ist die Liste beim Öffnen aktuell, ohne dass du an etwas denken musst.
+  // 12 Stunden, damit zwischen zwei Nachtläufen höchstens einmal zusätzlich geprüft wird.
+  const letzterSyncZeit = Number(localStorage.getItem("academy_letzter_sync") || 0);
+  if(!DEMO_MODE && Date.now() - letzterSyncZeit > 12*60*60*1000){
+    localStorage.setItem("academy_letzter_sync", String(Date.now()));
+    kandidatenAbgleichen(null);
+  }
 }
 
 /* Bereich 8.4 — manueller Anstoß des Kompass-Abgleichs.
    Dieselbe Funktion, die nachts per Cron läuft; hier nur mit Admin-Anmeldung
    statt mit dem Brücken-Geheimnis. */
 async function kandidatenAbgleichen(btn){
-  const alterText = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = "Wird abgeglichen …";
+  // btn = null bedeutet: stiller Hintergrundlauf beim Öffnen des Tabs.
+  // Dann keine Meldungsfenster -- nur die Liste aktualisieren, wenn sich etwas ändert.
+  const still = !btn;
+  let alterText = "";
+  if(btn){
+    alterText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Wird abgeglichen …";
+  }
   try{
     const { data: sess } = await supa.auth.getSession();
     const token = sess && sess.session ? sess.session.access_token : null;
-    if(!token){ showToast("Sitzung abgelaufen — bitte neu einloggen"); return; }
+    if(!token){ if(!still) showToast("Sitzung abgelaufen — bitte neu einloggen"); return; }
 
     const res = await fetch(SUPABASE_URL + "/functions/v1/academy-kandidaten-sync", {
       method: "POST",
@@ -3358,11 +3384,24 @@ async function kandidatenAbgleichen(btn){
         antwort_ohne_schueler_array: "Kompass hat geantwortet, aber ohne Schülerliste.",
         unauthorized: "Keine Berechtigung für den Abgleich."
       };
-      alert(meldungen[data.error] || ("Abgleich fehlgeschlagen: " + (data.error || "unbekannt")));
+      if(!still) alert(meldungen[data.error] || ("Abgleich fehlgeschlagen: " + (data.error || "unbekannt")));
+      return;
+    }
+
+    localStorage.setItem("academy_letzter_sync", String(Date.now()));
+    const hatAenderung = (data.neu || 0) + (data.aktualisiert || 0) > 0;
+
+    if(still){
+      if(hatAenderung){
+        await ladeKandidaten();
+        renderAdminKandidaten();
+        showToast(data.neu + " neue Kandidaten aus Kompass");
+      }
       return;
     }
 
     let txt = "Abgleich fertig.\n\n" + data.zusammenfassung;
+    if(data.ohne_email) txt += "\n\n" + data.ohne_email + " davon ohne E-Mail — PIN einfach direkt weitergeben.";
     if(data.probleme && data.probleme.length > 0){
       txt += "\n\nÜbersprungen:\n" + data.probleme.slice(0,10).join("\n");
     }
@@ -3371,10 +3410,12 @@ async function kandidatenAbgleichen(btn){
     await ladeKandidaten();
     renderAdminKandidaten();
   } catch(e){
-    showToast("Verbindungsfehler beim Abgleich");
+    if(!still) showToast("Verbindungsfehler beim Abgleich");
   } finally {
-    btn.disabled = false;
-    btn.textContent = alterText;
+    if(btn){
+      btn.disabled = false;
+      btn.textContent = alterText;
+    }
   }
 }
 
@@ -3396,7 +3437,10 @@ async function kandidatMailNachtragen(kandId){
 async function kandidatFreischalten(kandId, btn){
   const k = allKandidaten.find(function(x){ return x.id === kandId; });
   if(!k) return;
-  if(!confirm("Zugang für " + k.name + " freischalten?\n\nEs wird eine PIN erzeugt und an " + k.email + " geschickt.")) return;
+  const frage = k.email
+    ? "Zugang für " + k.name + " freischalten?\n\nEs wird eine PIN erzeugt und an " + k.email + " geschickt."
+    : "Zugang für " + k.name + " freischalten?\n\nEs wird eine PIN erzeugt. Da keine E-Mail hinterlegt ist, bekommst du sie danach zum Weitergeben angezeigt.";
+  if(!confirm(frage)) return;
 
   btn.disabled = true;
   const alterText = btn.textContent;
@@ -3414,21 +3458,90 @@ async function kandidatFreischalten(kandId, btn){
     const data = await res.json();
     if(!res.ok){ alert("Fehler: " + (data.error || "unbekannt")); return; }
 
-    let txt = "Zugang für " + data.name + " ist aktiv.\n\nPIN: " + data.pin;
-    if(data.mail === "gesendet") txt += "\n\nPIN-Mail wurde verschickt.";
-    else if(data.mail === "keine_email_hinterlegt") txt += "\n\nKeine E-Mail hinterlegt — PIN bitte selbst weitergeben.";
-    else txt += "\n\nMail konnte NICHT verschickt werden (" + data.mail + ") — PIN bitte selbst weitergeben.";
-    if(data.empfehlung === "eingeloest") txt += "\nEine wartende Kompass-Empfehlung wurde übernommen.";
-    alert(txt);
-
     await ladeKandidaten();
+    // Auch die Schülerliste neu laden: der Kandidat ist jetzt ein echter Schüler.
+    // Ohne das würde er im Schüler-Tab fehlen UND die Dublettenprüfung beim
+    // nächsten Freischalten liefe gegen veraltete Daten.
     await loadAdminData();
     renderAdminKandidaten();
+    zeigeZugangsdaten(data);
   } catch(e){
     showToast("Verbindungsfehler");
   } finally {
     btn.disabled = false;
     btn.textContent = alterText;
+  }
+}
+
+/* Zeigt PIN und Zugangsdaten nach der Freischaltung und bietet an, sie direkt
+   per WhatsApp/SMS zu verschicken. Spart das Abtippen von E-Mail-Adressen --
+   die meisten Schüler aus Kompass haben ohnehin keine hinterlegt. */
+function zeigeZugangsdaten(data){
+  const text =
+    "Dein Zugang zur Fahr-Akademie ist da!\n\n" +
+    "Telefonnummer: " + data.telefon + "\n" +
+    "PIN: " + data.pin + "\n\n" +
+    "Hier geht's zur App:\nhttps://serband1995-hue.github.io/Fahr-Akademie-/\n\n" +
+    "Dein Zugang ist 6 Monate gültig. Bitte gib die PIN nicht weiter — sie ist persönlich auf dich ausgestellt.";
+
+  let mailZeile = "";
+  if(data.mail === "gesendet") mailZeile = "PIN-Mail wurde verschickt.";
+  else if(data.mail === "keine_email_hinterlegt") mailZeile = "Keine E-Mail hinterlegt — bitte selbst weitergeben.";
+  else mailZeile = "Mail konnte NICHT verschickt werden — bitte selbst weitergeben.";
+
+  const alt = document.getElementById("pin-overlay");
+  if(alt) alt.remove();
+
+  const box = document.createElement("div");
+  box.id = "pin-overlay";
+  box.className = "pin-overlay";
+  box.innerHTML =
+    '<div class="pin-box glass">' +
+      '<div class="admin-form-title" style="margin-bottom:4px;">Zugang aktiv</div>' +
+      '<div class="admin-name" style="margin-bottom:12px;">' + esc(data.name) + "</div>" +
+      '<div class="admin-sub">Telefonnummer</div>' +
+      '<div class="pin-gross">' + esc(data.telefon) + "</div>" +
+      '<div class="admin-sub" style="margin-top:10px;">PIN</div>' +
+      '<div class="pin-gross pin-hervor">' + esc(data.pin) + "</div>" +
+      '<div class="admin-sub" style="margin-top:12px;">' + esc(mailZeile) +
+        (data.empfehlung === "eingeloest" ? " Eine wartende Kompass-Empfehlung wurde übernommen." : "") + "</div>" +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;">' +
+        '<button class="btn-klein" id="pin-teilen">Per WhatsApp/SMS senden</button>' +
+        '<button class="btn-klein btn-warn" id="pin-kopieren">Kopieren</button>' +
+        '<button class="btn-klein" id="pin-zu">Fertig</button>' +
+      "</div>" +
+    "</div>";
+  document.body.appendChild(box);
+
+  document.getElementById("pin-zu").addEventListener("click", function(){ box.remove(); });
+  document.getElementById("pin-teilen").addEventListener("click", async function(){
+    if(navigator.share){
+      // Auf dem Tablet öffnet das die normale Teilen-Auswahl (WhatsApp, SMS, …)
+      try{ await navigator.share({ text: text }); } catch(e){ /* Abbruch durch Nutzer ist ok */ }
+    } else {
+      await inZwischenablage(text);
+      showToast("Teilen geht hier nicht — Text wurde kopiert");
+    }
+  });
+  document.getElementById("pin-kopieren").addEventListener("click", async function(){
+    await inZwischenablage(text);
+    showToast("Zugangsdaten kopiert");
+  });
+}
+
+async function inZwischenablage(text){
+  try{
+    await navigator.clipboard.writeText(text);
+  } catch(e){
+    // Rückfallweg für ältere Browser ohne Zwischenablage-Berechtigung
+    const feld = document.createElement("textarea");
+    feld.value = text;
+    feld.style.position = "fixed";
+    feld.style.opacity = "0";
+    document.body.appendChild(feld);
+    feld.select();
+    try{ document.execCommand("copy"); } catch(e2){ /* nichts zu machen */ }
+    feld.remove();
   }
 }
 
