@@ -1,0 +1,39 @@
+{
+  "id": "/Fahr-Akademie-/",
+  "name": "Fahr-Akademie",
+  "short_name": "Akademie",
+  "description": "Video-Vorbereitung für Fahrschüler — ergänzend zur amtlichen Fahrausbildung",
+  "start_url": "/Fahr-Akademie-/index.html",
+  "scope": "/Fahr-Akademie-/",
+  "display": "standalone",
+  "background_color": "#F5F0E3",
+  "theme_color": "#F5F0E3",
+  "lang": "de",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
