@@ -84,23 +84,55 @@
      Admin, Login), weil #app der gemeinsame Container von allem ist.
      Greift bewusst erst ab 760px: am Handy füllt die Spalte ohnehin den Bildschirm,
      dort wäre ein Rahmen nur störend. */
+  /* ---- Bereich 2 (27.08.2026, überarbeitet): "Papierbogen" mit klaren Kanten ----
+     Erster Versuch hatte nur Ränder links und rechts -- oben und unten lief das
+     Papier einfach aus dem Bild, was den Eindruck kaputt machte.
+     Jetzt bekommt der Bogen eine feste Höhe und scrollt IN SICH. Dadurch bleiben
+     alle vier Kanten dauerhaft sichtbar: das Blatt liegt wirklich auf dem Tisch,
+     statt an zwei Seiten wegzulaufen.
+     Die Fußleiste wird dabei von "fixed am Bildschirm" zu "sticky im Bogen" --
+     sonst würde sie über die untere Papierkante hinausragen.
+     Greift bewusst erst ab 760px: am Handy füllt die Spalte den Bildschirm,
+     dort wäre ein Rahmen nur störend. */
   @media (min-width:760px){
-    body{ background:var(--bogen-aussen); }
+    body{
+      background:var(--bogen-aussen);
+      padding:22px 0;
+      display:flex; justify-content:center;
+      height:100vh; overflow:hidden;   /* die Seite selbst scrollt nicht mehr */
+    }
     #app{
+      width:100%; max-width:720px;
+      height:100%; min-height:0;
+      overflow-y:auto;                 /* gescrollt wird jetzt hier drin */
+      -webkit-overflow-scrolling:touch;
+      overscroll-behavior:contain;
       background:var(--bg);
-      border-left:1px solid var(--bogen-kante);
-      border-right:1px solid var(--bogen-kante);
-      box-shadow:0 0 34px rgba(43,40,30,.07);
-      padding-left:28px; padding-right:28px;
+      border:1px solid var(--bogen-kante);
+      border-radius:20px;
+      box-shadow:0 10px 44px rgba(43,40,30,.14);
+      padding:22px 28px 0;
+      position:relative;
     }
-    /* Die feste Fußleiste ist Teil des Bogens, nicht des Hintergrunds --
-       sonst liefe sie optisch über die Papierkante hinaus. */
+    /* Fußleiste klebt am unteren Rand des Bogens und übernimmt dessen Ecken.
+       Die negativen Ränder heben die Innenabstände von #app auf, damit sie
+       exakt bis an die Papierkante reicht. */
     .bottom-nav{
-      border-left:1px solid var(--bogen-kante);
-      border-right:1px solid var(--bogen-kante);
+      position:sticky; bottom:0; left:auto; right:auto;
+      max-width:none; width:auto;
+      margin:0 -28px 0; 
+      border-radius:0 0 19px 19px;
+      border-top:1px solid var(--bogen-kante);
     }
-    /* Der Admin-Balken sitzt ganz oben im Bogen und darf nicht breiter sein. */
-    .admin-balken{ max-width:720px; margin-left:auto; margin-right:auto; }
+    /* Der Freiraum für die vormals schwebende Leiste wird nicht mehr gebraucht. */
+    .page-content{ padding-bottom:var(--sp-l); }
+    /* Der Admin-Balken sitzt ganz oben im Bogen und darf dessen Ecken nicht überlaufen. */
+    .admin-balken{ margin:-22px -28px 0; border-radius:19px 19px 0 0; }
+    /* Dezente Bildlaufleiste, damit sie den Papiereindruck nicht stört */
+    #app::-webkit-scrollbar{ width:10px; }
+    #app::-webkit-scrollbar-thumb{ background:var(--border); border-radius:var(--r-pill);
+      border:3px solid var(--bg); }
+    #app::-webkit-scrollbar-track{ background:transparent; }
   }
 
   .bottom-nav{
@@ -515,8 +547,14 @@
   .hist-anzahl.oft{background:var(--gold-schwach);color:var(--gold);}
   .hist-datum{font-size:11px;color:var(--faint);flex-shrink:0;}
   /* ================= SEITENMENÜ (Drawer), Dashboard, Nützliches ================= */
+  /* 27.08.2026: Der Menü-Knopf war mit 18px-Symbol in 30px-Fläche viel zu klein
+     zum Treffen. Jetzt 44x44px Tap-Fläche mit 26px-Symbol und kräftigerem Strich,
+     damit die drei Striche auch auf dem Tablet klar erkennbar sind. */
   .menu-btn{background:none;border:none;color:var(--text);cursor:pointer;padding:6px;
-    display:flex;align-items:center;}
+    display:flex;align-items:center;justify-content:center;
+    min-width:44px;min-height:44px;border-radius:var(--r-m);}
+  .menu-btn:active{background:var(--surface-strong);}
+  .menu-btn .ic{width:26px;height:26px;stroke-width:2.2;vertical-align:0;}
   .drawer-backdrop{position:fixed;inset:0;background:rgba(20,18,12,.42);z-index:80;
     opacity:0;pointer-events:none;transition:opacity .2s ease;}
   .drawer-backdrop.open{opacity:1;pointer-events:auto;}
@@ -1742,6 +1780,18 @@ function renderThemenHtml(){
     '<div class="video-grid">' + (karten || '<div class="leer-hinweis">Keine Videos gefunden.</div>') + "</div>";
 }
 
+/* 27.08.2026: Seit dem Papierbogen-Layout scrollt auf breiten Bildschirmen
+   nicht mehr die Seite, sondern #app selbst. window.scrollTo hat dort keine
+   Wirkung mehr. Diese Helferfunktion trifft immer das richtige Element --
+   am Handy die Seite, am Tablet den Bogen. */
+function nachObenScrollen(){
+  const bogen = document.getElementById("app");
+  if(bogen && bogen.scrollHeight > bogen.clientHeight + 1){
+    bogen.scrollTo({ top:0, behavior:"smooth" });
+  }
+  window.scrollTo({ top:0, behavior:"smooth" });
+}
+
 function renderCatalog(){
   const totalVideos = allVideos.length;
   const seenCount = allVideos.filter(function(v){ return seenVideoIds.has(v.id); }).length;
@@ -1847,7 +1897,7 @@ function renderCatalog(){
     });
   });
   document.querySelectorAll("[data-hashtag]").forEach(function(b){
-    b.addEventListener("click", function(){ selectedHashtag = b.dataset.hashtag; renderCatalog(); window.scrollTo({top:0,behavior:"smooth"}); });
+    b.addEventListener("click", function(){ selectedHashtag = b.dataset.hashtag; renderCatalog(); nachObenScrollen(); });
   });
   document.querySelectorAll("[data-hashtag-zurueck]").forEach(function(b){
     b.addEventListener("click", function(){ selectedHashtag = null; renderCatalog(); });
@@ -1879,7 +1929,7 @@ function renderCatalog(){
       drawerView = null; mainView = "bereichdetail";
       pruefungFilter = "alle";
       renderCatalog();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      nachObenScrollen();
     });
   });
   document.querySelectorAll("[data-statusfilter]").forEach(function(b){
@@ -3245,6 +3295,12 @@ function renderAdminKandidaten(){
       '<input id="kand-suche" type="text" placeholder="Name, Telefon oder E-Mail suchen …" value="' + esc(kandidatenSuche) + '">' +
       '<label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:14px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text);">' +
         '<input type="checkbox" id="kand-offen"' + (kandidatenNurOffen ? " checked" : "") + "> Nur ohne Zugang zeigen</label>" +
+      // Der Abgleich läuft ohnehin jede Nacht automatisch -- dieser Knopf ist nur
+      // für den Fall, dass du gerade jemanden in Kompass angelegt hast.
+      '<div style="margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">' +
+        '<button class="btn-klein" id="kand-sync">Jetzt mit Kompass abgleichen</button>' +
+        '<span class="admin-sub" style="margin:0;">Läuft automatisch jede Nacht</span>' +
+      "</div>" +
     "</div>" + azLeiste + zeilen;
 
   const s = document.getElementById("kand-suche");
@@ -3270,6 +3326,56 @@ function renderAdminKandidaten(){
   document.querySelectorAll("[data-kmail]").forEach(function(b){
     b.addEventListener("click", function(){ kandidatMailNachtragen(b.dataset.kmail); });
   });
+  const syncBtn = document.getElementById("kand-sync");
+  if(syncBtn) syncBtn.addEventListener("click", function(){ kandidatenAbgleichen(syncBtn); });
+}
+
+/* Bereich 8.4 — manueller Anstoß des Kompass-Abgleichs.
+   Dieselbe Funktion, die nachts per Cron läuft; hier nur mit Admin-Anmeldung
+   statt mit dem Brücken-Geheimnis. */
+async function kandidatenAbgleichen(btn){
+  const alterText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = "Wird abgeglichen …";
+  try{
+    const { data: sess } = await supa.auth.getSession();
+    const token = sess && sess.session ? sess.session.access_token : null;
+    if(!token){ showToast("Sitzung abgelaufen — bitte neu einloggen"); return; }
+
+    const res = await fetch(SUPABASE_URL + "/functions/v1/academy-kandidaten-sync", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+      body: JSON.stringify({})
+    });
+    const data = await res.json();
+
+    if(!res.ok){
+      // Klartext statt Fehlercode, damit du sofort weißt, wo es hakt
+      const meldungen = {
+        kompass_export_url_fehlt: "Die Export-Adresse von Kompass ist noch nicht hinterlegt.",
+        kompass_nicht_erreichbar: "Kompass war nicht erreichbar. Läuft die Schnittstelle dort schon?",
+        kompass_fehler: "Kompass hat mit einem Fehler geantwortet (HTTP " + (data.status || "?") + ").",
+        antwort_ohne_schueler_array: "Kompass hat geantwortet, aber ohne Schülerliste.",
+        unauthorized: "Keine Berechtigung für den Abgleich."
+      };
+      alert(meldungen[data.error] || ("Abgleich fehlgeschlagen: " + (data.error || "unbekannt")));
+      return;
+    }
+
+    let txt = "Abgleich fertig.\n\n" + data.zusammenfassung;
+    if(data.probleme && data.probleme.length > 0){
+      txt += "\n\nÜbersprungen:\n" + data.probleme.slice(0,10).join("\n");
+    }
+    alert(txt);
+
+    await ladeKandidaten();
+    renderAdminKandidaten();
+  } catch(e){
+    showToast("Verbindungsfehler beim Abgleich");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = alterText;
+  }
 }
 
 async function kandidatMailNachtragen(kandId){
