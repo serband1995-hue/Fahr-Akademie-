@@ -206,6 +206,32 @@
   .admin-name{font-weight:700;font-size:14.5px;}
   .admin-sub{color:var(--muted);font-size:12.5px;margin-top:3px;}
   .admin-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:14px;white-space:nowrap;}
+  /* ---- Bereich 7+8 (27.08.2026) ---- */
+  /* Kompakte Aktions-Buttons in Listen */
+  .btn-klein{background:var(--gruen);color:#fff;border:none;border-radius:8px;
+    padding:9px 15px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+  .btn-klein:disabled{opacity:.55;cursor:default;}
+  .btn-klein.btn-warn{background:var(--gold);}
+  /* 8.4: A–Z-Sprungleiste über der Kandidatenliste */
+  .az-leiste{display:flex;flex-wrap:wrap;gap:2px;justify-content:center;padding:8px 4px;
+    margin-bottom:10px;position:sticky;top:0;z-index:5;background:var(--bg);border-radius:10px;}
+  .az-buchstabe{font-size:12px;font-weight:700;padding:4px 6px;border-radius:5px;cursor:pointer;
+    color:var(--gruen);min-width:20px;text-align:center;}
+  .az-buchstabe:active{background:var(--gold);color:#fff;}
+  .az-buchstabe.az-leer{opacity:.22;cursor:default;}
+  .az-kopf{font-weight:700;font-size:13px;color:var(--gold);margin:14px 0 6px;letter-spacing:1px;}
+  /* 8.2: Mehrfachauswahl */
+  .bulk-pick{display:flex;align-items:center;gap:6px;font-size:12px;opacity:.7;margin-bottom:6px;}
+  .bulk-leiste{border:2px solid var(--gold) !important;position:sticky;top:0;z-index:6;}
+  /* 8.5: Ablauf-Vorwarnung */
+  .warn-ablauf{color:var(--gold);font-weight:600;}
+  /* 7.9: gesperrte Klassen-Inhalte */
+  .video-locked{opacity:.62;cursor:default;}
+  .lock-hint{color:var(--gold);font-size:12px;margin-top:2px;}
+  /* 7.1/7.2: Empfehlung aus dem Kompass */
+  .empf-card{border:2px solid var(--gold) !important;}
+  .empf-badge{display:inline-block;background:var(--gold);color:#fff;font-size:11px;
+    font-weight:700;letter-spacing:.5px;padding:3px 8px;border-radius:10px;margin-bottom:8px;}
   .badge-aktiv{background:rgba(75,122,86,.15);color:var(--gruen-hell);border:1px solid rgba(75,122,86,.3);}
   .badge-abgelaufen{background:rgba(217,149,76,.15);color:#b5732f;border:1px solid rgba(217,149,76,.35);}
   .badge-gesperrt{background:var(--surface-strong);color:var(--muted);border:1px solid var(--border);}
@@ -604,6 +630,17 @@ function parseDeepLinkTag(){
 
 // Baut den Lernpfad: pro Stufe alle Videos in Ausbildungsplan-Reihenfolge,
 // mit eindeutigem Code (z. B. "G-1", "A-3") — das ersetzt das Suchen durch Blättern.
+// Bereich 7.9 (27.08.2026): Ist dieses Thema für den eingeloggten Schüler frei?
+// Themen ohne nur_klasse sind immer frei. Themen MIT nur_klasse brauchen zusätzlich
+// eine aktive Freigabe (academy_klassen_freigabe) -- Standard ist gesperrt.
+// Gesperrte Themen werden NICHT versteckt, sondern sichtbar mit Hinweis gezeigt,
+// damit der Schüler weiß, dass es sie gibt und er sie freischalten lassen kann.
+function tagGesperrt(tag){
+  if(!tag || !tag.nur_klasse) return false;
+  const freigabe = (session && session.klassen_freigabe) ? session.klassen_freigabe : {};
+  return freigabe[tag.nur_klasse] !== true;
+}
+
 function buildLernpfad(){
   const tagsSorted = allTags.slice().sort(function(a,b){ return (a.reihenfolge||0) - (b.reihenfolge||0); });
   const result = [];
@@ -624,7 +661,7 @@ function buildLernpfad(){
         if(bereitsAufgenommen.has(v.id)) return;
         bereitsAufgenommen.add(v.id);
         counter++;
-        videos.push({ video:v, tag:tag, code: STUFE_PREFIX[stufe] + "-" + counter });
+        videos.push({ video:v, tag:tag, code: STUFE_PREFIX[stufe] + "-" + counter, gesperrt: tagGesperrt(tag) });
       });
     });
     if(videos.length > 0) result.push({ stufe:stufe, videos:videos });
@@ -719,6 +756,15 @@ let myRole = null;
 let mySchule = null;
 let allSchulen = [];
 let adminTab = "dashboard";
+// --- Bereich 8 (27.08.2026): Admin-Übersichtlichkeit ---
+let allKandidaten = [];            // 8.4 Kandidaten-Pool
+let kandidatenSuche = "";          // 8.4 Schnellsuche
+let kandidatenNurOffen = true;     // 8.4 Standard: nur die ohne Zugang
+let schuelerSuche = "";            // 8.4 Schnellsuche in der Schülerliste
+let bulkAuswahl = new Set();       // 8.2 Mehrfachauswahl für Sammelaktionen
+let protokollEintraege = [];       // 8.7 Änderungsprotokoll (nicht zu verwechseln
+                                   //     mit renderAdminHistorie = Video-Historie je Schüler)
+let videoFilterStufe = "";         // 8.3 Video-Liste nach Stufe filtern
 let adminFortschritt = [];      // alle Videoaufrufe, für Dashboard + Schülerhistorie
 let historieSchuelerId = null;  // welcher Schüler gerade in der Historie offen ist
 let allFahrlehrer = [];
@@ -1203,11 +1249,63 @@ function renderStartHtml(){
     "</button>";
   }).join("");
 
+  // --- Bereich 7.1/7.2 (27.08.2026): Empfehlung aus dem Fahrlehrer-Kompass ---
+  // Kommt beim Login mit (session.empfehlung). Zeigt das konkrete Video zum
+  // gemeldeten Ausbildungsstand -- oder, falls kein Video zum Thema existiert,
+  // wenigstens den Sprung in den passenden Bereich.
+  let empfKarte = "";
+  const empf = session && session.empfehlung;
+  if(empf && (empf.tag_id || empf.stufe)){
+    let treffer = null;
+    if(empf.tag_id){
+      for(const g of pfad){
+        const f = g.videos.find(function(x){ return x.tag.id === empf.tag_id && !x.gesperrt; });
+        if(f){ treffer = { gruppe:g.stufe, x:f }; break; }
+      }
+    }
+    if(treffer){
+      empfKarte =
+        '<div class="karte empf-card" data-vid="' + esc(treffer.x.video.id) + '" style="cursor:pointer;margin-bottom:var(--sp-l);">' +
+          '<div class="empf-badge">EMPFOHLEN FÜR DICH</div>' +
+          '<div style="font-size:var(--fs-karte);font-weight:var(--fw-karte);">' + esc(treffer.x.video.titel) + "</div>" +
+          '<div class="admin-sub">' + esc(empf.nachricht || treffer.gruppe) + "</div>" +
+        "</div>";
+    } else if(empf.stufe && pfad.some(function(g){ return g.stufe === empf.stufe; })){
+      // Kein passendes Video: nur anzeigen, wenn der Bereich wirklich existiert,
+      // sonst bliebe ein toter Hinweis stehen.
+      empfKarte =
+        '<div class="karte empf-card" data-gotostufe="' + esc(empf.stufe) + '" style="cursor:pointer;margin-bottom:var(--sp-l);">' +
+          '<div class="empf-badge">EMPFOHLEN FÜR DICH</div>' +
+          '<div style="font-size:var(--fs-karte);font-weight:var(--fw-karte);">' + esc(empf.stufe) + "</div>" +
+          '<div class="admin-sub">' + esc(empf.nachricht || "Dein nächstes Thema — tippen zum Öffnen") + "</div>" +
+        "</div>";
+    }
+  }
+
+  // --- Bereich 7.6: Prüfungstermin-Countdown, sobald Kompass einen Termin gemeldet hat ---
+  let terminKarte = "";
+  if(session && session.pruefungstermin){
+    const termin = new Date(session.pruefungstermin + "T00:00:00");
+    const heute = new Date(); heute.setHours(0,0,0,0);
+    const tage = Math.round((termin - heute) / 86400000);
+    if(!isNaN(tage) && tage >= 0 && tage <= 60){
+      const wann = tage === 0 ? "heute" : (tage === 1 ? "morgen" : "in " + tage + " Tagen");
+      terminKarte =
+        '<div class="karte" style="margin-top:var(--sp-l);">' +
+          '<div class="section-label" style="margin:0 0 6px;">Deine Prüfung</div>' +
+          '<div style="font-size:var(--fs-karte);font-weight:var(--fw-karte);">' + esc(wann) + "</div>" +
+          '<div class="admin-sub">' + esc(termin.toLocaleDateString("de-DE")) + "</div>" +
+        "</div>";
+    }
+  }
+
   return (
     '<div class="tagline" style="font-size:22px;margin-bottom:var(--sp-m);">Willkommen zurück' + (name ? ", " + esc(name) : "") + "</div>" +
+    empfKarte +
     weiterKarte +
     '<div class="section-label" style="margin-top:0;">Deine Bereiche</div>' +
-    '<div class="bereich-stack">' + kacheln + "</div>"
+    '<div class="bereich-stack">' + kacheln + "</div>" +
+    terminKarte
   );
 }
 
@@ -1244,6 +1342,18 @@ function renderBereichDetailHtml(){
     const check = seenVideoIds.has(x.video.id) ? '<span class="vg-check">' + icon("check","ic-s") + "</span>" : "";
     const isHighlighted = deepLinkTagId && x.tag.id === deepLinkTagId;
     const targetId = isHighlighted ? ' id="dl-target"' : "";
+    // Bereich 7.9: gesperrte Themen bleiben sichtbar, aber nicht abspielbar.
+    // data-vid weglassen, sonst würde der allgemeine Klick-Handler das Video öffnen.
+    if(x.gesperrt){
+      return '<div class="vg-card video-locked">' +
+        '<div class="vg-bg" style="background:' + vgGradientFuer(x.video.id) + ';"></div>' +
+        '<div class="vg-play">' + icon("schloss") + "</div>" +
+        '<div class="vg-info"><div class="vg-code">' + esc(x.code) + '</div>' +
+          '<div class="vg-titel">' + esc(x.video.titel) + "</div>" +
+          '<div class="lock-hint">Nur Klasse ' + esc(x.tag.nur_klasse) + ' — bei der Fahrschule freischalten lassen</div>' +
+        "</div>" +
+      "</div>";
+    }
     return '<div class="vg-card' + (isHighlighted ? " highlight-target" : "") + '"' + targetId + ' data-vid="' + esc(x.video.id) + '">' +
       '<div class="vg-bg" style="background:' + vgGradientFuer(x.video.id) + ';"></div>' + vgBildLayer(x.video) +
       '<div class="vg-play">' + icon("play") + "</div>" +
@@ -1891,6 +2001,7 @@ async function loadAdminData(){
   // Fortschritt für Dashboard/Historie: jede Zeile ist EIN Videoaufruf, Wiederholungen
   // sind also mit drin -- genau das macht die Historie aussagekräftig.
   const fsRes = await supa.from("academy_fortschritt").select("*").order("gesehen_am", {ascending:false});
+  const kdRes = await supa.from("academy_kandidaten").select("*"); // Bereich 8.4
   allFahrlehrer = flRes.data || [];
   allPruefer = prRes.data || [];
   allSchueler = scRes.data || [];
@@ -1899,6 +2010,7 @@ async function loadAdminData(){
   videoTags = vtRes.data || [];
   videoPruefer = vprRes.data || [];
   adminFortschritt = fsRes.data || [];
+  allKandidaten = kdRes.data || [];
   if(myRole === "super_admin"){
     const schRes = await supa.from("academy_schulen").select("*").order("name");
     allSchulen = schRes.data || [];
@@ -1908,8 +2020,8 @@ async function loadAdminData(){
 function renderAdmin(){
   const isSuperAdmin = myRole === "super_admin";
   const tabs = isSuperAdmin
-    ? [["dashboard","Übersicht"],["schueler","Schüler"],["fahrlehrer","Fahrlehrer"],["videos","Videos"],["pruefer","Prüfer"],["schulen","Schulen"]]
-    : [["dashboard","Übersicht"],["schueler","Schüler"],["fahrlehrer","Fahrlehrer"]];
+    ? [["dashboard","Übersicht"],["schueler","Schüler"],["kandidaten","Kandidaten"],["fahrlehrer","Fahrlehrer"],["videos","Videos"],["pruefer","Prüfer"],["schulen","Schulen"],["protokoll","Protokoll"]]
+    : [["dashboard","Übersicht"],["schueler","Schüler"],["kandidaten","Kandidaten"],["fahrlehrer","Fahrlehrer"]];
 
   const tabsHtml = '<div class="admin-tabs">' +
     tabs.map(function(t){
@@ -1944,11 +2056,13 @@ function renderAdmin(){
 
   if(adminTab === "dashboard") renderAdminDashboard();
   if(adminTab === "schueler") renderAdminSchueler();
+  if(adminTab === "kandidaten") renderAdminKandidaten();
   if(adminTab === "historie") renderAdminHistorie();
   if(adminTab === "fahrlehrer") renderAdminFahrlehrer();
   if(adminTab === "videos") renderAdminVideos();
   if(adminTab === "pruefer") renderAdminPruefer();
   if(adminTab === "schulen") renderAdminSchulen();
+  if(adminTab === "protokoll") renderAdminProtokoll();
 }
 
 /* ---------- SCHÜLER-TAB ---------- */
@@ -2108,11 +2222,28 @@ function renderAdminHistorie(){
 }
 
 function renderAdminSchueler(){
-  const rows = allSchueler.map(function(s){
+  // --- Bereich 8.4 (27.08.2026): Schnellsuche über Name, Telefon, E-Mail ---
+  const suche = schuelerSuche.trim().toLowerCase();
+  const sucheNorm = suche.replace(/[\s\-\/]/g, "");
+  const gefiltert = allSchueler.filter(function(s){
+    if(!suche) return true;
+    const telNorm = (s.telefon || "").replace(/[\s\-\/]/g, "");
+    return (s.name || "").toLowerCase().includes(suche)
+      || (s.email || "").toLowerCase().includes(suche)
+      || (sucheNorm.length > 0 && telNorm.includes(sucheNorm));
+  });
+
+  const rows = gefiltert.map(function(s){
     const status = schuelerStatus(s);
     const badgeClass = status === "aktiv" ? "badge-aktiv" : status === "abgelaufen" ? "badge-abgelaufen" : "badge-gesperrt";
     const badgeText = status === "aktiv" ? "Aktiv" : status === "abgelaufen" ? "Abgelaufen" : "Gesperrt";
     const fl = allFahrlehrer.find(function(f){ return f.id === s.fahrlehrer_id; });
+    // Bereich 8.5: Vorwarnung, bevor ein Zugang unbemerkt ausläuft
+    const tageBisAblauf = Math.ceil((new Date(s.ablauf_am) - new Date()) / 86400000);
+    const ablaufWarnung = (status === "aktiv" && tageBisAblauf <= 14)
+      ? '<div class="admin-sub warn-ablauf">Läuft in ' + tageBisAblauf + " Tag" + (tageBisAblauf === 1 ? "" : "en") + " ab</div>" : "";
+    const terminZeile = s.pruefungstermin
+      ? '<div class="admin-sub">Prüfung: ' + fmtDate(s.pruefungstermin) + "</div>" : "";
     const sperrgrundZeile = (!s.aktiv && s.sperrgrund)
       ? '<div class="admin-sub" style="color:#B5573F;">🔒 Grund: ' + esc(s.sperrgrund) + "</div>" : "";
     const agbZeile = s.agb_akzeptiert_am
@@ -2121,10 +2252,12 @@ function renderAdminSchueler(){
     return '<div class="admin-card glass">' +
       '<div class="admin-row">' +
         '<div>' +
+          '<label class="bulk-pick"><input type="checkbox" class="bulk-cb" value="' + esc(s.id) + '"' +
+            (bulkAuswahl.has(s.id) ? " checked" : "") + "> auswählen</label>" +
           '<div class="admin-name">' + esc(s.name) + "</div>" +
           '<div class="admin-sub">' + esc(s.telefon) + " · Klasse " + esc(s.klasse) + " · " + esc(fl ? fl.name : "—") + "</div>" +
           '<div class="admin-sub">PIN: <span class="pin-display">' + esc(s.pin) + '</span> · gültig bis ' + fmtDate(s.ablauf_am) + "</div>" +
-          agbZeile + sperrgrundZeile +
+          ablaufWarnung + terminZeile + agbZeile + sperrgrundZeile +
         "</div>" +
         '<div style="text-align:right;">' +
           '<div class="admin-badge ' + badgeClass + '">' + badgeText + "</div>" +
@@ -2155,8 +2288,47 @@ function renderAdminSchueler(){
       '<label>Zugang vergeben über</label><select id="ns-fl">' + flOptions + "</select>" +
       '<button class="btn-primary" id="ns-btn" style="margin-top:6px;">Zugang anlegen &amp; PIN senden</button>' +
     "</div>" +
-    '<div class="section-label">Alle Schüler (' + allSchueler.length + ")</div>" +
+    '<div class="admin-card glass" style="margin-bottom:10px;">' +
+      '<input id="sch-suche" type="text" placeholder="Name, Telefon oder E-Mail suchen …" value="' + esc(schuelerSuche) + '">' +
+    "</div>" +
+    // Bereich 8.2: Sammelaktionen, nur sichtbar wenn wirklich etwas ausgewählt ist
+    (bulkAuswahl.size > 0
+      ? '<div class="admin-card glass bulk-leiste">' +
+          '<div class="admin-name">' + bulkAuswahl.size + " ausgewählt</div>" +
+          '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">' +
+            '<button class="btn-klein" id="bulk-verl">6 Monate verlängern</button>' +
+            '<button class="btn-klein btn-warn" id="bulk-sperr">Sperren</button>' +
+            '<button class="btn-klein" id="bulk-entsperr">Entsperren</button>' +
+            '<button class="btn-klein" id="bulk-leer">Auswahl aufheben</button>' +
+          "</div>" +
+        "</div>"
+      : "") +
+    '<div class="section-label">Alle Schüler (' + gefiltert.length +
+      (gefiltert.length !== allSchueler.length ? " von " + allSchueler.length : "") + ")</div>" +
     rows;
+
+  const suchEl = document.getElementById("sch-suche");
+  suchEl.addEventListener("input", function(){
+    schuelerSuche = suchEl.value;
+    const pos = suchEl.selectionStart;
+    renderAdminSchueler();
+    const n = document.getElementById("sch-suche");
+    n.focus(); n.setSelectionRange(pos, pos); // sonst springt die Tastatur bei jedem Zeichen zu
+  });
+  document.querySelectorAll(".bulk-cb").forEach(function(cb){
+    cb.addEventListener("change", function(){
+      if(cb.checked) bulkAuswahl.add(cb.value); else bulkAuswahl.delete(cb.value);
+      renderAdminSchueler();
+    });
+  });
+  const bLeer = document.getElementById("bulk-leer");
+  if(bLeer) bLeer.addEventListener("click", function(){ bulkAuswahl.clear(); renderAdminSchueler(); });
+  const bVerl = document.getElementById("bulk-verl");
+  if(bVerl) bVerl.addEventListener("click", bulkVerlaengern);
+  const bSperr = document.getElementById("bulk-sperr");
+  if(bSperr) bSperr.addEventListener("click", function(){ bulkSperrenSetzen(false); });
+  const bEnt = document.getElementById("bulk-entsperr");
+  if(bEnt) bEnt.addEventListener("click", function(){ bulkSperrenSetzen(true); });
 
   document.getElementById("ns-btn").addEventListener("click", createSchueler);
   document.querySelectorAll("[data-mail]").forEach(function(b){
@@ -2268,11 +2440,15 @@ async function toggleSchueler(id){
   }
   const { error } = await supa.from("academy_schueler").update({ aktiv: s.aktiv, sperrgrund: s.sperrgrund }).eq("id", id);
   if(error){ showToast("Fehler: " + error.message); return; }
+  protokolliere(s.aktiv ? "schueler_entsperrt" : "schueler_gesperrt", "schueler", id, s.name, s.aktiv ? null : s.sperrgrund);
   renderAdminSchueler();
 }
 
 async function deleteSchueler(id){
   if(!confirm("Diesen Schüler wirklich löschen?")) return;
+  // Namen VOR dem Löschen sichern -- danach ist er nicht mehr abrufbar
+  const weg = allSchueler.find(function(x){ return x.id === id; });
+  const wegName = weg ? weg.name : "(unbekannt)";
 
   if(DEMO_MODE){
     DEMO_SCHUELER = DEMO_SCHUELER.filter(function(x){ return x.id !== id; });
@@ -2282,13 +2458,29 @@ async function deleteSchueler(id){
   }
   const { error } = await supa.from("academy_schueler").delete().eq("id", id);
   if(error){ showToast("Fehler: " + error.message); return; }
+  await protokolliere("schueler_geloescht", "schueler", id, wegName, "Zugang vollständig entfernt (DSGVO Art. 17)");
   await loadAdminData();
   renderAdminSchueler();
 }
 
 /* ---------- VIDEOS-TAB ---------- */
 function renderAdminVideos(){
-  const rows = allVideos.map(function(v){
+  // --- Bereich 8.3 (27.08.2026): nach Stufe filtern statt durch alles zu scrollen ---
+  // Ein Video kann über mehrere Tags zu mehreren Stufen gehören, daher "irgendein
+  // Tag passt" statt einer festen Zuordnung.
+  const stufenVonVideo = function(v){
+    return videoTags.filter(function(vt){ return vt.video_id === v.id; })
+      .map(function(vt){ const t = allTags.find(function(x){ return x.id === vt.tag_id; }); return t ? t.stufe : null; })
+      .filter(Boolean);
+  };
+  const gefilterteVideos = videoFilterStufe
+    ? allVideos.filter(function(v){
+        if(videoFilterStufe === "__ohne_bunny__") return !v.bunny_video_id;
+        return stufenVonVideo(v).indexOf(videoFilterStufe) !== -1;
+      })
+    : allVideos;
+
+  const rows = gefilterteVideos.map(function(v){
     const tagsForVideo = videoTags.filter(function(vt){ return vt.video_id === v.id; })
       .map(function(vt){ const t = allTags.find(function(x){ return x.id === vt.tag_id; }); return t ? t.label : null; })
       .filter(Boolean).join(", ");
@@ -2402,7 +2594,22 @@ function renderAdminVideos(){
       '<button class="btn-primary" id="nv-btn" style="margin-top:6px;">Video anlegen &amp; Schüler benachrichtigen</button>' +
       '<div class="admin-sub" style="margin-top:6px;">Nach dem Anlegen erscheint das Video sofort bei allen Schülern — und alle mit aktivierten Benachrichtigungen bekommen automatisch eine Push-Nachricht.</div>' +
     "</div>" +
-    '<div class="section-label">Alle Videos (' + allVideos.length + ")</div>" +
+    '<div class="admin-card glass" style="margin-bottom:10px;">' +
+      '<label>Filtern</label>' +
+      '<select id="vid-filter">' +
+        '<option value="">Alle Stufen (' + allVideos.length + ")</option>" +
+        '<option value="__ohne_bunny__"' + (videoFilterStufe === "__ohne_bunny__" ? " selected" : "") + ">Nur ohne Bunny-ID (" +
+          allVideos.filter(function(v){ return !v.bunny_video_id; }).length + ")</option>" +
+        STUFEN_ORDER.map(function(st){
+          const n = allVideos.filter(function(v){ return stufenVonVideo(v).indexOf(st) !== -1; }).length;
+          if(n === 0) return "";
+          return '<option value="' + esc(st) + '"' + (videoFilterStufe === st ? " selected" : "") + ">" + esc(st) + " (" + n + ")</option>";
+        }).join("") +
+      "</select>" +
+    "</div>" +
+    '<div class="section-label">' +
+      (videoFilterStufe ? "Gefiltert: " + gefilterteVideos.length + " von " + allVideos.length : "Alle Videos (" + allVideos.length + ")") +
+    "</div>" +
     rows;
 
   // Themen-Suche: filtert die Liste live, damit man bei 60+ Themen nicht scrollen muss
@@ -2432,6 +2639,10 @@ function renderAdminVideos(){
     cb.addEventListener("change", aktualisiereChips);
   });
 
+  document.getElementById("vid-filter").addEventListener("change", function(e){
+    videoFilterStufe = e.target.value;
+    renderAdminVideos();
+  });
   document.getElementById("nv-btn").addEventListener("click", createVideo);
   document.querySelectorAll("[data-delv]").forEach(function(b){
     b.addEventListener("click", function(){ deleteVideo(b.dataset.delv); });
@@ -2510,6 +2721,22 @@ async function createVideo(){
   const gewaehltePruefer = Array.from(document.querySelectorAll(".nv-pruefer-cb:checked")).map(function(cb){ return cb.value; });
   if(!titel){ showToast("Titel ist Pflicht"); return; }
   if(gewaehlteTags.length === 0){ showToast("Bitte mindestens ein Thema auswählen"); return; }
+
+  // --- Bereich 8.10 (27.08.2026): Duplikate abfangen, BEVOR gespeichert wird ---
+  // Die Datenbank hat zusätzlich einen Unique-Index auf bunny_video_id; diese
+  // Prüfung existiert, damit du eine verständliche Rückfrage bekommst statt
+  // einer rohen Datenbank-Fehlermeldung.
+  if(bunnyId){
+    const bunnyDoppelt = allVideos.find(function(v){ return v.bunny_video_id === bunnyId; });
+    if(bunnyDoppelt){
+      showToast("Diese Bunny-ID ist schon bei „" + bunnyDoppelt.titel + "“ hinterlegt");
+      return;
+    }
+  }
+  const titelDoppelt = allVideos.find(function(v){
+    return (v.titel || "").trim().toLowerCase() === titel.toLowerCase();
+  });
+  if(titelDoppelt && !confirm("Es gibt bereits ein Video mit dem Titel „" + titelDoppelt.titel + "“.\n\nTrotzdem anlegen?")) return;
 
   const neu = { id:"v" + Date.now(), titel:titel, beschreibung: desc || null, bunny_video_id: bunnyId || null, pruefung_ergebnis: pruefungsergebnis };
   const neuVts = gewaehlteTags.map(function(tagId){ return { video_id: neu.id, tag_id: tagId }; });
@@ -2698,6 +2925,304 @@ async function deleteFahrlehrer(id){
 }
 
 /* ---------- SCHULEN-TAB (nur Super-Admin) ---------- */
+/* =========================================================
+   Bereich 8.7 (27.08.2026) — Änderungsprotokoll.
+   Nicht zu verwechseln mit renderAdminHistorie: das ist die
+   Video-Historie je Schüler. Hier geht es um Admin-Handlungen
+   (gesperrt, gelöscht, verlängert, freigeschaltet).
+   Bewusst "leise": ein fehlgeschlagener Protokolleintrag darf
+   die eigentliche Aktion nie blockieren.
+   ========================================================= */
+async function protokolliere(aktion, objektTyp, objektId, objektName, details){
+  if(DEMO_MODE) return;
+  try{
+    await supa.from("academy_aenderungen").insert({
+      akteur: (adminSession && adminSession.email) ? adminSession.email : "Admin",
+      aktion: aktion,
+      objekt_typ: objektTyp,
+      objekt_id: objektId || null,
+      objekt_name: objektName || null,
+      details: details || null
+    });
+  } catch(e){ /* Protokoll ist Beiwerk, kein Blocker */ }
+}
+
+async function renderAdminProtokoll(){
+  const el = document.getElementById("admin-content");
+  el.innerHTML = '<div class="loading">Protokoll wird geladen …</div>';
+  if(DEMO_MODE){ el.innerHTML = '<div class="empty">Im Demo-Modus nicht verfügbar.</div>'; return; }
+
+  const res = await supa.from("academy_aenderungen")
+    .select("*").order("zeitpunkt", { ascending:false }).limit(200);
+  if(res.error){ el.innerHTML = '<div class="empty">Protokoll konnte nicht geladen werden.</div>'; return; }
+  protokollEintraege = res.data || [];
+
+  if(protokollEintraege.length === 0){
+    el.innerHTML = '<div class="empty">Noch keine Änderungen protokolliert.</div>';
+    return;
+  }
+
+  el.innerHTML =
+    '<div class="admin-card glass" style="margin-bottom:12px;">' +
+      '<div class="admin-form-title" style="margin-bottom:4px;">Änderungsprotokoll</div>' +
+      '<div class="admin-sub">Die letzten ' + protokollEintraege.length + " Einträge</div>" +
+    "</div>" +
+    protokollEintraege.map(function(e){
+      return '<div class="admin-card glass">' +
+        '<div class="admin-name">' + esc(e.aktion.replace(/_/g, " ")) +
+          (e.objekt_name ? " · " + esc(e.objekt_name) : "") + "</div>" +
+        '<div class="admin-sub">' + fmtDateTime(e.zeitpunkt) + " · " + esc(e.akteur) + "</div>" +
+        (e.details ? '<div class="admin-sub" style="opacity:.75;">' + esc(e.details) + "</div>" : "") +
+      "</div>";
+    }).join("");
+}
+
+/* =========================================================
+   Bereich 8.4 — Kandidaten: alle bekannten Schüler an einem Ort,
+   mit Suche, A–Z-Sprungleiste und Ein-Klick-Freischaltung.
+   ========================================================= */
+async function ladeKandidaten(){
+  if(DEMO_MODE){ allKandidaten = []; return; }
+  const res = await supa.from("academy_kandidaten").select("*");
+  allKandidaten = res.data || [];
+}
+
+function kandidatenGefiltert(){
+  const suche = kandidatenSuche.trim().toLowerCase();
+  const sucheNorm = suche.replace(/[\s\-\/]/g, "");
+  return allKandidaten
+    .filter(function(k){
+      if(kandidatenNurOffen && k.konvertiert_am) return false;
+      if(!suche) return true;
+      const telNorm = (k.telefon || "").replace(/[\s\-\/]/g, "");
+      return (k.name || "").toLowerCase().includes(suche)
+        || (k.email || "").toLowerCase().includes(suche)
+        || (sucheNorm.length > 0 && telNorm.includes(sucheNorm));
+    })
+    .sort(function(a,b){ return (a.name||"").localeCompare(b.name||"", "de"); });
+}
+
+function renderAdminKandidaten(){
+  const liste = kandidatenGefiltert();
+  const offenGesamt = allKandidaten.filter(function(k){ return !k.konvertiert_am; }).length;
+
+  // A–Z-Leiste: nur Buchstaben anbieten, zu denen es wirklich jemanden gibt
+  const vorhanden = new Set(liste.map(function(k){ return (k.name || "?").trim().charAt(0).toUpperCase(); }));
+  const azLeiste = '<div class="az-leiste">' +
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map(function(b){
+      const aktiv = vorhanden.has(b);
+      return '<span class="az-buchstabe' + (aktiv ? "" : " az-leer") + '"' +
+        (aktiv ? ' data-az="' + b + '"' : "") + ">" + b + "</span>";
+    }).join("") +
+  "</div>";
+
+  let letzter = "";
+  const zeilen = liste.map(function(k){
+    const b = (k.name || "?").trim().charAt(0).toUpperCase();
+    let kopf = "";
+    if(b !== letzter){ letzter = b; kopf = '<div class="az-kopf" id="az-' + esc(b) + '">' + esc(b) + "</div>"; }
+    const hatZugang = !!k.konvertiert_am;
+    const badge = hatZugang
+      ? '<span class="admin-badge badge-aktiv">Zugang aktiv</span>'
+      : '<span class="admin-badge badge-gesperrt">offen</span>';
+    const aktion = hatZugang ? ""
+      : (!k.email
+          ? '<button class="btn-klein btn-warn" data-kmail="' + esc(k.id) + '">E-Mail nachtragen</button>'
+          : '<button class="btn-klein" data-kfrei="' + esc(k.id) + '">Zugang freischalten</button>');
+    return kopf +
+      '<div class="admin-card glass">' +
+        '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
+          '<div class="admin-name" style="flex:1;min-width:120px;">' + esc(k.name) + "</div>" + badge +
+        "</div>" +
+        '<div class="admin-sub">' + esc(k.telefon) +
+          (k.email ? " · " + esc(k.email) : ' · <span style="color:var(--gold);">keine E-Mail hinterlegt</span>') +
+          (k.klasse ? " · Klasse " + esc(k.klasse) : "") + "</div>" +
+        (k.quelle ? '<div class="admin-sub" style="opacity:.6;">Quelle: ' + esc(k.quelle) + "</div>" : "") +
+        (aktion ? '<div style="margin-top:8px;">' + aktion + "</div>" : "") +
+      "</div>";
+  }).join("") || '<div class="empty">Keine Treffer.</div>';
+
+  document.getElementById("admin-content").innerHTML =
+    '<div class="admin-card glass" style="margin-bottom:12px;">' +
+      '<div class="admin-form-title" style="margin-bottom:4px;">Kandidaten</div>' +
+      '<div class="admin-sub" style="margin-bottom:10px;">' + offenGesamt + " ohne Zugang · " + allKandidaten.length + " insgesamt</div>" +
+      '<input id="kand-suche" type="text" placeholder="Name, Telefon oder E-Mail suchen …" value="' + esc(kandidatenSuche) + '">' +
+      '<label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:14px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text);">' +
+        '<input type="checkbox" id="kand-offen"' + (kandidatenNurOffen ? " checked" : "") + "> Nur ohne Zugang zeigen</label>" +
+    "</div>" + azLeiste + zeilen;
+
+  const s = document.getElementById("kand-suche");
+  s.addEventListener("input", function(){
+    kandidatenSuche = s.value;
+    const pos = s.selectionStart;
+    renderAdminKandidaten();
+    const n = document.getElementById("kand-suche");
+    n.focus(); n.setSelectionRange(pos, pos); // sonst springt die Tastatur bei jedem Zeichen zu
+  });
+  document.getElementById("kand-offen").addEventListener("change", function(e){
+    kandidatenNurOffen = e.target.checked; renderAdminKandidaten();
+  });
+  document.querySelectorAll("[data-az]").forEach(function(b){
+    b.addEventListener("click", function(){
+      const z = document.getElementById("az-" + b.dataset.az);
+      if(z) z.scrollIntoView({ behavior:"smooth", block:"start" });
+    });
+  });
+  document.querySelectorAll("[data-kfrei]").forEach(function(b){
+    b.addEventListener("click", function(){ kandidatFreischalten(b.dataset.kfrei, b); });
+  });
+  document.querySelectorAll("[data-kmail]").forEach(function(b){
+    b.addEventListener("click", function(){ kandidatMailNachtragen(b.dataset.kmail); });
+  });
+}
+
+async function kandidatMailNachtragen(kandId){
+  const k = allKandidaten.find(function(x){ return x.id === kandId; });
+  if(!k) return;
+  const mail = prompt("E-Mail-Adresse für " + k.name + ":", k.email || "");
+  if(mail === null) return;
+  const sauber = mail.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(sauber)){ showToast("Keine gültige E-Mail-Adresse"); return; }
+  const res = await supa.from("academy_kandidaten").update({ email: sauber }).eq("id", kandId);
+  if(res.error){ showToast("Fehler: " + res.error.message); return; }
+  await protokolliere("kandidat_email_ergaenzt", "kandidat", kandId, k.name, sauber);
+  await ladeKandidaten();
+  renderAdminKandidaten();
+  showToast("E-Mail gespeichert");
+}
+
+async function kandidatFreischalten(kandId, btn){
+  const k = allKandidaten.find(function(x){ return x.id === kandId; });
+  if(!k) return;
+  if(!confirm("Zugang für " + k.name + " freischalten?\n\nEs wird eine PIN erzeugt und an " + k.email + " geschickt.")) return;
+
+  btn.disabled = true;
+  const alterText = btn.textContent;
+  btn.textContent = "Wird freigeschaltet …";
+  try{
+    const { data: sess } = await supa.auth.getSession();
+    const token = sess && sess.session ? sess.session.access_token : null;
+    if(!token){ showToast("Sitzung abgelaufen — bitte neu einloggen"); return; }
+
+    const res = await fetch(SUPABASE_URL + "/functions/v1/academy-zugang-aktivieren", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+      body: JSON.stringify({ kandidat_id: kandId })
+    });
+    const data = await res.json();
+    if(!res.ok){ alert("Fehler: " + (data.error || "unbekannt")); return; }
+
+    let txt = "Zugang für " + data.name + " ist aktiv.\n\nPIN: " + data.pin;
+    if(data.mail === "gesendet") txt += "\n\nPIN-Mail wurde verschickt.";
+    else if(data.mail === "keine_email_hinterlegt") txt += "\n\nKeine E-Mail hinterlegt — PIN bitte selbst weitergeben.";
+    else txt += "\n\nMail konnte NICHT verschickt werden (" + data.mail + ") — PIN bitte selbst weitergeben.";
+    if(data.empfehlung === "eingeloest") txt += "\nEine wartende Kompass-Empfehlung wurde übernommen.";
+    alert(txt);
+
+    await ladeKandidaten();
+    await loadAdminData();
+    renderAdminKandidaten();
+  } catch(e){
+    showToast("Verbindungsfehler");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = alterText;
+  }
+}
+
+/* =========================================================
+   Bereich 7.9 — Klassen-Freischaltung.
+   Themen mit nur_klasse bleiben für Schüler gesperrt (sichtbar,
+   mit Hinweis), bis hier freigegeben wird. Standard: alles zu.
+   ========================================================= */
+async function renderKlassenFreigabe(zielId){
+  const el = document.getElementById(zielId);
+  if(!el || DEMO_MODE) return;
+  const res = await supa.from("academy_klassen_freigabe").select("*").order("klasse");
+  const klassen = res.data || [];
+  if(klassen.length === 0) return;
+
+  el.innerHTML =
+    '<div class="admin-form glass" style="margin-top:12px;">' +
+      '<div class="admin-form-title">Klassen-Inhalte freischalten</div>' +
+      '<div class="admin-sub" style="margin-bottom:10px;">Themen, die einer Klasse zugeordnet sind, bleiben für Schüler gesperrt, bis du sie hier freigibst. Sie sind trotzdem sichtbar — mit dem Hinweis, dass sie bei der Fahrschule freigeschaltet werden können.</div>' +
+      klassen.map(function(k){
+        return '<label style="display:flex;align-items:center;gap:10px;padding:8px 0;font-weight:400;text-transform:none;letter-spacing:0;font-size:15px;color:var(--text);">' +
+          '<input type="checkbox" class="klasse-cb" value="' + esc(k.klasse) + '"' + (k.freigegeben ? " checked" : "") + "> Klasse " + esc(k.klasse) +
+          (k.freigegeben ? ' <span class="admin-badge badge-aktiv">frei</span>' : ' <span class="admin-badge badge-gesperrt">gesperrt</span>') +
+        "</label>";
+      }).join("") +
+    "</div>";
+
+  el.querySelectorAll(".klasse-cb").forEach(function(cb){
+    cb.addEventListener("change", async function(){
+      const { error } = await supa.from("academy_klassen_freigabe")
+        .update({ freigegeben: cb.checked, geaendert_am: new Date().toISOString() })
+        .eq("klasse", cb.value);
+      if(error){
+        showToast("Fehler: " + error.message);
+        cb.checked = !cb.checked; // Anzeige zurücksetzen, damit sie zum echten Stand passt
+        return;
+      }
+      await protokolliere(cb.checked ? "klasse_freigeschaltet" : "klasse_gesperrt", "klasse", cb.value, "Klasse " + cb.value, null);
+      showToast("Klasse " + cb.value + (cb.checked ? " freigeschaltet" : " gesperrt"));
+      renderKlassenFreigabe(zielId);
+    });
+  });
+}
+
+/* =========================================================
+   Bereich 8.2 — Sammelaktionen für mehrere Schüler.
+   Einzelne Updates statt Sammel-Update: so scheitert bei einem
+   Problem nur ein Schüler, und jede Änderung landet einzeln
+   nachvollziehbar im Protokoll.
+   ========================================================= */
+async function bulkVerlaengern(){
+  const ids = Array.from(bulkAuswahl);
+  if(ids.length === 0) return;
+  if(!confirm(ids.length + " Zugang/Zugänge um 6 Monate verlängern?")) return;
+
+  let ok = 0, fehler = 0;
+  for(const id of ids){
+    const s = allSchueler.find(function(x){ return x.id === id; });
+    if(!s){ fehler++; continue; }
+    // Ab heute rechnen, wenn schon abgelaufen — sonst ab bisherigem Ablaufdatum.
+    // Verhindert, dass eine Verlängerung in der Vergangenheit landet.
+    const basis = new Date(s.ablauf_am) > new Date() ? new Date(s.ablauf_am) : new Date();
+    basis.setMonth(basis.getMonth() + 6);
+    if(DEMO_MODE){ s.ablauf_am = basis.toISOString(); ok++; continue; }
+    const { error } = await supa.from("academy_schueler").update({ ablauf_am: basis.toISOString() }).eq("id", id);
+    if(error){ fehler++; continue; }
+    await protokolliere("zugang_verlaengert", "schueler", id, s.name, "neu gültig bis " + basis.toISOString().slice(0,10));
+    ok++;
+  }
+  bulkAuswahl.clear();
+  if(!DEMO_MODE) await loadAdminData();
+  renderAdminSchueler();
+  showToast(ok + " verlängert" + (fehler ? ", " + fehler + " fehlgeschlagen" : ""));
+}
+
+async function bulkSperrenSetzen(aktiv){
+  const ids = Array.from(bulkAuswahl);
+  if(ids.length === 0) return;
+  if(!confirm(ids.length + " Zugang/Zugänge " + (aktiv ? "entsperren" : "sperren") + "?")) return;
+
+  let ok = 0, fehler = 0;
+  for(const id of ids){
+    const s = allSchueler.find(function(x){ return x.id === id; });
+    if(!s){ fehler++; continue; }
+    if(DEMO_MODE){ s.aktiv = aktiv; ok++; continue; }
+    const { error } = await supa.from("academy_schueler").update({ aktiv: aktiv }).eq("id", id);
+    if(error){ fehler++; continue; }
+    await protokolliere(aktiv ? "schueler_entsperrt" : "schueler_gesperrt", "schueler", id, s.name, "Sammelaktion");
+    ok++;
+  }
+  bulkAuswahl.clear();
+  if(!DEMO_MODE) await loadAdminData();
+  renderAdminSchueler();
+  showToast(ok + " " + (aktiv ? "entsperrt" : "gesperrt") + (fehler ? ", " + fehler + " fehlgeschlagen" : ""));
+}
+
 function renderAdminSchulen(){
   const rows = allSchulen.map(function(s){
     const badgeClass = s.aktiv ? "badge-aktiv" : "badge-gesperrt";
@@ -2724,12 +3249,14 @@ function renderAdminSchulen(){
       '<div class="admin-sub" style="margin-top:4px;">Die Schule kann sich danach selbst über den Admin-Bereich einloggen und NUR ihre eigenen Schüler und Fahrlehrer verwalten. Du als Super-Admin siehst und kontrollierst weiterhin alles, inkl. sofortigem Sperren (Kill-Switch).</div>' +
     "</div>" +
     '<div class="section-label">Alle Schulen (' + allSchulen.length + ")</div>" +
-    rows;
+    rows +
+    '<div id="klassen-freigabe-bereich"></div>';
 
   document.getElementById("nsch-btn").addEventListener("click", createSchule);
   document.querySelectorAll("[data-toggleschule]").forEach(function(b){
     b.addEventListener("click", function(){ toggleSchule(b.dataset.toggleschule); });
   });
+  renderKlassenFreigabe("klassen-freigabe-bereich"); // Bereich 7.9
 }
 
 async function createSchule(){
