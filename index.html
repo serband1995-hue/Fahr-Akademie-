@@ -282,8 +282,11 @@
   .demo-player .big-ic{font-size:38px;}
 
   /* ---------- ADMIN ---------- */
-  .admin-tabs{display:flex;gap:8px;margin-bottom:18px;}
-  .admin-tab{flex:1;text-align:center;padding:11px 0;border-radius:12px;background:var(--surface);
+  .admin-tabs{display:flex;gap:8px;margin-bottom:18px;overflow-x:auto;scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;padding-bottom:2px;}
+  .admin-tabs::-webkit-scrollbar{display:none;}
+  .admin-tab{flex:1 0 auto;white-space:nowrap;padding-left:14px;padding-right:14px;
+    text-align:center;padding-top:11px;padding-bottom:11px;border-radius:12px;background:var(--surface);
     border:1px solid var(--border);color:var(--muted);font-size:13.5px;font-weight:700;cursor:pointer;
     font-family:'Barlow',sans-serif;}
   .admin-tab.active{background:var(--gruen);color:#fff;border-color:var(--gruen-hell);}
@@ -605,6 +608,35 @@
   .info-block{padding:var(--sp-m);margin-bottom:var(--sp-s);}
   .info-block p{margin:0 0 var(--sp-s);font-size:var(--fs-body);line-height:1.5;}
   .info-block p:last-child{margin-bottom:0;}
+  /* --- Abrechnung (Verkaufsbuch, 28.08.2026) --- */
+  .abr-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+  .abr-filter select{flex:1;min-width:120px;padding:10px 12px;border-radius:var(--r-m);
+    border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:13.5px;font-weight:600;}
+  .abr-kacheln{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;}
+  .abr-kachel{padding:12px 14px;border-radius:var(--r-l);background:var(--surface);
+    border:1px solid var(--border);box-shadow:var(--schatten-karte);}
+  .abr-kachel .k-wert{font-size:19px;font-weight:800;line-height:1.2;}
+  .abr-kachel .k-label{font-size:11px;color:var(--muted);margin-top:2px;}
+  .abr-kachel.betont{background:var(--gold-schwach);border-color:var(--gold-rand);}
+  .abr-kachel.betont .k-wert{color:var(--gold);}
+  .abr-felder{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:flex-end;}
+  .abr-feld{display:flex;flex-direction:column;gap:4px;}
+  .abr-feld label{font-size:10px;font-weight:700;letter-spacing:.07em;
+    text-transform:uppercase;color:var(--faint);}
+  .abr-feld input{width:96px;padding:9px 10px;border-radius:var(--r-m);
+    border:1px solid var(--border);background:var(--surface-strong);color:var(--text);
+    font-size:14px;font-weight:700;}
+  .abr-feld input.breit{width:140px;font-weight:600;}
+  .abr-feld input:focus{outline:2px solid var(--gruen-hell);outline-offset:1px;}
+  .abr-monat{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+    padding:9px 0;border-bottom:1px solid var(--border);}
+  .abr-monat:last-child{border-bottom:none;}
+  .abr-monat .m-name{font-weight:700;font-size:14px;}
+  .abr-monat .m-sub{font-size:11.5px;color:var(--muted);}
+  .abr-monat .m-wert{font-weight:800;font-size:15px;white-space:nowrap;}
+  .abr-offen{color:var(--gold);}
+  .badge-offen{background:var(--gold-schwach);color:var(--gold);}
+  .badge-bezahlt{background:var(--surface-tint);color:var(--gruen-hell);}
 </style>
 </head>
 <body>
@@ -883,6 +915,11 @@ let historieSchuelerId = null;  // welcher Schüler gerade in der Historie offen
 let allFahrlehrer = [];
 let allPruefer = [];
 let allSchueler = [];
+// --- Abrechnung / Verkaufsbuch (28.08.2026) ---
+let allVerkaeufe = [];      // Belege aus academy_verkaeufe
+let abrJahr = null;         // Filter: Jahr, null = alle
+let abrSchule = "";         // Filter: Schul-ID, "__direkt__" = nur Direktverkauf
+let abrNurOffen = false;    // Filter: nur unbezahlte Belege
 
 let session = JSON.parse(localStorage.getItem("academy_session") || "null");
 
@@ -2274,7 +2311,7 @@ async function loadAdminData(){
 function renderAdmin(){
   const isSuperAdmin = myRole === "super_admin";
   const tabs = isSuperAdmin
-    ? [["dashboard","Übersicht"],["schueler","Schüler"],["kandidaten","Kandidaten"],["fahrlehrer","Fahrlehrer"],["videos","Videos"],["pruefer","Prüfer"],["schulen","Schulen"],["protokoll","Protokoll"]]
+    ? [["dashboard","Übersicht"],["schueler","Schüler"],["kandidaten","Kandidaten"],["fahrlehrer","Fahrlehrer"],["videos","Videos"],["pruefer","Prüfer"],["schulen","Schulen"],["abrechnung","Abrechnung"],["protokoll","Protokoll"]]
     : [["dashboard","Übersicht"],["schueler","Schüler"],["kandidaten","Kandidaten"],["fahrlehrer","Fahrlehrer"]];
 
   const tabsHtml = '<div class="admin-tabs">' +
@@ -2316,6 +2353,7 @@ function renderAdmin(){
   if(adminTab === "videos") renderAdminVideos();
   if(adminTab === "pruefer") renderAdminPruefer();
   if(adminTab === "schulen") renderAdminSchulen();
+  if(adminTab === "abrechnung") renderAdminAbrechnung();
   if(adminTab === "protokoll") renderAdminProtokoll();
 }
 
@@ -3230,6 +3268,274 @@ async function renderAdminProtokoll(){
       "</div>";
     }).join("");
 }
+
+/* =========================================================
+   ABRECHNUNG (28.08.2026) — Auswertung des Verkaufsbuchs
+   academy_verkaeufe. Jeder freigeschaltete Zugang erzeugt per
+   Datenbank-Trigger automatisch einen Beleg; hier werden die
+   Betraege gepflegt und Monat fuer Monat zusammengezaehlt.
+   Nur fuer den Super-Admin sichtbar -- es ist Serbands Kassenbuch.
+   ========================================================= */
+
+const MONATSNAMEN = ["Januar","Februar","März","April","Mai","Juni",
+                     "Juli","August","September","Oktober","November","Dezember"];
+
+function fmtEuro(v){
+  if(v === null || v === undefined || v === "") return "—";
+  return Number(v).toLocaleString("de-DE",{minimumFractionDigits:2,maximumFractionDigits:2}) + " €";
+}
+
+// "100,50" und "100.50" sollen beide funktionieren -- deutsche Tastatur schreibt Komma.
+function parseEuro(roh){
+  const t = String(roh == null ? "" : roh).trim().replace(/[\s€]/g,"").replace(",",".");
+  if(t === "") return null;
+  const n = Number(t);
+  return isFinite(n) ? n : null;
+}
+
+async function ladeVerkaeufe(){
+  if(DEMO_MODE){ allVerkaeufe = []; return true; }
+  const res = await supa.from("academy_verkaeufe").select("*").order("verkauft_am",{ascending:false});
+  if(res.error){ allVerkaeufe = []; return false; }
+  allVerkaeufe = res.data || [];
+  return true;
+}
+
+function verkaeufeGefiltert(){
+  return allVerkaeufe.filter(function(v){
+    if(abrJahr && new Date(v.verkauft_am).getFullYear() !== Number(abrJahr)) return false;
+    if(abrSchule === "__direkt__"){ if(v.schule_id) return false; }
+    else if(abrSchule && v.schule_id !== abrSchule) return false;
+    if(abrNurOffen && v.bezahlt_am) return false;
+    return true;
+  });
+}
+
+async function renderAdminAbrechnung(){
+  const el = document.getElementById("admin-content");
+  el.innerHTML = '<div class="loading">Verkaufsbuch wird geladen …</div>';
+
+  if(DEMO_MODE){ el.innerHTML = '<div class="empty">Im Demo-Modus nicht verfügbar.</div>'; return; }
+  const ok = await ladeVerkaeufe();
+  if(!ok){ el.innerHTML = '<div class="empty">Verkaufsbuch konnte nicht geladen werden.</div>'; return; }
+  if(allVerkaeufe.length === 0){
+    el.innerHTML = '<div class="empty">Noch keine Verkäufe erfasst. Jeder neu freigeschaltete Zugang erscheint hier automatisch.</div>';
+    return;
+  }
+
+  const jahre = Array.from(new Set(allVerkaeufe.map(function(v){
+    return new Date(v.verkauft_am).getFullYear();
+  }))).sort(function(a,b){ return b - a; });
+
+  const liste = verkaeufeGefiltert();
+
+  /* ---- Filterzeile ---- */
+  const filterHtml =
+    '<div class="abr-filter">' +
+      '<select id="abr-jahr"><option value="">Alle Jahre</option>' +
+        jahre.map(function(j){
+          return '<option value="' + j + '"' + (String(abrJahr) === String(j) ? " selected" : "") + ">" + j + "</option>";
+        }).join("") +
+      "</select>" +
+      '<select id="abr-schule"><option value="">Alle Quellen</option>' +
+        '<option value="__direkt__"' + (abrSchule === "__direkt__" ? " selected" : "") + ">Nur Direktverkauf</option>" +
+        allSchulen.map(function(s){
+          return '<option value="' + esc(s.id) + '"' + (abrSchule === s.id ? " selected" : "") + ">" + esc(s.name) + "</option>";
+        }).join("") +
+      "</select>" +
+      '<select id="abr-offen">' +
+        '<option value="0"' + (abrNurOffen ? "" : " selected") + ">Alle Belege</option>" +
+        '<option value="1"' + (abrNurOffen ? " selected" : "") + ">Nur offene</option>" +
+      "</select>" +
+    "</div>";
+
+  /* ---- Einzelbelege mit Eingabefeldern ---- */
+  const belegeHtml = liste.length === 0
+    ? '<div class="empty">Keine Belege für diese Auswahl.</div>'
+    : liste.map(function(v){
+        const bezahlt = !!v.bezahlt_am;
+        const quelle = v.schule_id
+          ? (v.schule_name || v.schule_id)
+          : "Direktverkauf";
+        const fehlt = (v.provision === null || v.provision === undefined);
+        return '<div class="admin-card glass" data-beleg="' + esc(v.id) + '">' +
+          '<div class="admin-row">' +
+            "<div>" +
+              '<div class="admin-name">' + esc(v.schueler_name) + "</div>" +
+              '<div class="admin-sub">' + fmtDate(v.verkauft_am) + " · " + esc(quelle) +
+                (v.fahrlehrer_name ? " · " + esc(v.fahrlehrer_name) : "") + "</div>" +
+              (v.notiz ? '<div class="admin-sub" style="opacity:.7;">' + esc(v.notiz) + "</div>" : "") +
+            "</div>" +
+            '<div class="admin-badge ' + (bezahlt ? "badge-bezahlt" : "badge-offen") + '">' +
+              (bezahlt ? "Bezahlt" : (fehlt ? "Betrag fehlt" : "Offen")) +
+            "</div>" +
+          "</div>" +
+          '<div class="abr-felder">' +
+            '<div class="abr-feld"><label>Preis</label>' +
+              '<input type="text" inputmode="decimal" data-f="preis" value="' +
+                (v.verkaufspreis == null ? "" : String(v.verkaufspreis).replace(".", ",")) + '" placeholder="0,00"></div>' +
+            '<div class="abr-feld"><label>Dein Anteil</label>' +
+              '<input type="text" inputmode="decimal" data-f="provision" value="' +
+                (v.provision == null ? "" : String(v.provision).replace(".", ",")) + '" placeholder="0,00"></div>' +
+            '<div class="abr-feld"><label>Rechnung</label>' +
+              '<input type="text" class="breit" data-f="rechnung" value="' + esc(v.rechnung_nr || "") + '" placeholder="z. B. 2026-014"></div>' +
+          "</div>" +
+          '<div class="abr-felder" style="margin-top:10px;">' +
+            '<button class="btn-primary" data-speichern="' + esc(v.id) + '" style="padding:9px 16px;font-size:13px;">Speichern</button>' +
+            '<button class="icon-btn" data-bezahlt="' + esc(v.id) + '" style="padding:9px 14px;font-size:13px;font-weight:700;'
+              + 'border:1px solid var(--border);border-radius:var(--r-m);background:var(--surface);color:var(--text);">' +
+              (bezahlt ? "Auf offen setzen" : "Als bezahlt markieren") + "</button>" +
+          "</div>" +
+          (bezahlt ? '<div class="admin-sub" style="margin-top:6px;">Bezahlt am ' + fmtDate(v.bezahlt_am) + "</div>" : "") +
+        "</div>";
+      }).join("");
+
+  /* ---- Monatsübersicht ---- */
+  const proMonat = {};
+  liste.forEach(function(v){
+    const d = new Date(v.verkauft_am);
+    const key = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+    if(!proMonat[key]) proMonat[key] = { anzahl:0, umsatz:0, provision:0, offen:0, offenAnzahl:0, ohneBetrag:0 };
+    const m = proMonat[key];
+    m.anzahl++;
+    m.umsatz += Number(v.verkaufspreis || 0);
+    m.provision += Number(v.provision || 0);
+    if(v.provision == null) m.ohneBetrag++;
+    // Wichtig: auch unbezahlte Belege OHNE Betrag zaehlen, sonst meldet der
+    // Monat faelschlich "alles bezahlt" und die Rechnung wird uebersehen.
+    if(!v.bezahlt_am){ m.offen += Number(v.provision || 0); m.offenAnzahl++; }
+  });
+
+  const monatsHtml = Object.keys(proMonat).sort().reverse().map(function(key){
+    const m = proMonat[key];
+    const teile = key.split("-");
+    return '<div class="abr-monat">' +
+      "<div>" +
+        '<div class="m-name">' + MONATSNAMEN[Number(teile[1]) - 1] + " " + teile[0] + "</div>" +
+        '<div class="m-sub">' + m.anzahl + (m.anzahl === 1 ? " Zugang" : " Zugänge") +
+          " · Umsatz " + fmtEuro(m.umsatz) +
+          (m.ohneBetrag > 0 ? " · " + m.ohneBetrag + " ohne Betrag" : "") + "</div>" +
+      "</div>" +
+      '<div style="text-align:right;">' +
+        '<div class="m-wert">' + fmtEuro(m.provision) + "</div>" +
+        (m.offen > 0
+          ? '<div class="m-sub abr-offen">davon offen ' + fmtEuro(m.offen) + "</div>"
+          : (m.offenAnzahl > 0
+              ? '<div class="m-sub abr-offen">' + m.offenAnzahl + " offen · Betrag fehlt</div>"
+              : '<div class="m-sub">alles bezahlt</div>')) +
+      "</div>" +
+    "</div>";
+  }).join("") || '<div class="empty">Keine Daten.</div>';
+
+  /* ---- Jahresübersicht ---- */
+  const proJahr = {};
+  liste.forEach(function(v){
+    const j = new Date(v.verkauft_am).getFullYear();
+    if(!proJahr[j]) proJahr[j] = { anzahl:0, umsatz:0, provision:0, offen:0, offenAnzahl:0 };
+    proJahr[j].anzahl++;
+    proJahr[j].umsatz += Number(v.verkaufspreis || 0);
+    proJahr[j].provision += Number(v.provision || 0);
+    if(!v.bezahlt_am){ proJahr[j].offen += Number(v.provision || 0); proJahr[j].offenAnzahl++; }
+  });
+
+  const jahresHtml = Object.keys(proJahr).sort().reverse().map(function(j){
+    const y = proJahr[j];
+    return '<div class="abr-monat">' +
+      "<div>" +
+        '<div class="m-name">' + j + "</div>" +
+        '<div class="m-sub">' + y.anzahl + (y.anzahl === 1 ? " Zugang" : " Zugänge") + " · Umsatz " + fmtEuro(y.umsatz) + "</div>" +
+      "</div>" +
+      '<div style="text-align:right;">' +
+        '<div class="m-wert">' + fmtEuro(y.provision) + "</div>" +
+        (y.offen > 0
+          ? '<div class="m-sub abr-offen">davon offen ' + fmtEuro(y.offen) + "</div>"
+          : (y.offenAnzahl > 0
+              ? '<div class="m-sub abr-offen">' + y.offenAnzahl + " offen · Betrag fehlt</div>"
+              : '<div class="m-sub">alles bezahlt</div>')) +
+      "</div>" +
+    "</div>";
+  }).join("") || '<div class="empty">Keine Daten.</div>';
+
+  /* ---- Kopfkacheln über die aktuelle Auswahl ---- */
+  const gesamt = liste.reduce(function(a,v){ return a + Number(v.provision || 0); }, 0);
+  const offen  = liste.reduce(function(a,v){ return a + (v.bezahlt_am ? 0 : Number(v.provision || 0)); }, 0);
+  const ohneBetrag = liste.filter(function(v){ return v.provision == null; }).length;
+
+  el.innerHTML =
+    filterHtml +
+    '<div class="abr-kacheln">' +
+      '<div class="abr-kachel"><div class="k-wert">' + liste.length + '</div><div class="k-label">Zugänge</div></div>' +
+      '<div class="abr-kachel"><div class="k-wert">' + fmtEuro(gesamt) + '</div><div class="k-label">Dein Anteil gesamt</div></div>' +
+      '<div class="abr-kachel' + (offen > 0 ? " betont" : "") + '"><div class="k-wert">' + fmtEuro(offen) + '</div><div class="k-label">Davon noch offen</div></div>' +
+      '<div class="abr-kachel"><div class="k-wert">' + ohneBetrag + '</div><div class="k-label">Ohne Betrag</div></div>' +
+    "</div>" +
+    (ohneBetrag > 0
+      ? '<div class="admin-card glass" style="border-color:var(--gold-rand);background:var(--gold-schwach);">' +
+          '<div class="admin-sub" style="color:var(--text);">' + ohneBetrag +
+          ' Beleg(e) haben noch keinen Betrag. Trag ihn unten ein, dann zählen sie in den Summen mit.</div></div>'
+      : "") +
+    '<div class="section-label">Belege — Beträge eintragen</div>' +
+    belegeHtml +
+    '<div class="section-label">Monat für Monat</div>' +
+    '<div class="admin-card glass">' + monatsHtml + "</div>" +
+    '<div class="section-label">Jahresübersicht</div>' +
+    '<div class="admin-card glass">' + jahresHtml + "</div>";
+
+  /* ---- Ereignisse ---- */
+  document.getElementById("abr-jahr").addEventListener("change", function(){
+    abrJahr = this.value || null; renderAdminAbrechnung();
+  });
+  document.getElementById("abr-schule").addEventListener("change", function(){
+    abrSchule = this.value; renderAdminAbrechnung();
+  });
+  document.getElementById("abr-offen").addEventListener("change", function(){
+    abrNurOffen = this.value === "1"; renderAdminAbrechnung();
+  });
+  document.querySelectorAll("[data-speichern]").forEach(function(b){
+    b.addEventListener("click", function(){ verkaufSpeichern(b.dataset.speichern); });
+  });
+  document.querySelectorAll("[data-bezahlt]").forEach(function(b){
+    b.addEventListener("click", function(){ verkaufBezahltUmschalten(b.dataset.bezahlt); });
+  });
+}
+
+async function verkaufSpeichern(id){
+  const karte = document.querySelector('[data-beleg="' + id + '"]');
+  if(!karte) return;
+  const preisRoh     = karte.querySelector('[data-f="preis"]').value;
+  const provisionRoh = karte.querySelector('[data-f="provision"]').value;
+  const rechnung     = karte.querySelector('[data-f="rechnung"]').value.trim();
+
+  const preis     = parseEuro(preisRoh);
+  const provision = parseEuro(provisionRoh);
+
+  // Tippfehler abfangen, bevor sie im Kassenbuch stehen
+  if(preisRoh.trim() !== "" && preis === null){ showToast("Preis ist keine gültige Zahl"); return; }
+  if(provisionRoh.trim() !== "" && provision === null){ showToast("Dein Anteil ist keine gültige Zahl"); return; }
+  if(preis !== null && preis < 0){ showToast("Preis darf nicht negativ sein"); return; }
+  if(provision !== null && provision < 0){ showToast("Anteil darf nicht negativ sein"); return; }
+  if(preis !== null && provision !== null && provision > preis){
+    showToast("Dein Anteil ist größer als der Preis — bitte prüfen"); return;
+  }
+
+  const res = await supa.from("academy_verkaeufe")
+    .update({ verkaufspreis: preis, provision: provision, rechnung_nr: rechnung || null })
+    .eq("id", id);
+  if(res.error){ showToast("Konnte nicht gespeichert werden"); return; }
+  showToast("Gespeichert");
+  renderAdminAbrechnung();
+}
+
+async function verkaufBezahltUmschalten(id){
+  const v = allVerkaeufe.find(function(x){ return x.id === id; });
+  if(!v) return;
+  const neu = v.bezahlt_am ? null : new Date().toISOString();
+  const res = await supa.from("academy_verkaeufe").update({ bezahlt_am: neu }).eq("id", id);
+  if(res.error){ showToast("Konnte nicht geändert werden"); return; }
+  showToast(neu ? "Als bezahlt markiert" : "Wieder auf offen gesetzt");
+  renderAdminAbrechnung();
+}
+
 
 /* =========================================================
    Bereich 8.4 — Kandidaten: alle bekannten Schüler an einem Ort,
