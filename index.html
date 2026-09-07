@@ -1227,6 +1227,40 @@ async function maybeShowPushBanner(){
 async function showApp(){
   document.getElementById("app").innerHTML = '<div class="skel-karte"></div><div class="skel-karte"></div><div class="skel-karte"></div>';
 
+  // Bug-Fix (07.09.2026): Bisher wusste ein bereits eingeloggter Schüler NICHTS von
+  // nachträglichen Änderungen (Vollzugang freigeschaltet, Zustimmung, Sperre, Ablauf) --
+  // der Berechtigungsstand vom Login-Zeitpunkt blieb einfach hängen, bis jemand sich
+  // manuell neu einloggte. Deshalb bei JEDEM App-Start still im Hintergrund abgleichen.
+  // Ein Netzwerkfehler hier darf die Nutzung nie blockieren (z.B. offline) -- dann
+  // wird einfach mit dem zuletzt bekannten Stand weitergemacht.
+  if(session && !session.demo && session.session_token){
+    try{
+      const res = await fetch(SUPABASE_URL + "/functions/v1/academy-session-refresh", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + SUPABASE_ANON_KEY },
+        body: JSON.stringify({ session_token: session.session_token })
+      });
+      const data = await res.json();
+      if(res.ok && data.ok){
+        session.vollzugang = data.vollzugang;
+        session.agb_akzeptiert_am = data.agb_akzeptiert_am;
+        session.ablauf_am = data.ablauf_am;
+        session.klassen_freigabe = data.klassen_freigabe;
+        localStorage.setItem("academy_session", JSON.stringify(session));
+      } else if(res.status === 401){
+        // Session existiert serverseitig nicht mehr (z.B. Admin hat sie zurückgesetzt,
+        // oder wirklich abgelaufen) -- sauber zurück zum Login, statt mit Karteileichen
+        // weiterzuarbeiten.
+        doLogout();
+        return;
+      } else if(res.status === 403){
+        doLogout();
+        showToast(data.error === "zugang_abgelaufen" ? "Dein Zugang ist abgelaufen." : "Dein Zugang wurde gesperrt. Bitte wende dich an deine Fahrschule.");
+        return;
+      }
+    } catch(e){ /* offline o.ä. -- mit letztem bekannten Stand weitermachen */ }
+  }
+
   // Echte Zustimmungs-Sperre (25.08.2026): Ohne agb_akzeptiert_am kommt niemand am
   // Zustimmungsbildschirm vorbei -- kein Zurück-Button, keine Bottom-Nav, kein Umgehen.
   if(session && !session.demo && !session.agb_akzeptiert_am){
