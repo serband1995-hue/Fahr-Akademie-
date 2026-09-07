@@ -285,21 +285,14 @@
   /* Wanderndes Wasserzeichen (07.09.2026, angepasst 07.09.2026): zeigt nur Initialen +
      letzte 4 Ziffern (nicht die volle Nummer), springt periodisch an eine neue Stelle --
      verhindert simples Wegschneiden/Abkleben bei Screen-Recordings. Sehr dezent
-     (niedrige Deckkraft), aber im Zweifel lesbar. */
+     (niedrige Deckkraft), aber im Zweifel lesbar. Im nativen Vollbild-Modus des
+     Bunny-Players nicht sichtbar -- siehe Kommentar bei openVideo(). */
   .wz-overlay{
     position:absolute;color:rgba(255,255,255,.28);font-size:11px;font-weight:700;
     letter-spacing:.3px;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.5);
     transition:top 1.4s ease,left 1.4s ease;z-index:5;user-select:none;
     background:rgba(0,0,0,.08);padding:3px 7px;border-radius:5px;white-space:nowrap;
   }
-  /* Fullscreen-Fix: geht .player-wrap selbst in Vollbild (statt nur das iframe),
-     muss das iframe den ganzen verfuegbaren Platz ausfuellen, damit es genauso
-     aussieht wie vorher -- das Wasserzeichen bleibt dank position:absolute automatisch
-     erhalten, weil es dann Teil desselben Vollbild-Teilbaums ist. */
-  .player-wrap:fullscreen{width:100%;height:100%;}
-  .player-wrap:fullscreen iframe{width:100%;height:100%;}
-  .player-wrap:-webkit-full-screen{width:100%;height:100%;}
-  .player-wrap:-webkit-full-screen iframe{width:100%;height:100%;}
 
   /* ---------- ADMIN ---------- */
   .admin-tabs{display:flex;gap:8px;margin-bottom:18px;overflow-x:auto;scrollbar-width:none;
@@ -2252,32 +2245,14 @@ function stopWatermark(){
   if(el) el.remove();
 }
 
-// Fullscreen-Fix (07.09.2026): Das Wasserzeichen liegt als Geschwister-Element NEBEN
-// dem iframe in .player-wrap. Nutzt jemand den eingebauten Vollbild-Button des
-// Bunny-Players, geht NUR das iframe in Vollbild -- der Browser zeigt dann
-// ausschliesslich diesen Teilbaum an, unser Overlay verschwindet. Fix: sobald ein
-// <iframe> innerhalb von .player-wrap in Vollbild geht, sofort wieder verlassen und
-// stattdessen .player-wrap selbst (inkl. Wasserzeichen) in Vollbild schalten.
-// Hinweis: Fullscreen-Verhalten ist browserabhaengig -- unbedingt auf dem echten
-// Tablet testen, bevor du dich darauf verlaesst.
-function fullscreenUmleiten(){
-  const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
-  if(!fsEl || fsEl.tagName !== "IFRAME") return;
-  const wrap = fsEl.closest(".player-wrap");
-  if(!wrap) return;
-  const verlassen = document.exitFullscreen
-    ? document.exitFullscreen.bind(document)
-    : (document.webkitExitFullscreen ? document.webkitExitFullscreen.bind(document) : null);
-  if(!verlassen) return;
-  Promise.resolve(verlassen()).catch(function(){}).then(function(){
-    setTimeout(function(){
-      if(wrap.requestFullscreen) wrap.requestFullscreen().catch(function(){});
-      else if(wrap.webkitRequestFullscreen) wrap.webkitRequestFullscreen();
-    }, 50);
-  });
-}
-document.addEventListener("fullscreenchange", fullscreenUmleiten);
-document.addEventListener("webkitfullscreenchange", fullscreenUmleiten);
+// Fullscreen-Redirect vom 07.09.2026 wieder entfernt: hat auf dem echten Tablet
+// Vollbild komplett blockiert (requestFullscreen() aus einem fullscreenchange-Handler
+// heraus gilt in den meisten Browsern nicht mehr als direkte Nutzer-Geste und wird
+// verweigert -- Vollbild ging danach gar nicht mehr). Funktionierendes Vollbild hat
+// klar Vorrang vor dem Wasserzeichen: der native Bunny-Vollbild-Button funktioniert
+// jetzt wieder normal, das Wasserzeichen ist dabei (wie vorher, vor der ganzen
+// Wasserzeichen-Funktion) nicht sichtbar. Ein zuverlässiger Fix dafür bräuchte
+// Bunny Enterprise-DRM (siehe Research-Report Abschnitt 8), keinen Client-Trick.
 
 async function openVideo(videoId){
   stopWatermark(); // vorheriges Wasserzeichen (falls von Video zu Video gesprungen wird) sauber entfernen
