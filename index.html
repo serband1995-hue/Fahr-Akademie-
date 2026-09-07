@@ -466,6 +466,11 @@
   .bt-meta{font-size:11.5px;color:var(--muted);}
   .bt-arrow{flex-shrink:0;color:var(--faint);}
   .bereich-tile.voll .bt-arrow{color:var(--gold);}
+  /* Freemium (28.08.2026): komplett gesperrte Bereiche wirken gedämpfter, aber
+     bleiben klar antippbar -- man soll sehen, dass es dort was gibt. */
+  .bereich-tile.bereich-gesperrt{opacity:.72;}
+  .bt-lock{display:inline-flex;vertical-align:-2px;color:var(--faint);}
+  .bt-lock .ic{width:13px;height:13px;}
 
   /* --- Eigene Bereichsseite (Netflix-artige Videoauswahl) --- */
   .bereich-detail-head{display:flex;align-items:center;gap:var(--sp-m);margin-bottom:var(--sp-m);}
@@ -688,7 +693,8 @@ const ICONS = {
   info:'<circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/>',
   logout:'<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>',
   download:'<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/>',
-  hashtag:'<path d="M5 9h14M5 15h14M10 4L8 20M16 4l-2 16"/>'
+  hashtag:'<path d="M5 9h14M5 15h14M10 4L8 20M16 4l-2 16"/>',
+  krone:'<path d="M3 18h18l-1.5-9-4.5 4-3-6-3 6-4.5-4z"/>'
 };
 function icon(name, extraClass){
   return '<svg class="ic ' + (extraClass||"") + '" viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[name]||"") + "</svg>";
@@ -786,6 +792,28 @@ function tagGesperrt(tag){
   return freigabe[tag.nur_klasse] !== true;
 }
 
+// Freemium (28.08.2026): "Fahrzeug-Check" ist für jeden frei nutzbar, alle anderen
+// Bereiche brauchen academy_schueler.vollzugang = true. Zwei unabhängige Sperrgründe
+// können gleichzeitig gelten (Klasse UND Vollzugang) -- die Klassen-Sperre hat Vorrang
+// in der Anzeige, weil sie unabhängig vom Bezahlstatus ist.
+const FREIER_BEREICH = "Fahrzeug-Check";
+// Verhindert Doppel-Protokollierung, wenn dieselbe Bereichsseite mehrfach neu
+// gerendert wird (z.B. durch Antippen des Prüfungsfilters) -- pro Chat-Sitzung reicht.
+const bereitsProtokollierteSperrKlicks = new Set();
+function protokolliereSperrKlick(stufe){
+  if(!session || !session.session_token) return;
+  fetch(SUPABASE_URL + "/functions/v1/academy-log-sperre-klick", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + SUPABASE_ANON_KEY },
+    body: JSON.stringify({ session_token: session.session_token, stufe: stufe })
+  }).catch(function(){}); // Fire-and-forget -- ein Fehler hier darf niemanden stören
+}
+function videoSperrgrund(tag){
+  if(tagGesperrt(tag)) return "klasse";
+  if(tag && tag.stufe !== FREIER_BEREICH && !(session && session.vollzugang)) return "vollzugang";
+  return null;
+}
+
 function buildLernpfad(){
   const tagsSorted = allTags.slice().sort(function(a,b){ return (a.reihenfolge||0) - (b.reihenfolge||0); });
   const result = [];
@@ -806,7 +834,8 @@ function buildLernpfad(){
         if(bereitsAufgenommen.has(v.id)) return;
         bereitsAufgenommen.add(v.id);
         counter++;
-        videos.push({ video:v, tag:tag, code: STUFE_PREFIX[stufe] + "-" + counter, gesperrt: tagGesperrt(tag) });
+        const sperrgrund = videoSperrgrund(tag);
+        videos.push({ video:v, tag:tag, code: STUFE_PREFIX[stufe] + "-" + counter, gesperrt: !!sperrgrund, sperrgrund: sperrgrund });
       });
     });
     if(videos.length > 0) result.push({ stufe:stufe, videos:videos });
@@ -911,6 +940,7 @@ let protokollEintraege = [];       // 8.7 Änderungsprotokoll (nicht zu verwechs
                                    //     mit renderAdminHistorie = Video-Historie je Schüler)
 let videoFilterStufe = "";         // 8.3 Video-Liste nach Stufe filtern
 let adminFortschritt = [];      // alle Videoaufrufe, für Dashboard + Schülerhistorie
+let adminSperrKlicks = [];      // Freemium: welche gesperrten Bereiche werden angetippt
 let historieSchuelerId = null;  // welcher Schüler gerade in der Historie offen ist
 let allFahrlehrer = [];
 let allPruefer = [];
@@ -953,6 +983,7 @@ const I18N = {
     sprache:"Sprache", spracheHinweis:"Videos und Themenbezeichnungen bleiben auf Deutsch.",
     zurueck:"Zurück", zumStart:"Start", laedt:"Wird geladen …",
     gesperrtKlasse:"Nur Klasse {klasse} — bei der Fahrschule freischalten lassen",
+    gesperrtVollzugang:"Gehört zum Vollzugang", vollzugangBanner:"🔒 {anzahl} Videos zu {bereich} warten auf dich. Sprich mit deiner Fahrschule, um den Vollzugang freizuschalten.",
     telefon:"Telefonnummer", pin:"PIN", anmelden:"Anmelden",
     loginFehler:"Telefonnummer oder PIN falsch", keineVerbindung:"Keine Verbindung — versuch es gleich nochmal"
   },
@@ -967,6 +998,7 @@ const I18N = {
     sprache:"Dil", spracheHinweis:"Videolar ve konu adları Almanca kalır.",
     zurueck:"Geri", zumStart:"Başlangıç", laedt:"Yükleniyor …",
     gesperrtKlasse:"Sadece {klasse} sınıfı — sürücü kursundan açtır",
+    gesperrtVollzugang:"Tam erişime dahil", vollzugangBanner:"🔒 {bereich} alanında {anzahl} video seni bekliyor. Tam erişim için sürücü kursunla konuş.",
     telefon:"Telefon numarası", pin:"PIN", anmelden:"Giriş yap",
     loginFehler:"Telefon numarası veya PIN hatalı", keineVerbindung:"Bağlantı yok — birazdan tekrar dene"
   },
@@ -981,6 +1013,7 @@ const I18N = {
     sprache:"Language", spracheHinweis:"Videos and topic names stay in German.",
     zurueck:"Back", zumStart:"Home", laedt:"Loading …",
     gesperrtKlasse:"Class {klasse} only — ask your driving school to unlock",
+    gesperrtVollzugang:"Included in full access", vollzugangBanner:"🔒 {anzahl} videos on {bereich} are waiting for you. Ask your driving school to unlock full access.",
     telefon:"Phone number", pin:"PIN", anmelden:"Sign in",
     loginFehler:"Phone number or PIN incorrect", keineVerbindung:"No connection — please try again shortly"
   },
@@ -995,6 +1028,7 @@ const I18N = {
     sprache:"اللغة", spracheHinweis:"تبقى مقاطع الفيديو وأسماء المواضيع بالألمانية.",
     zurueck:"رجوع", zumStart:"الرئيسية", laedt:"جارٍ التحميل …",
     gesperrtKlasse:"الفئة {klasse} فقط — اطلب من مدرسة القيادة تفعيلها",
+    gesperrtVollzugang:"يتطلب الوصول الكامل", vollzugangBanner:"🔒 {anzahl} فيديو في {bereich} بانتظارك. تحدث مع مدرسة القيادة لتفعيل الوصول الكامل.",
     telefon:"رقم الهاتف", pin:"رقم التعريف", anmelden:"تسجيل الدخول",
     loginFehler:"رقم الهاتف أو رقم التعريف غير صحيح", keineVerbindung:"لا يوجد اتصال — حاول مرة أخرى قريباً"
   }
@@ -1371,9 +1405,10 @@ function renderLernpfadHtml(){
       const gesamt = g.videos.length;
       const gesehen = g.videos.filter(function(x){ return seenVideoIds.has(x.video.id); }).length;
       const pct = gesamt ? Math.round(gesehen/gesamt*100) : 0;
-      return '<button class="bereich-tile' + (pct>=100?" voll":"") + '" data-gotostufe="' + esc(g.stufe) + '">' +
+      const komplettGesperrt = g.videos.length > 0 && g.videos.every(function(x){ return x.sperrgrund === "vollzugang"; });
+      return '<button class="bereich-tile' + (pct>=100?" voll":"") + (komplettGesperrt?" bereich-gesperrt":"") + '" data-gotostufe="' + esc(g.stufe) + '">' +
         '<div class="bt-icon">' + bereichIcon(g.stufe) + "</div>" +
-        '<div class="bt-body"><div class="bt-titel">' + esc(g.stufe) + "</div>" +
+        '<div class="bt-body"><div class="bt-titel">' + esc(g.stufe) + (komplettGesperrt ? ' <span class="bt-lock">' + icon("schloss","ic-s") + "</span>" : "") + "</div>" +
           '<div class="bt-bar"><div class="bt-bar-fill" style="width:' + pct + '%;"></div></div>' +
           '<div class="bt-meta">' + gesehen + " von " + gesamt + " Videos · " + pct + "%</div></div>" +
         '<span class="bt-arrow">' + icon("weiter") + "</span>" +
@@ -1403,6 +1438,20 @@ function renderLernpfadHtml(){
   });
 
   const karten = treffer.map(function(x){
+    // Bug-Fix 28.08.2026: Suchergebnisse ignorierten gesperrte Videos bisher komplett --
+    // ein Tippen darauf hätte serverseitig funktioniert (Klassen-Sperre) bzw. abgelehnt
+    // (Vollzugang-Sperre), aber optisch sah es aus wie ein normales, offenes Video.
+    if(x.gesperrt){
+      const hinweis = x.sperrgrund === "klasse" ? t("gesperrtKlasse",{klasse:x.tag.nur_klasse}) : t("gesperrtVollzugang");
+      return '<div class="vg-card video-locked">' +
+        '<div class="vg-bg" style="background:' + vgGradientFuer(x.video.id) + ';"></div>' +
+        '<div class="vg-play">' + icon("schloss") + "</div>" +
+        '<div class="vg-info"><div class="vg-code">' + esc(x.tag.label) + '</div>' +
+          '<div class="vg-titel">' + esc(x.video.titel) + "</div>" +
+          '<div class="lock-hint">' + esc(hinweis) + "</div>" +
+        "</div>" +
+      "</div>";
+    }
     const check = seenVideoIds.has(x.video.id) ? '<span class="vg-check">' + icon("check","ic-s") + "</span>" : "";
     const ergebnisIcon = x.video.pruefung_ergebnis === "bestanden" ? '<span class="vg-ergebnis">✅</span>'
       : x.video.pruefung_ergebnis === "nicht_bestanden" ? '<span class="vg-ergebnis">❌</span>' : "";
@@ -1464,7 +1513,11 @@ function renderStartHtml(){
   const pfad = buildLernpfad();
   const naechste = (function(){
     for(const gruppe of pfad){
-      const offen = gruppe.videos.find(function(x){ return !seenVideoIds.has(x.video.id); });
+      // Bug-Fix 28.08.2026: gesperrte Videos (Klasse ODER Vollzugang) dürfen hier
+      // nicht als "Als Nächstes" vorgeschlagen werden -- der Schüler könnte sie eh
+      // nicht öffnen. Die Empfehlungskarte weiter unten filtert das schon richtig,
+      // hier fehlte es bisher.
+      const offen = gruppe.videos.find(function(x){ return !seenVideoIds.has(x.video.id) && !x.gesperrt; });
       if(offen) return { gruppe: gruppe.stufe, x: offen };
     }
     return null;
@@ -1496,10 +1549,14 @@ function renderStartHtml(){
     const gesamt = g.videos.length;
     const gesehen = g.videos.filter(function(x){ return seenVideoIds.has(x.video.id); }).length;
     const pct = gesamt ? Math.round(gesehen/gesamt*100) : 0;
-    return '<button class="bereich-tile' + (pct>=100?" voll":"") + '" data-gotostufe="' + esc(g.stufe) + '">' +
+    // Freemium (28.08.2026): Bereich gilt als "vollzugangs-gesperrt", wenn JEDES
+    // Video darin aus Bezahlgründen gesperrt ist (Klassen-Sperren zählen hier nicht,
+    // die haben ihre eigene, unabhängige Anzeige weiter unten in der Bereichsseite).
+    const komplettGesperrt = g.videos.length > 0 && g.videos.every(function(x){ return x.sperrgrund === "vollzugang"; });
+    return '<button class="bereich-tile' + (pct>=100?" voll":"") + (komplettGesperrt?" bereich-gesperrt":"") + '" data-gotostufe="' + esc(g.stufe) + '">' +
       '<div class="bt-icon">' + bereichIcon(g.stufe) + "</div>" +
       '<div class="bt-body">' +
-        '<div class="bt-titel">' + esc(g.stufe) + "</div>" +
+        '<div class="bt-titel">' + esc(g.stufe) + (komplettGesperrt ? ' <span class="bt-lock">' + icon("schloss","ic-s") + "</span>" : "") + "</div>" +
         '<div class="bt-bar"><div class="bt-bar-fill" style="width:' + pct + '%;"></div></div>' +
         '<div class="bt-meta">' + gesehen + " von " + gesamt + " Videos · " + pct + "%</div>" +
       "</div>" +
@@ -1600,15 +1657,17 @@ function renderBereichDetailHtml(){
     const check = seenVideoIds.has(x.video.id) ? '<span class="vg-check">' + icon("check","ic-s") + "</span>" : "";
     const isHighlighted = deepLinkTagId && x.tag.id === deepLinkTagId;
     const targetId = isHighlighted ? ' id="dl-target"' : "";
-    // Bereich 7.9: gesperrte Themen bleiben sichtbar, aber nicht abspielbar.
-    // data-vid weglassen, sonst würde der allgemeine Klick-Handler das Video öffnen.
+    // Bereich 7.9 + Freemium (28.08.2026): gesperrte Themen bleiben sichtbar, aber
+    // nicht abspielbar. data-vid weglassen, sonst würde der allgemeine Klick-Handler
+    // das Video öffnen. Zwei mögliche Sperrgründe mit jeweils passendem Hinweistext.
     if(x.gesperrt){
+      const hinweis = x.sperrgrund === "klasse" ? t("gesperrtKlasse",{klasse:x.tag.nur_klasse}) : t("gesperrtVollzugang");
       return '<div class="vg-card video-locked">' +
         '<div class="vg-bg" style="background:' + vgGradientFuer(x.video.id) + ';"></div>' +
         '<div class="vg-play">' + icon("schloss") + "</div>" +
         '<div class="vg-info"><div class="vg-code">' + esc(x.code) + '</div>' +
           '<div class="vg-titel">' + esc(x.video.titel) + "</div>" +
-          '<div class="lock-hint">' + esc(t("gesperrtKlasse",{klasse:x.tag.nur_klasse})) + "</div>" +
+          '<div class="lock-hint">' + esc(hinweis) + "</div>" +
         "</div>" +
       "</div>";
     }
@@ -1620,6 +1679,22 @@ function renderBereichDetailHtml(){
     "</div>";
   }).join("");
 
+  // Idee 4 (27.08.2026): konkreter statt generischer Hinweis, WIE VIELE Videos warten.
+  const vollzugangGesperrteAnzahl = gruppe.videos.filter(function(x){ return x.sperrgrund === "vollzugang"; }).length;
+  const vollzugangBanner = vollzugangGesperrteAnzahl > 0
+    ? '<div class="karte" style="background:var(--gold-schwach);border-color:var(--gold-rand);margin-bottom:var(--sp-m);">' +
+        esc(t("vollzugangBanner",{anzahl:vollzugangGesperrteAnzahl, bereich:selectedBereich})) +
+      "</div>"
+    : "";
+
+  // Idee 3: protokollieren, dass dieser gesperrte Bereich angetippt wurde -- Signal
+  // fürs Dashboard, wo echtes Kaufinteresse besteht. Einmal pro Seitenaufruf reicht,
+  // sonst würde jedes Neu-Rendern (z.B. Prüfungsfilter antippen) erneut zählen.
+  if(vollzugangGesperrteAnzahl > 0 && !bereitsProtokollierteSperrKlicks.has(selectedBereich)){
+    bereitsProtokollierteSperrKlicks.add(selectedBereich);
+    protokolliereSperrKlick(selectedBereich);
+  }
+
   return (
     '<button class="krumen zurueck-zeile" data-zurueckstart>' + icon("zurueck") + "<span>Start</span></button>" +
     '<div class="bereich-detail-head">' +
@@ -1630,6 +1705,7 @@ function renderBereichDetailHtml(){
         '<div class="admin-sub" style="margin-top:4px;">' + gesehen + " von " + gesamt + " Videos gesehen</div>" +
       "</div>" +
     "</div>" +
+    vollzugangBanner +
     filterBar +
     '<div class="video-grid">' + (karten || '<div class="leer-hinweis">Noch keine Videos in diesem Bereich.</div>') + "</div>"
   );
@@ -1811,7 +1887,20 @@ function renderThemenHtml(){
     .map(function(vt){ return allVideos.find(function(v){ return v.id === vt.video_id; }); })
     .filter(Boolean);
 
+  // Bug-Fix 28.08.2026: auch hier fehlte die Sperr-Prüfung komplett -- gleicher
+  // Sperrgrund gilt für alle Treffer, weil sie alle über DIESES eine Thema gefunden wurden.
+  const sperrgrundHier = tag ? videoSperrgrund(tag) : null;
   const karten = treffer.map(function(v){
+    if(sperrgrundHier){
+      const hinweis = sperrgrundHier === "klasse" ? t("gesperrtKlasse",{klasse:tag.nur_klasse}) : t("gesperrtVollzugang");
+      return '<div class="vg-card video-locked">' +
+        '<div class="vg-bg" style="background:' + vgGradientFuer(v.id) + ';"></div>' +
+        '<div class="vg-play">' + icon("schloss") + "</div>" +
+        '<div class="vg-info"><div class="vg-titel">' + esc(v.titel) + "</div>" +
+          '<div class="lock-hint">' + esc(hinweis) + "</div>" +
+        "</div>" +
+      "</div>";
+    }
     const check = seenVideoIds.has(v.id) ? '<span class="vg-check">' + icon("check","ic-s") + "</span>" : "";
     return '<div class="vg-card" data-vid="' + esc(v.id) + '">' +
       '<div class="vg-bg" style="background:' + vgGradientFuer(v.id) + ';"></div>' + vgBildLayer(v) +
@@ -2293,6 +2382,8 @@ async function loadAdminData(){
   // sind also mit drin -- genau das macht die Historie aussagekräftig.
   const fsRes = await supa.from("academy_fortschritt").select("*").order("gesehen_am", {ascending:false});
   const kdRes = await supa.from("academy_kandidaten").select("*"); // Bereich 8.4
+  // Freemium (28.08.2026): welche gesperrten Bereiche wecken das meiste Interesse?
+  const skRes = await supa.from("academy_sperre_klicks").select("stufe");
   allFahrlehrer = flRes.data || [];
   allPruefer = prRes.data || [];
   allSchueler = scRes.data || [];
@@ -2302,10 +2393,27 @@ async function loadAdminData(){
   videoPruefer = vprRes.data || [];
   adminFortschritt = fsRes.data || [];
   allKandidaten = kdRes.data || [];
+  adminSperrKlicks = skRes.data || [];
   if(myRole === "super_admin"){
     const schRes = await supa.from("academy_schulen").select("*").order("name");
     allSchulen = schRes.data || [];
+  } else if(mySchule){
+    // Partner-Modell (07.09.2026): Schul-Admin muss wissen, ob SEINE eigene Schule
+    // selbst verschicken darf (Boost: ja) oder nicht (z.B. Bilal: nein, Serband
+    // behält die Kontrolle) -- RLS erlaubt einer Schule, sich selbst zu sehen.
+    const eigeneSchule = await supa.from("academy_schulen").select("*").eq("id", mySchule).maybeSingle();
+    allSchulen = eigeneSchule.data ? [eigeneSchule.data] : [];
   }
+}
+
+// Partner-Modell: darf die EIGENE Schule des aktuell eingeloggten Admins selbst
+// verschicken? Super-Admin darf das immer; für Schul-Admins hängt es vom Flag ab
+// (Default true, falls aus irgendeinem Grund keine Schulzeile gefunden wird --
+// so bricht ein bestehender Ablauf wie Boost nie versehentlich weg).
+function darfSelbstVersenden(){
+  if(myRole === "super_admin") return true;
+  const eigene = allSchulen.find(function(sc){ return sc.id === mySchule; });
+  return !eigene || eigene.partner_darf_pin_senden !== false;
 }
 
 function renderAdmin(){
@@ -2397,6 +2505,25 @@ function renderAdminDashboard(){
     "</div>";
 
   const todos = [];
+  // Partner-Modell (07.09.2026): wichtigster Hinweis, ganz oben -- jeder wartende
+  // Zugang bedeutet echtes Geld auf dem Konto eines Partners, das erst zählt, wenn
+  // der Zugang wirklich beim Schüler ankommt.
+  const wartendeZugaenge = allSchueler.filter(function(s){ return s.schule_id && !s.pin_versendet_am; });
+  if(wartendeZugaenge.length){
+    const istSuperAdminDash = myRole === "super_admin";
+    todos.push(["gelb",
+      "<b>" + wartendeZugaenge.length + " neue Zugänge " + (istSuperAdminDash ? "von Partnern " : "") + "warten auf Versand</b><br>" +
+      wartendeZugaenge.map(function(s){
+        const schule = allSchulen.find(function(sc){ return sc.id === s.schule_id; });
+        return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px;">' +
+          '<span>' + esc(s.name) + (istSuperAdminDash ? " · " + esc(schule ? schule.name : "?") : "") + "</span>" +
+          (istSuperAdminDash
+            ? '<button class="icon-btn" data-mail="' + esc(s.id) + '" title="PIN senden" style="flex-shrink:0;">✉️</button>'
+            : '<span class="admin-sub" style="flex-shrink:0;">wird von Fahr-Akademie verschickt</span>') +
+        "</div>";
+      }).join("")
+    ]);
+  }
   if(videosOhneId.length) todos.push(["rot", videosOhneId.length + " Video(s) ohne Bunny-ID — für Schüler nicht abspielbar"]);
   if(ungesendeteVideos.length) todos.push(["gelb",
     ungesendeteVideos.length + " neue(s) Video(s) noch nicht angekündigt " +
@@ -2430,7 +2557,24 @@ function renderAdminDashboard(){
       return '<div class="hist-zeile"><span class="hist-titel">' + esc(t.titel) + '</span><span class="hist-anzahl">' + t.anzahl + "×</span></div>";
     }).join("") : '<div class="admin-sub">Noch keine Aufrufe.</div>') + "</div>";
 
-  document.getElementById("admin-content").innerHTML = kpis + todoHtml + topHtml;
+  // Freemium Idee 3 (28.08.2026): welche gesperrten Bereiche wecken das meiste
+  // Kaufinteresse -- direktes Signal, wo Vollzugang-Verkäufe am ehesten reinkommen.
+  const proSperrBereich = {};
+  adminSperrKlicks.forEach(function(k){ proSperrBereich[k.stufe] = (proSperrBereich[k.stufe]||0)+1; });
+  const topSperr = Object.keys(proSperrBereich).map(function(stufe){
+    return { stufe: stufe, anzahl: proSperrBereich[stufe] };
+  }).sort(function(a,b){ return b.anzahl - a.anzahl; }).slice(0,5);
+
+  const sperrHtml = '<div class="admin-card glass"><div class="admin-form-title" style="margin-bottom:6px;">👑 Meistgeklickte gesperrte Bereiche</div>' +
+    '<div class="admin-sub" style="margin-bottom:8px;">Zeigt, wo Schüler ohne Vollzugang am meisten reinschauen wollen.</div>' +
+    (topSperr.length ? topSperr.map(function(t){
+      return '<div class="hist-zeile"><span class="hist-titel">' + esc(t.stufe) + '</span><span class="hist-anzahl oft">' + t.anzahl + "×</span></div>";
+    }).join("") : '<div class="admin-sub">Noch keine Klicks auf gesperrte Bereiche.</div>') + "</div>";
+
+  document.getElementById("admin-content").innerHTML = kpis + todoHtml + topHtml + sperrHtml;
+  document.querySelectorAll("[data-mail]").forEach(function(b){
+    b.addEventListener("click", function(){ resendPin(b.dataset.mail); });
+  });
   const sammelBtn = document.getElementById("sammel-push-btn");
   if(sammelBtn){
     sammelBtn.addEventListener("click", async function(){
@@ -2538,9 +2682,26 @@ function renderAdminSchueler(){
       ? '<div class="admin-sub">Prüfung: ' + fmtDate(s.pruefungstermin) + "</div>" : "";
     const sperrgrundZeile = (!s.aktiv && s.sperrgrund)
       ? '<div class="admin-sub" style="color:#B5573F;">🔒 Grund: ' + esc(s.sperrgrund) + "</div>" : "";
+    // Partner-Modell (07.09.2026): Nur Serband sieht den echten PIN und darf ihn
+    // verschicken. Ein Partner-Fahrlehrer säh sonst den Klartext-PIN und könnte ihn
+    // dem Schüler einfach mündlich sagen -- das würde die ganze Versand-Kontrolle
+    // aushebeln, die genau dafür gebaut wurde.
+    const istSuperAdmin = myRole === "super_admin";
+    const zeigeKlartext = istSuperAdmin || darfSelbstVersenden();
+    const pinStatusZeile = zeigeKlartext
+      ? '<div class="admin-sub">PIN: <span class="pin-display">' + esc(s.pin) + '</span> · gültig bis ' + fmtDate(s.ablauf_am) + "</div>"
+      : '<div class="admin-sub">' + (s.pin_versendet_am
+          ? "✅ Zugang verschickt am " + fmtDate(s.pin_versendet_am)
+          : "⏳ Wartet auf Freischaltung durch deinen Ansprechpartner") +
+        " · gültig bis " + fmtDate(s.ablauf_am) + "</div>";
+    const pinWartetHinweis = (istSuperAdmin && !s.pin_versendet_am)
+      ? '<div class="admin-sub" style="color:var(--gold);font-weight:600;">⏳ Noch nicht verschickt</div>' : "";
     const agbZeile = s.agb_akzeptiert_am
       ? '<div class="admin-sub" style="opacity:.7;">Nutzungsbedingungen akzeptiert: ' + fmtDate(s.agb_akzeptiert_am) + "</div>"
       : '<div class="admin-sub" style="opacity:.7;color:var(--gold);">Nutzungsbedingungen noch nicht akzeptiert</div>';
+    // Freemium (28.08.2026): Vollzugang-Status sichtbar machen + Umschalter.
+    const vollzugangZeile = '<div class="admin-sub" style="' + (s.vollzugang ? "color:var(--gold);font-weight:600;" : "opacity:.7;") + '">' +
+      (s.vollzugang ? "👑 Vollzugang aktiv" : "Nur Fahrzeug-Check (kostenlos)") + "</div>";
     return '<div class="admin-card glass">' +
       '<div class="admin-row">' +
         '<div>' +
@@ -2548,14 +2709,15 @@ function renderAdminSchueler(){
             (bulkAuswahl.has(s.id) ? " checked" : "") + "> auswählen</label>" +
           '<div class="admin-name">' + esc(s.name) + "</div>" +
           '<div class="admin-sub">' + esc(s.telefon) + " · Klasse " + esc(s.klasse) + " · " + esc(fl ? fl.name : "—") + "</div>" +
-          '<div class="admin-sub">PIN: <span class="pin-display">' + esc(s.pin) + '</span> · gültig bis ' + fmtDate(s.ablauf_am) + "</div>" +
-          ablaufWarnung + terminZeile + agbZeile + sperrgrundZeile +
+          pinStatusZeile + pinWartetHinweis +
+          ablaufWarnung + terminZeile + agbZeile + vollzugangZeile + sperrgrundZeile +
         "</div>" +
         '<div style="text-align:right;">' +
           '<div class="admin-badge ' + badgeClass + '">' + badgeText + "</div>" +
           '<div style="margin-top:8px;">' +
-            '<button class="icon-btn" data-mail="' + esc(s.id) + '" title="PIN erneut senden">✉️</button>' +
+            (zeigeKlartext ? '<button class="icon-btn' + (!s.pin_versendet_am ? " danger" : "") + '" data-mail="' + esc(s.id) + '" title="PIN senden">✉️</button>' : "") +
             '<button class="icon-btn" data-hist="' + esc(s.id) + '" title="Verlauf ansehen">' + icon("dashboard") + "</button>" +
+            '<button class="icon-btn' + (s.vollzugang ? " danger" : "") + '" data-vollzugang="' + esc(s.id) + '" title="Vollzugang freischalten/entziehen">' + icon("krone") + "</button>" +
             '<button class="icon-btn" data-toggle="' + esc(s.id) + '" title="Sperren/Entsperren">' + (s.aktiv ? icon("schloss") : icon("schlossOffen")) + "</button>" +
             '<button class="icon-btn danger" data-del="' + esc(s.id) + '" title="Löschen">' + icon("papierkorb") + '</button>' +
           "</div>" +
@@ -2578,6 +2740,11 @@ function renderAdminSchueler(){
       '<label>Klasse</label><select id="ns-klasse"><option value="B">B</option><option value="BE">BE</option><option value="C">C</option><option value="CE">CE</option></select>' +
       '<label>Zugangsdauer</label><select id="ns-dauer"><option value="1">1 Monat</option><option value="3">3 Monate</option><option value="6" selected>6 Monate (Standard)</option><option value="12">12 Monate</option><option value="24">24 Monate</option></select>' +
       '<label>Zugang vergeben über</label><select id="ns-fl">' + flOptions + "</select>" +
+      '<label style="display:flex;align-items:center;gap:8px;margin-top:10px;">' +
+        '<input type="checkbox" id="ns-vollzugang" style="width:18px;height:18px;">' +
+        '<span>Sofort Vollzugang gewähren (schon vollständig bezahlt)</span>' +
+      "</label>" +
+      '<div class="admin-sub" style="margin-top:2px;">Unangehakt: Schüler sieht zunächst nur „Fahrzeug-Check" kostenlos, du schaltest den Rest später per 👑-Button frei.</div>' +
       '<button class="btn-primary" id="ns-btn" style="margin-top:6px;">Zugang anlegen &amp; PIN senden</button>' +
     "</div>" +
     '<div class="admin-card glass" style="margin-bottom:10px;">' +
@@ -2634,6 +2801,9 @@ function renderAdminSchueler(){
   document.querySelectorAll("[data-toggle]").forEach(function(b){
     b.addEventListener("click", function(){ toggleSchueler(b.dataset.toggle); });
   });
+  document.querySelectorAll("[data-vollzugang]").forEach(function(b){
+    b.addEventListener("click", function(){ toggleVollzugang(b.dataset.vollzugang); });
+  });
   document.querySelectorAll("[data-del]").forEach(function(b){
     b.addEventListener("click", function(){ deleteSchueler(b.dataset.del); });
   });
@@ -2646,6 +2816,7 @@ async function createSchueler(){
   const klasse = document.getElementById("ns-klasse").value;
   const dauerMonate = parseInt(document.getElementById("ns-dauer").value, 10) || 6;
   const flId = document.getElementById("ns-fl").value;
+  const vollzugangSofort = document.getElementById("ns-vollzugang").checked;
   if(!name || !tel){ showToast("Name und Telefonnummer sind Pflicht"); return; }
 
   const pin = genPin();
@@ -2658,7 +2829,8 @@ async function createSchueler(){
     empfohlen_von: flId === "serband" ? null : flId,
     erstellt_am: jetzt.toISOString(),
     ablauf_am: addMonthsISO(jetzt, dauerMonate),
-    aktiv: true
+    aktiv: true,
+    vollzugang: vollzugangSofort
   };
 
   if(DEMO_MODE){
@@ -2672,10 +2844,21 @@ async function createSchueler(){
 
   const { error } = await supa.from("academy_schueler").insert(neu);
   if(error){ showToast("Fehler: " + error.message); return; }
-  await sendPinMail(neu);
-  await loadAdminData();
-  renderAdminSchueler();
-  showToast("Schüler angelegt — PIN per Mail verschickt");
+
+  // Partner-Modell (07.09.2026): Nur Serband (Super-Admin) verschickt automatisch den
+  // PIN. Legt ein Partner-Fahrlehrer (Schul-Admin) einen Schüler an, bleibt der Zugang
+  // bewusst "wartend" -- Serband sieht das im Dashboard und verschickt selbst, das gibt
+  // ihm eine echte, tägliche Kontrolle über jeden neu generierten Zugang.
+  if(myRole === "super_admin" || darfSelbstVersenden()){
+    await sendPinMail(neu);
+    await loadAdminData();
+    renderAdminSchueler();
+    showToast("Schüler angelegt — PIN per Mail verschickt");
+  } else {
+    await loadAdminData();
+    renderAdminSchueler();
+    showToast("Zugang angelegt — dein Ansprechpartner schaltet den Zugang in Kürze frei");
+  }
 }
 
 async function sendPinMail(schueler){
@@ -2698,6 +2881,14 @@ async function sendPinMail(schueler){
     const data = await res.json();
     if(!res.ok){
       showToast("Mail-Versand fehlgeschlagen: " + (data.error || "unbekannter Fehler"));
+    } else {
+      // Partner-Modell: Zeitstempel setzen, damit der Schüler von der
+      // "wartet auf Versand"-Liste im Dashboard verschwindet.
+      const jetztIso = new Date().toISOString();
+      await supa.from("academy_schueler").update({ pin_versendet_am: jetztIso }).eq("id", schueler.id);
+      schueler.pin_versendet_am = jetztIso;
+      const lokal = allSchueler.find(function(x){ return x.id === schueler.id; });
+      if(lokal) lokal.pin_versendet_am = jetztIso;
     }
   } catch(e){
     showToast("Schüler gespeichert, aber Mail-Versand fehlgeschlagen");
@@ -2709,7 +2900,11 @@ async function resendPin(id){
   if(!s){ return; }
   if(!s.email){ showToast("Keine E-Mail hinterlegt"); return; }
   await sendPinMail(s);
-  showToast("PIN erneut an " + s.email + " gesendet");
+  showToast("PIN an " + s.email + " gesendet");
+  // Egal von wo ausgelöst (Dashboard-Warteliste oder Schülerliste) -- die aktuelle
+  // Ansicht muss den neuen Versand-Status sofort zeigen, sonst wirkt der Klick tot.
+  if(adminTab === "dashboard") renderAdminDashboard();
+  else if(adminTab === "schueler") renderAdminSchueler();
 }
 
 async function toggleSchueler(id){
@@ -2734,6 +2929,32 @@ async function toggleSchueler(id){
   if(error){ showToast("Fehler: " + error.message); return; }
   protokolliere(s.aktiv ? "schueler_entsperrt" : "schueler_gesperrt", "schueler", id, s.name, s.aktiv ? null : s.sperrgrund);
   renderAdminSchueler();
+}
+
+async function toggleVollzugang(id){
+  const s = allSchueler.find(function(x){ return x.id === id; });
+  if(!s) return;
+
+  const wirdFreigeschaltet = !s.vollzugang;
+  if(!wirdFreigeschaltet){
+    // Entziehen ist eine echte Weichenstellung (Schüler verliert bezahlten Zugriff) --
+    // deshalb eine Bestätigung, wie beim Löschen.
+    if(!confirm("Vollzugang für " + s.name + " wirklich entziehen? Nur Fahrzeug-Check bleibt dann sichtbar.")) return;
+  }
+
+  s.vollzugang = wirdFreigeschaltet;
+
+  if(DEMO_MODE){
+    renderAdminSchueler();
+    return;
+  }
+  const { error } = await supa.from("academy_schueler").update({ vollzugang: s.vollzugang }).eq("id", id);
+  if(error){ showToast("Fehler: " + error.message); return; }
+  // Der eigentliche Verkaufsbuch-Eintrag beim Freischalten passiert automatisch
+  // per Datenbank-Trigger (trg_academy_vollzugang_verkauf) -- hier nur die UI aktualisieren.
+  protokolliere(wirdFreigeschaltet ? "vollzugang_freigeschaltet" : "vollzugang_entzogen", "schueler", id, s.name, null);
+  renderAdminSchueler();
+  showToast(wirdFreigeschaltet ? "Vollzugang freigeschaltet — im Verkaufsbuch erfasst" : "Vollzugang entzogen");
 }
 
 async function deleteSchueler(id){
