@@ -282,15 +282,24 @@
     gap:10px;color:var(--muted);text-align:center;padding:24px;
   }
   .demo-player .big-ic{font-size:38px;}
-  /* Wanderndes Wasserzeichen (07.09.2026): sichtbare Telefonnummer im Video, springt
-     periodisch an eine neue Stelle -- verhindert simples Wegschneiden/Abkleben bei
-     Screen-Recordings. Bewusst dezent (niedrige Deckkraft), aber lesbar. */
+  /* Wanderndes Wasserzeichen (07.09.2026, angepasst 07.09.2026): zeigt nur Initialen +
+     letzte 4 Ziffern (nicht die volle Nummer), springt periodisch an eine neue Stelle --
+     verhindert simples Wegschneiden/Abkleben bei Screen-Recordings. Sehr dezent
+     (niedrige Deckkraft), aber im Zweifel lesbar. */
   .wz-overlay{
-    position:absolute;color:rgba(255,255,255,.55);font-size:11px;font-weight:700;
-    letter-spacing:.3px;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.7);
+    position:absolute;color:rgba(255,255,255,.28);font-size:11px;font-weight:700;
+    letter-spacing:.3px;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.5);
     transition:top 1.4s ease,left 1.4s ease;z-index:5;user-select:none;
-    background:rgba(0,0,0,.18);padding:3px 7px;border-radius:5px;white-space:nowrap;
+    background:rgba(0,0,0,.08);padding:3px 7px;border-radius:5px;white-space:nowrap;
   }
+  /* Fullscreen-Fix: geht .player-wrap selbst in Vollbild (statt nur das iframe),
+     muss das iframe den ganzen verfuegbaren Platz ausfuellen, damit es genauso
+     aussieht wie vorher -- das Wasserzeichen bleibt dank position:absolute automatisch
+     erhalten, weil es dann Teil desselben Vollbild-Teilbaums ist. */
+  .player-wrap:fullscreen{width:100%;height:100%;}
+  .player-wrap:fullscreen iframe{width:100%;height:100%;}
+  .player-wrap:-webkit-full-screen{width:100%;height:100%;}
+  .player-wrap:-webkit-full-screen iframe{width:100%;height:100%;}
 
   /* ---------- ADMIN ---------- */
   .admin-tabs{display:flex;gap:8px;margin-bottom:18px;overflow-x:auto;scrollbar-width:none;
@@ -2203,19 +2212,30 @@ function vgGradientFuer(videoId){
   return VG_GRADIENTS[h % VG_GRADIENTS.length];
 }
 
-// Wanderndes Wasserzeichen (07.09.2026, Betrugsschutz-Report Punkt 2): legt ein
-// halbtransparentes <div> mit Telefonnummer + Name des eingeloggten Schuelers ueber
-// den Player und laesst es alle paar Sekunden an eine neue zufaellige Stelle springen.
-// Nummer kommt aus session.telefon (server-seitig bei Login/Refresh gesetzt, nicht
-// nur aus dem Eingabefeld -- damit sie vertrauenswuerdig bleibt).
+// Wanderndes Wasserzeichen (07.09.2026, Betrugsschutz-Report Punkt 2; angepasst
+// 07.09.2026 auf Wunsch: nur Initialen + letzte 4 Ziffern statt voller Nummer).
+// Legt ein sehr dezentes <div> ueber den Player und laesst es alle paar Sekunden an
+// eine neue zufaellige Stelle springen. Nummer kommt aus session.telefon (server-seitig
+// bei Login/Refresh gesetzt, nicht nur aus dem Eingabefeld -- damit sie vertrauenswuerdig
+// bleibt), volle Nummer wird aber nie angezeigt, nur zur Identifikation im Ernstfall.
+function initialen(name){
+  const teile = String(name || "").trim().split(/\s+/).filter(Boolean);
+  if(teile.length === 0) return "";
+  if(teile.length === 1) return teile[0].slice(0, 2).toUpperCase();
+  return (teile[0][0] + teile[teile.length - 1][0]).toUpperCase();
+}
 function startWatermark(){
   stopWatermark();
   if(session && session.demo) return; // Demo-Modus hat keine echte Nummer
   const wrap = document.querySelector(".player-wrap");
   if(!wrap || !session || !session.telefon) return;
+  const ziffern = String(session.telefon).replace(/\D/g, "");
+  const letzte4 = ziffern.slice(-4);
+  if(!letzte4) return;
+  const kuerzel = initialen(session.name);
   const el = document.createElement("div");
   el.className = "wz-overlay";
-  el.textContent = session.telefon + (session.name ? " · " + session.name : "");
+  el.textContent = (kuerzel ? kuerzel + " " : "") + letzte4;
   wrap.appendChild(el);
   function platzieren(){
     // Bleibt innerhalb des sichtbaren Bereichs (Rand-Puffer, damit der Text nicht
@@ -2231,6 +2251,33 @@ function stopWatermark(){
   const el = document.querySelector(".wz-overlay");
   if(el) el.remove();
 }
+
+// Fullscreen-Fix (07.09.2026): Das Wasserzeichen liegt als Geschwister-Element NEBEN
+// dem iframe in .player-wrap. Nutzt jemand den eingebauten Vollbild-Button des
+// Bunny-Players, geht NUR das iframe in Vollbild -- der Browser zeigt dann
+// ausschliesslich diesen Teilbaum an, unser Overlay verschwindet. Fix: sobald ein
+// <iframe> innerhalb von .player-wrap in Vollbild geht, sofort wieder verlassen und
+// stattdessen .player-wrap selbst (inkl. Wasserzeichen) in Vollbild schalten.
+// Hinweis: Fullscreen-Verhalten ist browserabhaengig -- unbedingt auf dem echten
+// Tablet testen, bevor du dich darauf verlaesst.
+function fullscreenUmleiten(){
+  const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+  if(!fsEl || fsEl.tagName !== "IFRAME") return;
+  const wrap = fsEl.closest(".player-wrap");
+  if(!wrap) return;
+  const verlassen = document.exitFullscreen
+    ? document.exitFullscreen.bind(document)
+    : (document.webkitExitFullscreen ? document.webkitExitFullscreen.bind(document) : null);
+  if(!verlassen) return;
+  Promise.resolve(verlassen()).catch(function(){}).then(function(){
+    setTimeout(function(){
+      if(wrap.requestFullscreen) wrap.requestFullscreen().catch(function(){});
+      else if(wrap.webkitRequestFullscreen) wrap.webkitRequestFullscreen();
+    }, 50);
+  });
+}
+document.addEventListener("fullscreenchange", fullscreenUmleiten);
+document.addEventListener("webkitfullscreenchange", fullscreenUmleiten);
 
 async function openVideo(videoId){
   stopWatermark(); // vorheriges Wasserzeichen (falls von Video zu Video gesprungen wird) sauber entfernen
