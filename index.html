@@ -276,12 +276,21 @@
   .loading{text-align:center;padding:80px 0;color:var(--muted);font-size:14.5px;}
 
   /* ---------- PLAYER ---------- */
-  .player-wrap{border-radius:18px;overflow:hidden;background:#000;box-shadow:0 10px 30px rgba(0,0,0,.5);}
+  .player-wrap{position:relative;border-radius:18px;overflow:hidden;background:#000;box-shadow:0 10px 30px rgba(0,0,0,.5);}
   .demo-player{
     aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;
     gap:10px;color:var(--muted);text-align:center;padding:24px;
   }
   .demo-player .big-ic{font-size:38px;}
+  /* Wanderndes Wasserzeichen (07.09.2026): sichtbare Telefonnummer im Video, springt
+     periodisch an eine neue Stelle -- verhindert simples Wegschneiden/Abkleben bei
+     Screen-Recordings. Bewusst dezent (niedrige Deckkraft), aber lesbar. */
+  .wz-overlay{
+    position:absolute;color:rgba(255,255,255,.55);font-size:11px;font-weight:700;
+    letter-spacing:.3px;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.7);
+    transition:top 1.4s ease,left 1.4s ease;z-index:5;user-select:none;
+    background:rgba(0,0,0,.18);padding:3px 7px;border-radius:5px;white-space:nowrap;
+  }
 
   /* ---------- ADMIN ---------- */
   .admin-tabs{display:flex;gap:8px;margin-bottom:18px;overflow-x:auto;scrollbar-width:none;
@@ -954,6 +963,7 @@ let abrSchule = "";         // Filter: Schul-ID, "__direkt__" = nur Direktverkau
 let abrNurOffen = false;    // Filter: nur unbezahlte Belege
 
 let session = JSON.parse(localStorage.getItem("academy_session") || "null");
+let wzInterval = null; // 07.09.2026: Timer-Handle fuer das wandernde Wasserzeichen im Player
 
 /* =========================================================
    Bereich 10.5 (27.08.2026) — Mehrsprachige Oberfläche.
@@ -1159,6 +1169,7 @@ async function doLogin(){
 }
 
 function doLogout(){
+  stopWatermark();
   localStorage.removeItem("academy_session");
   session = null;
   openStufen = new Set();
@@ -1246,6 +1257,7 @@ async function showApp(){
         session.agb_akzeptiert_am = data.agb_akzeptiert_am;
         session.ablauf_am = data.ablauf_am;
         session.klassen_freigabe = data.klassen_freigabe;
+        if(data.telefon) session.telefon = data.telefon; // 07.09.2026: fuers Wasserzeichen im Player
         localStorage.setItem("academy_session", JSON.stringify(session));
       } else if(res.status === 401){
         // Session existiert serverseitig nicht mehr (z.B. Admin hat sie zurückgesetzt,
@@ -1963,6 +1975,7 @@ function nachObenScrollen(){
 }
 
 function renderCatalog(){
+  stopWatermark(); // Sicherheitsnetz: egal auf welchem Weg man die Videoseite verlaesst
   const totalVideos = allVideos.length;
   const seenCount = allVideos.filter(function(v){ return seenVideoIds.has(v.id); }).length;
 
@@ -2190,7 +2203,37 @@ function vgGradientFuer(videoId){
   return VG_GRADIENTS[h % VG_GRADIENTS.length];
 }
 
+// Wanderndes Wasserzeichen (07.09.2026, Betrugsschutz-Report Punkt 2): legt ein
+// halbtransparentes <div> mit Telefonnummer + Name des eingeloggten Schuelers ueber
+// den Player und laesst es alle paar Sekunden an eine neue zufaellige Stelle springen.
+// Nummer kommt aus session.telefon (server-seitig bei Login/Refresh gesetzt, nicht
+// nur aus dem Eingabefeld -- damit sie vertrauenswuerdig bleibt).
+function startWatermark(){
+  stopWatermark();
+  if(session && session.demo) return; // Demo-Modus hat keine echte Nummer
+  const wrap = document.querySelector(".player-wrap");
+  if(!wrap || !session || !session.telefon) return;
+  const el = document.createElement("div");
+  el.className = "wz-overlay";
+  el.textContent = session.telefon + (session.name ? " · " + session.name : "");
+  wrap.appendChild(el);
+  function platzieren(){
+    // Bleibt innerhalb des sichtbaren Bereichs (Rand-Puffer, damit der Text nicht
+    // ueber den Player-Rand hinausragt).
+    el.style.top = (4 + Math.random() * 82) + "%";
+    el.style.left = (3 + Math.random() * 62) + "%";
+  }
+  platzieren();
+  wzInterval = setInterval(platzieren, 4000);
+}
+function stopWatermark(){
+  if(wzInterval){ clearInterval(wzInterval); wzInterval = null; }
+  const el = document.querySelector(".wz-overlay");
+  if(el) el.remove();
+}
+
 async function openVideo(videoId){
+  stopWatermark(); // vorheriges Wasserzeichen (falls von Video zu Video gesprungen wird) sauber entfernen
   if(DEMO_MODE){
     markSeen(videoId);
     const v = allVideos.find(function(x){ return x.id === videoId; });
@@ -2260,6 +2303,7 @@ async function openVideo(videoId){
       '<div class="player-wrap"><iframe src="' + embedUrl + '" loading="lazy" ' +
       'style="border:0;width:100%;aspect-ratio:16/9;display:block;" allow="autoplay; fullscreen"></iframe></div>' +
       weiterBtn;
+    startWatermark();
     document.getElementById("back-btn").addEventListener("click", function(){
       // Konsistent: von JEDEM Video führt "Zurück" in dessen eigene Bereichsseite --
       // unabhängig davon, ob man vom Start, vom Lernpfad oder per Suche hierhergekommen ist.
