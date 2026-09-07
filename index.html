@@ -132,8 +132,10 @@
       border-radius:0 0 19px 19px;
       border-top:1px solid var(--bogen-kante);
     }
-    /* Der Freiraum für die vormals schwebende Leiste wird nicht mehr gebraucht. */
-    .page-content{ padding-bottom:var(--sp-l); }
+    /* Bug-Fix (07.09.2026): "sticky" braucht GENAUSO viel Bodenabstand wie "fixed" --
+       die Leiste nimmt am Ende der Liste trotzdem ihre volle Höhe ein, sonst wird die
+       letzte Karte (z.B. "Prüfung") von ihr überdeckt, statt sauber darüber zu enden. */
+    .page-content{ padding-bottom:96px; }
     /* Der Admin-Balken sitzt ganz oben im Bogen und darf dessen Ecken nicht überlaufen. */
     .admin-balken{ margin:-22px -28px 0; border-radius:19px 19px 0 0; }
     /* Dezente Bildlaufleiste, damit sie den Papiereindruck nicht stört */
