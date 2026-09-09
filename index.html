@@ -286,7 +286,8 @@
      letzte 4 Ziffern (nicht die volle Nummer), springt periodisch an eine neue Stelle --
      verhindert simples Wegschneiden/Abkleben bei Screen-Recordings. Sehr dezent
      (niedrige Deckkraft), aber im Zweifel lesbar. Im nativen Vollbild-Modus des
-     Bunny-Players nicht sichtbar -- siehe Kommentar bei openVideo(). */
+     Bunny-Players nicht sichtbar (bewusst so belassen, siehe Vorfall 07.09.2026 --
+     ein Redirect-Versuch hat Vollbild komplett kaputt gemacht und wurde zurueckgebaut). */
   .wz-overlay{
     position:absolute;color:rgba(255,255,255,.28);font-size:11px;font-weight:700;
     letter-spacing:.3px;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.5);
@@ -3689,8 +3690,11 @@ async function renderAdminAbrechnung(){
                 (v.fahrlehrer_name ? " · " + esc(v.fahrlehrer_name) : "") + "</div>" +
               (v.notiz ? '<div class="admin-sub" style="opacity:.7;">' + esc(v.notiz) + "</div>" : "") +
             "</div>" +
-            '<div class="admin-badge ' + (bezahlt ? "badge-bezahlt" : "badge-offen") + '">' +
-              (bezahlt ? "Bezahlt" : (fehlt ? "Betrag fehlt" : "Offen")) +
+            '<div style="display:flex;align-items:center;gap:8px;">' +
+              '<div class="admin-badge ' + (bezahlt ? "badge-bezahlt" : "badge-offen") + '">' +
+                (bezahlt ? "Bezahlt" : (fehlt ? "Betrag fehlt" : "Offen")) +
+              "</div>" +
+              '<button class="icon-btn danger" data-delverkauf="' + esc(v.id) + '" title="Löschen">' + icon("papierkorb") + '</button>' +
             "</div>" +
           "</div>" +
           '<div class="abr-felder">' +
@@ -3820,6 +3824,9 @@ async function renderAdminAbrechnung(){
   document.querySelectorAll("[data-bezahlt]").forEach(function(b){
     b.addEventListener("click", function(){ verkaufBezahltUmschalten(b.dataset.bezahlt); });
   });
+  document.querySelectorAll("[data-delverkauf]").forEach(function(b){
+    b.addEventListener("click", function(){ verkaufLoeschen(b.dataset.delverkauf); });
+  });
 }
 
 async function verkaufSpeichern(id){
@@ -3856,6 +3863,31 @@ async function verkaufBezahltUmschalten(id){
   const res = await supa.from("academy_verkaeufe").update({ bezahlt_am: neu }).eq("id", id);
   if(res.error){ showToast("Konnte nicht geändert werden"); return; }
   showToast(neu ? "Als bezahlt markiert" : "Wieder auf offen gesetzt");
+  renderAdminAbrechnung();
+}
+
+async function verkaufLoeschen(id){
+  const v = allVerkaeufe.find(function(x){ return x.id === id; });
+  if(!v) return;
+  // Bei bereits bezahlten/gebuchten Belegen strenger warnen -- das ist dann schon
+  // verbuchter Umsatz, kein einfacher Tippfehler mehr. Loeschen bleibt trotzdem
+  // moeglich (fuer echte Fehlbuchungen/Duplikate), aber bewusst mit Extra-Warnung.
+  const frage = v.bezahlt_am
+    ? "Dieser Beleg (" + esc(v.schueler_name) + ", " + (v.verkaufspreis == null ? "kein Preis" : v.verkaufspreis + " €") +
+      ") ist bereits als BEZAHLT verbucht.\n\nWirklich endgültig löschen? Das entfernt ihn auch aus der Jahresübersicht."
+    : "Beleg für " + esc(v.schueler_name) + " wirklich endgültig löschen?";
+  if(!confirm(frage)) return;
+
+  const { error } = await supa.from("academy_verkaeufe").delete().eq("id", id);
+  if(error){ showToast("Fehler: " + error.message); return; }
+  await protokolliere(
+    "beleg_geloescht", "verkauf", id, v.schueler_name,
+    "Preis: " + (v.verkaufspreis == null ? "—" : v.verkaufspreis + " €") +
+    ", Anteil: " + (v.provision == null ? "—" : v.provision + " €") +
+    (v.bezahlt_am ? " (war bereits bezahlt)" : " (war offen)")
+  );
+  showToast("Beleg gelöscht");
+  await ladeVerkaeufe();
   renderAdminAbrechnung();
 }
 
