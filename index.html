@@ -968,6 +968,23 @@ let abrNurOffen = false;    // Filter: nur unbezahlte Belege
 let session = JSON.parse(localStorage.getItem("academy_session") || "null");
 let wzInterval = null; // 07.09.2026: Timer-Handle fuer das wandernde Wasserzeichen im Player
 
+// 09.09.2026, Betrugsschutz Punkt 1+2: stabile Geraete-Kennung.
+// Rein zufaellig, enthaelt KEINE Geraete- oder Personendaten (kein Fingerprinting,
+// damit DSGVO-seitig unproblematisch). Bleibt pro Installation gleich, solange der
+// Browser-Speicher nicht geloescht wird -- das reicht, um Weitergabe an andere
+// Personen zu erkennen. Ein bewusst manipulierender Nutzer koennte den Wert
+// faelschen; das ist akzeptiert, es geht um Abschreckung im Alltag, nicht um
+// technische Unumgehbarkeit.
+function geraeteId(){
+  let id = null;
+  try{ id = localStorage.getItem("academy_geraet"); } catch(e){ return null; }
+  if(!id){
+    id = "g" + Date.now().toString(36) + Math.random().toString(36).slice(2, 12);
+    try{ localStorage.setItem("academy_geraet", id); } catch(e){ return null; }
+  }
+  return id;
+}
+
 /* =========================================================
    Bereich 10.5 (27.08.2026) — Mehrsprachige Oberfläche.
    WICHTIG zum Verständnis: Übersetzt wird die BEDIENOBERFLÄCHE
@@ -1159,7 +1176,7 @@ async function doLogin(){
     const res = await fetch(SUPABASE_URL + "/functions/v1/academy-login", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": "Bearer " + SUPABASE_ANON_KEY },
-      body: JSON.stringify({ telefon: tel, pin: pin })
+      body: JSON.stringify({ telefon: tel, pin: pin, geraete_id: geraeteId() })
     });
     const data = await res.json();
     if(!res.ok){ errEl.textContent = data.error || "Login fehlgeschlagen"; return; }
@@ -1263,10 +1280,12 @@ async function showApp(){
         if(data.telefon) session.telefon = data.telefon; // 07.09.2026: fuers Wasserzeichen im Player
         localStorage.setItem("academy_session", JSON.stringify(session));
       } else if(res.status === 401){
-        // Session existiert serverseitig nicht mehr (z.B. Admin hat sie zurückgesetzt,
-        // oder wirklich abgelaufen) -- sauber zurück zum Login, statt mit Karteileichen
-        // weiterzuarbeiten.
+        // Session existiert serverseitig nicht mehr. Seit der Ein-Geraet-Sperre
+        // (09.09.2026) ist der haeufigste Grund: jemand hat sich mit denselben
+        // Zugangsdaten auf einem anderen Geraet angemeldet. Ohne Erklaerung steht
+        // der Schueler sonst ratlos vor dem Login und meldet sich als "Fehler".
         doLogout();
+        showToast("Du wurdest abgemeldet, weil dieser Zugang auf einem anderen Gerät verwendet wurde. Der Zugang gilt nur für ein Gerät.");
         return;
       } else if(res.status === 403){
         doLogout();
@@ -2282,9 +2301,13 @@ async function openVideo(videoId){
 
     if(!res.ok){
       if(res.status === 401 || res.status === 403){
+        // Wie bei showApp(): seit der Ein-Geraet-Sperre ist der haeufigste Grund ein
+        // paralleler Login auf einem anderen Geraet. Ohne Hinweis wirkt das wie ein Bug.
+        stopWatermark();
         localStorage.removeItem("academy_session");
         session = null;
         showLogin();
+        showToast("Du wurdest abgemeldet, weil dieser Zugang auf einem anderen Gerät verwendet wurde. Der Zugang gilt nur für ein Gerät.");
         return;
       }
       document.getElementById("app").innerHTML =
@@ -2761,6 +2784,48 @@ function renderAdminHistorie(){
 }
 
 function renderAdminSchueler(){
+  // --- Betrugsschutz Punkt 4 (09.09.2026): Fortschritts-Plausibilität ---
+  // Idee: Eine Person kann nicht zwei verschiedene Videos gleichzeitig schauen.
+  // Zwei Aufrufe VERSCHIEDENER Videos innerhalb von 30 Sekunden sind daher ein
+  // Hinweis auf mehrere Nutzer hinter einem Zugang.
+  //
+  // WICHTIG (an echten Daten geprüft, nicht geschätzt): academy_videos hat KEIN
+  // Dauer-Feld, echte Überlappung ist also nicht exakt berechenbar. Und normales
+  // Herumklicken erzeugt genau dasselbe Muster -- bei den aktuellen Schülern kommen
+  // 1-7 solche Schnellwechsel ganz harmlos vor. Eine niedrige Schwelle würde also
+  // fast jeden ehrlichen Schüler anschwärzen. Deshalb bewusst streng: es zählt nur,
+  // wenn Schnellwechsel sowohl HÄUFIG sind als auch einen großen ANTEIL aller
+  // Übergänge ausmachen. Mit den aktuellen Echtdaten schlägt das bei niemandem an.
+  const MIN_SCHNELLWECHSEL = 8;
+  const MIN_ANTEIL = 0.30;
+  const ueberlappung = {};
+  (function(){
+    const proSchueler = {};
+    // adminFortschritt kommt absteigend sortiert -- für Zeitabstände brauchen wir
+    // aufsteigend, sonst wären alle Differenzen negativ.
+    const sortiert = adminFortschritt.slice().sort(function(a, b){
+      return new Date(a.gesehen_am) - new Date(b.gesehen_am);
+    });
+    sortiert.forEach(function(f){
+      if(!proSchueler[f.schueler_id]) proSchueler[f.schueler_id] = [];
+      proSchueler[f.schueler_id].push(f);
+    });
+    Object.keys(proSchueler).forEach(function(sid){
+      const liste = proSchueler[sid];
+      let schnell = 0, uebergaenge = 0;
+      for(let i = 1; i < liste.length; i++){
+        uebergaenge++;
+        const abstand = (new Date(liste[i].gesehen_am) - new Date(liste[i-1].gesehen_am)) / 1000;
+        if(abstand < 30 && liste[i].video_id !== liste[i-1].video_id) schnell++;
+      }
+      const anteil = uebergaenge > 0 ? schnell / uebergaenge : 0;
+      ueberlappung[sid] = {
+        schnell: schnell,
+        auffaellig: schnell >= MIN_SCHNELLWECHSEL && anteil >= MIN_ANTEIL
+      };
+    });
+  })();
+
   // --- Bereich 8.4 (27.08.2026): Schnellsuche über Name, Telefon, E-Mail ---
   const suche = schuelerSuche.trim().toLowerCase();
   const sucheNorm = suche.replace(/[\s\-\/]/g, "");
@@ -2805,6 +2870,51 @@ function renderAdminSchueler(){
     // Freemium (28.08.2026): Vollzugang-Status sichtbar machen + Umschalter.
     const vollzugangZeile = '<div class="admin-sub" style="' + (s.vollzugang ? "color:var(--gold);font-weight:600;" : "opacity:.7;") + '">' +
       (s.vollzugang ? "👑 Vollzugang aktiv" : "Nur Fahrzeug-Check (kostenlos)") + "</div>";
+    // Betrugsschutz (09.09.2026, Punkt 2): Login-Haeufigkeit sichtbar machen.
+    // Faustregel: mehr als 3 Logins/Tag im Schnitt seit Anlage ist fuer EINE Person
+    // untypisch haeufig -- moeglicher Hinweis auf geteilte Zugangsdaten. Nur ein
+    // Hinweis zum Nachschauen, kein automatischer Blocker.
+    let loginZeile = "";
+    if(s.login_anzahl > 0){
+      const tageSeitAnlage = Math.max(1, (new Date() - new Date(s.erstellt_am)) / 86400000);
+      const proTag = s.login_anzahl / tageSeitAnlage;
+      const auffaellig = proTag > 3;
+      loginZeile = '<div class="admin-sub"' + (auffaellig ? ' style="color:#B5573F;font-weight:600;"' : "") + '>' +
+        (auffaellig ? "⚠️ " : "") + s.login_anzahl + " Login" + (s.login_anzahl === 1 ? "" : "s") +
+        (s.letzter_login_am ? " · zuletzt " + fmtDate(s.letzter_login_am) : "") +
+        (auffaellig ? " — ungewöhnlich häufig, evtl. geteilter Zugang?" : "") +
+      "</div>";
+    }
+    // Betrugsschutz Punkt 2 (09.09.2026): Geraetewechsel zaehlen. Anders als der
+    // Login-Zaehler erkennt das gezielt WEITERGABE -- ein Zugang, der staendig
+    // zwischen verschiedenen Geraeten springt, wird sehr wahrscheinlich geteilt.
+    // Schwelle bewusst frueh bei 2 (auf Wunsch 09.09.2026): lieber einmal zu frueh
+    // hinschauen als monatelang Geld verlieren. Es ist reine Anzeige, ein Fehlalarm
+    // kostet nur einen kurzen Blick -- ein uebersehener Fall kostet echtes Geld.
+    let wechselZeile = "";
+    if(s.geraetewechsel_anzahl > 0){
+      const vielWechsel = s.geraetewechsel_anzahl >= 2;
+      wechselZeile = '<div class="admin-sub"' + (vielWechsel ? ' style="color:#B5573F;font-weight:600;"' : "") + '>' +
+        (vielWechsel ? "⚠️ " : "") + s.geraetewechsel_anzahl + "× Gerätewechsel" +
+        (vielWechsel ? " — Zugang wird vermutlich weitergegeben" : "") +
+      "</div>";
+    }
+    // Betrugsschutz Punkt 4: reine ANZEIGE, niemals automatische Sperre -- ein
+    // automatischer Rauswurf träfe irgendwann einen ehrlichen Schüler mitten in der
+    // Prüfungsvorbereitung. Serband entscheidet selbst, ob er nachhakt.
+    const ul = ueberlappung[s.id];
+    const ueberlappZeile = (ul && ul.auffaellig)
+      ? '<div class="admin-sub" style="color:#B5573F;font-weight:600;">⚠️ ' + ul.schnell +
+        "× zwei Videos fast gleichzeitig geöffnet — evtl. mehrere Nutzer</div>"
+      : "";
+    let stammZeile = "";
+    if(s.geburtsdatum || s.schuelernummer){
+      stammZeile = '<div class="admin-sub" style="opacity:.75;">' +
+        (s.geburtsdatum ? "geb. " + fmtDate(s.geburtsdatum) : "") +
+        (s.geburtsdatum && s.schuelernummer ? " · " : "") +
+        (s.schuelernummer ? "Nr. " + esc(s.schuelernummer) : "") +
+      "</div>";
+    }
     return '<div class="admin-card glass">' +
       '<div class="admin-row">' +
         '<div>' +
@@ -2813,7 +2923,7 @@ function renderAdminSchueler(){
           '<div class="admin-name">' + esc(s.name) + "</div>" +
           '<div class="admin-sub">' + esc(s.telefon) + " · Klasse " + esc(s.klasse) + " · " + esc(fl ? fl.name : "—") + "</div>" +
           pinStatusZeile + pinWartetHinweis +
-          ablaufWarnung + terminZeile + agbZeile + vollzugangZeile + sperrgrundZeile +
+          ablaufWarnung + terminZeile + agbZeile + vollzugangZeile + loginZeile + wechselZeile + ueberlappZeile + stammZeile + sperrgrundZeile +
         "</div>" +
         '<div style="text-align:right;">' +
           '<div class="admin-badge ' + badgeClass + '">' + badgeText + "</div>" +
@@ -2840,6 +2950,14 @@ function renderAdminSchueler(){
       '<label>Name</label><input id="ns-name" placeholder="Vor- und Nachname">' +
       '<label>Telefonnummer</label><input id="ns-tel" type="tel" placeholder="z. B. 01701234567">' +
       '<label>E-Mail (für PIN-Versand)</label><input id="ns-email" type="email" placeholder="schueler@mail.de">' +
+      // Betrugsschutz Punkt 3 (09.09.2026): Pflichtangaben, wenn ein Partner-Fahrlehrer
+      // (Schul-Admin) selbst anlegt. Erschwert Fantasie-Schueler erheblich, weil sich
+      // die Angaben gegen die echte Fahrschul-Kartei stichprobenhaft pruefen lassen.
+      // Fuer den Super-Admin (Serband selbst) bleiben sie freiwillig.
+      '<label>Geburtsdatum' + (myRole === "super_admin" ? " (optional)" : "") + "</label>" +
+        '<input id="ns-geburtsdatum" type="date">' +
+      '<label>Schülernummer der Fahrschule' + (myRole === "super_admin" ? " (optional)" : "") + "</label>" +
+        '<input id="ns-schuelernummer" placeholder="Nummer aus eurer Schülerkartei">' +
       '<label>Klasse</label><select id="ns-klasse"><option value="B">B</option><option value="BE">BE</option><option value="C">C</option><option value="CE">CE</option></select>' +
       '<label>Zugangsdauer</label><select id="ns-dauer"><option value="1">1 Monat</option><option value="3">3 Monate</option><option value="6" selected>6 Monate (Standard)</option><option value="12">12 Monate</option><option value="24">24 Monate</option></select>' +
       '<label>Zugang vergeben über</label><select id="ns-fl">' + flOptions + "</select>" +
@@ -2920,7 +3038,19 @@ async function createSchueler(){
   const dauerMonate = parseInt(document.getElementById("ns-dauer").value, 10) || 6;
   const flId = document.getElementById("ns-fl").value;
   const vollzugangSofort = document.getElementById("ns-vollzugang").checked;
+  const geburtsdatum = document.getElementById("ns-geburtsdatum").value;
+  const schuelernummer = document.getElementById("ns-schuelernummer").value.trim();
   if(!name || !tel){ showToast("Name und Telefonnummer sind Pflicht"); return; }
+  // Betrugsschutz Punkt 3 (09.09.2026): Fuer Partner-Fahrlehrer sind Geburtsdatum und
+  // Schuelernummer verpflichtend -- so lassen sich erfundene Schueler gegen die echte
+  // Fahrschul-Kartei pruefen. Serband selbst darf die Felder leer lassen.
+  if(myRole !== "super_admin"){
+    if(!geburtsdatum){ showToast("Bitte das Geburtsdatum des Schülers eintragen"); return; }
+    if(!schuelernummer){ showToast("Bitte die Schülernummer aus eurer Kartei eintragen"); return; }
+    // Plausibilitaet: Fahrschueler sind praktisch nie unter 15 oder ueber 80.
+    const alter = (new Date() - new Date(geburtsdatum)) / (365.25 * 86400000);
+    if(alter < 15 || alter > 80){ showToast("Das Geburtsdatum wirkt nicht plausibel — bitte prüfen"); return; }
+  }
 
   const pin = genPin();
   const jetzt = new Date();
@@ -2933,7 +3063,9 @@ async function createSchueler(){
     erstellt_am: jetzt.toISOString(),
     ablauf_am: addMonthsISO(jetzt, dauerMonate),
     aktiv: true,
-    vollzugang: vollzugangSofort
+    vollzugang: vollzugangSofort,
+    geburtsdatum: geburtsdatum || null,
+    schuelernummer: schuelernummer || null
   };
 
   if(DEMO_MODE){
