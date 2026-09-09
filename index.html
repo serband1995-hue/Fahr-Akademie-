@@ -2544,9 +2544,18 @@ function darfSelbstVersenden(){
 
 function renderAdmin(){
   const isSuperAdmin = myRole === "super_admin";
+  // Partner-Ansicht (09.09.2026): bewusst auf das Nötigste reduziert. Ein Partner
+  // braucht keine Kandidatenliste (das ist Serbands Vertriebs-Werkzeug) und darf
+  // auch nicht sehen oder verwalten, welche anderen Fahrlehrer es gibt. Videos sind
+  // fuer ihn nur zum ANSCHAUEN da, damit er weiss, was er verkauft (siehe
+  // renderAdminVideos -> nurLesen).
   const tabs = isSuperAdmin
     ? [["dashboard","Übersicht"],["schueler","Schüler"],["kandidaten","Kandidaten"],["fahrlehrer","Fahrlehrer"],["videos","Videos"],["pruefer","Prüfer"],["schulen","Schulen"],["abrechnung","Abrechnung"],["protokoll","Protokoll"]]
-    : [["dashboard","Übersicht"],["schueler","Schüler"],["kandidaten","Kandidaten"],["fahrlehrer","Fahrlehrer"]];
+    : [["dashboard","Übersicht"],["schueler","Schüler"],["videos","Videos"]];
+
+  // Schutz gegen einen stehengebliebenen Tab-Zustand: waere adminTab noch auf einem
+  // Tab, den diese Rolle nicht mehr sehen darf, faellt sie auf die Uebersicht zurueck.
+  if(!tabs.some(function(t){ return t[0] === adminTab; })) adminTab = "dashboard";
 
   const tabsHtml = '<div class="admin-tabs">' +
     tabs.map(function(t){
@@ -2578,6 +2587,13 @@ function renderAdmin(){
   });
 
   if(!tabs.find(function(t){ return t[0] === adminTab; }) && adminTab !== "historie") adminTab = "dashboard";
+
+  // Zusaetzliche Absicherung auf Anzeige-Ebene: diese Bereiche gehoeren ausschliesslich
+  // dem Super-Admin. Tabs auszublenden allein reicht nicht -- ein stehengebliebener
+  // Zustand koennte sie sonst trotzdem oeffnen. (Die Daten sind zusaetzlich per RLS
+  // geschuetzt, das hier ist nur die zweite Schicht.)
+  const nurSuper = ["kandidaten","fahrlehrer","pruefer","schulen","abrechnung","protokoll","historie"];
+  if(myRole !== "super_admin" && nurSuper.indexOf(adminTab) !== -1) adminTab = "dashboard";
 
   if(adminTab === "dashboard") renderAdminDashboard();
   if(adminTab === "schueler") renderAdminSchueler();
@@ -2650,10 +2666,34 @@ function renderAdminDashboard(){
       }).join("")
     ]);
   }
-  if(videosOhneId.length) todos.push(["rot", videosOhneId.length + " Video(s) ohne Bunny-ID — für Schüler nicht abspielbar"]);
-  if(ungesendeteVideos.length) todos.push(["gelb",
-    ungesendeteVideos.length + " neue(s) Video(s) noch nicht angekündigt " +
-    '<button id="sammel-push-btn" class="btn-primary" style="margin-left:8px;padding:5px 12px;font-size:12px;width:auto;display:inline-block;">' + icon("glocke","ic-s") + " Jetzt ankündigen</button>"]);
+  // Benachrichtigung (09.09.2026): Serband muss JEDEN von einem Partner angelegten
+  // Zugang mitbekommen -- auch die, die der Partner selbst schon verschickt hat und
+  // die deshalb nicht in der Warteliste oben auftauchen. Sonst entstehen Zugänge und
+  // Provisionen, von denen er erst bei der Abrechnung erfährt.
+  if(myRole === "super_admin"){
+    const neuVonPartner = allSchueler.filter(function(s){
+      return s.schule_id && s.erstellt_am &&
+        (jetzt - new Date(s.erstellt_am)) / 86400000 <= 7;
+    });
+    if(neuVonPartner.length){
+      todos.push(["gelb",
+        "<b>" + neuVonPartner.length + " neue(r) Zugang/Zugänge von Partnern (letzte 7 Tage)</b><br>" +
+        neuVonPartner.map(function(s){
+          const schule = allSchulen.find(function(sc){ return sc.id === s.schule_id; });
+          return '<div style="margin-top:4px;">' + esc(s.name) + " · " +
+            esc(schule ? schule.name : "?") + " · " + fmtDate(s.erstellt_am) + "</div>";
+        }).join("")
+      ]);
+    }
+  }
+  // Technische Hinweise gehen nur Serband etwas an -- ein Partner kann daran ohnehin
+  // nichts ändern und würde sich nur unnötig Sorgen machen.
+  if(myRole === "super_admin"){
+    if(videosOhneId.length) todos.push(["rot", videosOhneId.length + " Video(s) ohne Bunny-ID — für Schüler nicht abspielbar"]);
+    if(ungesendeteVideos.length) todos.push(["gelb",
+      ungesendeteVideos.length + " neue(s) Video(s) noch nicht angekündigt " +
+      '<button id="sammel-push-btn" class="btn-primary" style="margin-left:8px;padding:5px 12px;font-size:12px;width:auto;display:inline-block;">' + icon("glocke","ic-s") + " Jetzt ankündigen</button>"]);
+  }
   if(ohneZustimmung.length) todos.push(["gelb", ohneZustimmung.length + " Schüler haben die Nutzungsbedingungen noch nicht bestätigt"]);
   laeuftAb.forEach(function(s){
     const tage = Math.ceil((new Date(s.ablauf_am) - jetzt) / 86400000);
@@ -3080,6 +3120,20 @@ async function createSchueler(){
   const { error } = await supa.from("academy_schueler").insert(neu);
   if(error){ showToast("Fehler: " + error.message); return; }
 
+  // Benachrichtigung an Serband (09.09.2026): Legt ein PARTNER einen Zugang an, muss
+  // Serband das zuverlaessig mitbekommen -- sonst entstehen Zugaenge und Provisionen,
+  // von denen er erst bei der naechsten Abrechnung erfaehrt. Der Protokolleintrag ist
+  // die verlaessliche Spur; das Dashboard zeigt zusaetzlich einen auffaelligen Hinweis.
+  if(myRole !== "super_admin"){
+    await protokolliere(
+      "zugang_von_partner", "schueler", neu.id, neu.name,
+      "Angelegt von: " + (adminSession && adminSession.email ? adminSession.email : "Partner") +
+      " · Klasse " + klasse +
+      " · " + (vollzugangSofort ? "Vollzugang" : "nur Fahrzeug-Check") +
+      (schuelernummer ? " · Schüler-Nr. " + schuelernummer : "")
+    );
+  }
+
   // Partner-Modell (07.09.2026): Nur Serband (Super-Admin) verschickt automatisch den
   // PIN. Legt ein Partner-Fahrlehrer (Schul-Admin) einen Schüler an, bleibt der Zugang
   // bewusst "wartend" -- Serband sieht das im Dashboard und verschickt selbst, das gibt
@@ -3213,6 +3267,10 @@ async function deleteSchueler(id){
 
 /* ---------- VIDEOS-TAB ---------- */
 function renderAdminVideos(){
+  // Partner-Ansicht (09.09.2026): Ein Partner-Fahrlehrer soll sehen KÖNNEN, welche
+  // Videos es gibt -- er verkauft das Produkt schliesslich und muss wissen, was drin
+  // ist. Aendern, anlegen, loeschen oder Push verschicken darf er nichts davon.
+  const nurLesen = myRole !== "super_admin";
   // --- Bereich 8.3 (27.08.2026): nach Stufe filtern statt durch alles zu scrollen ---
   // Ein Video kann über mehrere Tags zu mehreren Stufen gehören, daher "irgendein
   // Tag passt" statt einer festen Zuordnung.
@@ -3239,18 +3297,19 @@ function renderAdminVideos(){
 
     const prueferChips = prueferForVideo.map(function(p){
       return '<span class="admin-badge badge-gesperrt" style="margin-right:4px;">' + esc(p.name) +
-        ' <span data-rmpr="' + esc(v.id) + '|' + esc(p.id) + '" style="cursor:pointer;font-weight:900;">×</span></span>';
+        (nurLesen ? "" : ' <span data-rmpr="' + esc(v.id) + '|' + esc(p.id) + '" style="cursor:pointer;font-weight:900;">×</span>') +
+      "</span>";
     }).join("");
 
     const restlichePruefer = allPruefer.filter(function(p){
       return !prueferForVideo.some(function(pf){ return pf.id === p.id; });
     });
-    const addPrueferSelect = restlichePruefer.length
-      ? '<select data-addpr-select="' + esc(v.id) + '" style="margin-top:6px;width:auto;display:inline-block;padding:6px 10px;font-size:12.5px;">' +
+    const addPrueferSelect = (nurLesen || !restlichePruefer.length)
+      ? ""
+      : '<select data-addpr-select="' + esc(v.id) + '" style="margin-top:6px;width:auto;display:inline-block;padding:6px 10px;font-size:12.5px;">' +
           restlichePruefer.map(function(p){ return '<option value="' + esc(p.id) + '">' + esc(p.name) + "</option>"; }).join("") +
         "</select> " +
-        '<button data-addpr-btn="' + esc(v.id) + '" class="icon-btn" style="font-size:12px;">+ Prüfer</button>'
-      : "";
+        '<button data-addpr-btn="' + esc(v.id) + '" class="icon-btn" style="font-size:12px;">+ Prüfer</button>';
 
     return '<div class="admin-card glass">' +
       '<div class="admin-row">' +
@@ -3258,17 +3317,19 @@ function renderAdminVideos(){
           '<div class="admin-name">' + esc(v.titel) + "</div>" +
           (v.beschreibung ? '<div class="admin-sub">' + esc(v.beschreibung) + "</div>" : "") +
           (tagsForVideo ? '<div class="admin-sub">Tags: ' + esc(tagsForVideo) + "</div>" : "") +
-          '<div class="admin-badge ' + (verknuepft ? "badge-aktiv" : "badge-abgelaufen") + '" style="margin-top:6px;display:inline-block;">' +
-            (verknuepft ? "🎬 Mit Bunny verknüpft" : "⚠️ Kein Video verknüpft") +
-          "</div>" +
+          (nurLesen ? "" :
+            '<div class="admin-badge ' + (verknuepft ? "badge-aktiv" : "badge-abgelaufen") + '" style="margin-top:6px;display:inline-block;">' +
+              (verknuepft ? "🎬 Mit Bunny verknüpft" : "⚠️ Kein Video verknüpft") +
+            "</div>") +
           '<div class="admin-sub" style="margin-top:8px;">Prüfer: ' + (prueferChips || "keiner") + "</div>" +
           '<div style="margin-top:4px;">' + addPrueferSelect + "</div>" +
         "</div>" +
+        (nurLesen ? "" :
         '<div style="text-align:right;">' +
           '<button class="icon-btn" data-editv="' + esc(v.id) + '" title="Bunny-Video-ID eintragen/ändern">' + icon("stift") + '</button>' +
           '<button class="icon-btn" data-notifyv="' + esc(v.id) + '" title="Push-Benachrichtigung an alle aktiven Schüler senden">' + icon("glocke") + '</button>' +
           '<button class="icon-btn danger" data-delv="' + esc(v.id) + '" title="Löschen">' + icon("papierkorb") + '</button>' +
-        "</div>" +
+        "</div>") +
       "</div>" +
     "</div>";
   }).join("") || '<div class="empty">Noch keine Videos angelegt.</div>';
@@ -3293,7 +3354,7 @@ function renderAdminVideos(){
     "</label>";
   }).join("");
 
-  document.getElementById("admin-content").innerHTML =
+  const anlegeForm = nurLesen ? "" :
     '<div class="admin-form glass">' +
       '<div class="admin-form-title" style="font-size:17px;">Neues Video anlegen</div>' +
       '<div class="admin-sub" style="margin-bottom:14px;">So kommt ein Video von deinem Handy zu den Schülern — 4 Schritte.</div>' +
@@ -3341,7 +3402,18 @@ function renderAdminVideos(){
 
       '<button class="btn-primary" id="nv-btn" style="margin-top:6px;">Video anlegen &amp; Schüler benachrichtigen</button>' +
       '<div class="admin-sub" style="margin-top:6px;">Nach dem Anlegen erscheint das Video sofort bei allen Schülern — und alle mit aktivierten Benachrichtigungen bekommen automatisch eine Push-Nachricht.</div>' +
-    "</div>" +
+    "</div>";
+
+  document.getElementById("admin-content").innerHTML =
+    anlegeForm +
+    // Partner sieht statt des Anlege-Formulars einen kurzen Hinweis, wozu die Liste da ist.
+    (nurLesen
+      ? '<div class="admin-card glass" style="margin-bottom:10px;">' +
+          '<div class="admin-name">Das steckt in der Fahr-Akademie</div>' +
+          '<div class="admin-sub">Diese ' + allVideos.length + ' Videos bekommen deine Schüler mit einem Vollzugang. ' +
+          'So weißt du genau, was du verkaufst. Die Inhalte pflegt Serband.</div>' +
+        "</div>"
+      : "") +
     '<div class="admin-card glass" style="margin-bottom:10px;">' +
       '<label>Filtern</label>' +
       '<select id="vid-filter">' +
@@ -3387,11 +3459,16 @@ function renderAdminVideos(){
     cb.addEventListener("change", aktualisiereChips);
   });
 
-  document.getElementById("vid-filter").addEventListener("change", function(e){
+  const vidFilter = document.getElementById("vid-filter");
+  if(vidFilter) vidFilter.addEventListener("change", function(e){
     videoFilterStufe = e.target.value;
     renderAdminVideos();
   });
-  document.getElementById("nv-btn").addEventListener("click", createVideo);
+  // Die folgenden Bedienelemente existieren in der Partner-Ansicht gar nicht --
+  // ohne diese Pruefung wuerde renderAdminVideos() dort mit einem Fehler abbrechen
+  // und der Video-Tab bliebe leer.
+  const nvBtn = document.getElementById("nv-btn");
+  if(nvBtn) nvBtn.addEventListener("click", createVideo);
   document.querySelectorAll("[data-delv]").forEach(function(b){
     b.addEventListener("click", function(){ deleteVideo(b.dataset.delv); });
   });
