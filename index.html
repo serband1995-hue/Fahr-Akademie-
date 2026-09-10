@@ -724,7 +724,8 @@ const BEREICH_ICON = {
   "Grundfahraufgaben":'<rect x="4" y="6" width="16" height="12" rx="2"/><path d="M9 10h6M9 14h3"/>',
   "Technik":'<circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/>',
   "Fahrzeug-Check":'<path d="M20 12a8 8 0 11-8-8"/><path d="M9 12l2 2 5-5"/>',
-  "Prüfung":'<path d="M9 11l3 3 6-6"/><rect x="3" y="4" width="18" height="16" rx="2"/>'
+  "Prüfung":'<path d="M9 11l3 3 6-6"/><rect x="3" y="4" width="18" height="16" rx="2"/>',
+  "Prüfungsstrecken":'<circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H16a3 3 0 0 0 0-6H8a3 3 0 0 1 0-6h7.5"/>'
 };
 function bereichIcon(stufe){
   return '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">' + (BEREICH_ICON[stufe] || BEREICH_ICON["Grundstufe"]) + "</svg>";
@@ -756,11 +757,11 @@ function passtZurSuche(video, tag){
   return heuhaufen.indexOf(q) !== -1;
 }
 
-const STUFEN_ORDER = ["Startklar","Grundstufe","Aufbaustufe","Leistungsstufe","Sonderfahrten","Grundfahraufgaben","Grundfahraufgaben-Alt","Technik","Fahrzeug-Check","Prüfung"];
+const STUFEN_ORDER = ["Startklar","Grundstufe","Aufbaustufe","Leistungsstufe","Sonderfahrten","Grundfahraufgaben","Grundfahraufgaben-Alt","Technik","Fahrzeug-Check","Prüfung","Prüfungsstrecken"];
 const STUFE_PREFIX = {
   "Grundstufe":"G", "Aufbaustufe":"A", "Leistungsstufe":"L",
   "Sonderfahrten":"S", "Grundfahraufgaben":"B4", "Technik":"T", "Prüfung":"P",
-  "Startklar":"B1", "Grundfahraufgaben-Alt":"GF", "Fahrzeug-Check":"B12"
+  "Startklar":"B1", "Grundfahraufgaben-Alt":"GF", "Fahrzeug-Check":"B12", "Prüfungsstrecken":"PS"
 };
 // Große Umstrukturierung (23.08.2026): Videobibliothek wächst von 6 auf 15 laienverständliche
 // Bereiche. Bereich für Bereich umgebaut, alte Stufen/Tags bleiben in der DB bestehen (Kompass
@@ -1006,7 +1007,7 @@ const SPRACHEN = [
 
 const I18N = {
   de:{
-    start:"Start", lernpfad:"Übersicht", pruefung:"Prüfer", verlauf:"Gesehen", konto:"Konto",
+    start:"Start", lernpfad:"Lernpfad", pruefung:"Prüfer", verlauf:"Verlauf", konto:"Konto",
     willkommen:"Willkommen zurück", weiterSchauen:"WEITER SCHAUEN", alsNaechstes:"Als Nächstes",
     deineBereiche:"Deine Bereiche", videosGesehen:"von {gesamt} Videos gesehen",
     allesGesehen:"Alles gesehen — stark!", allesGesehenSub:"Schau gern nochmal bei den Prüfungsstrecken vorbei.",
@@ -1021,7 +1022,7 @@ const I18N = {
     loginFehler:"Telefonnummer oder PIN falsch", keineVerbindung:"Keine Verbindung — versuch es gleich nochmal"
   },
   tr:{
-    start:"Başlangıç", lernpfad:"Genel bakış", pruefung:"Sınav görevlisi", verlauf:"İzlenenler", konto:"Hesap",
+    start:"Başlangıç", lernpfad:"Öğrenme yolu", pruefung:"Sınav görevlisi", verlauf:"Geçmiş", konto:"Hesap",
     willkommen:"Tekrar hoş geldin", weiterSchauen:"İZLEMEYE DEVAM ET", alsNaechstes:"Sırada",
     deineBereiche:"Alanların", videosGesehen:"/ {gesamt} video izlendi",
     allesGesehen:"Hepsi izlendi — harika!", allesGesehenSub:"Sınav güzergâhlarına tekrar göz at.",
@@ -1036,7 +1037,7 @@ const I18N = {
     loginFehler:"Telefon numarası veya PIN hatalı", keineVerbindung:"Bağlantı yok — birazdan tekrar dene"
   },
   en:{
-    start:"Home", lernpfad:"Overview", pruefung:"Examiners", verlauf:"Watched", konto:"Account",
+    start:"Home", lernpfad:"Learning path", pruefung:"Examiners", verlauf:"History", konto:"Account",
     willkommen:"Welcome back", weiterSchauen:"CONTINUE WATCHING", alsNaechstes:"Up next",
     deineBereiche:"Your areas", videosGesehen:"of {gesamt} videos watched",
     allesGesehen:"All watched — great!", allesGesehenSub:"Have another look at the exam routes.",
@@ -1051,7 +1052,7 @@ const I18N = {
     loginFehler:"Phone number or PIN incorrect", keineVerbindung:"No connection — please try again shortly"
   },
   ar:{
-    start:"الرئيسية", lernpfad:"نظرة عامة", pruefung:"الممتحنون", verlauf:"تمت مشاهدته", konto:"الحساب",
+    start:"الرئيسية", lernpfad:"مسار التعلم", pruefung:"الممتحنون", verlauf:"السجل", konto:"الحساب",
     willkommen:"مرحباً بعودتك", weiterSchauen:"متابعة المشاهدة", alsNaechstes:"التالي",
     deineBereiche:"مجالاتك", videosGesehen:"من {gesamt} فيديو تمت مشاهدته",
     allesGesehen:"شاهدت كل شيء — ممتاز!", allesGesehenSub:"ألقِ نظرة أخرى على مسارات الامتحان.",
@@ -1104,19 +1105,14 @@ let videoPruefer = [];
 let mainView = "start"; // "start" | "lernpfad" | "pruefungsstrecken" | "verlauf" | "konto"
 let openPruefer = new Set();
 let verlaufData = []; // rohe Ansehen-Ereignisse aus academy-progress (oder lokal im Demo-Modus)
-// "Bereits gesehen" (09.09.2026): Merkt sich, welche Videos der Schüler schon
-// angeschaut hat, damit er nichts doppelt schaut und weiß, was noch offen ist.
-// Rechtlicher Rahmen: Das ist reine SELBSTKONTROLLE des Schülers. Diese Markierung
-// wird im Admin-Bereich bewusst NICHT je Schüler angezeigt, es gibt keine Bewertung,
-// kein Feedback und keine Reaktion des Anbieters darauf. Nur so bleibt es
-// Selbstkontrolle und wird nicht zur "Überwachung des Lernerfolgs" (FernUSG).
-let seenVideoIds = new Set();
+let seenVideoIds = new Set(JSON.parse(localStorage.getItem("academy_demo_seen") || "[]"));
 let openStufen = new Set();
 let pruefungFilter = "alle"; // "alle" | "bestanden" | "nicht_bestanden" -- nur für die Stufe "Prüfung"
 let suchBegriff = "";        // Bereich 1.4: Volltextsuche über Titel/Kategorie
 let statusFilter = "alle";   // Bereich 1.6: "alle" | "offen" | "fertig"
 let drawerOpen = false;      // neues Seitenmenü (☰)
 let drawerView = null;       // null | "dashboard" | "nuetzliches" | "hilfe" | "ueber"
+let rechtDoc = null;         // Unterseite in "Rechtliches": null (Übersicht) | "impressum" | "datenschutz" | "agb" | "widerruf" (10.09.2026)
 let selectedBereich = null;  // welcher Bereich gerade als eigene "Netflix-Seite" offen ist
 let selectedHashtag = null;  // welches # gerade angetippt wurde (bereichsübergreifende Themensuche)
 let deepLinkTagId = null; // gesetzt bei ?tag=..., steuert einmaligen Scroll+Highlight
@@ -1397,9 +1393,13 @@ function renderZustimmung(){
 }
 
 async function loadVerlauf(){
-  // Lädt die "bereits gesehen"-Markierungen des EIGENEN Zugangs vom Server, damit
-  // sie auch nach einem Gerätewechsel oder Neu-Login noch stimmen.
-  if(DEMO_MODE){ verlaufData = []; return; }
+  if(DEMO_MODE){
+    // Im Demo-Modus gibt's keinen echten Verlaufs-Server — seenVideoIds (lokal) reicht als Näherung
+    verlaufData = Array.from(seenVideoIds).map(function(vid){
+      return { video_id: vid, gesehen_am: new Date().toISOString() };
+    });
+    return;
+  }
   try{
     const res = await fetch(SUPABASE_URL + "/functions/v1/academy-progress", {
       method: "POST",
@@ -1412,7 +1412,7 @@ async function loadVerlauf(){
       seenVideoIds = new Set(verlaufData.map(function(v){ return v.video_id; }));
     }
   } catch(e){
-    // Komfort-Funktion — bei Netzwerkfehler App trotzdem nutzbar lassen
+    // Verlauf ist ein Komfort-Feature — bei Netzwerkfehler App trotzdem nutzbar lassen
     verlaufData = [];
   }
 }
@@ -1637,14 +1637,12 @@ function renderStartHtml(){
     "</button>";
   }).join("");
 
-  // 09.09.2026 – Umbau zur reinen Videoplattform:
-  // Die Empfehlungs-Karte aus dem Fahrlehrer-Kompass ("Weil du bei Thema X stehst,
-  // schau dir Y an") wurde abgeschaltet. Sie stützte sich auf den gemeldeten
-  // Ausbildungsstand des Schülers und ist damit eine individuelle Lernsteuerung --
-  // genau das, was die App nicht mehr tun soll. Die Kompass-Schnittstelle selbst
-  // bleibt technisch bestehen, wird hier aber nicht mehr ausgewertet.
+  // --- Bereich 7.1/7.2 (27.08.2026): Empfehlung aus dem Fahrlehrer-Kompass ---
+  // Kommt beim Login mit (session.empfehlung). Zeigt das konkrete Video zum
+  // gemeldeten Ausbildungsstand -- oder, falls kein Video zum Thema existiert,
+  // wenigstens den Sprung in den passenden Bereich.
   let empfKarte = "";
-  const empf = null;
+  const empf = session && session.empfehlung;
   if(empf && (empf.tag_id || empf.stufe)){
     let treffer = null;
     if(empf.tag_id){
@@ -1788,7 +1786,7 @@ function renderBereichDetailHtml(){
 
 function renderVerlaufHtml(){
   if(verlaufData.length === 0){
-    return '<div class="empty">Noch nichts angesehen — starte in der Übersicht!</div>';
+    return '<div class="empty">Noch nichts angesehen — starte im Lernpfad!</div>';
   }
   // Pro Video aggregieren: wie oft gesehen, wann zuletzt
   const proVideo = {};
@@ -1921,20 +1919,156 @@ function renderUeberHtml(){
     "</div>";
 }
 
+// ---- RECHTSTEXTE (10.09.2026) ----
+// Vier vollständige Dokumente statt der alten Kurzfassung. Anbieterdaten: Serband
+// Abdullah, Kolpingstr. 23, 65667 Eschborn -- bewusst KEINE Telefonnummer im Impressum
+// (nach § 5 DDG nicht nötig). Kleinunternehmer nach § 19 UStG, keine USt-IdNr vorhanden.
+// Elterneinwilligung und Partnervereinbarung stehen bewusst NICHT hier -- nur zum
+// Ausdrucken, siehe Fahr-Akademie_Rechtstexte.md.
+const RECHTSDOKUMENTE = {
+  impressum: {
+    titel: "Impressum",
+    html:
+      '<p><b>Angaben gemäß § 5 DDG</b><br>' +
+      "Serband Abdullah<br>" +
+      "Kolpingstr. 23<br>" +
+      "65667 Eschborn<br>" +
+      "Deutschland</p>" +
+      '<p><b>Kontakt</b><br>' +
+      "E-Mail: fahrlehrerserband@gmail.com</p>" +
+      '<p><b>Umsatzsteuer</b><br>' +
+      "Gemäß § 19 UStG wird keine Umsatzsteuer berechnet und daher auch nicht ausgewiesen.</p>" +
+      '<p><b>Verantwortlich für den Inhalt</b><br>' +
+      "Serband Abdullah, Anschrift wie oben</p>" +
+      '<p><b>Streitbeilegung</b><br>' +
+      'Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: ' +
+      '<a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener">ec.europa.eu/consumers/odr</a>. ' +
+      "Wir sind nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>" +
+      '<p><b>Hinweis zum Angebot</b><br>' +
+      "Die Fahr-Akademie ist ein privates, ergänzendes Lernangebot in Form einer Videothek. Sie ist kein amtlicher Theorie- oder Praxisunterricht im Sinne des Fahrlehrergesetzes (FahrlG) und der Fahrschüler-Ausbildungsordnung (FahrschAusbO) und ersetzt keine Fahrschulausbildung. Der vorgeschriebene Theorie- und Praxisunterricht kann ausschließlich bei einer amtlich anerkannten Fahrschule absolviert werden.</p>"
+  },
+  datenschutz: {
+    titel: "Datenschutzerklärung",
+    html:
+      '<p><b>1. Verantwortlicher</b><br>' +
+      "Serband Abdullah, Kolpingstr. 23, 65667 Eschborn, E-Mail: fahrlehrerserband@gmail.com</p>" +
+      '<p><b>2. Welche Daten wir verarbeiten</b></p>' +
+      '<p><b>a) Bei der Anmeldung durch deine Fahrschule</b><br>' +
+      "Vor- und Nachname, Telefonnummer (dient gleichzeitig als Benutzername), E-Mail-Adresse (nur wenn angegeben, für den Versand der Zugangs-PIN), Führerscheinklasse, Geburtsdatum und interne Schülernummer (nur bei Anmeldung über eine Partner-Fahrschule), zugeordnete Fahrschule bzw. zugeordneter Fahrlehrer, Beginn und Ablaufdatum des Zugangs.<br>" +
+      "Zweck: Bereitstellung und Verwaltung deines persönlichen Zugangs. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung).</p>" +
+      '<p><b>b) Bei der Nutzung</b><br>' +
+      "Ein technischer Sitzungsschlüssel (damit du eingeloggt bleibst), Zeitpunkt und Anzahl deiner Anmeldungen sowie eine zufällig erzeugte Gerätekennung.<br>" +
+      "Zweck: Schutz vor unberechtigter Weitergabe von Zugangsdaten. Ein Zugang ist personengebunden und darf nur von einer Person genutzt werden. Wir erkennen daran, ob ein Zugang von mehreren Personen gleichzeitig verwendet wird. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse am Schutz vor Missbrauch).</p>" +
+      '<p><b>Ausdrücklicher Hinweis</b><br>' +
+      "Die App merkt sich, welche Videos du bereits geöffnet hast — allein damit du selbst den Überblick behältst und nichts versehentlich doppelt anschaust. Diese Markierung ist ausschließlich für dich bestimmt: Der Anbieter, deine Fahrschule und dein Fahrlehrer können nicht einsehen, welche Videos du angesehen hast. Es findet keine Bewertung, keine Lernerfolgskontrolle und keine Rückmeldung zu deinem Lernstand statt. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Bereitstellung der von dir genutzten Funktion).</p>" +
+      '<p><b>c) Beim Videoabruf</b><br>' +
+      "Die Videos werden über den Dienstleister Bunny.net ausgeliefert. Dabei wird technisch bedingt deine IP-Adresse an dessen Server übermittelt.</p>" +
+      '<p><b>d) Wasserzeichen im Video</b><br>' +
+      "Während der Videowiedergabe werden deine Initialen und die letzten vier Ziffern deiner Telefonnummer sichtbar eingeblendet. Das schützt die Inhalte vor unerlaubter Weitergabe. Diese Anzeige erfolgt nur auf deinem eigenen Bildschirm. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse am Schutz unserer Inhalte).</p>" +
+      '<p><b>e) Benachrichtigungen (nur mit deiner Zustimmung)</b><br>' +
+      "Wenn du Push-Benachrichtigungen aktivierst, speichern wir einen technischen Schlüssel deines Geräts. Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO (Einwilligung). Du kannst sie jederzeit in den Einstellungen wieder abschalten.</p>" +
+      '<p><b>3. Wo deine Daten liegen</b><br>' +
+      "Unsere Datenbank wird bei Supabase in einem Rechenzentrum in Frankfurt am Main (Region eu-central-1) betrieben. Die Videos werden über Bunny.net ausgeliefert. Mit beiden Anbietern bestehen Verträge zur Auftragsverarbeitung nach Art. 28 DSGVO.</p>" +
+      '<p><b>4. Weitergabe an Dritte</b><br>' +
+      "Deine Daten werden nicht verkauft und nicht zu Werbezwecken weitergegeben. Deine Fahrschule bzw. dein Fahrlehrer sieht nur die Schüler, die sie oder er selbst angelegt hat, und dort nur Name, Kontaktdaten und Zugangsstatus — nicht dein Nutzungsverhalten.</p>" +
+      '<p><b>5. Speicherdauer</b><br>' +
+      "Wir löschen deine Daten, wenn dein Zugang gelöscht wird. Ausgenommen sind Buchhaltungsunterlagen zu abgeschlossenen Zahlungsvorgängen; diese müssen wir aufgrund handels- und steuerrechtlicher Aufbewahrungspflichten (§ 147 AO, § 257 HGB) bis zu 10 Jahre aufbewahren.</p>" +
+      '<p><b>6. Deine Rechte</b><br>' +
+      "Du hast das Recht auf Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) und Widerspruch (Art. 21 DSGVO). Eine erteilte Einwilligung kannst du jederzeit mit Wirkung für die Zukunft widerrufen. Wende dich dafür an fahrlehrerserband@gmail.com.<br>" +
+      "Außerdem kannst du dich bei einer Datenschutz-Aufsichtsbehörde beschweren. Zuständig ist der Hessische Beauftragte für Datenschutz und Informationsfreiheit, Postfach 3163, 65021 Wiesbaden.</p>" +
+      '<p><b>7. Minderjährige</b><br>' +
+      "Ist der Nutzer unter 18 Jahre alt, ist die Zustimmung eines Erziehungsberechtigten erforderlich.</p>"
+  },
+  agb: {
+    titel: "Allgemeine Geschäftsbedingungen",
+    html:
+      '<p><b>§ 1 Anbieter und Geltungsbereich</b><br>' +
+      'Anbieter ist Serband Abdullah, Kolpingstr. 23, 65667 Eschborn ("Anbieter"). Diese Bedingungen gelten für die Nutzung der Fahr-Akademie durch den Nutzer.</p>' +
+      '<p><b>§ 2 Was die Fahr-Akademie ist — und was nicht</b><br>' +
+      "(1) Die Fahr-Akademie ist eine Videothek mit Lernvideos rund um das Autofahren. Der Nutzer kann sich einloggen und die Videos ansehen. Mehr Leistungen sind nicht geschuldet.<br>" +
+      "(2) Der Anbieter schuldet ausdrücklich nicht: eine Kontrolle oder Bewertung des Lernerfolgs, eine individuelle Betreuung, Beantwortung von Fachfragen oder persönliches Feedback, Tests, Prüfungen oder Zertifikate, einen bestimmten Lernerfolg oder das Bestehen einer Prüfung.<br>" +
+      "(2a) Die App zeigt dem Nutzer an, welche Videos er bereits geöffnet hat. Diese Anzeige dient allein der Orientierung des Nutzers und ist eine reine Selbstkontrolle. Sie wird vom Anbieter weder eingesehen noch ausgewertet; eine Rückmeldung oder Bewertung findet nicht statt.<br>" +
+      "(3) Die Fahr-Akademie ist kein Fernunterricht im Sinne des Fernunterrichtsschutzgesetzes, da keine Überwachung des Lernerfolgs durch den Anbieter stattfindet. Sie ist kein amtlicher Fahrschulunterricht im Sinne des Fahrlehrergesetzes und ersetzt weder den vorgeschriebenen Theorieunterricht noch die praktische Ausbildung in einer Fahrschule.<br>" +
+      "(4) Die Videos zeigen Beispielsituationen aus dem Straßenverkehr. Maßgeblich sind stets die Straßenverkehrsordnung in ihrer jeweils gültigen Fassung sowie die Anweisungen des eigenen Fahrlehrers. Bei Abweichungen gehen Gesetz und Fahrlehrer vor.</p>" +
+      '<p><b>§ 3 Zugang</b><br>' +
+      "(1) Der Nutzer erhält einen persönlichen Zugang aus Telefonnummer und vierstelliger PIN.<br>" +
+      "(2) Die Laufzeit beträgt 6 Monate ab Freischaltung. Danach endet der Zugang automatisch. Es entsteht kein Abonnement und keine automatische Verlängerung.<br>" +
+      "(3) Der Zugang ist streng persönlich. Die Weitergabe der Zugangsdaten an Dritte ist untersagt.<br>" +
+      "(4) Aus technischen Gründen kann immer nur ein Gerät gleichzeitig angemeldet sein. Meldet sich ein weiteres Gerät an, wird die vorherige Anmeldung beendet.</p>" +
+      '<p><b>§ 4 Preise und Zahlung</b><br>' +
+      "(1) Der Preis beträgt 80 EUR für die gesamte Laufzeit von 6 Monaten.<br>" +
+      "(2) Die Zahlung erfolgt bar bei der Fahrschule oder beim vermittelnden Fahrlehrer. Der Zugang wird nach Zahlungseingang manuell freigeschaltet.<br>" +
+      '(3) Ein Teil der Inhalte (Bereich "Fahrzeug-Check") ist kostenlos nutzbar.</p>' +
+      '<p><b>§ 5 Nutzungsrechte und Schutz der Inhalte</b><br>' +
+      "(1) Der Nutzer erhält ein einfaches, nicht übertragbares Recht, die Inhalte während der Laufzeit zu privaten Lernzwecken anzusehen.<br>" +
+      "(2) Untersagt sind insbesondere: Aufzeichnen, Herunterladen, Vervielfältigen, Weitergeben, öffentliches Zugänglichmachen sowie jede kommerzielle Nutzung der Inhalte.<br>" +
+      "(3) Zum Schutz vor unerlaubter Weitergabe werden während der Wiedergabe Initialen und die letzten vier Ziffern der Telefonnummer eingeblendet.<br>" +
+      "(4) Bei Verstoß kann der Anbieter den Zugang ohne Erstattung fristlos sperren. Weitergehende Schadensersatz- und Unterlassungsansprüche bleiben unberührt.</p>" +
+      '<p><b>§ 6 Verfügbarkeit</b><br>' +
+      "Der Anbieter bemüht sich um eine hohe Verfügbarkeit, schuldet aber keine ununterbrochene Erreichbarkeit. Kurzzeitige Ausfälle durch Wartung oder Störungen beim Hosting-Dienstleister begründen keinen Anspruch auf Minderung oder Erstattung.</p>" +
+      '<p><b>§ 7 Widerrufsrecht</b><br>' +
+      "Siehe gesonderte Widerrufsbelehrung.</p>" +
+      '<p><b>§ 8 Haftung</b><br>' +
+      "(1) Der Anbieter haftet unbeschränkt bei Vorsatz und grober Fahrlässigkeit sowie bei der Verletzung von Leben, Körper oder Gesundheit.<br>" +
+      "(2) Bei einfacher Fahrlässigkeit haftet der Anbieter nur bei Verletzung einer wesentlichen Vertragspflicht (Kardinalpflicht) und begrenzt auf den vertragstypischen, vorhersehbaren Schaden.<br>" +
+      "(3) Der Anbieter haftet nicht für das Nichtbestehen einer Prüfung, für Unfälle oder Schäden, die aus einer Übertragung von Videoinhalten auf reale Fahrsituationen entstehen, oder für Entscheidungen, die der Nutzer im Straßenverkehr trifft. Im Straßenverkehr gilt allein die Straßenverkehrsordnung, die Anweisung des Fahrlehrers und die eigene Sorgfaltspflicht.<br>" +
+      "(4) Die Haftung nach dem Produkthaftungsgesetz bleibt unberührt.</p>" +
+      '<p><b>§ 9 Minderjährige</b><br>' +
+      "Bei Nutzern unter 18 Jahren ist die Zustimmung eines Erziehungsberechtigten erforderlich. Der Anbieter kann einen entsprechenden Nachweis verlangen.</p>" +
+      '<p><b>§ 10 Schlussbestimmungen</b><br>' +
+      "(1) Es gilt deutsches Recht.<br>" +
+      "(2) Sollte eine Bestimmung unwirksam sein, bleibt der Vertrag im Übrigen wirksam.</p>" +
+      '<p style="color:var(--muted);font-size:12.5px;">Stand: 10.09.2026</p>'
+  },
+  widerruf: {
+    titel: "Widerrufsbelehrung",
+    html:
+      '<p><b>Widerrufsrecht</b><br>' +
+      "Du hast das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen. Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag des Vertragsabschlusses.<br>" +
+      "Um dein Widerrufsrecht auszuüben, musst du uns (Serband Abdullah, Kolpingstr. 23, 65667 Eschborn, fahrlehrerserband@gmail.com) mittels einer eindeutigen Erklärung (z. B. per Post oder E-Mail) über deinen Entschluss informieren. Zur Wahrung der Frist reicht es, dass du die Mitteilung vor Ablauf der Frist absendest.</p>" +
+      '<p><b>Folgen des Widerrufs</b><br>' +
+      "Wenn du diesen Vertrag widerrufst, erstatten wir dir alle Zahlungen unverzüglich und spätestens binnen vierzehn Tagen ab dem Tag zurück, an dem die Mitteilung über deinen Widerruf bei uns eingegangen ist.</p>" +
+      '<p><b>Vorzeitiges Erlöschen des Widerrufsrechts</b><br>' +
+      "Dein Widerrufsrecht erlischt vorzeitig, wenn wir mit der Bereitstellung der Videoinhalte begonnen haben, nachdem du (1) ausdrücklich zugestimmt hast, dass wir vor Ablauf der Widerrufsfrist mit der Bereitstellung beginnen, und (2) bestätigt hast, dass du dadurch dein Widerrufsrecht verlierst.</p>" +
+      '<p style="color:var(--muted);font-size:13px;">Hinweis: Bei Barzahlung vor Ort mit persönlichem Gespräch liegt in der Regel kein Fernabsatz vor. Diese Belehrung gilt sicherheitshalber für Fälle, in denen der Zugang online oder durch einen vermittelnden Partner aus der Ferne verkauft wird.</p>'
+  }
+};
+
 function renderRechtlichesHtml(){
   const status = (session && session.agb_akzeptiert_am)
     ? '<div class="admin-sub" style="margin-bottom:14px;">Zugestimmt am ' + fmtDateTime(session.agb_akzeptiert_am) + "</div>"
     : "";
+
+  // Unterseite offen -- nur das jeweilige Dokument zeigen, mit eigenem Zurück
+  // zur Rechtliches-Übersicht (nicht direkt zu Start, sonst verliert man die Liste).
+  if(rechtDoc && RECHTSDOKUMENTE[rechtDoc]){
+    const d = RECHTSDOKUMENTE[rechtDoc];
+    return '<button class="krumen zurueck-zeile" data-zurueck-recht>' + icon("zurueck") + "<span>Rechtliches</span></button>" +
+      '<div class="tagline" style="font-size:20px;margin-bottom:4px;">' + d.titel + "</div>" +
+      '<div class="karte info-block">' + d.html + "</div>";
+  }
+
+  // Übersicht: vier Kacheln, gleiches Muster wie „Nützliches" (PDF-Karten)
+  const eintraege = [
+    ["impressum","Impressum","Anbieterkennzeichnung nach § 5 DDG"],
+    ["datenschutz","Datenschutzerklärung","Welche Daten wir speichern und warum"],
+    ["agb","Allgemeine Geschäftsbedingungen","Nutzungsbedingungen der Fahr-Akademie"],
+    ["widerruf","Widerrufsbelehrung","Dein Widerrufsrecht bei Vertragsschluss"]
+  ];
+  const zeilen = eintraege.map(function(e){
+    return '<div class="karte pdf-karte" data-rechtdoc="' + e[0] + '" style="cursor:pointer;">' +
+      '<div class="pdf-ic">' + icon("pdf") + "</div>" +
+      '<div style="min-width:0;"><div class="pdf-titel">' + e[1] + "</div>" +
+        '<div class="pdf-meta">' + e[2] + "</div></div>" +
+      '<span class="bt-arrow" style="margin-left:auto;">' + icon("weiter") + "</span>" +
+    "</div>";
+  }).join("");
+
   return '<button class="krumen zurueck-zeile" data-zurueckstart>' + icon("zurueck") + "<span>Start</span></button>" +
     '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Rechtliches</div>' +
     status +
-    '<div class="karte info-block">' +
-      '<p><b>1. Ergänzender Charakter</b><br>Die Videos der Fahr-Akademie sind eine freiwillige Ergänzung zu deiner Fahrausbildung und ersetzen nicht den Unterricht bei deiner Fahrschule.</p>' +
-      '<p><b>2. Keine Erfolgsgarantie</b><br>Es gibt keine Garantie, dass du mit diesen Videos die Führerscheinprüfung bestehst. Der Lernerfolg hängt von vielen Faktoren ab, die außerhalb unserer Kontrolle liegen.</p>' +
-      '<p><b>3. Persönlicher Zugang</b><br>Dein Zugang (Telefonnummer + PIN) ist persönlich und nicht übertragbar. Die Weitergabe an Dritte verstößt gegen diese Nutzungsbedingungen und kann ohne Vorankündigung zur sofortigen Sperrung deines Zugangs führen, ohne Anspruch auf Erstattung bereits gezahlter Beträge.</p>' +
-      '<p><b>4. Minderjährige</b><br>Bist du unter 18, bestätigst du mit der Nutzung, dass die Einwilligung deiner Erziehungsberechtigten vorliegt.</p>' +
-      '<p><b>5. Datenschutz</b><br>Deine Daten werden ausschließlich auf Servern in Deutschland gespeichert. Details siehe „Über diese App".</p>' +
-    "</div>";
+    '<div class="admin-sub" style="margin-bottom:14px;">Alle rechtlichen Informationen zur Fahr-Akademie.</div>' +
+    zeilen;
 }
 
 // ---- # THEMEN (25.08.2026) ----
@@ -2020,9 +2154,6 @@ function renderCatalog(){
   else if(mainView === "verlauf") content = renderVerlaufHtml();
   else content = renderKontoHtml();
 
-  // 09.09.2026: "Lernpfad" heißt jetzt "Übersicht", "Verlauf" heißt "Gesehen" --
-  // neutrale Namen ohne Kurs-/Lehrgangs-Anmutung. Die Beschriftung kommt weiterhin
-  // aus der Übersetzungstabelle, damit sie in allen vier Sprachen stimmt.
   const tabs = [
     ["start",t("start")],["lernpfad",t("lernpfad")],["pruefungsstrecken",t("pruefung")],
     ["verlauf",t("verlauf")],["konto",t("konto")]
@@ -2067,13 +2198,13 @@ function renderCatalog(){
         '<img class="logo-img" src="' + LOGO + '" alt="Logo"></button>' +
       '<div class="header-spacer"></div>' +
     "</div>" +
-    '<div class="header-txt-center"><h1>Fahr-Akademie</h1><div class="progress-line">' + seenCount + " von " + totalVideos + " Videos angesehen</div></div>" +
+    '<div class="header-txt-center"><h1>Fahr-Akademie</h1><div class="progress-line">' + seenCount + " von " + totalVideos + " Videos gesehen" + (totalVideos ? " · " + Math.round(seenCount/totalVideos*100) + "%" : "") + "</div></div>" +
     (DEMO_MODE ? '<div class="demo-badge">Demo-Modus — Beispieldaten</div>' : "") +
     '<div class="page-content">' + content + "</div>" +
     bottomNav;
 
   document.getElementById("logo-home-btn").addEventListener("click", function(){
-    drawerView = null; mainView = "start"; selectedBereich = null; renderCatalog();
+    drawerView = null; mainView = "start"; selectedBereich = null; rechtDoc = null; renderCatalog();
   });
   document.getElementById("drawer-open-btn").addEventListener("click", function(){
     // Direktes Klassen-Umschalten statt Neu-Rendern -- nur so kann die Drawer-Öffnung
@@ -2095,7 +2226,7 @@ function renderCatalog(){
       document.querySelector(".drawer").classList.remove("open");
       document.getElementById("drawer-backdrop").classList.remove("open");
       setTimeout(function(){
-        drawerView = b.dataset.drawer; drawerOpen = false; selectedHashtag = null; renderCatalog();
+        drawerView = b.dataset.drawer; drawerOpen = false; selectedHashtag = null; rechtDoc = null; renderCatalog();
       }, 180);
     });
   });
@@ -2117,8 +2248,15 @@ function renderCatalog(){
   });
   document.querySelectorAll("[data-zurueckstart]").forEach(function(b){
     b.addEventListener("click", function(){
-      drawerView = null; mainView = "start"; selectedBereich = null; selectedHashtag = null; renderCatalog();
+      drawerView = null; mainView = "start"; selectedBereich = null; selectedHashtag = null; rechtDoc = null; renderCatalog();
     });
+  });
+  // Rechtliches (10.09.2026): von der Übersicht in ein einzelnes Dokument, und zurück
+  document.querySelectorAll("[data-rechtdoc]").forEach(function(b){
+    b.addEventListener("click", function(){ rechtDoc = b.dataset.rechtdoc; renderCatalog(); nachObenScrollen(); });
+  });
+  document.querySelectorAll("[data-zurueck-recht]").forEach(function(b){
+    b.addEventListener("click", function(){ rechtDoc = null; renderCatalog(); });
   });
   const suchInput = document.getElementById("such-input");
   if(suchInput){
@@ -2167,9 +2305,8 @@ function renderCatalog(){
 }
 
 function markSeen(videoId){
-  // Nur im Arbeitsspeicher der laufenden Sitzung -- die verlässliche Quelle ist der
-  // Server (siehe loadVerlauf). Kein Schreiben in den Gerätespeicher nötig.
   seenVideoIds.add(videoId);
+  localStorage.setItem("academy_demo_seen", JSON.stringify(Array.from(seenVideoIds)));
 }
 
 // Bereich 1.1: In welchem Bereich liegt dieses Video? (für den Breadcrumb)
@@ -2334,8 +2471,8 @@ async function openVideo(videoId){
     const embedUrl = "https://iframe.mediadelivery.net/embed/" + data.library_id + "/" + data.bunny_video_id +
       "?token=" + data.token + "&expires=" + data.expires + "&captions=" + encodeURIComponent(sprache);
 
-    // Server hat die Markierung schon gesetzt — lokal sofort mitziehen, damit der
-    // Haken ohne Neu-Login direkt sichtbar ist.
+    // Server hat den Fortschritt schon gespeichert — lokal sofort mitziehen,
+    // damit Häkchen/Verlauf auch ohne Neu-Login sofort aktuell sind.
     seenVideoIds.add(videoId);
     verlaufData.unshift({ video_id: videoId, gesehen_am: new Date().toISOString() });
 
@@ -2506,26 +2643,19 @@ async function loadAdminData(){
     allSchulen = [{id:"boost",name:"Fahrschule Boost",aktiv:true}];
     return;
   }
-  // 09.09.2026 (Architektur): Diese Abfragen liefen bisher NACHEINANDER -- jede
-  // wartete auf die vorige, obwohl keine von der anderen abhaengt. Bei 9 Tabellen
-  // summierte sich das zu spuerbarer Wartezeit, die mit jedem neuen Schueler und
-  // jedem Videoaufruf weiter waechst (academy_fortschritt ist die groesste Tabelle).
-  // Jetzt laufen sie gleichzeitig; das Ergebnis ist identisch, nur schneller.
-  const [flRes, prRes, scRes, tgRes, vdRes, vtRes, vprRes, fsRes, kdRes, skRes] = await Promise.all([
-    supa.from("academy_fahrlehrer").select("*"),
-    supa.from("academy_pruefer").select("*"),
-    supa.from("academy_schueler").select("*").order("erstellt_am",{ascending:false}),
-    supa.from("academy_tags").select("*").order("reihenfolge"),
-    supa.from("academy_videos").select("*").order("reihenfolge"),
-    supa.from("academy_video_tags").select("*"),
-    supa.from("academy_video_pruefer").select("*"),
-    // Fortschritt für Dashboard/Historie: jede Zeile ist EIN Videoaufruf, Wiederholungen
-    // sind also mit drin -- genau das macht die Historie aussagekräftig.
-    supa.from("academy_fortschritt").select("*").order("gesehen_am", {ascending:false}),
-    supa.from("academy_kandidaten").select("*"), // Bereich 8.4
-    // Freemium (28.08.2026): welche gesperrten Bereiche wecken das meiste Interesse?
-    supa.from("academy_sperre_klicks").select("stufe")
-  ]);
+  const flRes = await supa.from("academy_fahrlehrer").select("*");
+  const prRes = await supa.from("academy_pruefer").select("*");
+  const scRes = await supa.from("academy_schueler").select("*").order("erstellt_am",{ascending:false});
+  const tgRes = await supa.from("academy_tags").select("*").order("reihenfolge");
+  const vdRes = await supa.from("academy_videos").select("*").order("reihenfolge");
+  const vtRes = await supa.from("academy_video_tags").select("*");
+  const vprRes = await supa.from("academy_video_pruefer").select("*");
+  // Fortschritt für Dashboard/Historie: jede Zeile ist EIN Videoaufruf, Wiederholungen
+  // sind also mit drin -- genau das macht die Historie aussagekräftig.
+  const fsRes = await supa.from("academy_fortschritt").select("*").order("gesehen_am", {ascending:false});
+  const kdRes = await supa.from("academy_kandidaten").select("*"); // Bereich 8.4
+  // Freemium (28.08.2026): welche gesperrten Bereiche wecken das meiste Interesse?
+  const skRes = await supa.from("academy_sperre_klicks").select("stufe");
   allFahrlehrer = flRes.data || [];
   allPruefer = prRes.data || [];
   allSchueler = scRes.data || [];
@@ -2985,13 +3115,7 @@ function renderAdminSchueler(){
           '<div class="admin-badge ' + badgeClass + '">' + badgeText + "</div>" +
           '<div style="margin-top:8px;">' +
             (zeigeKlartext ? '<button class="icon-btn' + (!s.pin_versendet_am ? " danger" : "") + '" data-mail="' + esc(s.id) + '" title="PIN senden">✉️</button>' : "") +
-            // 09.09.2026 entfernt: Button "Verlauf ansehen" (Video-Historie je Schüler).
-            // Die "bereits gesehen"-Markierungen sind ausschließlich für den Schüler
-            // selbst bestimmt. Könnte der Anbieter den Lernstand einzelner Schüler
-            // einsehen, wäre das eine Kontrolle durch den Lehrenden -- und genau das
-            // löst die Zulassungspflicht nach dem FernUSG aus. Die Daten bleiben in
-            // der Datenbank (für Missbrauchserkennung), werden hier aber nicht mehr
-            // je Schüler angezeigt.
+            '<button class="icon-btn" data-hist="' + esc(s.id) + '" title="Verlauf ansehen">' + icon("dashboard") + "</button>" +
             '<button class="icon-btn' + (s.vollzugang ? " danger" : "") + '" data-vollzugang="' + esc(s.id) + '" title="Vollzugang freischalten/entziehen">' + icon("krone") + "</button>" +
             '<button class="icon-btn" data-toggle="' + esc(s.id) + '" title="Sperren/Entsperren">' + (s.aktiv ? icon("schloss") : icon("schlossOffen")) + "</button>" +
             '<button class="icon-btn danger" data-del="' + esc(s.id) + '" title="Löschen">' + icon("papierkorb") + '</button>' +
@@ -3076,7 +3200,11 @@ function renderAdminSchueler(){
   document.querySelectorAll("[data-mail]").forEach(function(b){
     b.addEventListener("click", function(){ resendPin(b.dataset.mail); });
   });
-  // (Listener für "Verlauf ansehen" entfällt — siehe Begründung oben bei der Karte.)
+  document.querySelectorAll("[data-hist]").forEach(function(b){
+    b.addEventListener("click", function(){
+      historieSchuelerId = b.dataset.hist; adminTab = "historie"; renderAdmin();
+    });
+  });
   document.querySelectorAll("[data-toggle]").forEach(function(b){
     b.addEventListener("click", function(){ toggleSchueler(b.dataset.toggle); });
   });
