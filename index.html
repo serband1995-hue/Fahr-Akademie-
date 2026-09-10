@@ -953,6 +953,7 @@ let bulkAuswahl = new Set();       // 8.2 Mehrfachauswahl für Sammelaktionen
 let protokollEintraege = [];       // 8.7 Änderungsprotokoll (nicht zu verwechseln
                                    //     mit renderAdminHistorie = Video-Historie je Schüler)
 let videoFilterStufe = "";         // 8.3 Video-Liste nach Stufe filtern
+let videoFilterFahrzeug = "";      // 09.09.2026: Video-Liste nach Fahrzeug filtern (Audi A1, Audi Q5, Cupra, ...)
 let adminFortschritt = [];      // alle Videoaufrufe, für Dashboard + Schülerhistorie
 let adminSperrKlicks = [];      // Freemium: welche gesperrten Bereiche werden angetippt
 let historieSchuelerId = null;  // welcher Schüler gerade in der Historie offen ist
@@ -3279,12 +3280,13 @@ function renderAdminVideos(){
       .map(function(vt){ const t = allTags.find(function(x){ return x.id === vt.tag_id; }); return t ? t.stufe : null; })
       .filter(Boolean);
   };
-  const gefilterteVideos = videoFilterStufe
-    ? allVideos.filter(function(v){
-        if(videoFilterStufe === "__ohne_bunny__") return !v.bunny_video_id;
-        return stufenVonVideo(v).indexOf(videoFilterStufe) !== -1;
-      })
-    : allVideos;
+  const gefilterteVideos = allVideos.filter(function(v){
+    if(videoFilterStufe === "__ohne_bunny__" && v.bunny_video_id) return false;
+    if(videoFilterStufe && videoFilterStufe !== "__ohne_bunny__" && stufenVonVideo(v).indexOf(videoFilterStufe) === -1) return false;
+    if(videoFilterFahrzeug === "__ohne_fahrzeug__" && v.fahrzeug) return false;
+    if(videoFilterFahrzeug && videoFilterFahrzeug !== "__ohne_fahrzeug__" && v.fahrzeug !== videoFilterFahrzeug) return false;
+    return true;
+  });
 
   const rows = gefilterteVideos.map(function(v){
     const tagsForVideo = videoTags.filter(function(vt){ return vt.video_id === v.id; })
@@ -3317,6 +3319,7 @@ function renderAdminVideos(){
           '<div class="admin-name">' + esc(v.titel) + "</div>" +
           (v.beschreibung ? '<div class="admin-sub">' + esc(v.beschreibung) + "</div>" : "") +
           (tagsForVideo ? '<div class="admin-sub">Tags: ' + esc(tagsForVideo) + "</div>" : "") +
+          '<div class="admin-sub" style="margin-top:4px;">🚗 ' + (v.fahrzeug ? esc(v.fahrzeug) : '<span style="opacity:.6;">kein Fahrzeug hinterlegt</span>') + "</div>" +
           (nurLesen ? "" :
             '<div class="admin-badge ' + (verknuepft ? "badge-aktiv" : "badge-abgelaufen") + '" style="margin-top:6px;display:inline-block;">' +
               (verknuepft ? "🎬 Mit Bunny verknüpft" : "⚠️ Kein Video verknüpft") +
@@ -3326,6 +3329,7 @@ function renderAdminVideos(){
         "</div>" +
         (nurLesen ? "" :
         '<div style="text-align:right;">' +
+          '<button class="icon-btn" data-editfz="' + esc(v.id) + '" title="Fahrzeug eintragen/ändern">🚗</button>' +
           '<button class="icon-btn" data-editv="' + esc(v.id) + '" title="Bunny-Video-ID eintragen/ändern">' + icon("stift") + '</button>' +
           '<button class="icon-btn" data-notifyv="' + esc(v.id) + '" title="Push-Benachrichtigung an alle aktiven Schüler senden">' + icon("glocke") + '</button>' +
           '<button class="icon-btn danger" data-delv="' + esc(v.id) + '" title="Löschen">' + icon("papierkorb") + '</button>' +
@@ -3381,6 +3385,15 @@ function renderAdminVideos(){
         '<div class="schritt-hilfe">Die „Video GUID" aus Schritt 1 hier einfügen. Ohne sie ist das Video für Schüler ' +
         'nicht abspielbar — du kannst sie aber auch später über das Stift-Symbol nachtragen.</div>' +
         '<label>Bunny-Video-ID</label><input id="nv-bunny" placeholder="z. B. 3a1f9c2e-8b4d-...">' +
+        // 09.09.2026: Fahrzeug direkt beim Anlegen mit erfassen, damit der Filter
+        // ab dem ersten Tag vollstaendig bleibt statt erst nachtraeglich gepflegt
+        // werden zu muessen. Datalist schlaegt bereits verwendete Namen vor.
+        '<label style="margin-top:10px;">Fahrzeug (optional)</label>' +
+        '<input id="nv-fahrzeug" list="nv-fahrzeug-liste" placeholder="z. B. Audi A1, Audi Q5, Cupra">' +
+        '<datalist id="nv-fahrzeug-liste">' +
+          Array.from(new Set(allVideos.map(function(v){ return v.fahrzeug; }).filter(Boolean))).sort()
+            .map(function(fz){ return '<option value="' + esc(fz) + '">'; }).join("") +
+        "</datalist>" +
       "</div>" +
 
       // Schritt 4
@@ -3426,9 +3439,21 @@ function renderAdminVideos(){
           return '<option value="' + esc(st) + '"' + (videoFilterStufe === st ? " selected" : "") + ">" + esc(st) + " (" + n + ")</option>";
         }).join("") +
       "</select>" +
+      // 09.09.2026: zweiter Filter nach Fahrzeug, unabhaengig vom Stufen-Filter
+      // kombinierbar (z.B. "Technik" + "Audi A1" gleichzeitig).
+      '<label style="margin-top:10px;">Fahrzeug</label>' +
+      '<select id="vid-filter-fahrzeug">' +
+        '<option value="">Alle Fahrzeuge (' + allVideos.length + ")</option>" +
+        '<option value="__ohne_fahrzeug__"' + (videoFilterFahrzeug === "__ohne_fahrzeug__" ? " selected" : "") + ">Kein Fahrzeug hinterlegt (" +
+          allVideos.filter(function(v){ return !v.fahrzeug; }).length + ")</option>" +
+        Array.from(new Set(allVideos.map(function(v){ return v.fahrzeug; }).filter(Boolean))).sort().map(function(fz){
+          const n = allVideos.filter(function(v){ return v.fahrzeug === fz; }).length;
+          return '<option value="' + esc(fz) + '"' + (videoFilterFahrzeug === fz ? " selected" : "") + ">" + esc(fz) + " (" + n + ")</option>";
+        }).join("") +
+      "</select>" +
     "</div>" +
     '<div class="section-label">' +
-      (videoFilterStufe ? "Gefiltert: " + gefilterteVideos.length + " von " + allVideos.length : "Alle Videos (" + allVideos.length + ")") +
+      ((videoFilterStufe || videoFilterFahrzeug) ? "Gefiltert: " + gefilterteVideos.length + " von " + allVideos.length : "Alle Videos (" + allVideos.length + ")") +
     "</div>" +
     rows;
 
@@ -3463,6 +3488,14 @@ function renderAdminVideos(){
   if(vidFilter) vidFilter.addEventListener("change", function(e){
     videoFilterStufe = e.target.value;
     renderAdminVideos();
+  });
+  const vidFilterFahrzeug = document.getElementById("vid-filter-fahrzeug");
+  if(vidFilterFahrzeug) vidFilterFahrzeug.addEventListener("change", function(e){
+    videoFilterFahrzeug = e.target.value;
+    renderAdminVideos();
+  });
+  document.querySelectorAll("[data-editfz]").forEach(function(b){
+    b.addEventListener("click", function(){ editVideoFahrzeug(b.dataset.editfz); });
   });
   // Die folgenden Bedienelemente existieren in der Partner-Ansicht gar nicht --
   // ohne diese Pruefung wuerde renderAdminVideos() dort mit einem Fehler abbrechen
@@ -3537,12 +3570,41 @@ async function editVideoBunnyId(id){
   showToast("Bunny-ID aktualisiert");
 }
 
+// 09.09.2026: Fahrzeug pro Video eintragen/aendern, fuer den Fahrzeug-Filter.
+// Bewusst freies Textfeld statt starrer Liste -- neue Fahrzeuge (naechstes Auto,
+// Wechsel des Fuhrparks) sollen ohne Code-Aenderung nutzbar sein. Die zuletzt
+// verwendeten Namen erscheinen als Vorschlag, damit Schreibweisen einheitlich
+// bleiben (sonst wuerde "audi q5" und "Audi Q5" als zwei verschiedene Fahrzeuge
+// im Filter auftauchen).
+async function editVideoFahrzeug(id){
+  const v = allVideos.find(function(x){ return x.id === id; });
+  if(!v) return;
+  const bekannte = Array.from(new Set(allVideos.map(function(x){ return x.fahrzeug; }).filter(Boolean))).sort();
+  const hinweis = bekannte.length ? "\n\nBereits verwendet: " + bekannte.join(", ") : "";
+  const neu = prompt("Fahrzeug für „" + v.titel + "\" eintragen (z. B. Audi A1, Audi Q5, Cupra):" + hinweis, v.fahrzeug || "");
+  if(neu === null) return;
+  const trimmed = neu.trim();
+
+  if(DEMO_MODE){
+    v.fahrzeug = trimmed || null;
+    renderAdminVideos();
+    showToast("Fahrzeug aktualisiert (Demo)");
+    return;
+  }
+  const { error } = await supa.from("academy_videos").update({ fahrzeug: trimmed || null }).eq("id", id);
+  if(error){ showToast("Fehler: " + error.message); return; }
+  await loadAdminData();
+  renderAdminVideos();
+  showToast("Fahrzeug aktualisiert");
+}
+
 async function createVideo(){
   const titel = document.getElementById("nv-titel").value.trim();
   const desc = document.getElementById("nv-desc").value.trim();
   const gewaehlteTags = Array.from(document.querySelectorAll(".nv-tag-cb:checked")).map(function(cb){ return cb.value; });
   const pruefungsergebnis = document.getElementById("nv-pruefungsergebnis").value || null;
   const bunnyId = document.getElementById("nv-bunny").value.trim();
+  const fahrzeugFeld = document.getElementById("nv-fahrzeug").value.trim();
   const gewaehltePruefer = Array.from(document.querySelectorAll(".nv-pruefer-cb:checked")).map(function(cb){ return cb.value; });
   if(!titel){ showToast("Titel ist Pflicht"); return; }
   if(gewaehlteTags.length === 0){ showToast("Bitte mindestens ein Thema auswählen"); return; }
@@ -3563,7 +3625,7 @@ async function createVideo(){
   });
   if(titelDoppelt && !confirm("Es gibt bereits ein Video mit dem Titel „" + titelDoppelt.titel + "“.\n\nTrotzdem anlegen?")) return;
 
-  const neu = { id:"v" + Date.now(), titel:titel, beschreibung: desc || null, bunny_video_id: bunnyId || null, pruefung_ergebnis: pruefungsergebnis };
+  const neu = { id:"v" + Date.now(), titel:titel, beschreibung: desc || null, bunny_video_id: bunnyId || null, pruefung_ergebnis: pruefungsergebnis, fahrzeug: fahrzeugFeld || null };
   const neuVts = gewaehlteTags.map(function(tagId){ return { video_id: neu.id, tag_id: tagId }; });
 
   if(DEMO_MODE){
