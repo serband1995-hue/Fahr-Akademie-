@@ -1006,7 +1006,7 @@ const SPRACHEN = [
 
 const I18N = {
   de:{
-    start:"Start", lernpfad:"Lernpfad", pruefung:"Prüfer", verlauf:"Verlauf", konto:"Konto",
+    start:"Start", lernpfad:"Übersicht", pruefung:"Prüfer", verlauf:"Gesehen", konto:"Konto",
     willkommen:"Willkommen zurück", weiterSchauen:"WEITER SCHAUEN", alsNaechstes:"Als Nächstes",
     deineBereiche:"Deine Bereiche", videosGesehen:"von {gesamt} Videos gesehen",
     allesGesehen:"Alles gesehen — stark!", allesGesehenSub:"Schau gern nochmal bei den Prüfungsstrecken vorbei.",
@@ -1021,7 +1021,7 @@ const I18N = {
     loginFehler:"Telefonnummer oder PIN falsch", keineVerbindung:"Keine Verbindung — versuch es gleich nochmal"
   },
   tr:{
-    start:"Başlangıç", lernpfad:"Öğrenme yolu", pruefung:"Sınav görevlisi", verlauf:"Geçmiş", konto:"Hesap",
+    start:"Başlangıç", lernpfad:"Genel bakış", pruefung:"Sınav görevlisi", verlauf:"İzlenenler", konto:"Hesap",
     willkommen:"Tekrar hoş geldin", weiterSchauen:"İZLEMEYE DEVAM ET", alsNaechstes:"Sırada",
     deineBereiche:"Alanların", videosGesehen:"/ {gesamt} video izlendi",
     allesGesehen:"Hepsi izlendi — harika!", allesGesehenSub:"Sınav güzergâhlarına tekrar göz at.",
@@ -1036,7 +1036,7 @@ const I18N = {
     loginFehler:"Telefon numarası veya PIN hatalı", keineVerbindung:"Bağlantı yok — birazdan tekrar dene"
   },
   en:{
-    start:"Home", lernpfad:"Learning path", pruefung:"Examiners", verlauf:"History", konto:"Account",
+    start:"Home", lernpfad:"Overview", pruefung:"Examiners", verlauf:"Watched", konto:"Account",
     willkommen:"Welcome back", weiterSchauen:"CONTINUE WATCHING", alsNaechstes:"Up next",
     deineBereiche:"Your areas", videosGesehen:"of {gesamt} videos watched",
     allesGesehen:"All watched — great!", allesGesehenSub:"Have another look at the exam routes.",
@@ -1051,7 +1051,7 @@ const I18N = {
     loginFehler:"Phone number or PIN incorrect", keineVerbindung:"No connection — please try again shortly"
   },
   ar:{
-    start:"الرئيسية", lernpfad:"مسار التعلم", pruefung:"الممتحنون", verlauf:"السجل", konto:"الحساب",
+    start:"الرئيسية", lernpfad:"نظرة عامة", pruefung:"الممتحنون", verlauf:"تمت مشاهدته", konto:"الحساب",
     willkommen:"مرحباً بعودتك", weiterSchauen:"متابعة المشاهدة", alsNaechstes:"التالي",
     deineBereiche:"مجالاتك", videosGesehen:"من {gesamt} فيديو تمت مشاهدته",
     allesGesehen:"شاهدت كل شيء — ممتاز!", allesGesehenSub:"ألقِ نظرة أخرى على مسارات الامتحان.",
@@ -1104,7 +1104,13 @@ let videoPruefer = [];
 let mainView = "start"; // "start" | "lernpfad" | "pruefungsstrecken" | "verlauf" | "konto"
 let openPruefer = new Set();
 let verlaufData = []; // rohe Ansehen-Ereignisse aus academy-progress (oder lokal im Demo-Modus)
-let seenVideoIds = new Set(JSON.parse(localStorage.getItem("academy_demo_seen") || "[]"));
+// "Bereits gesehen" (09.09.2026): Merkt sich, welche Videos der Schüler schon
+// angeschaut hat, damit er nichts doppelt schaut und weiß, was noch offen ist.
+// Rechtlicher Rahmen: Das ist reine SELBSTKONTROLLE des Schülers. Diese Markierung
+// wird im Admin-Bereich bewusst NICHT je Schüler angezeigt, es gibt keine Bewertung,
+// kein Feedback und keine Reaktion des Anbieters darauf. Nur so bleibt es
+// Selbstkontrolle und wird nicht zur "Überwachung des Lernerfolgs" (FernUSG).
+let seenVideoIds = new Set();
 let openStufen = new Set();
 let pruefungFilter = "alle"; // "alle" | "bestanden" | "nicht_bestanden" -- nur für die Stufe "Prüfung"
 let suchBegriff = "";        // Bereich 1.4: Volltextsuche über Titel/Kategorie
@@ -1391,13 +1397,9 @@ function renderZustimmung(){
 }
 
 async function loadVerlauf(){
-  if(DEMO_MODE){
-    // Im Demo-Modus gibt's keinen echten Verlaufs-Server — seenVideoIds (lokal) reicht als Näherung
-    verlaufData = Array.from(seenVideoIds).map(function(vid){
-      return { video_id: vid, gesehen_am: new Date().toISOString() };
-    });
-    return;
-  }
+  // Lädt die "bereits gesehen"-Markierungen des EIGENEN Zugangs vom Server, damit
+  // sie auch nach einem Gerätewechsel oder Neu-Login noch stimmen.
+  if(DEMO_MODE){ verlaufData = []; return; }
   try{
     const res = await fetch(SUPABASE_URL + "/functions/v1/academy-progress", {
       method: "POST",
@@ -1410,7 +1412,7 @@ async function loadVerlauf(){
       seenVideoIds = new Set(verlaufData.map(function(v){ return v.video_id; }));
     }
   } catch(e){
-    // Verlauf ist ein Komfort-Feature — bei Netzwerkfehler App trotzdem nutzbar lassen
+    // Komfort-Funktion — bei Netzwerkfehler App trotzdem nutzbar lassen
     verlaufData = [];
   }
 }
@@ -1635,12 +1637,14 @@ function renderStartHtml(){
     "</button>";
   }).join("");
 
-  // --- Bereich 7.1/7.2 (27.08.2026): Empfehlung aus dem Fahrlehrer-Kompass ---
-  // Kommt beim Login mit (session.empfehlung). Zeigt das konkrete Video zum
-  // gemeldeten Ausbildungsstand -- oder, falls kein Video zum Thema existiert,
-  // wenigstens den Sprung in den passenden Bereich.
+  // 09.09.2026 – Umbau zur reinen Videoplattform:
+  // Die Empfehlungs-Karte aus dem Fahrlehrer-Kompass ("Weil du bei Thema X stehst,
+  // schau dir Y an") wurde abgeschaltet. Sie stützte sich auf den gemeldeten
+  // Ausbildungsstand des Schülers und ist damit eine individuelle Lernsteuerung --
+  // genau das, was die App nicht mehr tun soll. Die Kompass-Schnittstelle selbst
+  // bleibt technisch bestehen, wird hier aber nicht mehr ausgewertet.
   let empfKarte = "";
-  const empf = session && session.empfehlung;
+  const empf = null;
   if(empf && (empf.tag_id || empf.stufe)){
     let treffer = null;
     if(empf.tag_id){
@@ -1784,7 +1788,7 @@ function renderBereichDetailHtml(){
 
 function renderVerlaufHtml(){
   if(verlaufData.length === 0){
-    return '<div class="empty">Noch nichts angesehen — starte im Lernpfad!</div>';
+    return '<div class="empty">Noch nichts angesehen — starte in der Übersicht!</div>';
   }
   // Pro Video aggregieren: wie oft gesehen, wann zuletzt
   const proVideo = {};
@@ -2016,6 +2020,9 @@ function renderCatalog(){
   else if(mainView === "verlauf") content = renderVerlaufHtml();
   else content = renderKontoHtml();
 
+  // 09.09.2026: "Lernpfad" heißt jetzt "Übersicht", "Verlauf" heißt "Gesehen" --
+  // neutrale Namen ohne Kurs-/Lehrgangs-Anmutung. Die Beschriftung kommt weiterhin
+  // aus der Übersetzungstabelle, damit sie in allen vier Sprachen stimmt.
   const tabs = [
     ["start",t("start")],["lernpfad",t("lernpfad")],["pruefungsstrecken",t("pruefung")],
     ["verlauf",t("verlauf")],["konto",t("konto")]
@@ -2060,7 +2067,7 @@ function renderCatalog(){
         '<img class="logo-img" src="' + LOGO + '" alt="Logo"></button>' +
       '<div class="header-spacer"></div>' +
     "</div>" +
-    '<div class="header-txt-center"><h1>Fahr-Akademie</h1><div class="progress-line">' + seenCount + " von " + totalVideos + " Videos gesehen" + (totalVideos ? " · " + Math.round(seenCount/totalVideos*100) + "%" : "") + "</div></div>" +
+    '<div class="header-txt-center"><h1>Fahr-Akademie</h1><div class="progress-line">' + seenCount + " von " + totalVideos + " Videos angesehen</div></div>" +
     (DEMO_MODE ? '<div class="demo-badge">Demo-Modus — Beispieldaten</div>' : "") +
     '<div class="page-content">' + content + "</div>" +
     bottomNav;
@@ -2160,8 +2167,9 @@ function renderCatalog(){
 }
 
 function markSeen(videoId){
+  // Nur im Arbeitsspeicher der laufenden Sitzung -- die verlässliche Quelle ist der
+  // Server (siehe loadVerlauf). Kein Schreiben in den Gerätespeicher nötig.
   seenVideoIds.add(videoId);
-  localStorage.setItem("academy_demo_seen", JSON.stringify(Array.from(seenVideoIds)));
 }
 
 // Bereich 1.1: In welchem Bereich liegt dieses Video? (für den Breadcrumb)
@@ -2326,8 +2334,8 @@ async function openVideo(videoId){
     const embedUrl = "https://iframe.mediadelivery.net/embed/" + data.library_id + "/" + data.bunny_video_id +
       "?token=" + data.token + "&expires=" + data.expires + "&captions=" + encodeURIComponent(sprache);
 
-    // Server hat den Fortschritt schon gespeichert — lokal sofort mitziehen,
-    // damit Häkchen/Verlauf auch ohne Neu-Login sofort aktuell sind.
+    // Server hat die Markierung schon gesetzt — lokal sofort mitziehen, damit der
+    // Haken ohne Neu-Login direkt sichtbar ist.
     seenVideoIds.add(videoId);
     verlaufData.unshift({ video_id: videoId, gesehen_am: new Date().toISOString() });
 
@@ -2498,19 +2506,26 @@ async function loadAdminData(){
     allSchulen = [{id:"boost",name:"Fahrschule Boost",aktiv:true}];
     return;
   }
-  const flRes = await supa.from("academy_fahrlehrer").select("*");
-  const prRes = await supa.from("academy_pruefer").select("*");
-  const scRes = await supa.from("academy_schueler").select("*").order("erstellt_am",{ascending:false});
-  const tgRes = await supa.from("academy_tags").select("*").order("reihenfolge");
-  const vdRes = await supa.from("academy_videos").select("*").order("reihenfolge");
-  const vtRes = await supa.from("academy_video_tags").select("*");
-  const vprRes = await supa.from("academy_video_pruefer").select("*");
-  // Fortschritt für Dashboard/Historie: jede Zeile ist EIN Videoaufruf, Wiederholungen
-  // sind also mit drin -- genau das macht die Historie aussagekräftig.
-  const fsRes = await supa.from("academy_fortschritt").select("*").order("gesehen_am", {ascending:false});
-  const kdRes = await supa.from("academy_kandidaten").select("*"); // Bereich 8.4
-  // Freemium (28.08.2026): welche gesperrten Bereiche wecken das meiste Interesse?
-  const skRes = await supa.from("academy_sperre_klicks").select("stufe");
+  // 09.09.2026 (Architektur): Diese Abfragen liefen bisher NACHEINANDER -- jede
+  // wartete auf die vorige, obwohl keine von der anderen abhaengt. Bei 9 Tabellen
+  // summierte sich das zu spuerbarer Wartezeit, die mit jedem neuen Schueler und
+  // jedem Videoaufruf weiter waechst (academy_fortschritt ist die groesste Tabelle).
+  // Jetzt laufen sie gleichzeitig; das Ergebnis ist identisch, nur schneller.
+  const [flRes, prRes, scRes, tgRes, vdRes, vtRes, vprRes, fsRes, kdRes, skRes] = await Promise.all([
+    supa.from("academy_fahrlehrer").select("*"),
+    supa.from("academy_pruefer").select("*"),
+    supa.from("academy_schueler").select("*").order("erstellt_am",{ascending:false}),
+    supa.from("academy_tags").select("*").order("reihenfolge"),
+    supa.from("academy_videos").select("*").order("reihenfolge"),
+    supa.from("academy_video_tags").select("*"),
+    supa.from("academy_video_pruefer").select("*"),
+    // Fortschritt für Dashboard/Historie: jede Zeile ist EIN Videoaufruf, Wiederholungen
+    // sind also mit drin -- genau das macht die Historie aussagekräftig.
+    supa.from("academy_fortschritt").select("*").order("gesehen_am", {ascending:false}),
+    supa.from("academy_kandidaten").select("*"), // Bereich 8.4
+    // Freemium (28.08.2026): welche gesperrten Bereiche wecken das meiste Interesse?
+    supa.from("academy_sperre_klicks").select("stufe")
+  ]);
   allFahrlehrer = flRes.data || [];
   allPruefer = prRes.data || [];
   allSchueler = scRes.data || [];
@@ -2970,7 +2985,13 @@ function renderAdminSchueler(){
           '<div class="admin-badge ' + badgeClass + '">' + badgeText + "</div>" +
           '<div style="margin-top:8px;">' +
             (zeigeKlartext ? '<button class="icon-btn' + (!s.pin_versendet_am ? " danger" : "") + '" data-mail="' + esc(s.id) + '" title="PIN senden">✉️</button>' : "") +
-            '<button class="icon-btn" data-hist="' + esc(s.id) + '" title="Verlauf ansehen">' + icon("dashboard") + "</button>" +
+            // 09.09.2026 entfernt: Button "Verlauf ansehen" (Video-Historie je Schüler).
+            // Die "bereits gesehen"-Markierungen sind ausschließlich für den Schüler
+            // selbst bestimmt. Könnte der Anbieter den Lernstand einzelner Schüler
+            // einsehen, wäre das eine Kontrolle durch den Lehrenden -- und genau das
+            // löst die Zulassungspflicht nach dem FernUSG aus. Die Daten bleiben in
+            // der Datenbank (für Missbrauchserkennung), werden hier aber nicht mehr
+            // je Schüler angezeigt.
             '<button class="icon-btn' + (s.vollzugang ? " danger" : "") + '" data-vollzugang="' + esc(s.id) + '" title="Vollzugang freischalten/entziehen">' + icon("krone") + "</button>" +
             '<button class="icon-btn" data-toggle="' + esc(s.id) + '" title="Sperren/Entsperren">' + (s.aktiv ? icon("schloss") : icon("schlossOffen")) + "</button>" +
             '<button class="icon-btn danger" data-del="' + esc(s.id) + '" title="Löschen">' + icon("papierkorb") + '</button>' +
@@ -3055,11 +3076,7 @@ function renderAdminSchueler(){
   document.querySelectorAll("[data-mail]").forEach(function(b){
     b.addEventListener("click", function(){ resendPin(b.dataset.mail); });
   });
-  document.querySelectorAll("[data-hist]").forEach(function(b){
-    b.addEventListener("click", function(){
-      historieSchuelerId = b.dataset.hist; adminTab = "historie"; renderAdmin();
-    });
-  });
+  // (Listener für "Verlauf ansehen" entfällt — siehe Begründung oben bei der Karte.)
   document.querySelectorAll("[data-toggle]").forEach(function(b){
     b.addEventListener("click", function(){ toggleSchueler(b.dataset.toggle); });
   });
