@@ -234,6 +234,12 @@
 
   .video-list{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
   .video-card{padding:16px 18px;cursor:pointer;display:flex;align-items:center;gap:14px;}
+  /* Deutscher Originaltitel unter dem uebersetzten Titel (10.09.2026).
+     Bewusst klein und zurueckhaltend: der Fahrlehrer nennt den deutschen Titel,
+     der Schueler soll ihn wiedererkennen -- ohne dass er den Blick dominiert.
+     Bei eingestellter Sprache Deutsch wird die Zeile gar nicht erst erzeugt. */
+  .titel-original{font-size:11.5px;color:var(--faint);margin-top:2px;font-weight:500;}
+  [dir="rtl"] .titel-original{direction:ltr;text-align:right;}
   .video-card:active{background:var(--surface-strong);}
   .video-play-ic{
     width:38px;height:38px;border-radius:50%;background:var(--gruen);flex-shrink:0;
@@ -249,11 +255,47 @@
   .stufe-header{
     display:flex;align-items:center;justify-content:space-between;padding:14px 16px;
     background:var(--surface);border:1px solid var(--border);border-radius:14px;cursor:pointer;
+    transition:border-color .22s ease, background .22s ease;
   }
   .stufe-header.open{border-color:var(--gruen-hell);}
+  .stufe-header:active{transform:scale(.995);}
   .stufe-header-left{display:flex;align-items:center;gap:10px;}
-  .stufe-caret{color:var(--faint);font-size:13px;width:12px;display:inline-block;}
+  /* Der Pfeil wird immer gleich gezeichnet und nur gedreht -- ein Zeichenwechsel
+     (▸ zu ▾) kann nicht animieren und wirkt dadurch ruckartig. */
+  .stufe-caret{color:var(--faint);font-size:13px;width:12px;display:inline-block;
+    transition:transform .25s cubic-bezier(.4,0,.2,1); transform-origin:50% 50%;}
+  .stufe-header.open .stufe-caret{transform:rotate(90deg);}
   .stufe-name{font-weight:700;font-size:15px;font-family:'Barlow',sans-serif;}
+
+  /* ---- Aufklapp-Animation (10.09.2026) ----
+     Vorher erschien die Videoliste schlagartig, weil sie beim Aufklappen komplett
+     neu gezeichnet wird. Jetzt fahren die Karten leicht versetzt von oben ein.
+     Die Staffelung endet bewusst bei 8 Karten -- danach wuerde das Warten stoeren. */
+  @keyframes einblenden{
+    from{opacity:0; transform:translateY(-6px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  .stufe-section .video-list > *{
+    animation:einblenden .3s cubic-bezier(.4,0,.2,1) both;
+  }
+  .stufe-section .video-list > *:nth-child(1){animation-delay:0ms;}
+  .stufe-section .video-list > *:nth-child(2){animation-delay:35ms;}
+  .stufe-section .video-list > *:nth-child(3){animation-delay:70ms;}
+  .stufe-section .video-list > *:nth-child(4){animation-delay:105ms;}
+  .stufe-section .video-list > *:nth-child(5){animation-delay:140ms;}
+  .stufe-section .video-list > *:nth-child(6){animation-delay:175ms;}
+  .stufe-section .video-list > *:nth-child(7){animation-delay:210ms;}
+  .stufe-section .video-list > *:nth-child(n+8){animation-delay:245ms;}
+
+  /* Wer im Betriebssystem weniger Bewegung eingestellt hat, bekommt keine.
+     Das ist kein Zierrat: Bewegung kann bei Migraene und Schwindel echte
+     Beschwerden ausloesen. */
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration:.01ms !important; animation-iteration-count:1 !important;
+      transition-duration:.01ms !important; scroll-behavior:auto !important;
+    }
+  }
   .video-code{
     min-width:38px;height:38px;border-radius:12px;background:var(--gruen);flex-shrink:0;
     display:flex;align-items:center;justify-content:center;color:#fff;font-size:12.5px;font-weight:700;
@@ -305,6 +347,21 @@
     font-family:'Barlow',sans-serif;}
   .admin-tab.active{background:var(--gruen);color:#fff;border-color:var(--gruen-hell);}
   .admin-card{padding:14px 16px;margin-bottom:10px;}
+  /* ---- Zugangs-Status (10.09.2026) ----
+     Vorher war der Vollzugang nur eine von zehn Textzeilen und wurde ueber ein
+     Kronen-Symbol geschaltet, das direkt neben dem Sperr-Schloss sass -- zwei
+     aehnlich aussehende Knoepfe mit voellig verschiedener Wirkung. Jetzt: farbige
+     Kante links fuer den Blick aus der Ferne, beschrifteter Knopf statt Symbolraten. */
+  .admin-card.bezahlt{border-left:4px solid var(--gold);}
+  .admin-card.gratis{border-left:4px solid var(--border);}
+  .zugang-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;
+    margin-top:12px;padding:11px 14px;border-radius:11px;cursor:pointer;font-family:inherit;
+    font-size:13.5px;font-weight:700;border:1px solid var(--border);background:var(--surface);
+    color:var(--muted);transition:background .22s ease,color .22s ease,border-color .22s ease;}
+  .zugang-btn .ic{width:16px;height:16px;flex-shrink:0;}
+  .zugang-btn.ist-bezahlt{background:var(--gold);border-color:var(--gold);color:#fff;}
+  .zugang-btn:hover{border-color:var(--gruen-hell);}
+  .zugang-btn:active{transform:scale(.985);}
   .admin-row{display:flex;justify-content:space-between;align-items:center;gap:10px;}
   .admin-name{font-weight:700;font-size:14.5px;}
   .admin-sub{color:var(--muted);font-size:12.5px;margin-top:3px;}
@@ -485,6 +542,10 @@
   .bereich-tile.bereich-gesperrt{opacity:.72;}
   .bt-lock{display:inline-flex;vertical-align:-2px;color:var(--faint);}
   .bt-lock .ic{width:13px;height:13px;}
+  /* Positives Gegenstueck zum Schloss: zeigt sofort, wo man ohne Bezahlung loslegen kann. */
+  .bt-frei{display:inline-block;vertical-align:1px;margin-left:6px;padding:2px 8px;
+    border-radius:var(--r-pill);background:var(--surface-tint);color:var(--gruen-hell);
+    font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;}
 
   /* --- Eigene Bereichsseite (Netflix-artige Videoauswahl) --- */
   .bereich-detail-head{display:flex;align-items:center;gap:var(--sp-m);margin-bottom:var(--sp-m);}
@@ -746,9 +807,14 @@ function normalisiereSuche(s){
 function passtZurSuche(video, tag){
   if(!suchBegriff) return true;
   const q = normalisiereSuche(suchBegriff);
+  // Es wird bewusst in BEIDEN Sprachen gesucht (10.09.2026): der deutsche Originaltitel
+  // steht sichtbar unter jedem Video, und der Fahrlehrer nennt ohnehin den deutschen
+  // Namen. Wer ihn abtippt, muss einen Treffer bekommen -- auch bei türkischer Oberfläche.
   const heuhaufen = [
-    video.titel || "", video.beschreibung || "",
-    tag ? tag.label : "", tag && tag.ort ? tag.ort : "", tag ? tag.stufe : ""
+    video.titel || "", video.titel_de || "", video.beschreibung || "",
+    tag ? tag.label : "", tag && tag.label_de ? tag.label_de : "",
+    tag && tag.ort ? tag.ort : "", tag ? tag.stufe : "",
+    tag ? bereichName(tag.stufe) : ""
   ].join(" ").toLowerCase();
   return heuhaufen.indexOf(q) !== -1;
 }
@@ -812,16 +878,13 @@ function tagGesperrt(tag){
   return freigabe[tag.nur_klasse] !== true;
 }
 
-// Freemium (28.08.2026, angepasst 10.09.2026 beim Bereichs-Umbau): Ursprünglich war der
-// GANZE Bereich "Fahrzeug-Check" frei nutzbar. Beim Umbau wanderte dieser Bereich in
-// "Fahrzeug & Technik" -- zusammen mit den bisher KOSTENPFLICHTIGEN Themen "Technikwissen"
-// und "Kontrollleuchten benennen und verstehen" (früher Startklar). Ein reiner
-// Bereichs-Freischalter hätte diese beiden versehentlich mit-gratis gemacht. Deshalb jetzt
-// tag-genau: nur exakt diese 11 Themen sind frei, alles andere braucht weiterhin vollzugang.
-const FREIE_TAG_IDS = new Set([
-  "b12_reifen","b12_beleuchtung","b12_fluessigkeiten","b12_bremsen","b12_kontrollleuchten",
-  "b12_tanken","b12_checkliste","b12_lenkung","b12_warndreieck","b12_ladung","b12_pruefer_fragen"
-]);
+// Freemium (28.08.2026, endgueltig geloest 10.09.2026):
+// Ob ein Thema ohne Vollzugang nutzbar ist, steht jetzt als Spalte academy_tags.gratis in
+// der Datenbank -- dieselbe Spalte, die auch die Edge Function academy-video-token liest.
+// Vorher stand die Liste an zwei Orten und lief bereits einmal auseinander, wodurch der
+// Gratis-Zugang serverseitig komplett blockiert war. Eine einzige Quelle verhindert das.
+// Zum Umstellen genuegt jetzt ein UPDATE in der Datenbank, kein Code-Aenderung mehr.
+// Verzicht auf eine Kopie hier ist Absicht: jede Kopie koennte wieder abweichen.
 // Verhindert Doppel-Protokollierung, wenn dieselbe Bereichsseite mehrfach neu
 // gerendert wird (z.B. durch Antippen des Prüfungsfilters) -- pro Chat-Sitzung reicht.
 const bereitsProtokollierteSperrKlicks = new Set();
@@ -835,7 +898,7 @@ function protokolliereSperrKlick(stufe){
 }
 function videoSperrgrund(tag){
   if(tagGesperrt(tag)) return "klasse";
-  if(tag && !FREIE_TAG_IDS.has(tag.id) && !(session && session.vollzugang)) return "vollzugang";
+  if(tag && !tag.gratis && !(session && session.vollzugang)) return "vollzugang";
   return null;
 }
 
@@ -893,19 +956,23 @@ function buildLernpfad(){
 }
 
 /* ---------- Demo-Daten ---------- */
+// Demo-Daten (10.09.2026 an die neue Bereichsstruktur angeglichen): Die alten Bereichsnamen
+// (Grundstufe, Aufbaustufe, ...) gibt es nicht mehr, dadurch haette der Demo-Modus gar keine
+// Bereiche mehr angezeigt. Ausserdem braucht jedes Thema jetzt ein gratis-Feld, sonst gilt
+// alles als kostenpflichtig und waere im Demo-Modus komplett gesperrt.
 const DEMO_TAGS = [
-  {id:"g_sitz",label:"Sitz & Spiegel richtig einstellen",stufe:"Grundstufe",ort:null,reihenfolge:1},
-  {id:"g_anfahr",label:"Anfahren & gezieltes Anhalten",stufe:"Grundstufe",ort:"Waldhof",reihenfolge:2},
-  {id:"a_einbahn",label:"Einbahnstraße erkennen & einordnen",stufe:"Aufbaustufe",ort:"Bieber",reihenfolge:3},
-  {id:"a_berg",label:"Berganfahren ohne Zurückrollen",stufe:"Aufbaustufe",ort:"Ketteler-Krankenhaus",reihenfolge:4},
-  {id:"l_kreisel",label:"Innerorts-Kreisverkehr",stufe:"Leistungsstufe",ort:"Bürgel",reihenfolge:5},
-  {id:"l_fahrrad",label:'Fahrradstraße & "Anlieger frei"',stufe:"Leistungsstufe",ort:"Leibnizschule, Sana",reihenfolge:6},
-  {id:"s_ab_ein",label:"Korrektes Einfahren auf die Autobahn",stufe:"Sonderfahrten",ort:"Bieber",reihenfolge:7},
-  {id:"s_n_orient",label:"Orientierung bei Dunkelheit",stufe:"Sonderfahrten",ort:"Nachtfahrt",reihenfolge:8},
-  {id:"gf_rueck",label:"Rückwärtsfahren & um die Ecke",stufe:"Grundfahraufgaben",ort:"Bieber Parkplatz",reihenfolge:9},
-  {id:"gf_wenden",label:"Wenden in der Straße",stufe:"Grundfahraufgaben",ort:"Tennisstraße",reihenfolge:10},
-  {id:"t_profil",label:"Profiltiefe (mind. 1,6 mm)",stufe:"Technik",ort:"Reifen",reihenfolge:11},
-  {id:"t_oel",label:"Motoröl prüfen",stufe:"Technik",ort:"Flüssigkeiten",reihenfolge:12}
+  {id:"g_sitz",label:"Sitz & Spiegel richtig einstellen",stufe:"Fahrzeug & Technik",ort:null,reihenfolge:1,gratis:true,archiviert:false},
+  {id:"t_profil",label:"Profiltiefe (mind. 1,6 mm)",stufe:"Fahrzeug & Technik",ort:"Reifen",reihenfolge:2,gratis:true,archiviert:false},
+  {id:"t_oel",label:"Motoröl prüfen",stufe:"Fahrzeug & Technik",ort:"Flüssigkeiten",reihenfolge:3,gratis:true,archiviert:false},
+  {id:"g_anfahr",label:"Anfahren & gezieltes Anhalten",stufe:"Fahrmanöver-Grundlagen",ort:"Waldhof",reihenfolge:4,gratis:false,archiviert:false},
+  {id:"a_berg",label:"Berganfahren ohne Zurückrollen",stufe:"Fahrmanöver-Grundlagen",ort:"Ketteler-Krankenhaus",reihenfolge:5,gratis:false,archiviert:false},
+  {id:"gf_rueck",label:"Rückwärtsfahren & um die Ecke",stufe:"Fahrmanöver-Grundlagen",ort:"Bieber Parkplatz",reihenfolge:6,gratis:false,archiviert:false},
+  {id:"gf_wenden",label:"Wenden in der Straße",stufe:"Fahrmanöver-Grundlagen",ort:"Tennisstraße",reihenfolge:7,gratis:false,archiviert:false},
+  {id:"a_einbahn",label:"Einbahnstraße erkennen & einordnen",stufe:"Abbiegen, Vorfahrt & Verkehrszeichen",ort:"Bieber",reihenfolge:8,gratis:false,archiviert:false},
+  {id:"l_kreisel",label:"Innerorts-Kreisverkehr",stufe:"Abbiegen, Vorfahrt & Verkehrszeichen",ort:"Bürgel",reihenfolge:9,gratis:false,archiviert:false},
+  {id:"l_fahrrad",label:'Fahrradstraße & "Anlieger frei"',stufe:"Abbiegen, Vorfahrt & Verkehrszeichen",ort:"Leibnizschule, Sana",reihenfolge:10,gratis:false,archiviert:false},
+  {id:"s_ab_ein",label:"Korrektes Einfahren auf die Autobahn",stufe:"Autobahn",ort:"Bieber",reihenfolge:11,gratis:false,archiviert:false},
+  {id:"s_n_orient",label:"Orientierung bei Dunkelheit",stufe:"Autobahn",ort:"Nachtfahrt",reihenfolge:12,gratis:false,archiviert:false}
 ];
 const DEMO_VIDEOS = [
   {id:"v1",titel:"Richtig sitzen & Spiegel einstellen",beschreibung:"Die Grundhaltung, die alles einfacher macht"},
@@ -1025,7 +1092,7 @@ function geraeteId(){
    Bereich 10.5 (27.08.2026) — Mehrsprachige Oberfläche.
    WICHTIG zum Verständnis: Übersetzt wird die BEDIENOBERFLÄCHE
    (Knöpfe, Menü, Meldungen). Inhalte wie Bereichsnamen
-   ("Grundstufe"), Themen und Videotitel kommen aus der Datenbank
+   ("Fahrzeug & Technik"), Themen und Videotitel kommen aus der Datenbank
    und bleiben deutsch. Für Inhalts-Übersetzungen bräuchte es
    zusätzliche Spalten je Sprache -- bewusst später, nicht jetzt.
    Aufbau so gewählt, dass genau das ohne Umbau ergänzt werden kann.
@@ -1041,7 +1108,7 @@ const SPRACHEN = [
 
 const I18N = {
   de:{
-    start:"Start", lernpfad:"Lernpfad", pruefung:"Prüfer", verlauf:"Verlauf", konto:"Konto",
+    start:"Start", lernpfad:"Übersicht", pruefung:"Prüfer", verlauf:"Gesehen", konto:"Konto",
     willkommen:"Willkommen zurück", weiterSchauen:"WEITER SCHAUEN", alsNaechstes:"Als Nächstes",
     deineBereiche:"Deine Bereiche", videosGesehen:"von {gesamt} Videos gesehen",
     allesGesehen:"Alles gesehen — stark!", allesGesehenSub:"Schau gern nochmal bei den Prüfungsstrecken vorbei.",
@@ -1056,7 +1123,7 @@ const I18N = {
     loginFehler:"Telefonnummer oder PIN falsch", keineVerbindung:"Keine Verbindung — versuch es gleich nochmal"
   },
   tr:{
-    start:"Başlangıç", lernpfad:"Öğrenme yolu", pruefung:"Sınav görevlisi", verlauf:"Geçmiş", konto:"Hesap",
+    start:"Başlangıç", lernpfad:"Genel bakış", pruefung:"Sınav görevlisi", verlauf:"İzlenenler", konto:"Hesap",
     willkommen:"Tekrar hoş geldin", weiterSchauen:"İZLEMEYE DEVAM ET", alsNaechstes:"Sırada",
     deineBereiche:"Alanların", videosGesehen:"/ {gesamt} video izlendi",
     allesGesehen:"Hepsi izlendi — harika!", allesGesehenSub:"Sınav güzergâhlarına tekrar göz at.",
@@ -1071,7 +1138,7 @@ const I18N = {
     loginFehler:"Telefon numarası veya PIN hatalı", keineVerbindung:"Bağlantı yok — birazdan tekrar dene"
   },
   en:{
-    start:"Home", lernpfad:"Learning path", pruefung:"Examiners", verlauf:"History", konto:"Account",
+    start:"Home", lernpfad:"Overview", pruefung:"Examiners", verlauf:"Watched", konto:"Account",
     willkommen:"Welcome back", weiterSchauen:"CONTINUE WATCHING", alsNaechstes:"Up next",
     deineBereiche:"Your areas", videosGesehen:"of {gesamt} videos watched",
     allesGesehen:"All watched — great!", allesGesehenSub:"Have another look at the exam routes.",
@@ -1086,7 +1153,7 @@ const I18N = {
     loginFehler:"Phone number or PIN incorrect", keineVerbindung:"No connection — please try again shortly"
   },
   ar:{
-    start:"الرئيسية", lernpfad:"مسار التعلم", pruefung:"الممتحنون", verlauf:"السجل", konto:"الحساب",
+    start:"الرئيسية", lernpfad:"نظرة عامة", pruefung:"الممتحنون", verlauf:"ما شاهدته", konto:"الحساب",
     willkommen:"مرحباً بعودتك", weiterSchauen:"متابعة المشاهدة", alsNaechstes:"التالي",
     deineBereiche:"مجالاتك", videosGesehen:"من {gesamt} فيديو تمت مشاهدته",
     allesGesehen:"شاهدت كل شيء — ممتاز!", allesGesehenSub:"ألقِ نظرة أخرى على مسارات الامتحان.",
@@ -1116,12 +1183,55 @@ function t(schluessel, werte){
   return text;
 }
 
+// ---- Inhaltstexte übersetzen (10.09.2026) ----
+// Bis hierher wurde nur die BEDIENOBERFLÄCHE übersetzt (Knöpfe, Menü). Videotitel,
+// Themen und Bereichsnamen kamen aus der Datenbank und blieben deutsch.
+// Jetzt liegen die Übersetzungen in academy_uebersetzungen und werden beim Laden
+// einmal in dieses Nachschlagewerk geschrieben: "art|id|feld|sprache" -> Text.
+//
+// Grundsätze, die bewusst so gewählt sind:
+//  - Deutsch steht NICHT in der Übersetzungstabelle. Es bleibt in der Haupttabelle und
+//    ist der Rückfallwert. Fehlt eine Übersetzung, erscheint der deutsche Text statt
+//    einer leeren Zeile -- ein leerer Videotitel wäre schlimmer als ein deutscher.
+//  - Eigennamen (Bieber, Waldhof, TÜV, Audi, Prüfernamen) werden absichtlich NICHT
+//    übersetzt. Ein Schüler sucht seine Strecke unter dem Namen, den sein Fahrlehrer
+//    nennt -- ein übersetzter Ortsname wäre unauffindbar.
+let inhaltUebersetzungen = {};
+
+function inhalt(art, id, feld, deutsch){
+  if(sprache === "de") return deutsch;
+  const treffer = inhaltUebersetzungen[art + "|" + id + "|" + feld + "|" + sprache];
+  return treffer || deutsch;
+}
+
+// Der deutsche Originaltitel wird bei fremder Sprache klein unter dem übersetzten
+// Titel gezeigt. Zwei Gründe: der Fahrlehrer nennt den deutschen Titel, und der
+// Schüler lernt die Begriffe nebenbei mit. Bei Deutsch entfällt die Zeile.
+function originalTitel(art, id, feld, deutsch){
+  if(sprache === "de") return "";
+  if(!deutsch) return ""; // z.B. Demo-Daten ohne hinterlegten Originaltext
+  const treffer = inhaltUebersetzungen[art + "|" + id + "|" + feld + "|" + sprache];
+  if(!treffer || treffer === deutsch) return ""; // nichts uebersetzt -> keine Dopplung
+  return '<div class="titel-original">' + esc(deutsch) + "</div>";
+}
+
+// Bereichsname zum Anzeigen. Der interne Wert bleibt immer deutsch (Schluessel!),
+// nur die sichtbare Beschriftung wechselt die Sprache.
+function bereichName(stufe){
+  return inhalt("bereich", stufe, "name", stufe);
+}
+
 function setzeSprache(code){
   if(!I18N[code]) return;
   sprache = code;
   localStorage.setItem("academy_sprache", code);
   wendeSprachRichtungAn();
-  renderCatalog();
+  // Inhaltstexte (Videotitel, Themen) werden beim LADEN uebersetzt, nicht beim Zeichnen.
+  // Ein reines renderCatalog() wuerde die Titel deshalb in der alten Sprache stehen
+  // lassen -- die Bedienoberflaeche waere tuerkisch, die Videotitel weiter deutsch.
+  // Darum den Katalog neu laden. Die Uebersetzungen liegen bereits im Nachschlagewerk,
+  // der Abruf ist klein und passiert nur beim bewussten Sprachwechsel.
+  loadCatalog().then(function(){ renderCatalog(); }).catch(function(){ renderCatalog(); });
 }
 
 // Bereich 10.9 vorbereitet: Arabisch läuft von rechts nach links. lang/dir werden am
@@ -1465,10 +1575,44 @@ async function loadCatalog(){
   const vtagsRes = await supa.from("academy_video_tags").select("*");
   const prRes = await supa.from("academy_pruefer").select("*");
   const vprRes = await supa.from("academy_video_pruefer").select("*");
-  allTags = tagsRes.data || [];
+
+  // Schutz gegen einen leeren Katalog (10.09.2026): Seit dem Sprachwechsel laeuft
+  // loadCatalog auch MITTEN in der Nutzung, nicht mehr nur einmal beim Login. Bricht
+  // dabei die Verbindung weg, wuerden Themen und Videos mit leeren Listen ueberschrieben
+  // und der Schueler saehe eine leere App, obwohl eben noch alles da war. Deshalb: bei
+  // einem Fehler die vorhandenen Daten unveraendert lassen und nichts anfassen.
+  if(tagsRes.error || videosRes.error){
+    if(allTags.length || allVideos.length) return; // bereits geladen -> alten Stand behalten
+  }
+
+  // Inhaltsuebersetzungen (10.09.2026). Bewusst EIN Abruf fuer alles statt je Video --
+  // bei rund 350 kurzen Zeilen ist das deutlich schneller als viele Einzelabfragen.
+  // Schlaegt der Abruf fehl, bleibt das Nachschlagewerk leer und alles erscheint auf
+  // Deutsch. Das ist der gewollte Notfall-Zustand: lieber deutsch als leer.
+  const ubRes = await supa.from("academy_uebersetzungen").select("*");
+  inhaltUebersetzungen = {};
+  (ubRes.data || []).forEach(function(u){
+    inhaltUebersetzungen[u.art + "|" + u.datensatz_id + "|" + u.feld + "|" + u.sprache] = u.text;
+  });
+  allTags = (tagsRes.data || []).filter(function(t){ return !t.archiviert; });
+  // Inhalte einmal zentral uebersetzen statt an jeder Anzeigestelle einzeln (10.09.2026).
+  // Vorteil: greift automatisch in allen Ansichten -- Start, Bereichsseite, Suche,
+  // Prueferliste, "Gesehen" -- ohne dass irgendwo eine Stelle vergessen werden kann.
+  // WICHTIG: das Feld "stufe" wird bewusst NICHT ersetzt. Es ist der Schluessel fuer
+  // STUFEN_ORDER, BEREICH_PRIORITAET, BEREICH_ICON und die data-gotostufe-Verlinkung.
+  // Bereichsnamen werden deshalb erst beim Anzeigen uebersetzt (siehe bereichName()).
+  allTags.forEach(function(t){
+    t.label_de = t.label;
+    t.label = inhalt("tag", t.id, "label", t.label);
+  });
   // Schüler sehen nur Videos, die tatsächlich mit Bunny verknüpft sind — sonst
   // klickt jemand auf ein "leeres" Video, das noch gar nicht abspielbar ist.
   allVideos = (videosRes.data || []).filter(function(v){ return !!v.bunny_video_id; });
+  allVideos.forEach(function(v){
+    v.titel_de = v.titel;
+    v.titel = inhalt("video", v.id, "titel", v.titel);
+    if(v.beschreibung) v.beschreibung = inhalt("video", v.id, "beschreibung", v.beschreibung);
+  });
   videoTags = vtagsRes.data || [];
   allPruefer = prRes.data || [];
   videoPruefer = vprRes.data || [];
@@ -1515,7 +1659,7 @@ function renderLernpfadHtml(){
       const komplettGesperrt = g.videos.length > 0 && g.videos.every(function(x){ return x.sperrgrund === "vollzugang"; });
       return '<button class="bereich-tile' + (pct>=100?" voll":"") + (komplettGesperrt?" bereich-gesperrt":"") + '" data-gotostufe="' + esc(g.stufe) + '">' +
         '<div class="bt-icon">' + bereichIcon(g.stufe) + "</div>" +
-        '<div class="bt-body"><div class="bt-titel">' + esc(g.stufe) + (komplettGesperrt ? ' <span class="bt-lock">' + icon("schloss","ic-s") + "</span>" : "") + "</div>" +
+        '<div class="bt-body"><div class="bt-titel">' + esc(bereichName(g.stufe)) + (komplettGesperrt ? ' <span class="bt-lock">' + icon("schloss","ic-s") + "</span>" : "") + "</div>" +
           '<div class="bt-bar"><div class="bt-bar-fill" style="width:' + pct + '%;"></div></div>' +
           '<div class="bt-meta">' + gesehen + " von " + gesamt + " Videos · " + pct + "%</div></div>" +
         '<span class="bt-arrow">' + icon("weiter") + "</span>" +
@@ -1554,7 +1698,7 @@ function renderLernpfadHtml(){
         '<div class="vg-bg" style="background:' + vgGradientFuer(x.video.id) + ';"></div>' +
         '<div class="vg-play">' + icon("schloss") + "</div>" +
         '<div class="vg-info"><div class="vg-code">' + esc(x.tag.label) + '</div>' +
-          '<div class="vg-titel">' + esc(x.video.titel) + "</div>" +
+          '<div class="vg-titel">' + esc(x.video.titel) + "</div>" + originalTitel("video", x.video.id, "titel", x.video.titel_de) +
           '<div class="lock-hint">' + esc(hinweis) + "</div>" +
         "</div>" +
       "</div>";
@@ -1584,7 +1728,7 @@ function renderPruefungsstreckenHtml(){
         .filter(Boolean).join(", ");
       const check = seenVideoIds.has(v.id) ? '<span class="video-check">✓</span>' : "";
       return '<div class="video-card glass" data-vid="' + esc(v.id) + '">' +
-        '<div><div class="video-title">' + esc(v.titel) + "</div>" +
+        '<div><div class="video-title">' + esc(v.titel) + "</div>" + originalTitel("video", v.id, "titel", v.titel_de) +
           (tagsForVideo ? '<div class="video-desc" style="opacity:.7;">Enthält: ' + esc(tagsForVideo) + "</div>" : "") +
         "</div>" + check +
       "</div>";
@@ -1593,7 +1737,7 @@ function renderPruefungsstreckenHtml(){
     return '<div class="stufe-section">' +
       '<div class="stufe-header' + (isOpen ? " open" : "") + '" data-pruefer="' + esc(g.pruefer.id) + '">' +
         '<div class="stufe-header-left">' +
-          '<span class="stufe-caret">' + (isOpen ? "▾" : "▸") + "</span>" +
+          '<span class="stufe-caret">▸</span>' +
           '<span class="stufe-name">' + esc(g.pruefer.name) + "</span>" +
         "</div>" +
         '<span class="admin-badge badge-gesperrt">' + g.videos.length + " Video" + (g.videos.length === 1 ? "" : "s") + "</span>" +
@@ -1610,14 +1754,22 @@ function fmtDateTime(iso){
 }
 
 function renderStartHtml(){
-  const totalVideos = allVideos.length;
-  const seenCount = allVideos.filter(function(v){ return seenVideoIds.has(v.id); }).length;
+  const pfad = buildLernpfad();
+  // Fortschritt ehrlich rechnen (10.09.2026): frueher zaehlte hier allVideos.length, also
+  // ALLE Videos -- auch die, die der Schueler mangels Vollzugang gar nicht oeffnen kann.
+  // Ein Gratis-Schueler sah dadurch dauerhaft "8 von 39", eine Zahl die er nie erreichen
+  // konnte. Jetzt zaehlen nur Videos, die ihm wirklich offenstehen.
+  const offeneVideos = [];
+  pfad.forEach(function(g){
+    g.videos.forEach(function(x){ if(!x.gesperrt) offeneVideos.push(x.video); });
+  });
+  const totalVideos = offeneVideos.length;
+  const seenCount = offeneVideos.filter(function(v){ return seenVideoIds.has(v.id); }).length;
   const name = (session && session.name) ? session.name : "";
   const prozent = totalVideos ? Math.round(seenCount / totalVideos * 100) : 0;
 
   // Bereich 1.2: EINE prominente Fortsetzen-Karte -- zuletzt Angesehenes hat Vorrang,
   // sonst das nächste offene Video. Bewusst nur eine Karte, damit der Start ruhig bleibt.
-  const pfad = buildLernpfad();
   const naechste = (function(){
     for(const gruppe of pfad){
       // Bug-Fix 28.08.2026: gesperrte Videos (Klasse ODER Vollzugang) dürfen hier
@@ -1660,12 +1812,23 @@ function renderStartHtml(){
     // Video darin aus Bezahlgründen gesperrt ist (Klassen-Sperren zählen hier nicht,
     // die haben ihre eigene, unabhängige Anzeige weiter unten in der Bereichsseite).
     const komplettGesperrt = g.videos.length > 0 && g.videos.every(function(x){ return x.sperrgrund === "vollzugang"; });
+    // Positives Gegenstueck zum Schloss -- aber nur fuer Schueler OHNE Vollzugang.
+    // Wer bereits bezahlt hat, kann ohnehin alles sehen; dort waere "gratis" nur Rauschen.
+    const komplettFrei = !(session && session.vollzugang) &&
+      g.videos.length > 0 && g.videos.every(function(x){ return !x.gesperrt && x.tag && x.tag.gratis; });
+    // Gesperrte Bereiche zeigen keinen sinnlosen 0%-Balken, sondern was drin wartet.
+    const metaZeile = komplettGesperrt
+      ? gesamt + " Video" + (gesamt === 1 ? "" : "s") + " warten auf dich"
+      : gesehen + " von " + gesamt + " Video" + (gesamt === 1 ? "" : "s") + " · " + pct + "%";
     return '<button class="bereich-tile' + (pct>=100?" voll":"") + (komplettGesperrt?" bereich-gesperrt":"") + '" data-gotostufe="' + esc(g.stufe) + '">' +
       '<div class="bt-icon">' + bereichIcon(g.stufe) + "</div>" +
       '<div class="bt-body">' +
-        '<div class="bt-titel">' + esc(g.stufe) + (komplettGesperrt ? ' <span class="bt-lock">' + icon("schloss","ic-s") + "</span>" : "") + "</div>" +
-        '<div class="bt-bar"><div class="bt-bar-fill" style="width:' + pct + '%;"></div></div>' +
-        '<div class="bt-meta">' + gesehen + " von " + gesamt + " Videos · " + pct + "%</div>" +
+        '<div class="bt-titel">' + esc(bereichName(g.stufe)) +
+          (komplettGesperrt ? ' <span class="bt-lock">' + icon("schloss","ic-s") + "</span>" : "") +
+          (komplettFrei ? ' <span class="bt-frei">gratis</span>' : "") +
+        "</div>" +
+        (komplettGesperrt ? "" : '<div class="bt-bar"><div class="bt-bar-fill" style="width:' + pct + '%;"></div></div>') +
+        '<div class="bt-meta">' + metaZeile + "</div>" +
       "</div>" +
       '<span class="bt-arrow">' + icon("weiter") + "</span>" +
     "</button>";
@@ -1773,7 +1936,7 @@ function renderBereichDetailHtml(){
         '<div class="vg-bg" style="background:' + vgGradientFuer(x.video.id) + ';"></div>' +
         '<div class="vg-play">' + icon("schloss") + "</div>" +
         '<div class="vg-info"><div class="vg-code">' + esc(x.code) + '</div>' +
-          '<div class="vg-titel">' + esc(x.video.titel) + "</div>" +
+          '<div class="vg-titel">' + esc(x.video.titel) + "</div>" + originalTitel("video", x.video.id, "titel", x.video.titel_de) +
           '<div class="lock-hint">' + esc(hinweis) + "</div>" +
         "</div>" +
       "</div>";
@@ -1782,7 +1945,7 @@ function renderBereichDetailHtml(){
       '<div class="vg-bg" style="background:' + vgGradientFuer(x.video.id) + ';"></div>' + vgBildLayer(x.video) +
       '<div class="vg-play">' + icon("play") + "</div>" +
       ergebnisIcon + check +
-      '<div class="vg-info"><div class="vg-code">' + esc(x.code) + '</div><div class="vg-titel">' + esc(x.video.titel) + "</div></div>" +
+      '<div class="vg-info"><div class="vg-code">' + esc(x.code) + '</div><div class="vg-titel">' + esc(x.video.titel) + "</div>" + originalTitel("video", x.video.id, "titel", x.video.titel_de) + "</div>" +
     "</div>";
   }).join("");
 
@@ -1807,7 +1970,7 @@ function renderBereichDetailHtml(){
     '<div class="bereich-detail-head">' +
       '<div class="bdh-icon">' + bereichIcon(selectedBereich) + "</div>" +
       '<div style="flex:1;">' +
-        "<h2>" + esc(selectedBereich) + "</h2>" +
+        "<h2>" + esc(bereichName(selectedBereich)) + "</h2>" +
         '<div class="bdh-bar"><div class="bdh-bar-fill" style="width:' + pct + '%;"></div></div>' +
         '<div class="admin-sub" style="margin-top:4px;">' + gesehen + " von " + gesamt + " Videos gesehen</div>" +
       "</div>" +
@@ -1838,7 +2001,7 @@ function renderVerlaufHtml(){
     if(!v) return "";
     const info = proVideo[vid];
     return '<div class="video-card glass" data-vid="' + esc(vid) + '">' +
-      '<div><div class="video-title">' + esc(v.titel) + "</div>" +
+      '<div><div class="video-title">' + esc(v.titel) + "</div>" + originalTitel("video", v.id, "titel", v.titel_de) +
         '<div class="video-desc">Zuletzt: ' + fmtDateTime(info.letztes) + "</div>" +
       "</div>" +
       '<span class="admin-badge badge-aktiv" style="margin-left:auto;">' + info.count + "× gesehen</span>" +
@@ -1883,7 +2046,7 @@ function renderDashboardHtml(){
     return '<div class="dash-row' + (pct>=100?" voll":"") + '" data-gotostufe="' + esc(g.stufe) + '" style="cursor:pointer;">' +
       bereichIcon(g.stufe) +
       '<div style="flex:1;min-width:0;">' +
-        '<div class="dr-name">' + esc(g.stufe) + "</div>" +
+        '<div class="dr-name">' + esc(bereichName(g.stufe)) + "</div>" +
         '<div class="dr-bar"><div class="dr-bar-fill" style="width:' + pct + '%;"></div></div>' +
       "</div>" +
       '<div class="dr-pct">' + gesehen + "/" + gesamt + "</div>" +
@@ -2693,7 +2856,9 @@ async function loadAdminData(){
   allFahrlehrer = flRes.data || [];
   allPruefer = prRes.data || [];
   allSchueler = scRes.data || [];
-  allTags = tgRes.data || [];
+  // Archivierte Themen (10.09.2026) verschwinden auch aus dem Admin-Bereich, damit sie die
+  // Auswahllisten beim Video-Verknuepfen nicht mehr zumuellen. Geloescht wird nichts.
+  allTags = (tgRes.data || []).filter(function(t){ return !t.archiviert; });
   allVideos = vdRes.data || [];
   videoTags = vtRes.data || [];
   videoPruefer = vprRes.data || [];
@@ -3087,9 +3252,8 @@ function renderAdminSchueler(){
     const agbZeile = s.agb_akzeptiert_am
       ? '<div class="admin-sub" style="opacity:.7;">Nutzungsbedingungen akzeptiert: ' + fmtDate(s.agb_akzeptiert_am) + "</div>"
       : '<div class="admin-sub" style="opacity:.7;color:var(--gold);">Nutzungsbedingungen noch nicht akzeptiert</div>';
-    // Freemium (28.08.2026): Vollzugang-Status sichtbar machen + Umschalter.
-    const vollzugangZeile = '<div class="admin-sub" style="' + (s.vollzugang ? "color:var(--gold);font-weight:600;" : "opacity:.7;") + '">' +
-      (s.vollzugang ? "👑 Vollzugang aktiv" : "Nur Gratis-Themen (kostenlos)") + "</div>";
+    // Zugangs-Status wird nicht mehr als Textzeile gezeigt, sondern als farbige
+    // Kartenkante + beschrifteter Knopf unten (siehe zugangKnopf weiter unten).
     // Betrugsschutz (09.09.2026, Punkt 2): Login-Haeufigkeit sichtbar machen.
     // Faustregel: mehr als 3 Logins/Tag im Schnitt seit Anlage ist fuer EINE Person
     // untypisch haeufig -- moeglicher Hinweis auf geteilte Zugangsdaten. Nur ein
@@ -3135,7 +3299,14 @@ function renderAdminSchueler(){
         (s.schuelernummer ? "Nr. " + esc(s.schuelernummer) : "") +
       "</div>";
     }
-    return '<div class="admin-card glass">' +
+    // Ein Knopf, der sagt was er tut -- statt eines Kronen-Symbols neben dem Schloss.
+    const zugangKnopf =
+      '<button class="zugang-btn' + (s.vollzugang ? " ist-bezahlt" : "") + '" data-vollzugang="' + esc(s.id) + '">' +
+        icon(s.vollzugang ? "krone" : "schlossOffen") +
+        "<span>" + (s.vollzugang ? "Vollzugang aktiv · antippen zum Entziehen" : "Nur Gratis-Bereich · Vollzugang freischalten") + "</span>" +
+      "</button>";
+
+    return '<div class="admin-card glass ' + (s.vollzugang ? "bezahlt" : "gratis") + '">' +
       '<div class="admin-row">' +
         '<div>' +
           '<label class="bulk-pick"><input type="checkbox" class="bulk-cb" value="' + esc(s.id) + '"' +
@@ -3143,19 +3314,19 @@ function renderAdminSchueler(){
           '<div class="admin-name">' + esc(s.name) + "</div>" +
           '<div class="admin-sub">' + esc(s.telefon) + " · Klasse " + esc(s.klasse) + " · " + esc(fl ? fl.name : "—") + "</div>" +
           pinStatusZeile + pinWartetHinweis +
-          ablaufWarnung + terminZeile + agbZeile + vollzugangZeile + loginZeile + wechselZeile + ueberlappZeile + stammZeile + sperrgrundZeile +
+          ablaufWarnung + terminZeile + agbZeile + loginZeile + wechselZeile + ueberlappZeile + stammZeile + sperrgrundZeile +
         "</div>" +
         '<div style="text-align:right;">' +
           '<div class="admin-badge ' + badgeClass + '">' + badgeText + "</div>" +
           '<div style="margin-top:8px;">' +
             (zeigeKlartext ? '<button class="icon-btn' + (!s.pin_versendet_am ? " danger" : "") + '" data-mail="' + esc(s.id) + '" title="PIN senden">✉️</button>' : "") +
             '<button class="icon-btn" data-hist="' + esc(s.id) + '" title="Verlauf ansehen">' + icon("dashboard") + "</button>" +
-            '<button class="icon-btn' + (s.vollzugang ? " danger" : "") + '" data-vollzugang="' + esc(s.id) + '" title="Vollzugang freischalten/entziehen">' + icon("krone") + "</button>" +
-            '<button class="icon-btn" data-toggle="' + esc(s.id) + '" title="Sperren/Entsperren">' + (s.aktiv ? icon("schloss") : icon("schlossOffen")) + "</button>" +
+            '<button class="icon-btn" data-toggle="' + esc(s.id) + '" title="Login sperren/entsperren">' + (s.aktiv ? icon("schloss") : icon("schlossOffen")) + "</button>" +
             '<button class="icon-btn danger" data-del="' + esc(s.id) + '" title="Löschen">' + icon("papierkorb") + '</button>' +
           "</div>" +
         "</div>" +
       "</div>" +
+      zugangKnopf +
     "</div>";
   }).join("") || '<div class="empty">Noch keine Schüler angelegt.</div>';
 
@@ -3183,9 +3354,9 @@ function renderAdminSchueler(){
       '<label>Zugang vergeben über</label><select id="ns-fl">' + flOptions + "</select>" +
       '<label style="display:flex;align-items:center;gap:8px;margin-top:10px;">' +
         '<input type="checkbox" id="ns-vollzugang" style="width:18px;height:18px;">' +
-        '<span>Sofort Vollzugang gewähren (schon vollständig bezahlt)</span>' +
+        '<span>Hat bereits bezahlt — Vollzugang sofort freischalten</span>' +
       "</label>" +
-      '<div class="admin-sub" style="margin-top:2px;">Unangehakt: Schüler sieht zunächst nur die Gratis-Themen kostenlos, du schaltest den Rest später per 👑-Button frei.</div>' +
+      '<div class="admin-sub" style="margin-top:2px;">Ohne Haken startet der Schüler im Gratis-Bereich (Fahrzeug &amp; Technik). Den Rest schaltest du später mit dem Knopf unten an seiner Karte frei.</div>' +
       '<button class="btn-primary" id="ns-btn" style="margin-top:6px;">Zugang anlegen &amp; PIN senden</button>' +
     "</div>" +
     '<div class="admin-card glass" style="margin-bottom:10px;">' +
