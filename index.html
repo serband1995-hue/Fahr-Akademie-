@@ -715,20 +715,17 @@ function icon(name, extraClass){
 }
 // Ein Icon je Bereich (Punkt 2.9) -- macht die Chip-Leiste ohne Textlesen erkennbar.
 const BEREICH_ICON = {
-  "Startklar":'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/>',
-  "Grundstufe":'<path d="M5 19V9l7-5 7 5v10"/><path d="M9 19v-6h6v6"/>',
-  "Aufbaustufe":'<path d="M4 18h16"/><path d="M7 18V9m5 9V5m5 13v-6"/>',
-  "Leistungsstufe":'<path d="M12 3l2.5 6 6.5.5-5 4.3 1.6 6.2L12 16.8 6.4 20l1.6-6.2-5-4.3 6.5-.5z"/>',
-  "Sonderfahrten":'<path d="M3 12h18"/><path d="M6 12V7h12v5"/><circle cx="8" cy="16" r="2"/><circle cx="16" cy="16" r="2"/>',
-  "Grundfahraufgaben-Alt":'<rect x="4" y="6" width="16" height="12" rx="2"/><path d="M9 10h6M9 14h3"/>',
-  "Grundfahraufgaben":'<rect x="4" y="6" width="16" height="12" rx="2"/><path d="M9 10h6M9 14h3"/>',
-  "Technik":'<circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/>',
-  "Fahrzeug-Check":'<path d="M20 12a8 8 0 11-8-8"/><path d="M9 12l2 2 5-5"/>',
+  "Fahrzeug & Technik":'<path d="M3 12h18"/><path d="M6 12V7h12v5"/><circle cx="8" cy="16" r="2"/><circle cx="16" cy="16" r="2"/>',
+  "Stoppschild-Situationen":'<path d="M8 3h8l5 5v8l-5 5H8l-5-5V8z"/>',
+  "Fahrmanöver-Grundlagen":'<rect x="4" y="6" width="16" height="12" rx="2"/><path d="M9 10h6M9 14h3"/>',
+  "Abbiegen, Vorfahrt & Verkehrszeichen":'<path d="M12 3l9 16H3z"/><path d="M12 9v4"/><path d="M12 16.5h.01"/>',
+  "Autobahn":'<path d="M4 20L9 4h6l5 16"/><path d="M12 8v2m0 3v2m0 3v1"/>',
+  "Wenden & Umkehren":'<path d="M9 14l-4-4 4-4"/><path d="M5 10h9a5 5 0 015 5v1"/>',
   "Prüfung":'<path d="M9 11l3 3 6-6"/><rect x="3" y="4" width="18" height="16" rx="2"/>',
   "Prüfungsstrecken":'<circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H16a3 3 0 0 0 0-6H8a3 3 0 0 1 0-6h7.5"/>'
 };
 function bereichIcon(stufe){
-  return '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">' + (BEREICH_ICON[stufe] || BEREICH_ICON["Grundstufe"]) + "</svg>";
+  return '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">' + (BEREICH_ICON[stufe] || BEREICH_ICON["Fahrzeug & Technik"]) + "</svg>";
 }
 
 // Suche versteht auch Umgangssprache (Bereich 1.4): "Kreisel" findet "Kreisverkehr".
@@ -757,11 +754,11 @@ function passtZurSuche(video, tag){
   return heuhaufen.indexOf(q) !== -1;
 }
 
-const STUFEN_ORDER = ["Startklar","Grundstufe","Aufbaustufe","Leistungsstufe","Sonderfahrten","Grundfahraufgaben","Grundfahraufgaben-Alt","Technik","Fahrzeug-Check","Prüfung","Prüfungsstrecken"];
+const STUFEN_ORDER = ["Fahrzeug & Technik","Stoppschild-Situationen","Fahrmanöver-Grundlagen","Abbiegen, Vorfahrt & Verkehrszeichen","Autobahn","Wenden & Umkehren","Prüfung","Prüfungsstrecken"];
 const STUFE_PREFIX = {
-  "Grundstufe":"G", "Aufbaustufe":"A", "Leistungsstufe":"L",
-  "Sonderfahrten":"S", "Grundfahraufgaben":"B4", "Technik":"T", "Prüfung":"P",
-  "Startklar":"B1", "Grundfahraufgaben-Alt":"GF", "Fahrzeug-Check":"B12", "Prüfungsstrecken":"PS"
+  "Fahrzeug & Technik":"FT", "Stoppschild-Situationen":"ST", "Fahrmanöver-Grundlagen":"FM",
+  "Abbiegen, Vorfahrt & Verkehrszeichen":"AV", "Autobahn":"AB", "Wenden & Umkehren":"WU",
+  "Prüfung":"P", "Prüfungsstrecken":"PS"
 };
 // Große Umstrukturierung (23.08.2026): Videobibliothek wächst von 6 auf 15 laienverständliche
 // Bereiche. Bereich für Bereich umgebaut, alte Stufen/Tags bleiben in der DB bestehen (Kompass
@@ -769,12 +766,21 @@ const STUFE_PREFIX = {
 // Struktur um, sobald ein Bereich fertig umgezogen ist. Wird mit jedem weiteren Bereich ergänzt.
 const LEGACY_TAG_REDIRECT = {
   "t11_parken": "b4_laengsparken",
+  "t10_wenden": "b4_wenden",
   "t12_technikwissen": "b12_checkliste"
 };
 
+// Kompass-Kompatibilität (10.09.2026): Kompass schickt IMMER tag+stufe zusammen und die
+// App löst primär über die Tag-ID auf (siehe parseDeepLinkTag -> deepLinkTag.stufe), daher
+// bricht das tag-genaue Verlinken durch die Bereichs-Umbenennung NICHT. Diese Tabelle ist
+// nur das Sicherheitsnetz für alte Links OHNE tag-Parameter (nur ?stufe=...).
 const LEGACY_STUFE_REDIRECT = {
-  "technik": "Fahrzeug-Check",
-  "grundfahraufgaben": "Grundfahraufgaben"
+  "technik": "Fahrzeug & Technik",
+  "grundfahraufgaben": "Fahrmanöver-Grundlagen",
+  "grundstufe": "Abbiegen, Vorfahrt & Verkehrszeichen",
+  "aufbaustufe": "Abbiegen, Vorfahrt & Verkehrszeichen",
+  "leistungsstufe": "Abbiegen, Vorfahrt & Verkehrszeichen",
+  "sonderfahrten": "Autobahn"
 };
 function parseDeepLinkStufe(){
   const params = new URLSearchParams(location.search);
@@ -807,11 +813,16 @@ function tagGesperrt(tag){
   return freigabe[tag.nur_klasse] !== true;
 }
 
-// Freemium (28.08.2026): "Fahrzeug-Check" ist für jeden frei nutzbar, alle anderen
-// Bereiche brauchen academy_schueler.vollzugang = true. Zwei unabhängige Sperrgründe
-// können gleichzeitig gelten (Klasse UND Vollzugang) -- die Klassen-Sperre hat Vorrang
-// in der Anzeige, weil sie unabhängig vom Bezahlstatus ist.
-const FREIER_BEREICH = "Fahrzeug-Check";
+// Freemium (28.08.2026, angepasst 10.09.2026 beim Bereichs-Umbau): Ursprünglich war der
+// GANZE Bereich "Fahrzeug-Check" frei nutzbar. Beim Umbau wanderte dieser Bereich in
+// "Fahrzeug & Technik" -- zusammen mit den bisher KOSTENPFLICHTIGEN Themen "Technikwissen"
+// und "Kontrollleuchten benennen und verstehen" (früher Startklar). Ein reiner
+// Bereichs-Freischalter hätte diese beiden versehentlich mit-gratis gemacht. Deshalb jetzt
+// tag-genau: nur exakt diese 11 Themen sind frei, alles andere braucht weiterhin vollzugang.
+const FREIE_TAG_IDS = new Set([
+  "b12_reifen","b12_beleuchtung","b12_fluessigkeiten","b12_bremsen","b12_kontrollleuchten",
+  "b12_tanken","b12_checkliste","b12_lenkung","b12_warndreieck","b12_ladung","b12_pruefer_fragen"
+]);
 // Verhindert Doppel-Protokollierung, wenn dieselbe Bereichsseite mehrfach neu
 // gerendert wird (z.B. durch Antippen des Prüfungsfilters) -- pro Chat-Sitzung reicht.
 const bereitsProtokollierteSperrKlicks = new Set();
@@ -825,7 +836,7 @@ function protokolliereSperrKlick(stufe){
 }
 function videoSperrgrund(tag){
   if(tagGesperrt(tag)) return "klasse";
-  if(tag && tag.stufe !== FREIER_BEREICH && !(session && session.vollzugang)) return "vollzugang";
+  if(tag && !FREIE_TAG_IDS.has(tag.id) && !(session && session.vollzugang)) return "vollzugang";
   return null;
 }
 
@@ -1998,7 +2009,7 @@ const RECHTSDOKUMENTE = {
       '<p><b>§ 4 Preise und Zahlung</b><br>' +
       "(1) Der Preis beträgt 80 EUR für die gesamte Laufzeit von 6 Monaten.<br>" +
       "(2) Die Zahlung erfolgt bar bei der Fahrschule oder beim vermittelnden Fahrlehrer. Der Zugang wird nach Zahlungseingang manuell freigeschaltet.<br>" +
-      '(3) Ein Teil der Inhalte (Bereich "Fahrzeug-Check") ist kostenlos nutzbar.</p>' +
+      '(3) Ein Teil der Inhalte (ausgewählte Fahrzeug-Check-Themen) ist kostenlos nutzbar.</p>' +
       '<p><b>§ 5 Nutzungsrechte und Schutz der Inhalte</b><br>' +
       "(1) Der Nutzer erhält ein einfaches, nicht übertragbares Recht, die Inhalte während der Laufzeit zu privaten Lernzwecken anzusehen.<br>" +
       "(2) Untersagt sind insbesondere: Aufzeichnen, Herunterladen, Vervielfältigen, Weitergeben, öffentliches Zugänglichmachen sowie jede kommerzielle Nutzung der Inhalte.<br>" +
@@ -3055,7 +3066,7 @@ function renderAdminSchueler(){
       : '<div class="admin-sub" style="opacity:.7;color:var(--gold);">Nutzungsbedingungen noch nicht akzeptiert</div>';
     // Freemium (28.08.2026): Vollzugang-Status sichtbar machen + Umschalter.
     const vollzugangZeile = '<div class="admin-sub" style="' + (s.vollzugang ? "color:var(--gold);font-weight:600;" : "opacity:.7;") + '">' +
-      (s.vollzugang ? "👑 Vollzugang aktiv" : "Nur Fahrzeug-Check (kostenlos)") + "</div>";
+      (s.vollzugang ? "👑 Vollzugang aktiv" : "Nur Gratis-Themen (kostenlos)") + "</div>";
     // Betrugsschutz (09.09.2026, Punkt 2): Login-Haeufigkeit sichtbar machen.
     // Faustregel: mehr als 3 Logins/Tag im Schnitt seit Anlage ist fuer EINE Person
     // untypisch haeufig -- moeglicher Hinweis auf geteilte Zugangsdaten. Nur ein
@@ -3151,7 +3162,7 @@ function renderAdminSchueler(){
         '<input type="checkbox" id="ns-vollzugang" style="width:18px;height:18px;">' +
         '<span>Sofort Vollzugang gewähren (schon vollständig bezahlt)</span>' +
       "</label>" +
-      '<div class="admin-sub" style="margin-top:2px;">Unangehakt: Schüler sieht zunächst nur „Fahrzeug-Check" kostenlos, du schaltest den Rest später per 👑-Button frei.</div>' +
+      '<div class="admin-sub" style="margin-top:2px;">Unangehakt: Schüler sieht zunächst nur die Gratis-Themen kostenlos, du schaltest den Rest später per 👑-Button frei.</div>' +
       '<button class="btn-primary" id="ns-btn" style="margin-top:6px;">Zugang anlegen &amp; PIN senden</button>' +
     "</div>" +
     '<div class="admin-card glass" style="margin-bottom:10px;">' +
@@ -3275,7 +3286,7 @@ async function createSchueler(){
       "zugang_von_partner", "schueler", neu.id, neu.name,
       "Angelegt von: " + (adminSession && adminSession.email ? adminSession.email : "Partner") +
       " · Klasse " + klasse +
-      " · " + (vollzugangSofort ? "Vollzugang" : "nur Fahrzeug-Check") +
+      " · " + (vollzugangSofort ? "Vollzugang" : "nur Gratis-Themen") +
       (schuelernummer ? " · Schüler-Nr. " + schuelernummer : "")
     );
   }
@@ -3374,7 +3385,7 @@ async function toggleVollzugang(id){
   if(!wirdFreigeschaltet){
     // Entziehen ist eine echte Weichenstellung (Schüler verliert bezahlten Zugriff) --
     // deshalb eine Bestätigung, wie beim Löschen.
-    if(!confirm("Vollzugang für " + s.name + " wirklich entziehen? Nur Fahrzeug-Check bleibt dann sichtbar.")) return;
+    if(!confirm("Vollzugang für " + s.name + " wirklich entziehen? Nur die Gratis-Themen bleiben dann sichtbar.")) return;
   }
 
   s.vollzugang = wirdFreigeschaltet;
