@@ -240,6 +240,13 @@
      Bei eingestellter Sprache Deutsch wird die Zeile gar nicht erst erzeugt. */
   .titel-original{font-size:11.5px;color:var(--faint);margin-top:2px;font-weight:500;}
   [dir="rtl"] .titel-original{direction:ltr;text-align:right;}
+  /* Videolänge (10.09.2026): entscheidet, ob jemand JETZT draufklickt.
+     Zwischen 2 Minuten (Reifen prüfen) und über 40 Minuten (Prüfungsstrecke)
+     liegen Welten -- ohne Angabe tippt ein Schüler mit 10 Minuten Zeit blind. */
+  .dauer-badge{display:inline-flex;align-items:center;gap:4px;margin-top:5px;
+    padding:2px 8px;border-radius:var(--r-pill);background:var(--surface-tint);
+    color:var(--muted);font-size:11px;font-weight:700;}
+  .dauer-badge .ic{width:12px;height:12px;}
   .video-card:active{background:var(--surface-strong);}
   .video-play-ic{
     width:38px;height:38px;border-radius:50%;background:var(--gruen);flex-shrink:0;
@@ -769,7 +776,8 @@ const ICONS = {
   logout:'<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>',
   download:'<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/>',
   hashtag:'<path d="M5 9h14M5 15h14M10 4L8 20M16 4l-2 16"/>',
-  krone:'<path d="M3 18h18l-1.5-9-4.5 4-3-6-3 6-4.5-4z"/>'
+  krone:'<path d="M3 18h18l-1.5-9-4.5 4-3-6-3 6-4.5-4z"/>',
+  uhr:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>'
 };
 function icon(name, extraClass){
   return '<svg class="ic ' + (extraClass||"") + '" viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[name]||"") + "</svg>";
@@ -1217,6 +1225,67 @@ function originalTitel(art, id, feld, deutsch){
 
 // Bereichsname zum Anzeigen. Der interne Wert bleibt immer deutsch (Schluessel!),
 // nur die sichtbare Beschriftung wechselt die Sprache.
+// Videolänge lesbar machen (10.09.2026). Fehlt die Länge, wird BEWUSST nichts angezeigt
+// statt "0:00" -- eine falsche Zahl ist schlimmer als gar keine.
+// Kurzform für Kacheln und Listen, z.B. "42 Min" oder "1 Std 5 Min".
+function dauerKurz(sekunden){
+  const s = Number(sekunden);
+  if(!isFinite(s) || s <= 0) return "";
+  const gesamtMin = Math.max(1, Math.round(s / 60));
+  if(gesamtMin < 60) return gesamtMin + " Min";
+  const std = Math.floor(gesamtMin / 60);
+  const rest = gesamtMin % 60;
+  return std + " Std" + (rest ? " " + rest + " Min" : "");
+}
+
+// Kleine Längenangabe unter dem Videotitel. Erzeugt gar nichts, wenn keine Länge
+// hinterlegt ist -- so bleiben Videos ohne Angabe unauffällig statt fehlerhaft.
+function dauerBadge(video){
+  const txt = video ? dauerKurz(video.dauer_sekunden) : "";
+  if(!txt) return "";
+  return '<div class="dauer-badge">' + icon("uhr","ic-s") + "<span>" + esc(txt) + "</span></div>";
+}
+
+// Laengen von Bunny holen (10.09.2026). Die eigentliche Arbeit macht die Edge Function
+// academy-bunny-dauer -- der Bunny-API-Schluessel darf niemals ins Frontend, sonst koennte
+// ihn jeder aus dem Quelltext lesen und die ganze Videobibliothek auslesen.
+async function holeVideoLaengen(){
+  const btn = document.getElementById("dauer-btn");
+  if(btn){ btn.disabled = true; btn.textContent = "Wird abgefragt …"; }
+  try{
+    const { data: sess } = await supa.auth.getSession();
+    const token = sess && sess.session ? sess.session.access_token : null;
+    if(!token){ showToast("Bitte neu anmelden"); return; }
+
+    const res = await fetch(SUPABASE_URL + "/functions/v1/academy-bunny-dauer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token }
+    });
+    const daten = await res.json();
+
+    if(daten.code === "secret_fehlt"){
+      alert("Der Bunny-API-Schlüssel fehlt noch.\n\n" +
+        "So trägst du ihn ein:\n" +
+        "1. Bei Bunny: Stream → deine Library → API → den Schlüssel kopieren\n" +
+        "2. Bei Supabase: Edge Functions → Secrets → neues Geheimnis BUNNY_API_KEY\n\n" +
+        "Danach hier nochmal antippen.\n\n" +
+        "Hinweis: Das ist ein ANDERER Schlüssel als der, mit dem die Videos abgespielt werden.");
+      return;
+    }
+    if(daten.error){ showToast("Fehler: " + daten.error); return; }
+
+    await loadAdminData();
+    renderAdminVideos();
+    const fehlerTxt = (daten.fehler && daten.fehler.length)
+      ? " · " + daten.fehler.length + " ohne Angabe" : "";
+    showToast(daten.aktualisiert + " aktualisiert, " + daten.unveraendert + " unverändert" + fehlerTxt);
+  } catch(e){
+    showToast("Verbindungsfehler — bitte Internet prüfen");
+  } finally {
+    if(btn){ btn.disabled = false; btn.textContent = "Längen von Bunny holen"; }
+  }
+}
+
 function bereichName(stufe){
   return inhalt("bereich", stufe, "name", stufe);
 }
@@ -1698,7 +1767,7 @@ function renderLernpfadHtml(){
         '<div class="vg-bg" style="background:' + vgGradientFuer(x.video.id) + ';"></div>' +
         '<div class="vg-play">' + icon("schloss") + "</div>" +
         '<div class="vg-info"><div class="vg-code">' + esc(x.tag.label) + '</div>' +
-          '<div class="vg-titel">' + esc(x.video.titel) + "</div>" + originalTitel("video", x.video.id, "titel", x.video.titel_de) +
+          '<div class="vg-titel">' + esc(x.video.titel) + "</div>" + originalTitel("video", x.video.id, "titel", x.video.titel_de) + dauerBadge(x.video) +
           '<div class="lock-hint">' + esc(hinweis) + "</div>" +
         "</div>" +
       "</div>";
@@ -1728,7 +1797,7 @@ function renderPruefungsstreckenHtml(){
         .filter(Boolean).join(", ");
       const check = seenVideoIds.has(v.id) ? '<span class="video-check">✓</span>' : "";
       return '<div class="video-card glass" data-vid="' + esc(v.id) + '">' +
-        '<div><div class="video-title">' + esc(v.titel) + "</div>" + originalTitel("video", v.id, "titel", v.titel_de) +
+        '<div><div class="video-title">' + esc(v.titel) + "</div>" + originalTitel("video", v.id, "titel", v.titel_de) + dauerBadge(v) +
           (tagsForVideo ? '<div class="video-desc" style="opacity:.7;">Enthält: ' + esc(tagsForVideo) + "</div>" : "") +
         "</div>" + check +
       "</div>";
@@ -1816,10 +1885,15 @@ function renderStartHtml(){
     // Wer bereits bezahlt hat, kann ohnehin alles sehen; dort waere "gratis" nur Rauschen.
     const komplettFrei = !(session && session.vollzugang) &&
       g.videos.length > 0 && g.videos.every(function(x){ return !x.gesperrt && x.tag && x.tag.gratis; });
-    // Gesperrte Bereiche zeigen keinen sinnlosen 0%-Balken, sondern was drin wartet.
+    // Gesamtdauer des Bereichs, sofern fuer die Videos hinterlegt. Fehlt sie ueberall,
+    // bleibt die Zeile wie bisher -- kein Platzhalter, keine falsche Zahl.
+    const summeSek = g.videos.reduce(function(a,x){
+      const d = Number(x.video.dauer_sekunden); return a + (isFinite(d) && d > 0 ? d : 0);
+    }, 0);
+    const dauerTeil = summeSek > 0 ? " · " + dauerKurz(summeSek) : "";
     const metaZeile = komplettGesperrt
-      ? gesamt + " Video" + (gesamt === 1 ? "" : "s") + " warten auf dich"
-      : gesehen + " von " + gesamt + " Video" + (gesamt === 1 ? "" : "s") + " · " + pct + "%";
+      ? gesamt + " Video" + (gesamt === 1 ? "" : "s") + " warten auf dich" + dauerTeil
+      : gesehen + " von " + gesamt + " Video" + (gesamt === 1 ? "" : "s") + " · " + pct + "%" + dauerTeil;
     return '<button class="bereich-tile' + (pct>=100?" voll":"") + (komplettGesperrt?" bereich-gesperrt":"") + '" data-gotostufe="' + esc(g.stufe) + '">' +
       '<div class="bt-icon">' + bereichIcon(g.stufe) + "</div>" +
       '<div class="bt-body">' +
@@ -1936,7 +2010,7 @@ function renderBereichDetailHtml(){
         '<div class="vg-bg" style="background:' + vgGradientFuer(x.video.id) + ';"></div>' +
         '<div class="vg-play">' + icon("schloss") + "</div>" +
         '<div class="vg-info"><div class="vg-code">' + esc(x.code) + '</div>' +
-          '<div class="vg-titel">' + esc(x.video.titel) + "</div>" + originalTitel("video", x.video.id, "titel", x.video.titel_de) +
+          '<div class="vg-titel">' + esc(x.video.titel) + "</div>" + originalTitel("video", x.video.id, "titel", x.video.titel_de) + dauerBadge(x.video) +
           '<div class="lock-hint">' + esc(hinweis) + "</div>" +
         "</div>" +
       "</div>";
@@ -1945,7 +2019,7 @@ function renderBereichDetailHtml(){
       '<div class="vg-bg" style="background:' + vgGradientFuer(x.video.id) + ';"></div>' + vgBildLayer(x.video) +
       '<div class="vg-play">' + icon("play") + "</div>" +
       ergebnisIcon + check +
-      '<div class="vg-info"><div class="vg-code">' + esc(x.code) + '</div><div class="vg-titel">' + esc(x.video.titel) + "</div>" + originalTitel("video", x.video.id, "titel", x.video.titel_de) + "</div>" +
+      '<div class="vg-info"><div class="vg-code">' + esc(x.code) + '</div><div class="vg-titel">' + esc(x.video.titel) + "</div>" + originalTitel("video", x.video.id, "titel", x.video.titel_de) + dauerBadge(x.video) + "</div>" +
     "</div>";
   }).join("");
 
@@ -2001,7 +2075,7 @@ function renderVerlaufHtml(){
     if(!v) return "";
     const info = proVideo[vid];
     return '<div class="video-card glass" data-vid="' + esc(vid) + '">' +
-      '<div><div class="video-title">' + esc(v.titel) + "</div>" + originalTitel("video", v.id, "titel", v.titel_de) +
+      '<div><div class="video-title">' + esc(v.titel) + "</div>" + originalTitel("video", v.id, "titel", v.titel_de) + dauerBadge(v) +
         '<div class="video-desc">Zuletzt: ' + fmtDateTime(info.letztes) + "</div>" +
       "</div>" +
       '<span class="admin-badge badge-aktiv" style="margin-left:auto;">' + info.count + "× gesehen</span>" +
@@ -2889,14 +2963,16 @@ function darfSelbstVersenden(){
 
 function renderAdmin(){
   const isSuperAdmin = myRole === "super_admin";
-  // Partner-Ansicht (09.09.2026): bewusst auf das Nötigste reduziert. Ein Partner
-  // braucht keine Kandidatenliste (das ist Serbands Vertriebs-Werkzeug) und darf
-  // auch nicht sehen oder verwalten, welche anderen Fahrlehrer es gibt. Videos sind
-  // fuer ihn nur zum ANSCHAUEN da, damit er weiss, was er verkauft (siehe
-  // renderAdminVideos -> nurLesen).
+  // Partner-Ansicht (09.09.2026, erweitert 10.09.2026): bewusst schlank, aber nicht
+  // blind. Ein Partner braucht keine Kandidatenliste (das ist Serbands Vertriebs-
+  // Werkzeug) und sieht keine fremden Schulen. NEU: er sieht seine EIGENE Abrechnung
+  // und seine eigenen Fahrlehrer -- vorher schaltete er Zugaenge frei, ohne je zu
+  // erfahren wie viele es waren oder was er schuldet. Das fuehrt zu Streit bei der
+  // ersten Rechnung. Die Datenbank-Richtlinien erlaubten den Blick auf die eigenen
+  // Verkaeufe laengst; es war nur im Frontend ausgeblendet.
   const tabs = isSuperAdmin
     ? [["dashboard","Übersicht"],["schueler","Schüler"],["kandidaten","Kandidaten"],["fahrlehrer","Fahrlehrer"],["videos","Videos"],["pruefer","Prüfer"],["schulen","Schulen"],["abrechnung","Abrechnung"],["protokoll","Protokoll"]]
-    : [["dashboard","Übersicht"],["schueler","Schüler"],["videos","Videos"]];
+    : [["dashboard","Übersicht"],["schueler","Schüler"],["fahrlehrer","Fahrlehrer"],["videos","Videos"],["abrechnung","Abrechnung"]];
 
   // Schutz gegen einen stehengebliebenen Tab-Zustand: waere adminTab noch auf einem
   // Tab, den diese Rolle nicht mehr sehen darf, faellt sie auf die Uebersicht zurueck.
@@ -2908,7 +2984,7 @@ function renderAdmin(){
     }).join("") +
   "</div>";
 
-  const roleLabel = isSuperAdmin ? "Super-Admin" : "Schul-Admin";
+  const roleLabel = isSuperAdmin ? "Super-Admin" : "Partner";
 
   document.getElementById("app").innerHTML =
     // Bereich 1.10: unverwechselbar sichtbar, dass man im Admin-Modus ist
@@ -2937,7 +3013,10 @@ function renderAdmin(){
   // dem Super-Admin. Tabs auszublenden allein reicht nicht -- ein stehengebliebener
   // Zustand koennte sie sonst trotzdem oeffnen. (Die Daten sind zusaetzlich per RLS
   // geschuetzt, das hier ist nur die zweite Schicht.)
-  const nurSuper = ["kandidaten","fahrlehrer","pruefer","schulen","abrechnung","protokoll","historie"];
+  // "abrechnung" und "fahrlehrer" stehen hier seit 10.09.2026 NICHT mehr drin: der
+  // Partner darf beides sehen, aber nur die eigenen Daten -- das erzwingen die
+  // Datenbank-Richtlinien, nicht diese Liste.
+  const nurSuper = ["kandidaten","pruefer","schulen","protokoll","historie"];
   if(myRole !== "super_admin" && nurSuper.indexOf(adminTab) !== -1) adminTab = "dashboard";
 
   if(adminTab === "dashboard") renderAdminDashboard();
@@ -3576,10 +3655,51 @@ async function toggleVollzugang(id){
   if(!s) return;
 
   const wirdFreigeschaltet = !s.vollzugang;
+  let preisEingabe = null;
+
   if(!wirdFreigeschaltet){
     // Entziehen ist eine echte Weichenstellung (Schüler verliert bezahlten Zugriff) --
-    // deshalb eine Bestätigung, wie beim Löschen.
-    if(!confirm("Vollzugang für " + s.name + " wirklich entziehen? Nur die Gratis-Themen bleiben dann sichtbar.")) return;
+    // deshalb eine Bestätigung, wie beim Löschen. Der bereits gebuchte Verkauf bleibt
+    // bewusst bestehen: eine Abrechnung rueckwirkend zu loeschen waere buchhalterisch
+    // falsch. Das wird hier offen gesagt, statt es den Nutzer spaeter entdecken zu lassen.
+    if(!confirm("Vollzugang für " + s.name + " wirklich entziehen?\n\n" +
+      "Der Schüler sieht dann nur noch die Gratis-Themen.\n" +
+      "Hinweis: Eine bereits erstellte Abrechnung bleibt bestehen und wird dadurch nicht storniert.")) return;
+  } else {
+    // Freischalten kostet Geld -- vorher Preis erfragen und bestaetigen lassen (10.09.2026).
+    // Vorher loeste ein einziger Klick ohne Rueckfrage sofort eine Abrechnung aus.
+    const schule = allSchulen.find(function(sc){ return sc.id === s.schule_id; });
+    const standard = schule && schule.preis_schueler != null ? Number(schule.preis_schueler) : null;
+    const meinAnteil = schule && schule.provision_serband != null ? Number(schule.provision_serband) : null;
+    const istPartner = myRole !== "super_admin";
+
+    const eingabe = prompt(
+      "Vollzugang für " + s.name + " freischalten.\n\n" +
+      "Welchen Preis hast du dem Schüler berechnet? (in Euro)\n" +
+      (standard != null ? "Leer lassen = Standardpreis " + standard + " €\n" : "") +
+      (istPartner && meinAnteil != null ? "\nDein Anteil an die Fahr-Akademie: " + meinAnteil + " € pro Zugang." : ""),
+      standard != null ? String(standard) : ""
+    );
+    if(eingabe === null) return; // abgebrochen
+
+    const roh = String(eingabe).trim().replace(",", ".");
+    if(roh !== ""){
+      const zahl = Number(roh);
+      if(!isFinite(zahl) || zahl < 0){ showToast("Bitte einen gültigen Betrag eingeben"); return; }
+      preisEingabe = Math.round(zahl * 100) / 100;
+      // Verkauf unter dem eigenen Einkaufspreis: rechnerisch erlaubt, aber der Partner
+      // soll es bewusst tun und nicht erst auf der Rechnung merken.
+      if(istPartner && meinAnteil != null && preisEingabe < meinAnteil){
+        if(!confirm("Achtung: Du berechnest " + preisEingabe + " €, zahlst aber " + meinAnteil +
+          " € an die Fahr-Akademie.\n\nDu machst damit " + (meinAnteil - preisEingabe).toFixed(2) +
+          " € Verlust bei diesem Zugang.\n\nTrotzdem freischalten?")) return;
+      }
+    }
+
+    const anzeigePreis = preisEingabe != null ? preisEingabe : standard;
+    if(!confirm("Vollzugang für " + s.name + " freischalten?\n\n" +
+      (anzeigePreis != null ? "Abrechnungsbetrag: " + anzeigePreis + " €\n" : "") +
+      "Das erstellt sofort eine Abrechnung und lässt sich nicht rückgängig machen.")) return;
   }
 
   s.vollzugang = wirdFreigeschaltet;
@@ -3588,13 +3708,21 @@ async function toggleVollzugang(id){
     renderAdminSchueler();
     return;
   }
-  const { error } = await supa.from("academy_schueler").update({ vollzugang: s.vollzugang }).eq("id", id);
+  // Der Preis muss VOR dem Umschalten gespeichert sein: der Datenbank-Trigger liest ihn
+  // im selben Moment aus, in dem vollzugang auf true wechselt. Zwei getrennte Schreib-
+  // vorgaenge in falscher Reihenfolge wuerden den Standardpreis buchen statt des
+  // eingegebenen -- deshalb beides in EINEM Update.
+  const felder = { vollzugang: s.vollzugang };
+  if(wirdFreigeschaltet && preisEingabe != null){
+    felder.verkaufspreis = preisEingabe;
+    s.verkaufspreis = preisEingabe;
+  }
+  const { error } = await supa.from("academy_schueler").update(felder).eq("id", id);
   if(error){ showToast("Fehler: " + error.message); return; }
-  // Der eigentliche Verkaufsbuch-Eintrag beim Freischalten passiert automatisch
-  // per Datenbank-Trigger (trg_academy_vollzugang_verkauf) -- hier nur die UI aktualisieren.
-  protokolliere(wirdFreigeschaltet ? "vollzugang_freigeschaltet" : "vollzugang_entzogen", "schueler", id, s.name, null);
+  protokolliere(wirdFreigeschaltet ? "vollzugang_freigeschaltet" : "vollzugang_entzogen", "schueler", id, s.name,
+    wirdFreigeschaltet && preisEingabe != null ? "Preis: " + preisEingabe + " EUR" : null);
   renderAdminSchueler();
-  showToast(wirdFreigeschaltet ? "Vollzugang freigeschaltet — im Verkaufsbuch erfasst" : "Vollzugang entzogen");
+  showToast(wirdFreigeschaltet ? "Vollzugang freigeschaltet — Abrechnung erstellt" : "Vollzugang entzogen");
 }
 
 async function deleteSchueler(id){
@@ -3767,8 +3895,21 @@ function renderAdminVideos(){
       '<div class="admin-sub" style="margin-top:6px;">Nach dem Anlegen erscheint das Video sofort bei allen Schülern — und alle mit aktivierten Benachrichtigungen bekommen automatisch eine Push-Nachricht.</div>' +
     "</div>";
 
+  const ohneDauer = allVideos.filter(function(v){ return v.bunny_video_id && !v.dauer_sekunden; }).length;
+  const dauerKarte = nurLesen ? "" :
+    '<div class="admin-card glass" style="margin-bottom:10px;">' +
+      '<div class="admin-name">Videolängen</div>' +
+      '<div class="admin-sub">' +
+        (ohneDauer === 0
+          ? "Alle Videos haben eine Länge hinterlegt."
+          : ohneDauer + " Video" + (ohneDauer === 1 ? "" : "s") + " noch ohne Längenangabe. Der Schüler sieht dort keine Dauer.") +
+      "</div>" +
+      '<button class="btn-primary" id="dauer-btn" style="margin-top:8px;">Längen von Bunny holen</button>' +
+    "</div>";
+
   document.getElementById("admin-content").innerHTML =
     anlegeForm +
+    dauerKarte +
     // Partner sieht statt des Anlege-Formulars einen kurzen Hinweis, wozu die Liste da ist.
     (nurLesen
       ? '<div class="admin-card glass" style="margin-bottom:10px;">' +
@@ -3834,6 +3975,8 @@ function renderAdminVideos(){
     cb.addEventListener("change", aktualisiereChips);
   });
 
+  const dauerBtn = document.getElementById("dauer-btn");
+  if(dauerBtn) dauerBtn.addEventListener("click", holeVideoLaengen);
   const vidFilter = document.getElementById("vid-filter");
   if(vidFilter) vidFilter.addEventListener("change", function(e){
     videoFilterStufe = e.target.value;
@@ -4263,6 +4406,57 @@ async function renderAdminAbrechnung(){
   if(DEMO_MODE){ el.innerHTML = '<div class="empty">Im Demo-Modus nicht verfügbar.</div>'; return; }
   const ok = await ladeVerkaeufe();
   if(!ok){ el.innerHTML = '<div class="empty">Verkaufsbuch konnte nicht geladen werden.</div>'; return; }
+
+  // Partner-Abrechnung (10.09.2026): bewusst eine EIGENE, einfache Ansicht statt
+  // Serbands Verwaltungsoberflaeche. Ein Partner will drei Zahlen wissen: wie viele
+  // Zugaenge, was habe ich eingenommen, was schulde ich. Filterleisten, Belegnummern
+  // und Bezahlt-Haken sind Serbands Werkzeuge -- der Partner darf sie ohnehin nicht
+  // aendern (Datenbank-Richtlinie), sie wuerden ihn nur verwirren.
+  if(myRole !== "super_admin"){
+    if(allVerkaeufe.length === 0){
+      el.innerHTML = '<div class="empty">Noch keine Zugänge freigeschaltet. Sobald du einem Schüler den Vollzugang gibst, erscheint er hier.</div>';
+      return;
+    }
+    let summeEinnahmen = 0, summeSchuld = 0, offeneSchuld = 0;
+    allVerkaeufe.forEach(function(v){
+      summeEinnahmen += Number(v.verkaufspreis || 0);
+      summeSchuld += Number(v.provision || 0);
+      if(!v.bezahlt_am) offeneSchuld += Number(v.provision || 0);
+    });
+    const zeilen = allVerkaeufe.slice().sort(function(a,b){
+      return new Date(b.verkauft_am) - new Date(a.verkauft_am);
+    }).map(function(v){
+      return '<div class="admin-card glass' + (v.bezahlt_am ? "" : " gratis") + '">' +
+        '<div class="admin-row"><div>' +
+          '<div class="admin-name">' + esc(v.schueler_name || "—") + "</div>" +
+          '<div class="admin-sub">Freigeschaltet am ' + fmtDate(v.verkauft_am) + "</div>" +
+          '<div class="admin-sub">Du hast berechnet: <b>' + Number(v.verkaufspreis || 0).toFixed(2) + " €</b></div>" +
+          '<div class="admin-sub">Anteil Fahr-Akademie: <b>' + Number(v.provision || 0).toFixed(2) + " €</b></div>" +
+        "</div>" +
+        '<div style="text-align:right;"><div class="admin-badge ' + (v.bezahlt_am ? "ok" : "warn") + '">' +
+          (v.bezahlt_am ? "beglichen" : "offen") + "</div></div>" +
+        "</div>" +
+      "</div>";
+    }).join("");
+
+    el.innerHTML =
+      '<div class="admin-card glass" style="border-left:4px solid var(--gold);">' +
+        '<div class="section-label" style="margin:0 0 10px;">Deine Abrechnung</div>' +
+        '<div class="admin-sub">Freigeschaltete Zugänge</div>' +
+        '<div class="admin-name" style="margin-bottom:10px;">' + allVerkaeufe.length + "</div>" +
+        '<div class="admin-sub">Von dir eingenommen</div>' +
+        '<div class="admin-name" style="margin-bottom:10px;">' + summeEinnahmen.toFixed(2) + " €</div>" +
+        '<div class="admin-sub">Anteil Fahr-Akademie gesamt</div>' +
+        '<div class="admin-name" style="margin-bottom:10px;">' + summeSchuld.toFixed(2) + " €</div>" +
+        '<div class="admin-sub">Davon noch offen</div>' +
+        '<div class="admin-name" style="color:var(--gold);">' + offeneSchuld.toFixed(2) + " €</div>" +
+        '<div class="admin-sub" style="margin-top:12px;opacity:.8;">Was du darüber hinaus einnimmst, behältst du. Den Preis legst du bei jedem Schüler selbst fest.</div>' +
+      "</div>" +
+      '<div class="section-label" style="margin:18px 0 8px;">Einzelne Zugänge</div>' +
+      zeilen;
+    return;
+  }
+
   if(allVerkaeufe.length === 0){
     el.innerHTML = '<div class="empty">Noch keine Verkäufe erfasst. Jeder neu freigeschaltete Zugang erscheint hier automatisch.</div>';
     return;
