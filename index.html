@@ -247,6 +247,47 @@
     padding:2px 8px;border-radius:var(--r-pill);background:var(--surface-tint);
     color:var(--muted);font-size:11px;font-weight:700;}
   .dauer-badge .ic{width:12px;height:12px;}
+  /* Anfrage statt Schloss (12.09.2026) */
+  .anfrage-karte{background:var(--gold-schwach);border-color:var(--gold-rand);
+    margin-bottom:var(--sp-m);text-align:center;}
+  .anfrage-text{font-weight:600;margin-bottom:12px;line-height:1.45;}
+  .anfrage-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    width:100%;padding:13px 18px;border-radius:12px;border:none;cursor:pointer;
+    background:var(--gold);color:#fff;font-family:inherit;font-size:15px;font-weight:800;
+    transition:transform .18s ease,opacity .18s ease;}
+  .anfrage-btn:active{transform:scale(.97);}
+  .anfrage-btn:disabled{opacity:.6;cursor:default;}
+  .anfrage-btn .ic{width:17px;height:17px;}
+  .anfrage-klein{font-size:11.5px;color:var(--muted);margin-top:9px;line-height:1.4;}
+  /* Kostprobe: bewusst GRÜN, nicht gold. Gold steht überall sonst für "kostenpflichtig" --
+     dieselbe Farbe hier würde das Gegenteil signalisieren. */
+  .kostprobe-badge{display:inline-block;margin-top:5px;padding:2px 9px;border-radius:var(--r-pill);
+    background:var(--gruen);color:#fff;font-size:10.5px;font-weight:800;
+    letter-spacing:.04em;text-transform:uppercase;}
+  /* Registrierung (12.09.2026) */
+  .neu-hier{margin-top:26px;width:100%;max-width:340px;}
+  .neu-trenner{display:flex;align-items:center;gap:12px;color:var(--faint);font-size:12.5px;margin-bottom:12px;}
+  .neu-trenner::before,.neu-trenner::after{content:"";flex:1;height:1px;background:var(--border);}
+  .btn-sekundaer{width:100%;padding:13px 18px;border-radius:12px;cursor:pointer;
+    background:transparent;border:1.5px solid var(--gruen-hell);color:var(--gruen-hell);
+    font-family:inherit;font-size:15px;font-weight:700;
+    transition:background .2s ease,color .2s ease;}
+  .btn-sekundaer:active{transform:scale(.98);}
+  .neu-klein{font-size:11.5px;color:var(--muted);margin-top:9px;line-height:1.45;text-align:center;}
+  .reg-label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:12px 0 5px;}
+  .reg-hinweis{font-size:11px;color:var(--faint);margin-top:-4px;margin-bottom:2px;}
+  .reg-code{margin-top:12px;padding:9px 12px;border-radius:10px;background:var(--surface-tint);
+    font-size:12.5px;color:var(--gruen-hell);}
+  .reg-recht{font-size:10.5px;color:var(--faint);line-height:1.5;margin-top:12px;}
+  /* PIN nach der Anmeldung: bewusst riesig. Sie ist der einzige Weg zurueck in die App --
+     geht sie hier verloren, ist der Zugang fuer den Schueler praktisch weg. */
+  .pin-label{font-size:12.5px;color:var(--muted);font-weight:700;}
+  .pin-gross{font-family:'Playfair Display',serif;font-size:52px;font-weight:700;
+    letter-spacing:.16em;color:var(--gruen-hell);margin:6px 0 10px;}
+  .pin-hinweis{font-size:12.5px;color:var(--muted);line-height:1.5;}
+  .pin-zugang{margin-top:12px;padding:9px 12px;border-radius:10px;background:var(--surface-tint);font-size:12.5px;}
+  .werbe-code{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;
+    letter-spacing:.14em;color:var(--gold);margin-bottom:6px;}
   .video-card:active{background:var(--surface-strong);}
   .video-play-ic{
     width:38px;height:38px;border-radius:50%;background:var(--gruen);flex-shrink:0;
@@ -904,10 +945,18 @@ function protokolliereSperrKlick(stufe){
     body: JSON.stringify({ session_token: session.session_token, stufe: stufe })
   }).catch(function(){}); // Fire-and-forget -- ein Fehler hier darf niemanden stören
 }
-function videoSperrgrund(tag){
+// Kostprobe (12.09.2026): Das Video wird zusaetzlich uebergeben, weil "gratis" auf ZWEI
+// Ebenen gelten kann -- das ganze Thema (academy_tags.gratis) oder ein einzelnes Video
+// (academy_videos.gratis). Genau das braucht die Kostprobe: EINE Pruefungsstrecke offen,
+// die anderen zehn zu, obwohl alle elf dasselbe Thema tragen.
+// MUSS mit der Pruefung in academy-video-token uebereinstimmen -- laufen die auseinander,
+// zeigt die App ein Schloss, wo der Server durchlaesst (oder schlimmer: umgekehrt).
+function videoSperrgrund(tag, video){
   if(tagGesperrt(tag)) return "klasse";
-  if(tag && !tag.gratis && !(session && session.vollzugang)) return "vollzugang";
-  return null;
+  if(session && session.vollzugang) return null;
+  if(video && video.gratis) return null;   // Kostprobe: einzelnes Video frei
+  if(tag && tag.gratis) return null;       // ganzes Thema frei
+  return "vollzugang";
 }
 
 // Zuordnungs-Reihenfolge (10.09.2026): Ein Video kann fachlich zu mehreren Bereichen
@@ -954,7 +1003,7 @@ function buildLernpfad(){
         const v = allVideos.find(function(x){ return x.id === vt.video_id; });
         if(!v) return;
         counter++;
-        const sperrgrund = videoSperrgrund(tag);
+        const sperrgrund = videoSperrgrund(tag, v);
         videos.push({ video:v, tag:tag, code: STUFE_PREFIX[stufe] + "-" + counter, gesperrt: !!sperrgrund, sperrgrund: sperrgrund });
       });
     });
@@ -1363,15 +1412,135 @@ function showLogin(){
         '<button class="btn-primary" id="lo-btn">Einloggen</button>' +
         '<div id="lo-err" class="err"></div>' +
       "</div>" +
+      // Einstieg für Neue (12.09.2026). Bewusst UNTER dem Login und optisch ruhiger:
+      // die meisten Aufrufe sind Anmeldungen von Bestandsschülern, die sollen nicht
+      // zwischen zwei gleich lauten Formularen suchen müssen.
+      '<div class="neu-hier">' +
+        '<div class="neu-trenner"><span>Noch keinen Zugang?</span></div>' +
+        '<button class="btn-sekundaer" id="zur-reg">Kostenlos starten</button>' +
+        '<div class="neu-klein">Fahrzeug &amp; Technik komplett gratis, dazu eine Prüfungsstrecke zum Testen.</div>' +
+      "</div>" +
       (DEMO_MODE ? '<div class="demo-badge">Demo-Modus — beliebige Eingabe funktioniert</div>' : "") +
       '<div style="margin-top:22px;"><a id="admin-link" style="color:var(--faint);font-size:12px;cursor:pointer;text-decoration:underline;">Admin-Bereich</a></div>' +
     "</div>";
   document.getElementById("lo-btn").addEventListener("click", doLogin);
   document.getElementById("lo-pin").addEventListener("keydown", function(e){ if(e.key === "Enter") doLogin(); });
+  document.getElementById("zur-reg").addEventListener("click", showRegistrierung);
   document.getElementById("admin-link").addEventListener("click", function(){
     location.hash = "#admin";
     init();
   });
+}
+
+// Selbstregistrierung (12.09.2026).
+// WARUM: Bisher legte Serband jeden Schüler von Hand an -- er erreicht damit nur, wen er
+// gerade in der Fahrstunde sieht. Seine Gruppe hat über 70 Leute. Der Flaschenhals war nie
+// das Interesse, sondern die Handarbeit. Hier trägt sich der Schüler selbst ein.
+// Die E-Mail ist Pflicht, obwohl der Login sie nicht braucht: ohne sie gibt es keine
+// PIN-Mail, keine Ablauf-Erinnerung und keinen Weg, ihn je wieder zu erreichen.
+function showRegistrierung(){
+  const werbeCode = (new URLSearchParams(location.search).get("code") || "").toUpperCase();
+  document.getElementById("app").innerHTML =
+    '<div class="login-screen">' +
+      '<img class="logo-img" src="' + LOGO + '" alt="Logo">' +
+      "<h1>Kostenlos starten</h1>" +
+      '<div class="tagline">In 30 Sekunden startklar</div>' +
+      '<div class="login-card glass" style="text-align:left;">' +
+        '<label class="reg-label">Dein Name</label>' +
+        '<input id="rg-name" type="text" placeholder="Vor- und Nachname" autocomplete="name">' +
+        '<label class="reg-label">Handynummer</label>' +
+        '<input id="rg-tel" type="tel" placeholder="0176 12345678" autocomplete="tel">' +
+        '<div class="reg-hinweis">Damit meldest du dich später an.</div>' +
+        '<label class="reg-label">E-Mail</label>' +
+        '<input id="rg-mail" type="email" placeholder="name@beispiel.de" autocomplete="email">' +
+        '<div class="reg-hinweis">Dorthin schicken wir dir deine PIN.</div>' +
+        '<label class="reg-label">Führerscheinklasse</label>' +
+        '<select id="rg-klasse">' +
+          '<option value="B">B (Auto)</option>' +
+          '<option value="BE">BE (Auto mit Anhänger)</option>' +
+          '<option value="A">A (Motorrad)</option>' +
+          '<option value="A1">A1</option>' +
+          '<option value="A2">A2</option>' +
+          '<option value="AM">AM (Roller)</option>' +
+          '<option value="C">C (LKW)</option>' +
+          '<option value="CE">CE (LKW mit Anhänger)</option>' +
+        "</select>" +
+        (werbeCode ? '<div class="reg-code">Empfehlungscode erkannt: <b>' + esc(werbeCode) + "</b></div>" : "") +
+        '<button class="btn-primary" id="rg-btn" style="margin-top:14px;">Gratis-Zugang erstellen</button>' +
+        '<div id="rg-err" class="err"></div>' +
+        '<div class="reg-recht">Mit dem Anlegen stimmst du den Nutzungsbedingungen zu. ' +
+          'Die Fahr-Akademie ist ein ergänzendes Lernangebot und ersetzt keine Fahrschulausbildung. ' +
+          'Unter 18? Dann brauchst du die Zustimmung deiner Eltern.</div>' +
+      "</div>" +
+      '<div style="margin-top:18px;"><a id="zurueck-login" style="color:var(--faint);font-size:13px;cursor:pointer;text-decoration:underline;">Ich habe schon einen Zugang</a></div>' +
+    "</div>";
+  document.getElementById("rg-btn").addEventListener("click", function(){ doRegistrierung(werbeCode); });
+  document.getElementById("zurueck-login").addEventListener("click", showLogin);
+}
+
+async function doRegistrierung(werbeCode){
+  const btn = document.getElementById("rg-btn");
+  const err = document.getElementById("rg-err");
+  const name = document.getElementById("rg-name").value.trim();
+  const tel = document.getElementById("rg-tel").value.trim();
+  const mail = document.getElementById("rg-mail").value.trim();
+  const klasse = document.getElementById("rg-klasse").value;
+  err.textContent = "";
+
+  // Prüfung schon hier, nicht erst am Server: eine sofortige Rückmeldung ist freundlicher
+  // als eine Wartezeit mit anschließender Fehlermeldung. Der Server prüft trotzdem nochmal --
+  // auf eine Prüfung im Browser darf man sich nie verlassen.
+  if(name.length < 2){ err.textContent = "Bitte gib deinen Namen ein."; return; }
+  if(tel.replace(/[^0-9+]/g,"").length < 7){ err.textContent = "Bitte gib deine Handynummer ein."; return; }
+  if(mail && mail.indexOf("@") === -1){ err.textContent = "Die E-Mail sieht nicht richtig aus."; return; }
+
+  btn.disabled = true;
+  btn.textContent = "Wird angelegt …";
+  try{
+    const res = await fetch(SUPABASE_URL + "/functions/v1/academy-selbstregistrierung", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + SUPABASE_ANON_KEY },
+      body: JSON.stringify({ name: name, telefon: tel, email: mail, klasse: klasse, code: werbeCode || null })
+    });
+    const d = await res.json();
+
+    if(d.ok){
+      // PIN GROSS und bildschirmfüllend anzeigen. Sie ist der einzige Weg zurück in die
+      // App -- geht sie hier verloren, ist der Zugang für den Schüler praktisch weg.
+      document.getElementById("app").innerHTML =
+        '<div class="login-screen">' +
+          '<img class="logo-img" src="' + LOGO + '" alt="Logo">' +
+          "<h1>Fertig, " + esc(d.name.split(" ")[0]) + "!</h1>" +
+          '<div class="login-card glass">' +
+            '<div class="pin-label">Das ist deine PIN</div>' +
+            '<div class="pin-gross">' + esc(d.pin) + "</div>" +
+            '<div class="pin-hinweis">Schreib sie dir auf oder mach einen Screenshot.' +
+              (d.mail_versendet ? " Wir haben sie dir auch per E-Mail geschickt." : "") + "</div>" +
+            '<div class="pin-zugang">Anmelden mit <b>' + esc(d.telefon) + "</b> + PIN</div>" +
+            '<button class="btn-primary" id="rg-weiter" style="margin-top:16px;">Jetzt loslegen</button>' +
+          "</div>" +
+        "</div>";
+      document.getElementById("rg-weiter").addEventListener("click", function(){
+        showLogin();
+        const tf = document.getElementById("lo-tel"); if(tf) tf.value = d.telefon;
+        const pf = document.getElementById("lo-pin"); if(pf) pf.focus();
+      });
+      return;
+    }
+
+    if(d.code === "bereits_vorhanden"){
+      err.textContent = d.error;
+      btn.textContent = "Zum Anmelden";
+      btn.disabled = false;
+      btn.onclick = showLogin;
+      return;
+    }
+    err.textContent = d.error || "Das hat nicht geklappt. Bitte nochmal versuchen.";
+    btn.disabled = false; btn.textContent = "Gratis-Zugang erstellen";
+  } catch(e){
+    err.textContent = "Keine Verbindung — bitte Internet prüfen.";
+    btn.disabled = false; btn.textContent = "Gratis-Zugang erstellen";
+  }
 }
 
 async function doLogin(){
@@ -2019,15 +2188,25 @@ function renderBereichDetailHtml(){
       '<div class="vg-bg" style="background:' + vgGradientFuer(x.video.id) + ';"></div>' + vgBildLayer(x.video) +
       '<div class="vg-play">' + icon("play") + "</div>" +
       ergebnisIcon + check +
-      '<div class="vg-info"><div class="vg-code">' + esc(x.code) + '</div><div class="vg-titel">' + esc(x.video.titel) + "</div>" + originalTitel("video", x.video.id, "titel", x.video.titel_de) + dauerBadge(x.video) + "</div>" +
+      '<div class="vg-info"><div class="vg-code">' + esc(x.code) + '</div><div class="vg-titel">' + esc(x.video.titel) + "</div>" + originalTitel("video", x.video.id, "titel", x.video.titel_de) + dauerBadge(x.video) +
+        (x.video.gratis && !(session && session.vollzugang)
+          ? '<div class="kostprobe-badge">gratis testen</div>' : "") +
+      "</div>" +
     "</div>";
   }).join("");
 
   // Idee 4 (27.08.2026): konkreter statt generischer Hinweis, WIE VIELE Videos warten.
+  // 12.09.2026 erweitert: aus dem Hinweis wird ein KNOPF. Ein reiner Hinweis sagt nur
+  // "das ist zu" -- der Schüler weiß nicht, was er tun soll, also tut er nichts und geht.
+  // Der Knopf gibt ihm den nächsten Schritt, ohne Formular und ohne Wartezeit.
   const vollzugangGesperrteAnzahl = gruppe.videos.filter(function(x){ return x.sperrgrund === "vollzugang"; }).length;
   const vollzugangBanner = vollzugangGesperrteAnzahl > 0
-    ? '<div class="karte" style="background:var(--gold-schwach);border-color:var(--gold-rand);margin-bottom:var(--sp-m);">' +
-        esc(t("vollzugangBanner",{anzahl:vollzugangGesperrteAnzahl, bereich:selectedBereich})) +
+    ? '<div class="karte anfrage-karte">' +
+        '<div class="anfrage-text">' + esc(t("vollzugangBanner",{anzahl:vollzugangGesperrteAnzahl, bereich:bereichName(selectedBereich)})) + "</div>" +
+        '<button class="anfrage-btn" data-zugang-anfragen="' + esc(selectedBereich) + '">' +
+          icon("krone") + "<span>Zugang anfragen</span>" +
+        "</button>" +
+        '<div class="anfrage-klein">Du bekommst dann die Zahlungsinfos. Erst nach Zahlung wird freigeschaltet.</div>' +
       "</div>"
     : "";
 
@@ -2094,12 +2273,28 @@ function renderKontoHtml(){
     return '<button class="sprach-btn' + (s.code === sprache ? " aktiv" : "") + '" data-sprache="' + esc(s.code) + '">' +
       esc(s.name) + "</button>";
   }).join("");
+  // Weiterempfehlung (12.09.2026). Nur für Schüler mit Vollzugang sichtbar: wer selbst
+  // gratis nutzt, hat nichts zu empfehlen -- ein Knopf, der jedem Zweiten "geht nicht"
+  // sagt, ärgert mehr als er bringt. Der beste Verkäufer ist der zufriedene Kunde,
+  // und der ist direkt nach bestandener Prüfung am euphorischsten.
+  const werbeKarte = (session && session.vollzugang)
+    ? '<div class="admin-card glass" style="margin-top:16px;border-left:4px solid var(--gold);">' +
+        '<div class="section-label" style="margin:0 0 8px;">Freunde einladen</div>' +
+        '<div class="admin-sub" style="line-height:1.5;margin-bottom:10px;">' +
+          'Kennst du jemanden, der auch bald Prüfung hat? Gib deinen Code weiter — ' +
+          'ihr bekommt beide einen Rabatt.</div>' +
+        '<div id="werbe-anzeige"></div>' +
+        '<button class="btn-sekundaer" id="werbe-btn">Meinen Code anzeigen</button>' +
+      "</div>"
+    : "";
+
   return (
     '<div class="admin-card glass">' +
       '<div class="section-label" style="margin:0 0 10px;">' + esc(t("deinZugang")) + "</div>" +
       '<div class="admin-sub">' + esc(t("name")) + '</div><div class="admin-name" style="margin-bottom:12px;">' + esc(name) + "</div>" +
       '<div class="admin-sub">' + esc(t("gueltigBis")) + '</div><div class="admin-name">' + esc(ablauf) + "</div>" +
     "</div>" +
+    werbeKarte +
     '<div class="admin-card glass" style="margin-top:16px;">' +
       '<div class="section-label" style="margin:0 0 10px;">' + esc(t("sprache")) + "</div>" +
       '<div class="sprach-reihe">' + sprachKnoepfe + "</div>" +
@@ -2367,10 +2562,13 @@ function renderThemenHtml(){
     .map(function(vt){ return allVideos.find(function(v){ return v.id === vt.video_id; }); })
     .filter(Boolean);
 
-  // Bug-Fix 28.08.2026: auch hier fehlte die Sperr-Prüfung komplett -- gleicher
-  // Sperrgrund gilt für alle Treffer, weil sie alle über DIESES eine Thema gefunden wurden.
-  const sperrgrundHier = tag ? videoSperrgrund(tag) : null;
+  // 28.08.2026: hier fehlte die Sperr-Prüfung komplett.
+  // 12.09.2026: Prüfung pro VIDEO statt pauschal für alle Treffer. Grund: seit der
+  // Kostprobe kann ein einzelnes Video frei sein, obwohl sein Thema kostenpflichtig ist.
+  // Eine gemeinsame Prüfung über das Thema würde Bieber 1 hier fälschlich mit Schloss
+  // zeigen, während er in der Bereichsansicht offen ist -- widersprüchlich und verwirrend.
   const karten = treffer.map(function(v){
+    const sperrgrundHier = tag ? videoSperrgrund(tag, v) : null;
     if(sperrgrundHier){
       const hinweis = sperrgrundHier === "klasse" ? t("gesperrtKlasse",{klasse:tag.nur_klasse}) : t("gesperrtVollzugang");
       return '<div class="vg-card video-locked">' +
@@ -2526,6 +2724,12 @@ function renderCatalog(){
   document.querySelectorAll("[data-rechtdoc]").forEach(function(b){
     b.addEventListener("click", function(){ rechtDoc = b.dataset.rechtdoc; renderCatalog(); nachObenScrollen(); });
   });
+  // Zugangsanfrage (12.09.2026)
+  document.querySelectorAll("[data-zugang-anfragen]").forEach(function(b){
+    b.addEventListener("click", function(){ zugangAnfragen(b, b.dataset.zugangAnfragen); });
+  });
+  const werbeBtn = document.getElementById("werbe-btn");
+  if(werbeBtn) werbeBtn.addEventListener("click", holeWerbecode);
   document.querySelectorAll("[data-zurueck-recht]").forEach(function(b){
     b.addEventListener("click", function(){ rechtDoc = null; renderCatalog(); });
   });
@@ -2573,6 +2777,93 @@ function renderCatalog(){
   document.querySelectorAll("[data-sprache]").forEach(function(b){
     b.addEventListener("click", function(){ setzeSprache(b.dataset.sprache); });
   });
+}
+
+// Zugangsanfrage (12.09.2026). Der Knopf bleibt nach dem Antippen stehen und zeigt den
+// Zustand, statt zu verschwinden -- ein verschwundener Knopf lässt den Schüler rätseln,
+// ob überhaupt etwas passiert ist.
+async function zugangAnfragen(btn, bereich){
+  if(!session || !session.session_token){ showToast("Bitte neu anmelden"); return; }
+  const urspruenglich = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = "<span>Wird gesendet …</span>";
+  try{
+    const res = await fetch(SUPABASE_URL + "/functions/v1/academy-anfrage", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + SUPABASE_ANON_KEY },
+      body: JSON.stringify({ session_token: session.session_token, aktion: "zugang", quelle: bereich })
+    });
+    const d = await res.json();
+
+    if(d.ok && d.bereits_angefragt){
+      btn.innerHTML = icon("check") + "<span>Anfrage läuft schon</span>";
+      showToast("Deine Anfrage ist schon unterwegs — melde dich gern nochmal bei deinem Fahrlehrer.");
+      return;
+    }
+    if(d.ok){
+      btn.innerHTML = icon("check") + "<span>Anfrage gesendet</span>";
+      alert("Danke! Deine Anfrage ist raus.\n\n" +
+        "So geht es weiter:\n" +
+        "1. Dein Fahrlehrer meldet sich mit den Zahlungsinfos\n" +
+        "2. Nach Zahlung wird dein Zugang freigeschaltet\n" +
+        "3. Alle Bereiche sind dann sofort offen — ohne neu anzumelden");
+      return;
+    }
+    if(d.code === "hat_schon"){
+      btn.innerHTML = urspruenglich; btn.disabled = false;
+      showToast("Du hast bereits den vollen Zugang.");
+      return;
+    }
+    btn.innerHTML = urspruenglich; btn.disabled = false;
+    showToast(d.error || "Das hat nicht geklappt. Bitte nochmal versuchen.");
+  } catch(e){
+    btn.innerHTML = urspruenglich; btn.disabled = false;
+    showToast("Keine Verbindung — bitte Internet prüfen.");
+  }
+}
+
+// Werbecode holen und zum Teilen anbieten (12.09.2026).
+// Der Text ist vorformuliert. Grund: wer selbst etwas texten muss, verschickt es nicht.
+async function holeWerbecode(){
+  const btn = document.getElementById("werbe-btn");
+  const anzeige = document.getElementById("werbe-anzeige");
+  if(!session || !session.session_token){ showToast("Bitte neu anmelden"); return; }
+  btn.disabled = true; btn.textContent = "Moment …";
+  try{
+    const res = await fetch(SUPABASE_URL + "/functions/v1/academy-anfrage", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + SUPABASE_ANON_KEY },
+      body: JSON.stringify({ session_token: session.session_token, aktion: "werbecode" })
+    });
+    const d = await res.json();
+    if(!d.ok){
+      btn.disabled = false; btn.textContent = "Meinen Code anzeigen";
+      showToast(d.error || "Das hat nicht geklappt.");
+      return;
+    }
+    const link = location.origin + location.pathname + "?code=" + encodeURIComponent(d.code);
+    anzeige.innerHTML =
+      '<div class="werbe-code">' + esc(d.code) + "</div>" +
+      '<div class="admin-sub" style="margin-bottom:10px;word-break:break-all;">' + esc(link) + "</div>";
+    btn.textContent = "Link teilen";
+    btn.disabled = false;
+    btn.onclick = function(){
+      const text = "Ich lerne meine Prüfungsstrecken mit der Fahr-Akademie — " +
+        "die echten Strecken, die der Prüfer fährt. Mit meinem Code bekommst du Rabatt: " + link;
+      // Teilen-Dialog des Handys nutzen, wenn vorhanden -- das ist der kürzeste Weg
+      // in WhatsApp. Sonst in die Zwischenablage, damit trotzdem etwas passiert.
+      if(navigator.share){
+        navigator.share({ title: "Fahr-Akademie", text: text }).catch(function(){});
+      } else if(navigator.clipboard){
+        navigator.clipboard.writeText(text).then(function(){ showToast("Text kopiert — jetzt einfügen"); });
+      } else {
+        prompt("Text zum Kopieren:", text);
+      }
+    };
+  } catch(e){
+    btn.disabled = false; btn.textContent = "Meinen Code anzeigen";
+    showToast("Keine Verbindung — bitte Internet prüfen.");
+  }
 }
 
 function markSeen(videoId){
@@ -3035,7 +3326,7 @@ function renderAdmin(){
 // ---- ADMIN-DASHBOARD (25.08.2026) ----
 // Beantwortet in wenigen Sekunden: "Muss ich heute etwas tun?" -- statt sofort in
 // Formularen und Listen zu landen.
-function renderAdminDashboard(){
+async function renderAdminDashboard(){
   const jetzt = new Date();
   const sichtbareSchueler = myRole === "super_admin"
     ? allSchueler : allSchueler.filter(function(s){ return s.schule_id === mySchule; });
@@ -3161,7 +3452,34 @@ function renderAdminDashboard(){
       return '<div class="hist-zeile"><span class="hist-titel">' + esc(t.stufe) + '</span><span class="hist-anzahl oft">' + t.anzahl + "×</span></div>";
     }).join("") : '<div class="admin-sub">Noch keine Klicks auf gesperrte Bereiche.</div>') + "</div>";
 
-  document.getElementById("admin-content").innerHTML = kpis + todoHtml + topHtml + sperrHtml;
+  // Offene Zugangsanfragen (12.09.2026). Bewusst GANZ OBEN und in Gold: hier wartet
+  // jemand mit Geld in der Hand. Jede Stunde, die eine Anfrage liegen bleibt, ist eine
+  // Stunde, in der der Schüler es sich anders überlegen kann.
+  let anfrageHtml = "";
+  try {
+    const { data: anfragen } = await supa
+      .from("academy_zugang_anfragen")
+      .select("id, schueler_id, erstellt_am, quelle")
+      .is("erledigt_am", null)
+      .order("erstellt_am", { ascending: true });
+    if(anfragen && anfragen.length){
+      anfrageHtml = '<div class="admin-card glass" style="border-left:4px solid var(--gold);margin-bottom:10px;">' +
+        '<div class="admin-form-title" style="margin-bottom:6px;">' + anfragen.length +
+          " Zugangsanfrage" + (anfragen.length === 1 ? "" : "n") + " offen</div>" +
+        anfragen.map(function(a){
+          const s = allSchueler.find(function(x){ return x.id === a.schueler_id; });
+          return '<div class="hist-zeile">' +
+            '<span class="hist-titel">' + esc(s ? s.name : "(unbekannt)") +
+              (a.quelle ? ' <span style="color:var(--faint);">· ' + esc(a.quelle) + "</span>" : "") + "</span>" +
+            '<span class="hist-anzahl oft">' + fmtDate(a.erstellt_am) + "</span>" +
+          "</div>";
+        }).join("") +
+        '<div class="admin-sub" style="margin-top:8px;">Zum Freischalten: Tab „Schüler" öffnen und dort den Zugangs-Knopf antippen.</div>' +
+      "</div>";
+    }
+  } catch(e){ /* Dashboard darf an einer Nebenabfrage nie scheitern */ }
+
+  document.getElementById("admin-content").innerHTML = anfrageHtml + kpis + todoHtml + topHtml + sperrHtml;
   document.querySelectorAll("[data-mail]").forEach(function(b){
     b.addEventListener("click", function(){ resendPin(b.dataset.mail); });
   });
@@ -3719,6 +4037,17 @@ async function toggleVollzugang(id){
   }
   const { error } = await supa.from("academy_schueler").update(felder).eq("id", id);
   if(error){ showToast("Fehler: " + error.message); return; }
+
+  // Offene Zugangsanfrage automatisch schließen (12.09.2026). Ohne das bliebe sie für
+  // immer im Dashboard stehen -- nach zwei Wochen wäre die Liste wertlos, weil man
+  // erledigte nicht mehr von echten unterscheiden könnte.
+  if(wirdFreigeschaltet){
+    try {
+      await supa.from("academy_zugang_anfragen")
+        .update({ erledigt_am: new Date().toISOString(), notiz: "Durch Freischaltung erledigt" })
+        .eq("schueler_id", id).is("erledigt_am", null);
+    } catch(e){ /* Nebensache -- der Vollzugang ist längst gesetzt */ }
+  }
   protokolliere(wirdFreigeschaltet ? "vollzugang_freigeschaltet" : "vollzugang_entzogen", "schueler", id, s.name,
     wirdFreigeschaltet && preisEingabe != null ? "Preis: " + preisEingabe + " EUR" : null);
   renderAdminSchueler();
