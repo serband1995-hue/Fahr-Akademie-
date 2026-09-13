@@ -343,6 +343,37 @@
      Bei eingestellter Sprache Deutsch wird die Zeile gar nicht erst erzeugt. */
   .titel-original{font-size:11.5px;color:var(--faint);margin-top:2px;font-weight:500;}
   [dir="rtl"] .titel-original{direction:ltr;text-align:right;}
+  /* 13.09.2026, Paket-Abschnitt 8 (RTL). Ergaenzt die bereits vorhandenen Regeln.
+     Grundsatz aus dem Paket: Glyphen MIT Richtungssinn kippen (Pfeile, Play),
+     Glyphen OHNE nicht (Haken, Siegel, Uhr, Auge). Die Pfeil-Faelle stehen schon
+     weiter unten bei .ak-pfeil / .weiter-play / .vz-mal-offen. */
+
+  /* Zahlen, Zeiten und Codes bleiben LTR -- sonst wird aus "4 Min" das
+     unlesbare "Min 4" und aus einer PIN eine rueckwaerts gelesene Ziffernfolge. */
+  [dir="rtl"] .vz-dauer,
+  [dir="rtl"] .pin-display{direction:ltr;}
+
+  /* Haken und Siegel haben KEINEN Richtungssinn -- explizit festgehalten, damit
+     niemand spaeter eine Sammelregel darueberlegt, die sie mitkippt. */
+  [dir="rtl"] .vz-siegel,
+  [dir="rtl"] .ak-tun-punkt,
+  [dir="rtl"] .vz-mal-gesehen .ic{transform:none;}
+
+  /* Playfair Display hat KEINE arabischen Glyphen -- ohne diese Regel faellt der
+     Browser auf eine beliebige Systemschrift zurueck und die Ueberschriften sehen
+     auf jedem Geraet anders aus. Barlow 700 statt einer dritten Schriftanfrage. */
+  [lang="ar"] .fa-hero,
+  [lang="ar"] .ak-name,
+  [lang="ar"] .station.jetzt .station-name{
+    font-family:var(--ff-body);
+    font-weight:700;
+    line-height:1.3;
+  }
+
+  /* Arabisch braucht mehr Zeilenhoehe, sonst kollidieren die Unterlaengen. */
+  [lang="ar"] .vz-titel,
+  [lang="ar"] .station-name,
+  [lang="ar"] .ak-tun-text{line-height:1.45;}
   /* Videolänge (10.09.2026): entscheidet, ob jemand JETZT draufklickt.
      Zwischen 2 Minuten (Reifen prüfen) und über 40 Minuten (Prüfungsstrecke)
      liegen Welten -- ohne Angabe tippt ein Schüler mit 10 Minuten Zeit blind. */
@@ -440,6 +471,10 @@
       animation-duration:.01ms !important; animation-iteration-count:1 !important;
       transition-duration:.01ms !important; scroll-behavior:auto !important;
     }
+    /* 13.09.2026: View Transitions laufen NICHT ueber normale Animationen und
+       wurden von der Sternchen-Regel darueber nicht erfasst -- der Seitenwechsel
+       hat also trotz "Bewegung reduzieren" weiter uebergeblendet. */
+    ::view-transition-old(root), ::view-transition-new(root){animation:none !important;}
   }
   .video-code{
     min-width:38px;height:38px;border-radius:12px;background:var(--gruen);flex-shrink:0;
@@ -486,6 +521,12 @@
     border:1px solid var(--border);color:var(--muted);font-size:13.5px;font-weight:700;cursor:pointer;
     font-family:'Barlow',sans-serif;}
   .admin-tab.active{background:var(--gruen);color:#fff;border-color:var(--gruen-hell);}
+  /* 13.09.2026: Unterreiter innerhalb eines Tabs (Schueler/Kandidaten,
+     Fahrlehrer/Pruefer/Schulen) -- gleiche Bausteine wie die Haupt-Tabs,
+     aber kleiner und ohne den grossen Abstand nach unten, damit klar bleibt,
+     dass sie eine Ebene tiefer sitzen. */
+  .admin-unterreiter{margin-bottom:12px;}
+  .admin-unterreiter .admin-tab{padding-top:8px;padding-bottom:8px;font-size:12.5px;min-height:38px;}
   .admin-card{padding:14px 16px;margin-bottom:10px;}
 
   /* ---- Dreistufige Schülerkarte (13.09.2026, Spec 3.14) ----
@@ -528,6 +569,10 @@
   .ak-aktionen{display:flex;flex-wrap:wrap;gap:var(--sp-s);margin-top:14px;}
   .ak-aktionen > *{flex:1;min-width:120px;min-height:44px;}
   .ak-loeschen{color:var(--warn);border-color:var(--warn);}
+  /* Abrechnung-Block in der Schuelerkarte (13.09.2026): optisch wie die Aufgabe
+     darueber abgesetzt, aber ohne Gold -- das ist hier keine Handlungsaufforderung,
+     sondern reine Information/Bearbeitung. */
+  .ak-abrechnung{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
   /* ---- Zugangs-Status (10.09.2026) ----
      Vorher war der Vollzugang nur eine von zehn Textzeilen und wurde ueber ein
      Kronen-Symbol geschaltet, das direkt neben dem Sperr-Schloss sass -- zwei
@@ -1381,7 +1426,13 @@ let adminSession = JSON.parse(localStorage.getItem("academy_admin_session") || "
 let myRole = null;
 let mySchule = null;
 let allSchulen = [];
-let adminTab = "dashboard";
+let adminTab = "schueler";
+// 13.09.2026 -- Admin-Tabs 9->5: Dashboard ist jetzt die Kopfleiste des Schueler-Tabs
+// (kein eigener Tab mehr), Kandidaten ein Umschalter darin, Pruefer/Fahrlehrer/Schulen
+// ein Umschalter im Partner-Tab. Zustand fuer beide Umschalter:
+let schuelerAnsicht = "schueler";   // "schueler" | "kandidaten" (kandidaten nur super_admin)
+let partnerSub = "fahrlehrer";      // "fahrlehrer" | "pruefer" | "schulen" (letztere nur super_admin)
+let offeneAbrechnungKarten = new Set(); // welche Schuelerkarten ihren Abrechnungs-Block zeigen
 // --- Bereich 8 (27.08.2026): Admin-Übersichtlichkeit ---
 let allKandidaten = [];            // 8.4 Kandidaten-Pool
 let kandidatenSuche = "";          // 8.4 Schnellsuche
@@ -1455,7 +1506,44 @@ const I18N = {
     gesperrtKlasse:"Nur Klasse {klasse} — bei der Fahrschule freischalten lassen",
     gesperrtVollzugang:"Gehört zum Vollzugang", vollzugangBanner:"{anzahl} Videos zu {bereich} warten auf dich. Sprich mit deiner Fahrschule, um den Vollzugang freizuschalten.",
     telefon:"Telefonnummer", pin:"PIN", anmelden:"Anmelden",
-    loginFehler:"Telefonnummer oder PIN falsch", keineVerbindung:"Keine Verbindung — versuch es gleich nochmal"
+    loginFehler:"Telefonnummer oder PIN falsch", keineVerbindung:"Keine Verbindung — versuch es gleich nochmal",
+    /* --- 13.09.2026, Paket-Abschnitt 4.8: Texte fuer Strecke, Siegel, Player,
+       Verlauf, Konto und PIN-Karte. TR/EN/AR stammen aus dem Designer-Paket und
+       sind NICHT von Muttersprachlern -- vor Livegang pruefen lassen. --- */
+    abgehakt:"Abgehakt",
+    abhaken:"Für mich abhaken",
+    abschnitte:"Abschnitte",
+    anfrageUnterwegs:"Anfrage ist unterwegs",
+    bereichVon:"BEREICH {n} VON {g}",
+    danach:"Danach",
+    deinPin:"Dein PIN",
+    deinVerlauf:"Dein Verlauf",
+    dieStrecke:"Die Strecke",
+    duBistHier:"Du bist hier",
+    einOffen:"ein Video ist offen",
+    freierBereich:"Kostenloser Bereich",
+    hier:"hier",
+    keinKauf:"Kein Kauf in der App. Dein Fahrlehrer schaltet frei.",
+    kopieren:"Kopieren",
+    kopiert:"Kopiert",
+    nichtsAbgehakt:"Noch nichts abgehakt",
+    noch:"noch",
+    nurDu:"Nur du siehst das. Du hakst selbst ab — niemand bewertet dich.",
+    offenFuerAlle:"offen für alle",
+    offenOhne:"offen ohne Freischaltung",
+    pinAnzeigen:"PIN anzeigen",
+    pinEingabe:"Gib deinen vierstelligen PIN ein.",
+    pinWarnung:"Das ist der einzige Weg zurück in die App. Mach jetzt ein Foto davon.",
+    quittung:"Du hast {g} von {a} gesehen.",
+    siegelSatz:"Dieser Bereich ist versiegelt. Dein Fahrlehrer öffnet ihn für dich — meist am selben Tag.",
+    strecke:"Strecke",
+    versiegelt:"versiegelt",
+    videos:"Videos",
+    vollzugang:"Vollzugang",
+    weiter:"Weiter",
+    weiterBei:"Weiter bei Minute {m}",
+    zugang:"Zugang",
+    zugangAnfragen:"Zugang anfragen"
   },
   tr:{
     start:"Başlangıç", lernpfad:"Genel bakış", pruefung:"Sınav görevlisi", verlauf:"İzlenenler", konto:"Hesap",
@@ -1470,7 +1558,41 @@ const I18N = {
     gesperrtKlasse:"Sadece {klasse} sınıfı — sürücü kursundan açtır",
     gesperrtVollzugang:"Tam erişime dahil", vollzugangBanner:"{bereich} alanında {anzahl} video seni bekliyor. Tam erişim için sürücü kursunla konuş.",
     telefon:"Telefon numarası", pin:"PIN", anmelden:"Giriş yap",
-    loginFehler:"Telefon numarası veya PIN hatalı", keineVerbindung:"Bağlantı yok — birazdan tekrar dene"
+    loginFehler:"Telefon numarası veya PIN hatalı", keineVerbindung:"Bağlantı yok — birazdan tekrar dene",
+    abgehakt:"İşaretlendi",
+    abhaken:"Benim için işaretle",
+    abschnitte:"Bölümler",
+    anfrageUnterwegs:"Talep gönderildi",
+    bereichVon:"BÖLÜM {n} / {g}",
+    danach:"Sonra",
+    deinPin:"PIN'in",
+    deinVerlauf:"Geçmişin",
+    dieStrecke:"Güzergâh",
+    duBistHier:"Buradasın",
+    einOffen:"bir video açık",
+    freierBereich:"Ücretsiz bölüm",
+    hier:"burada",
+    keinKauf:"Uygulamada satın alma yok. Sürüş hocan açar.",
+    kopieren:"Kopyala",
+    kopiert:"Kopyalandı",
+    nichtsAbgehakt:"Henüz işaretlenmedi",
+    noch:"kaldı",
+    nurDu:"Bunu sadece sen görürsün. Kendin işaretlersin — kimse seni değerlendirmez.",
+    offenFuerAlle:"herkese açık",
+    offenOhne:"kilit olmadan açık",
+    pinAnzeigen:"PIN'i göster",
+    pinEingabe:"Dört haneli PIN'ini gir.",
+    pinWarnung:"Uygulamaya dönmenin tek yolu budur. Şimdi bir fotoğrafını çek.",
+    quittung:"{a} içinden {g} izledin.",
+    siegelSatz:"Bu bölüm mühürlü. Sürüş hocan senin için açar — genellikle aynı gün.",
+    strecke:"Güzergâh",
+    versiegelt:"mühürlü",
+    videos:"Videolar",
+    vollzugang:"Tam erişim",
+    weiter:"Devam",
+    weiterBei:"{m}. dakikadan devam et",
+    zugang:"Erişim",
+    zugangAnfragen:"Erişim talep et"
   },
   en:{
     start:"Home", lernpfad:"Overview", pruefung:"Examiners", verlauf:"Watched", konto:"Account",
@@ -1485,7 +1607,41 @@ const I18N = {
     gesperrtKlasse:"Class {klasse} only — ask your driving school to unlock",
     gesperrtVollzugang:"Included in full access", vollzugangBanner:"{anzahl} videos on {bereich} are waiting for you. Ask your driving school to unlock full access.",
     telefon:"Phone number", pin:"PIN", anmelden:"Sign in",
-    loginFehler:"Phone number or PIN incorrect", keineVerbindung:"No connection — please try again shortly"
+    loginFehler:"Phone number or PIN incorrect", keineVerbindung:"No connection — please try again shortly",
+    abgehakt:"Marked",
+    abhaken:"Mark for myself",
+    abschnitte:"Sections",
+    anfrageUnterwegs:"Request sent",
+    bereichVon:"AREA {n} OF {g}",
+    danach:"Up next",
+    deinPin:"Your PIN",
+    deinVerlauf:"Your history",
+    dieStrecke:"The route",
+    duBistHier:"You are here",
+    einOffen:"one video is open",
+    freierBereich:"Free area",
+    hier:"here",
+    keinKauf:"No purchase in the app. Your instructor unlocks it.",
+    kopieren:"Copy",
+    kopiert:"Copied",
+    nichtsAbgehakt:"Nothing marked yet",
+    noch:"left",
+    nurDu:"Only you see this. You mark it yourself — nobody grades you.",
+    offenFuerAlle:"open to everyone",
+    offenOhne:"open without unlock",
+    pinAnzeigen:"Show PIN",
+    pinEingabe:"Enter your four-digit PIN.",
+    pinWarnung:"This is the only way back into the app. Take a photo of it now.",
+    quittung:"You have watched {g} of {a}.",
+    siegelSatz:"This area is sealed. Your instructor opens it for you — usually the same day.",
+    strecke:"Route",
+    versiegelt:"sealed",
+    videos:"Videos",
+    vollzugang:"Full access",
+    weiter:"Continue",
+    weiterBei:"Continue at minute {m}",
+    zugang:"Access",
+    zugangAnfragen:"Request access"
   },
   ar:{
     start:"الرئيسية", lernpfad:"نظرة عامة", pruefung:"الممتحنون", verlauf:"ما شاهدته", konto:"الحساب",
@@ -1500,7 +1656,41 @@ const I18N = {
     gesperrtKlasse:"الفئة {klasse} فقط — اطلب من مدرسة القيادة تفعيلها",
     gesperrtVollzugang:"يتطلب الوصول الكامل", vollzugangBanner:"{anzahl} فيديو في {bereich} بانتظارك. تحدث مع مدرسة القيادة لتفعيل الوصول الكامل.",
     telefon:"رقم الهاتف", pin:"رقم التعريف", anmelden:"تسجيل الدخول",
-    loginFehler:"رقم الهاتف أو رقم التعريف غير صحيح", keineVerbindung:"لا يوجد اتصال — حاول مرة أخرى قريباً"
+    loginFehler:"رقم الهاتف أو رقم التعريف غير صحيح", keineVerbindung:"لا يوجد اتصال — حاول مرة أخرى قريباً",
+    abgehakt:"معلّمة",
+    abhaken:"علّمها لنفسي",
+    abschnitte:"المقاطع",
+    anfrageUnterwegs:"تم إرسال الطلب",
+    bereichVon:"القسم {n} من {g}",
+    danach:"التالي",
+    deinPin:"رمزك",
+    deinVerlauf:"سجلّك",
+    dieStrecke:"المسار",
+    duBistHier:"أنت هنا",
+    einOffen:"فيديو واحد متاح",
+    freierBereich:"القسم المجاني",
+    hier:"هنا",
+    keinKauf:"لا شراء داخل التطبيق. مدرّبك هو من يفتح.",
+    kopieren:"نسخ",
+    kopiert:"تم النسخ",
+    nichtsAbgehakt:"لا شيء معلّم بعد",
+    noch:"متبقٍ",
+    nurDu:"أنت فقط ترى هذا. أنت من يعلّم — لا أحد يقيّمك.",
+    offenFuerAlle:"متاح للجميع",
+    offenOhne:"متاح بدون تفعيل",
+    pinAnzeigen:"إظهار الرمز",
+    pinEingabe:"أدخل الرمز المكوّن من أربعة أرقام.",
+    pinWarnung:"هذه هي الطريقة الوحيدة للعودة إلى التطبيق. صوّرها الآن.",
+    quittung:"شاهدت {g} من {a}.",
+    siegelSatz:"هذا القسم مُغلق. مدرّبك يفتحه لك — غالبًا في اليوم نفسه.",
+    strecke:"المسار",
+    versiegelt:"مُغلق",
+    videos:"الفيديوهات",
+    vollzugang:"وصول كامل",
+    weiter:"متابعة",
+    weiterBei:"متابعة من الدقيقة {m}",
+    zugang:"الوصول",
+    zugangAnfragen:"طلب الوصول"
   }
 };
 
@@ -2333,9 +2523,14 @@ function renderStartHtml(){
     .reduce(function(a,v){ const d=Number(v.dauer_sekunden); return a+(isFinite(d)&&d>0?d:0); },0);
   const gesamtSek = offeneVideos.reduce(function(a,v){ const d=Number(v.dauer_sekunden); return a+(isFinite(d)&&d>0?d:0); },0);
   const quittung = gesamtSek > 0
-    ? '<div class="fa-quittung">Du hast <strong>' + esc(dauerKurz(gesehenSek) || "0 Min") + '</strong> von ' +
-        esc(dauerKurz(gesamtSek)) + " gesehen.</div>"
-    : '<div class="fa-quittung">Du hast <strong>' + seenCount + '</strong> von ' + totalVideos + " Videos gesehen.</div>";
+    ? '<div class="fa-quittung">' + t("quittung", {
+        g: "<strong>" + esc(dauerKurz(gesehenSek) || "0 Min") + "</strong>",
+        a: esc(dauerKurz(gesamtSek))
+      }) + "</div>"
+    : '<div class="fa-quittung">' + t("quittung", {
+        g: "<strong>" + seenCount + "</strong>",
+        a: totalVideos + " " + t("videos")
+      }) + "</div>";
 
   // Die Strecke ersetzt die gestapelten Kacheln: ein Grid aus Linie (Spalte 1) und
   // Station (Spalte 2) je Bereich. "Jetzt" ist der erste Bereich mit offenem,
@@ -2370,11 +2565,11 @@ function renderStartHtml(){
       const gesehenSekGruppe = g.videos.filter(function(x){ return seenVideoIds.has(x.video.id); })
         .reduce(function(a,x){ const d=Number(x.video.dauer_sekunden); return a+(isFinite(d)&&d>0?d:0); },0);
       const zeitTeil = gesehenSekGruppe > 0 ? " · " + dauerKurz(gesehenSekGruppe) : "";
-      meta = "Du bist hier · " + gesehen + " von " + gesamt + " gesehen" + zeitTeil;
+      meta = t("duBistHier") + " · " + gesehen + " / " + gesamt + zeitTeil;
     } else if(komplettGesperrt){
-      meta = gesamt + " Video" + (gesamt === 1 ? "" : "s") + dauerTeil + ' · <span class="vz-siegelwort">versiegelt</span>';
+      meta = gesamt + " " + t("videos") + dauerTeil + ' · <span class="vz-siegelwort">' + esc(t("versiegelt")) + "</span>";
     } else if(komplettFrei){
-      meta = gesamt + " Video" + (gesamt === 1 ? "" : "s") + dauerTeil + " · offen für alle";
+      meta = gesamt + " " + t("videos") + dauerTeil + " · " + esc(t("offenFuerAlle"));
     } else {
       meta = gesehen + " von " + gesamt + " gesehen" + dauerTeil;
     }
@@ -2398,9 +2593,9 @@ function renderStartHtml(){
   // Siegel-Notiz nur ohne Vollzugang -- wer bereits bezahlt hat, sieht sie nie.
   const siegelNotiz = (!(session && session.vollzugang))
     ? '<div class="siegel-notiz">' +
-        "<p>Ein Teil der Strecke ist <strong>versiegelt</strong>. Dein Fahrlehrer schaltet den Vollzugang frei.</p>" +
-        '<button class="btn-gold druck-1" data-haptik data-zugang-anfragen="' + esc(ersteGesperrteGruppe || "Start") + '">Zugang anfragen</button>' +
-        '<div class="siegel-klein">Kein Kauf in der App. Dein Fahrlehrer schaltet frei.</div>' +
+        "<p>" + esc(t("siegelSatz")) + "</p>" +
+        '<button class="btn-gold druck-1" data-haptik data-zugang-anfragen="' + esc(ersteGesperrteGruppe || "Start") + '">' + esc(t("zugangAnfragen")) + "</button>" +
+        '<div class="siegel-klein">' + esc(t("keinKauf")) + "</div>" +
       "</div>"
     : "";
 
@@ -2508,7 +2703,7 @@ function renderBereichDetailHtml(){
     ? '<div class="karte anfrage-karte">' +
         '<div class="anfrage-text">' + icon("schloss") + " " + esc(t("vollzugangBanner",{anzahl:vollzugangGesperrteAnzahl, bereich:bereichName(selectedBereich)})) + "</div>" +
         '<button class="anfrage-btn" data-zugang-anfragen="' + esc(selectedBereich) + '">' +
-          icon("krone") + "<span>Zugang anfragen</span>" +
+          icon("krone") + "<span>" + esc(t("zugangAnfragen")) + "</span>" +
         "</button>" +
         '<div class="anfrage-klein">Du bekommst dann die Zahlungsinfos. Erst nach Zahlung wird freigeschaltet.</div>' +
       "</div>"
@@ -3387,7 +3582,7 @@ function renderVideoZeile(cfg){
     } else {
       malInhalt = "";
       malKlasse = "vz-mal-siegel";
-      metaTxt = [codeTeil, '<span class="vz-siegelwort">versiegelt</span>'].filter(Boolean).join(" · ");
+      metaTxt = [codeTeil, '<span class="vz-siegelwort">' + esc(t("versiegelt")) + "</span>"].filter(Boolean).join(" · ");
     }
   } else if(gesehen){
     zusatzKlasse = "gesehen";
@@ -3407,7 +3602,7 @@ function renderVideoZeile(cfg){
     const ohneVollzugang = !(session && session.vollzugang);
     const kostprobe = ohneVollzugang && v.gratis && cfg.tag && !cfg.tag.gratis;
     const themaFrei = ohneVollzugang && cfg.tag && cfg.tag.gratis;
-    const zusatz = kostprobe ? "Kostprobe" : (themaFrei ? "offen für alle" : "");
+    const zusatz = kostprobe ? t("einOffen") : (themaFrei ? t("offenFuerAlle") : "");
     metaTxt = [codeTeil, zusatz].filter(Boolean).join(" · ");
   }
 
@@ -3884,13 +4079,16 @@ function renderAdmin(){
   // erfahren wie viele es waren oder was er schuldet. Das fuehrt zu Streit bei der
   // ersten Rechnung. Die Datenbank-Richtlinien erlaubten den Blick auf die eigenen
   // Verkaeufe laengst; es war nur im Frontend ausgeblendet.
+  // 13.09.2026: 9 Tabs -> 5. Kandidaten sitzt jetzt als Umschalter im Schueler-Tab,
+  // Pruefer/Fahrlehrer/Schulen als Umschalter im Partner-Tab. Dashboard wird zur
+  // Kopfleiste des Schueler-Tabs (renderAdminDashboard) statt eigenem Tab.
   const tabs = isSuperAdmin
-    ? [["dashboard","Übersicht"],["schueler","Schüler"],["kandidaten","Kandidaten"],["fahrlehrer","Fahrlehrer"],["videos","Videos"],["pruefer","Prüfer"],["schulen","Schulen"],["abrechnung","Abrechnung"],["protokoll","Protokoll"]]
-    : [["dashboard","Übersicht"],["schueler","Schüler"],["fahrlehrer","Fahrlehrer"],["videos","Videos"],["abrechnung","Abrechnung"]];
+    ? [["schueler","Schüler"],["videos","Videos"],["partner","Partner & Rollen"],["abrechnung","Abrechnung"],["protokoll","Protokoll"]]
+    : [["schueler","Schüler"],["videos","Videos"],["partner","Partner & Rollen"],["abrechnung","Abrechnung"]];
 
   // Schutz gegen einen stehengebliebenen Tab-Zustand: waere adminTab noch auf einem
   // Tab, den diese Rolle nicht mehr sehen darf, faellt sie auf die Uebersicht zurueck.
-  if(!tabs.some(function(t){ return t[0] === adminTab; })) adminTab = "dashboard";
+  if(!tabs.some(function(t){ return t[0] === adminTab; })) adminTab = "schueler";
 
   const tabsHtml = '<div class="admin-tabs">' +
     tabs.map(function(t){
@@ -3921,7 +4119,7 @@ function renderAdmin(){
     t.addEventListener("click", function(){ adminTab = t.dataset.tab; renderAdmin(); });
   });
 
-  if(!tabs.find(function(t){ return t[0] === adminTab; })) adminTab = "dashboard";
+  if(!tabs.find(function(t){ return t[0] === adminTab; })) adminTab = "schueler";
 
   // Zusaetzliche Absicherung auf Anzeige-Ebene: diese Bereiche gehoeren ausschliesslich
   // dem Super-Admin. Tabs auszublenden allein reicht nicht -- ein stehengebliebener
@@ -3930,25 +4128,127 @@ function renderAdmin(){
   // "abrechnung" und "fahrlehrer" stehen hier seit 10.09.2026 NICHT mehr drin: der
   // Partner darf beides sehen, aber nur die eigenen Daten -- das erzwingen die
   // Datenbank-Richtlinien, nicht diese Liste.
-  const nurSuper = ["kandidaten","pruefer","schulen","protokoll"];
-  if(myRole !== "super_admin" && nurSuper.indexOf(adminTab) !== -1) adminTab = "dashboard";
+  // Nur noch "protokoll" ist ein reiner Super-Admin-Tab. Die alten nurSuper-Faelle
+  // (kandidaten, pruefer, schulen) sind jetzt Umschalter INNERHALB von Tabs, die
+  // beide Rollen sehen -- die Sichtbarkeitspruefung sitzt jetzt in genau diesen
+  // Umschalter-Funktionen (renderAdminSchuelerPillen, renderAdminPartnerPillen),
+  // nicht mehr hier auf Tab-Ebene.
+  const nurSuper = ["protokoll"];
+  if(myRole !== "super_admin" && nurSuper.indexOf(adminTab) !== -1) adminTab = "schueler";
 
-  if(adminTab === "dashboard") renderAdminDashboard();
-  if(adminTab === "schueler") renderAdminSchueler();
-  if(adminTab === "kandidaten") renderAdminKandidaten();
-  if(adminTab === "fahrlehrer") renderAdminFahrlehrer();
+  if(adminTab === "schueler") renderAdminSchuelerTab();
   if(adminTab === "videos") renderAdminVideos();
-  if(adminTab === "pruefer") renderAdminPruefer();
-  if(adminTab === "schulen") renderAdminSchulen();
+  if(adminTab === "partner") renderAdminPartnerTab();
   if(adminTab === "abrechnung") renderAdminAbrechnung();
   if(adminTab === "protokoll") renderAdminProtokoll();
 }
 
+/* =========================================================
+   SCHÜLER-TAB: Orchestrator (13.09.2026, Admin-Tabs 9->5)
+   Baut die Huelle einmal (Uebersicht + Pillen-Umschalter + Unter-Container) und
+   laesst renderAdminDashboard / renderAdminSchueler / renderAdminKandidaten in
+   ihre jeweils eigenen Container schreiben. So bleibt ein Klick auf die Pillen
+   billig (nur admin-pillen + admin-unter-inner neu), ohne die Uebersicht darueber
+   jedes Mal neu vom Server zu laden.
+   ========================================================= */
+async function renderAdminSchuelerTab(){
+  document.getElementById("admin-content").innerHTML =
+    '<div id="admin-uebersicht-inner"></div>' +
+    '<div id="admin-pillen"></div>' +
+    '<div id="admin-unter-inner"></div>';
+
+  renderAdminDashboard(); // eigener Container, laeuft unabhaengig (eigene Async-Abfrage)
+
+  // Kandidaten sind Serbands Vertriebswerkzeug -- ein Partner sieht sie nicht.
+  // Stehengebliebener Zustand (z.B. Rollenwechsel im selben Tab) wird hier
+  // zurueckgesetzt, dieselbe Absicherung wie vorher die nurSuper-Liste.
+  if(myRole !== "super_admin") schuelerAnsicht = "schueler";
+
+  // Fuer den Abrechnung-Knopf in der Karte gebraucht. Immer frisch laden (nicht nur
+  // wenn leer), sonst zeigt die Karte nach einer Aenderung im Abrechnung-Tab einen
+  // veralteten Bezahlt-Status.
+  await ladeVerkaeufe();
+
+  renderAdminSchuelerPillen();
+  renderAdminSchuelerUnter();
+}
+
+function renderAdminSchuelerPillen(){
+  const pillenEl = document.getElementById("admin-pillen");
+  if(!pillenEl) return;
+  if(myRole !== "super_admin"){ pillenEl.innerHTML = ""; return; }
+  pillenEl.innerHTML =
+    '<div class="admin-tabs admin-unterreiter">' +
+      '<div class="admin-tab' + (schuelerAnsicht === "schueler" ? " active" : "") + '" data-ansicht="schueler">Schüler</div>' +
+      '<div class="admin-tab' + (schuelerAnsicht === "kandidaten" ? " active" : "") + '" data-ansicht="kandidaten">Kandidaten</div>' +
+    "</div>";
+  pillenEl.querySelectorAll("[data-ansicht]").forEach(function(b){
+    b.addEventListener("click", function(){
+      schuelerAnsicht = b.dataset.ansicht;
+      renderAdminSchuelerPillen();
+      renderAdminSchuelerUnter();
+    });
+  });
+}
+
+function renderAdminSchuelerUnter(){
+  if(schuelerAnsicht === "kandidaten" && myRole === "super_admin") renderAdminKandidaten();
+  else renderAdminSchueler();
+}
+
+/* =========================================================
+   PARTNER & ROLLEN-TAB: Orchestrator (13.09.2026, Admin-Tabs 9->5)
+   Fahrlehrer/Pruefer/Schulen als Unterreiter statt drei eigener Tabs. Ein Partner
+   sieht nur "Fahrlehrer" -- dann werden die Pillen erst gar nicht angezeigt, ein
+   Umschalter mit einer einzigen Option waere nur Verwirrung.
+   ========================================================= */
+function renderAdminPartnerTab(){
+  if(myRole !== "super_admin") partnerSub = "fahrlehrer";
+  document.getElementById("admin-content").innerHTML =
+    '<div id="admin-partner-pillen"></div>' +
+    '<div id="admin-partner-inner"></div>';
+  renderAdminPartnerPillen();
+  renderAdminPartnerUnter();
+}
+
+function renderAdminPartnerPillen(){
+  const pillenEl = document.getElementById("admin-partner-pillen");
+  if(!pillenEl) return;
+  const optionen = myRole === "super_admin"
+    ? [["fahrlehrer","Fahrlehrer"],["pruefer","Prüfer"],["schulen","Schulen"]]
+    : [["fahrlehrer","Fahrlehrer"]];
+  if(optionen.length < 2){ pillenEl.innerHTML = ""; return; }
+  pillenEl.innerHTML =
+    '<div class="admin-tabs admin-unterreiter">' +
+      optionen.map(function(o){
+        return '<div class="admin-tab' + (partnerSub === o[0] ? " active" : "") + '" data-partnersub="' + o[0] + '">' + o[1] + "</div>";
+      }).join("") +
+    "</div>";
+  pillenEl.querySelectorAll("[data-partnersub]").forEach(function(b){
+    b.addEventListener("click", function(){
+      partnerSub = b.dataset.partnersub;
+      renderAdminPartnerPillen();
+      renderAdminPartnerUnter();
+    });
+  });
+}
+
+function renderAdminPartnerUnter(){
+  if(partnerSub === "pruefer" && myRole === "super_admin") renderAdminPruefer();
+  else if(partnerSub === "schulen" && myRole === "super_admin") renderAdminSchulen();
+  else renderAdminFahrlehrer();
+}
+
 /* ---------- SCHÜLER-TAB ---------- */
-// ---- ADMIN-DASHBOARD (25.08.2026) ----
+// ---- ADMIN-DASHBOARD (25.08.2026, Kopfleiste seit 13.09.2026) ----
 // Beantwortet in wenigen Sekunden: "Muss ich heute etwas tun?" -- statt sofort in
-// Formularen und Listen zu landen.
+// Formularen und Listen zu landen. Seit dem Tab-Umbau KEIN eigener Tab mehr,
+// sondern die Kopfleiste des Schueler-Tabs -- schreibt deshalb NICHT mehr in
+// admin-content direkt, sondern in den eigenen Unter-Container, der neben dem
+// Schueler/Kandidaten-Umschalter gleichzeitig im DOM steht.
 async function renderAdminDashboard(){
+  const zielEl = document.getElementById("admin-uebersicht-inner");
+  if(!zielEl) return; // Tab wurde in der Zwischenzeit verlassen
   const jetzt = new Date();
   const sichtbareSchueler = myRole === "super_admin"
     ? allSchueler : allSchueler.filter(function(s){ return s.schule_id === mySchule; });
@@ -4101,11 +4401,16 @@ async function renderAdminDashboard(){
     }
   } catch(e){ /* Dashboard darf an einer Nebenabfrage nie scheitern */ }
 
-  document.getElementById("admin-content").innerHTML = anfrageHtml + kpis + todoHtml + topHtml + sperrHtml;
-  document.querySelectorAll("[data-mail]").forEach(function(b){
+  zielEl.innerHTML = anfrageHtml + kpis + todoHtml + topHtml + sperrHtml;
+  // WICHTIG: auf zielEl scopen, nicht global -- die Schueler-Karten-Liste steht in
+  // einem GESCHWISTER-Container gleichzeitig im DOM und hat eigene data-mail-Knoepfe
+  // (Regel: neue Klasse/ID immer gegen ihre tatsaechliche Verwendung kreuzpruefen).
+  // Ein globales querySelectorAll haette beide Knopf-Gruppen doppelt gebunden --
+  // ein Klick haette resendPin() zweimal ausgeloest und die PIN-Mail doppelt verschickt.
+  zielEl.querySelectorAll("[data-mail]").forEach(function(b){
     b.addEventListener("click", function(){ resendPin(b.dataset.mail); });
   });
-  const sammelBtn = document.getElementById("sammel-push-btn");
+  const sammelBtn = zielEl.querySelector("#sammel-push-btn");
   if(sammelBtn){
     sammelBtn.addEventListener("click", async function(){
       sammelBtn.disabled = true; sammelBtn.textContent = "Sende …";
@@ -4136,6 +4441,8 @@ async function renderAdminDashboard(){
 }
 
 function renderAdminSchueler(){
+  const el = document.getElementById("admin-unter-inner");
+  if(!el) return; // Tab wurde in der Zwischenzeit verlassen
   // --- Betrugsschutz Punkt 4 (09.09.2026): Fortschritts-Plausibilität ---
   // Idee: Eine Person kann nicht zwei verschiedene Videos gleichzeitig schauen.
   // Zwei Aufrufe VERSCHIEDENER Videos innerhalb von 30 Sekunden sind daher ein
@@ -4312,6 +4619,10 @@ function renderAdminSchueler(){
 
     // Ebene 3: alles Bisherige, nur eingeklappt. Nichts geht verloren.
     const offen = offeneSchuelerKarten.has(s.id);
+    // Abrechnung-Knopf (13.09.2026, Admin-Tabs 9->5): nur wenn ueberhaupt ein Beleg
+    // existieren KANN -- ein Start-Schueler ohne Vollzugang hat nie einen Verkauf,
+    // der Knopf waere fuer ihn nur eine leere Weiterleitung ins Nichts.
+    const abrOffen = offeneAbrechnungKarten.has(s.id);
     const detailHtml = offen
       ? '<div class="ak-details">' +
           pinStatusZeile + pinWartetHinweis +
@@ -4320,8 +4631,10 @@ function renderAdminSchueler(){
           '<div class="ak-aktionen">' +
             (zeigeKlartext ? '<button class="btn-still druck-2" data-mail="' + esc(s.id) + '">Zugangsdaten senden</button>' : "") +
             '<button class="btn-still druck-2" data-toggle="' + esc(s.id) + '">' + (s.aktiv ? "Login sperren" : "Login entsperren") + "</button>" +
+            (s.vollzugang ? '<button class="btn-still druck-2" data-abrbtn="' + esc(s.id) + '">Abrechnung' + (abrOffen ? " ▾" : " ▸") + '</button>' : "") +
             '<button class="btn-still druck-2 ak-loeschen" data-del="' + esc(s.id) + '">Löschen</button>' +
           "</div>" +
+          (s.vollzugang && abrOffen ? schuelerAbrechnungHtml(s) : "") +
         "</div>"
       : "";
 
@@ -4352,7 +4665,7 @@ function renderAdminSchueler(){
     : allFahrlehrer.filter(function(f){ return f.schule_id === mySchule; });
   const flOptions = visibleFahrlehrer.map(function(f){ return '<option value="' + esc(f.id) + '">' + esc(f.name) + "</option>"; }).join("");
 
-  document.getElementById("admin-content").innerHTML =
+  el.innerHTML =
     '<div class="admin-form glass">' +
       '<div class="admin-form-title">Neuen Schüler anlegen</div>' +
       '<label>Name</label><input id="ns-name" placeholder="Vor- und Nachname">' +
@@ -4395,51 +4708,72 @@ function renderAdminSchueler(){
       (gefiltert.length !== allSchueler.length ? " von " + allSchueler.length : "") + ")</div>" +
     rows;
 
-  const suchEl = document.getElementById("sch-suche");
+  const suchEl = el.querySelector("#sch-suche");
   suchEl.addEventListener("input", function(){
     schuelerSuche = suchEl.value;
     const pos = suchEl.selectionStart;
     renderAdminSchueler();
-    const n = document.getElementById("sch-suche");
+    const n = document.getElementById("admin-unter-inner").querySelector("#sch-suche");
     n.focus(); n.setSelectionRange(pos, pos); // sonst springt die Tastatur bei jedem Zeichen zu
   });
-  document.querySelectorAll(".bulk-cb").forEach(function(cb){
+  el.querySelectorAll(".bulk-cb").forEach(function(cb){
     cb.addEventListener("change", function(){
       if(cb.checked) bulkAuswahl.add(cb.value); else bulkAuswahl.delete(cb.value);
       renderAdminSchueler();
     });
   });
-  const bLeer = document.getElementById("bulk-leer");
+  const bLeer = el.querySelector("#bulk-leer");
   if(bLeer) bLeer.addEventListener("click", function(){ bulkAuswahl.clear(); renderAdminSchueler(); });
-  const bVerl = document.getElementById("bulk-verl");
+  const bVerl = el.querySelector("#bulk-verl");
   if(bVerl) bVerl.addEventListener("click", bulkVerlaengern);
-  const bSperr = document.getElementById("bulk-sperr");
+  const bSperr = el.querySelector("#bulk-sperr");
   if(bSperr) bSperr.addEventListener("click", function(){ bulkSperrenSetzen(false); });
-  const bEnt = document.getElementById("bulk-entsperr");
+  const bEnt = el.querySelector("#bulk-entsperr");
   if(bEnt) bEnt.addEventListener("click", function(){ bulkSperrenSetzen(true); });
 
-  document.getElementById("ns-btn").addEventListener("click", createSchueler);
-  document.querySelectorAll("[data-mail]").forEach(function(b){
+  el.querySelector("#ns-btn").addEventListener("click", createSchueler);
+  // WICHTIG: auf el gescopt, nicht global -- die Uebersicht (Dashboard) steht als
+  // GESCHWISTER-Container gleichzeitig im DOM und hat eigene data-mail-Knoepfe fuer
+  // wartende Zugaenge. Ein globales querySelectorAll haette deren Knoepfe hier ein
+  // zweites Mal gebunden -- ein Klick dort haette die PIN-Mail doppelt verschickt.
+  el.querySelectorAll("[data-mail]").forEach(function(b){
     b.addEventListener("click", function(){ resendPin(b.dataset.mail); });
   });
-  document.querySelectorAll("[data-toggle]").forEach(function(b){
+  el.querySelectorAll("[data-toggle]").forEach(function(b){
     b.addEventListener("click", function(){ toggleSchueler(b.dataset.toggle); });
   });
-  document.querySelectorAll("[data-vollzugang]").forEach(function(b){
+  el.querySelectorAll("[data-vollzugang]").forEach(function(b){
     b.addEventListener("click", function(){ toggleVollzugang(b.dataset.vollzugang); });
   });
-  document.querySelectorAll("[data-del]").forEach(function(b){
+  el.querySelectorAll("[data-del]").forEach(function(b){
     b.addEventListener("click", function(){ deleteSchueler(b.dataset.del); });
   });
   // Karte auf-/zuklappen. Nur diese eine Karte neu zeichnen waere schoener, aber
   // renderAdminSchueler() ist billig genug und haelt den Zustand an EINER Stelle.
-  document.querySelectorAll("[data-karte]").forEach(function(b){
+  el.querySelectorAll("[data-karte]").forEach(function(b){
     b.addEventListener("click", function(){
       const id = b.dataset.karte;
       if(offeneSchuelerKarten.has(id)) offeneSchuelerKarten.delete(id);
       else offeneSchuelerKarten.add(id);
       renderAdminSchueler();
     });
+  });
+  // Abrechnung-Knopf in der Details-Ebene (13.09.2026): oeffnet/schliesst den
+  // Beleg-Block fuer genau diesen Schueler. Getrenntes Set von offeneSchuelerKarten,
+  // damit Auf-/Zuklappen der Karte selbst den Abrechnungs-Block nicht zuruecksetzt.
+  el.querySelectorAll("[data-abrbtn]").forEach(function(b){
+    b.addEventListener("click", function(){
+      const id = b.dataset.abrbtn;
+      if(offeneAbrechnungKarten.has(id)) offeneAbrechnungKarten.delete(id);
+      else offeneAbrechnungKarten.add(id);
+      renderAdminSchueler();
+    });
+  });
+  el.querySelectorAll("[data-akspeichern]").forEach(function(b){
+    b.addEventListener("click", function(){ schuelerBelegSpeichern(b.dataset.akspeichern); });
+  });
+  el.querySelectorAll("[data-akbezahlt]").forEach(function(b){
+    b.addEventListener("click", function(){ schuelerBelegBezahltUmschalten(b.dataset.akbezahlt); });
   });
 }
 
@@ -4563,10 +4897,100 @@ async function resendPin(id){
   if(!s.email){ showToast("Keine E-Mail hinterlegt"); return; }
   await sendPinMail(s);
   showToast("PIN an " + s.email + " gesendet");
-  // Egal von wo ausgelöst (Dashboard-Warteliste oder Schülerliste) -- die aktuelle
-  // Ansicht muss den neuen Versand-Status sofort zeigen, sonst wirkt der Klick tot.
-  if(adminTab === "dashboard") renderAdminDashboard();
-  else if(adminTab === "schueler") renderAdminSchueler();
+  // 13.09.2026: Dashboard und Schueler-Liste sind seit dem Tab-Umbau KEINE
+  // getrennten Tabs mehr, sondern stehen gleichzeitig im DOM -- der Knopf kann aus
+  // beiden kommen, also beide auffrischen. NICHT die Kandidaten-Unteransicht
+  // anfassen: waere schuelerAnsicht gerade "kandidaten", wuerde renderAdminSchueler()
+  // den admin-unter-inner-Container mit der Schueler-Liste ueberschreiben und die
+  // gerade offene Kandidatenliste unter dem Nutzer wegreissen.
+  renderAdminDashboard();
+  if(schuelerAnsicht === "schueler") renderAdminSchueler();
+}
+
+// ---- Abrechnung in der Schuelerkarte (13.09.2026, Admin-Tabs 9->5) ----
+// Zeigt/bearbeitet GENAU den einen Beleg dieses Schuelers -- fuer die
+// Monatsuebersicht mit Filtern bleibt der eigene Abrechnung-Tab zustaendig.
+// allVerkaeufe wird beim Betreten des Schueler-Tabs geladen (renderAdminSchuelerTab).
+function schuelerAbrechnungHtml(s){
+  const beleg = allVerkaeufe.find(function(v){ return v.schueler_id === s.id; });
+  if(!beleg){
+    return '<div class="ak-abrechnung admin-sub">Noch kein Beleg vorhanden.</div>';
+  }
+  const bezahlt = !!beleg.bezahlt_am;
+  if(myRole !== "super_admin"){
+    // Read-only, wie die bestehende Partner-Ansicht im Abrechnung-Tab: ein Partner
+    // darf laut Datenbank-Richtlinie ohnehin nichts aendern -- Eingabefelder waeren
+    // hier nur eine Attrappe.
+    return '<div class="ak-abrechnung">' +
+      '<div class="admin-sub">Du hast berechnet: <b>' + Number(beleg.verkaufspreis || 0).toFixed(2) + " €</b></div>" +
+      '<div class="admin-sub">Anteil Fahr-Akademie: <b>' + Number(beleg.provision || 0).toFixed(2) + " €</b></div>" +
+      '<div class="admin-badge ' + (bezahlt ? "ok" : "warn") + '" style="margin-top:6px;display:inline-block;">' +
+        (bezahlt ? "beglichen" : "offen") + "</div>" +
+    "</div>";
+  }
+  // Super-Admin: editierbar -- exakt dieselben Felder/Klassen wie im Abrechnung-Tab
+  // (abr-felder/abr-feld), nur fuer diesen einen Beleg statt der ganzen Liste.
+  return '<div class="ak-abrechnung" data-beleg="' + esc(beleg.id) + '">' +
+    '<div class="abr-felder">' +
+      '<div class="abr-feld"><label>Preis</label>' +
+        '<input type="text" inputmode="decimal" data-f="preis" value="' +
+          (beleg.verkaufspreis == null ? "" : String(beleg.verkaufspreis).replace(".", ",")) + '" placeholder="0,00"></div>' +
+      '<div class="abr-feld"><label>Dein Anteil</label>' +
+        '<input type="text" inputmode="decimal" data-f="provision" value="' +
+          (beleg.provision == null ? "" : String(beleg.provision).replace(".", ",")) + '" placeholder="0,00"></div>' +
+      '<div class="abr-feld"><label>Rechnung</label>' +
+        '<input type="text" class="breit" data-f="rechnung" value="' + esc(beleg.rechnung_nr || "") + '" placeholder="z. B. 2026-014"></div>' +
+    "</div>" +
+    '<div class="abr-felder" style="margin-top:10px;">' +
+      '<button class="btn-primary" data-akspeichern="' + esc(beleg.id) + '" style="padding:9px 16px;font-size:13px;">Speichern</button>' +
+      '<button class="icon-btn" data-akbezahlt="' + esc(beleg.id) + '" style="padding:9px 14px;font-size:13px;font-weight:700;'
+        + 'border:1px solid var(--border);border-radius:var(--r-m);background:var(--surface);color:var(--text);">' +
+        (bezahlt ? "Auf offen setzen" : "Als bezahlt markieren") + "</button>" +
+    "</div>" +
+    (bezahlt ? '<div class="admin-sub" style="margin-top:6px;">Bezahlt am ' + fmtDate(beleg.bezahlt_am) + "</div>" : "") +
+  "</div>";
+}
+
+async function schuelerBelegSpeichern(belegId){
+  const karte = document.querySelector('[data-beleg="' + belegId + '"]');
+  if(!karte) return;
+  const preisRoh     = karte.querySelector('[data-f="preis"]').value;
+  const provisionRoh = karte.querySelector('[data-f="provision"]').value;
+  const rechnung     = karte.querySelector('[data-f="rechnung"]').value.trim();
+  const preis     = parseEuro(preisRoh);
+  const provision = parseEuro(provisionRoh);
+
+  // Dieselben Pruefungen wie verkaufSpeichern() im Abrechnung-Tab -- ein Tippfehler
+  // soll hier genauso wenig durchrutschen wie dort.
+  if(preisRoh.trim() !== "" && preis === null){ showToast("Preis ist keine gültige Zahl"); return; }
+  if(provisionRoh.trim() !== "" && provision === null){ showToast("Dein Anteil ist keine gültige Zahl"); return; }
+  if(preis !== null && preis < 0){ showToast("Preis darf nicht negativ sein"); return; }
+  if(provision !== null && provision < 0){ showToast("Anteil darf nicht negativ sein"); return; }
+  if(preis !== null && provision !== null && provision > preis){
+    showToast("Dein Anteil ist größer als der Preis — bitte prüfen"); return;
+  }
+
+  const res = await supa.from("academy_verkaeufe")
+    .update({ verkaufspreis: preis, provision: provision, rechnung_nr: rechnung || null })
+    .eq("id", belegId);
+  if(res.error){ showToast("Konnte nicht gespeichert werden"); return; }
+  // Lokal nachziehen statt neu zu laden -- der naechste Render soll sofort den
+  // neuen Stand zeigen (gleiches Muster wie bei sendPinMail).
+  const lokal = allVerkaeufe.find(function(x){ return x.id === belegId; });
+  if(lokal){ lokal.verkaufspreis = preis; lokal.provision = provision; lokal.rechnung_nr = rechnung || null; }
+  showToast("Gespeichert");
+  renderAdminSchueler();
+}
+
+async function schuelerBelegBezahltUmschalten(belegId){
+  const v = allVerkaeufe.find(function(x){ return x.id === belegId; });
+  if(!v) return;
+  const neu = v.bezahlt_am ? null : new Date().toISOString();
+  const res = await supa.from("academy_verkaeufe").update({ bezahlt_am: neu }).eq("id", belegId);
+  if(res.error){ showToast("Konnte nicht geändert werden"); return; }
+  v.bezahlt_am = neu;
+  showToast(neu ? "Als bezahlt markiert" : "Wieder auf offen gesetzt");
+  renderAdminSchueler();
 }
 
 async function toggleSchueler(id){
@@ -5201,6 +5625,8 @@ async function deleteVideo(id){
 
 /* ---------- PRÜFER-TAB ---------- */
 function renderAdminPruefer(){
+  const el = document.getElementById("admin-partner-inner");
+  if(!el) return;
   const rows = allPruefer.map(function(p){
     return '<div class="admin-card glass">' +
       '<div class="admin-row">' +
@@ -5210,7 +5636,7 @@ function renderAdminPruefer(){
     "</div>";
   }).join("") || '<div class="empty">Noch keine Prüfer angelegt.</div>';
 
-  document.getElementById("admin-content").innerHTML =
+  el.innerHTML =
     '<div class="admin-form glass">' +
       '<div class="admin-form-title">Neuen Prüfer anlegen</div>' +
       '<label>Name</label><input id="np-name" placeholder="Vor- und Nachname">' +
@@ -5261,6 +5687,8 @@ async function deletePruefer(id){
 
 /* ---------- FAHRLEHRER-TAB (Schul-Admin verwaltet eigene, Super-Admin sieht alle) ---------- */
 function renderAdminFahrlehrer(){
+  const el = document.getElementById("admin-partner-inner");
+  if(!el) return;
   const visible = myRole === "super_admin"
     ? allFahrlehrer
     : allFahrlehrer.filter(function(f){ return f.schule_id === mySchule; });
@@ -5278,7 +5706,7 @@ function renderAdminFahrlehrer(){
     "</div>";
   }).join("") || '<div class="empty">Noch keine Fahrlehrer angelegt.</div>';
 
-  document.getElementById("admin-content").innerHTML =
+  el.innerHTML =
     '<div class="admin-form glass">' +
       '<div class="admin-form-title">Neuen Fahrlehrer anlegen</div>' +
       '<label>Name</label><input id="nfl-name" placeholder="Vor- und Nachname">' +
@@ -5761,6 +6189,8 @@ function kandidatenGefiltert(){
 }
 
 function renderAdminKandidaten(){
+  const el = document.getElementById("admin-unter-inner");
+  if(!el) return; // Tab wurde in der Zwischenzeit verlassen
   const liste = kandidatenGefiltert();
   const offenGesamt = allKandidaten.filter(function(k){ return !k.konvertiert_am; }).length;
 
@@ -5803,7 +6233,7 @@ function renderAdminKandidaten(){
       "</div>";
   }).join("") || '<div class="empty">Keine Treffer.</div>';
 
-  document.getElementById("admin-content").innerHTML =
+  el.innerHTML =
     '<div class="admin-card glass" style="margin-bottom:12px;">' +
       '<div class="admin-form-title" style="margin-bottom:4px;">Kandidaten</div>' +
       '<div class="admin-sub" style="margin-bottom:10px;">' + offenGesamt + " ohne Zugang · " + allKandidaten.length + " insgesamt</div>" +
@@ -5818,30 +6248,30 @@ function renderAdminKandidaten(){
       "</div>" +
     "</div>" + azLeiste + zeilen;
 
-  const s = document.getElementById("kand-suche");
-  s.addEventListener("input", function(){
-    kandidatenSuche = s.value;
-    const pos = s.selectionStart;
+  const sucheEl = el.querySelector("#kand-suche");
+  sucheEl.addEventListener("input", function(){
+    kandidatenSuche = sucheEl.value;
+    const pos = sucheEl.selectionStart;
     renderAdminKandidaten();
-    const n = document.getElementById("kand-suche");
+    const n = document.getElementById("admin-unter-inner").querySelector("#kand-suche");
     n.focus(); n.setSelectionRange(pos, pos); // sonst springt die Tastatur bei jedem Zeichen zu
   });
-  document.getElementById("kand-offen").addEventListener("change", function(e){
+  el.querySelector("#kand-offen").addEventListener("change", function(e){
     kandidatenNurOffen = e.target.checked; renderAdminKandidaten();
   });
-  document.querySelectorAll("[data-az]").forEach(function(b){
+  el.querySelectorAll("[data-az]").forEach(function(b){
     b.addEventListener("click", function(){
-      const z = document.getElementById("az-" + b.dataset.az);
+      const z = el.querySelector("#az-" + b.dataset.az);
       if(z) z.scrollIntoView({ behavior:"smooth", block:"start" });
     });
   });
-  document.querySelectorAll("[data-kfrei]").forEach(function(b){
+  el.querySelectorAll("[data-kfrei]").forEach(function(b){
     b.addEventListener("click", function(){ kandidatFreischalten(b.dataset.kfrei, b); });
   });
-  document.querySelectorAll("[data-kmail]").forEach(function(b){
+  el.querySelectorAll("[data-kmail]").forEach(function(b){
     b.addEventListener("click", function(){ kandidatMailNachtragen(b.dataset.kmail); });
   });
-  const syncBtn = document.getElementById("kand-sync");
+  const syncBtn = el.querySelector("#kand-sync");
   if(syncBtn) syncBtn.addEventListener("click", function(){ kandidatenAbgleichen(syncBtn); });
 
   // Wenn der letzte Abgleich lange her ist, einmal still im Hintergrund nachziehen.
@@ -6158,6 +6588,8 @@ async function bulkSperrenSetzen(aktiv){
 }
 
 function renderAdminSchulen(){
+  const el = document.getElementById("admin-partner-inner");
+  if(!el) return;
   const rows = allSchulen.map(function(s){
     const badgeClass = s.aktiv ? "badge-aktiv" : "badge-gesperrt";
     const badgeText = s.aktiv ? "Aktiv" : "Gesperrt";
@@ -6174,7 +6606,7 @@ function renderAdminSchulen(){
     "</div>";
   }).join("") || '<div class="empty">Noch keine Schulen angelegt.</div>';
 
-  document.getElementById("admin-content").innerHTML =
+  el.innerHTML =
     '<div class="admin-form glass">' +
       '<div class="admin-form-title">Neue Schule + Schul-Login anlegen</div>' +
       '<label>Name der Schule</label><input id="nsch-name" placeholder="z. B. Fahrschule Boost">' +
@@ -6220,7 +6652,7 @@ async function createSchule(){
     await loadAdminData();
     renderAdminSchulen();
     showToast("Schule angelegt. Login-Daten unten notieren!");
-    document.getElementById("admin-content").insertAdjacentHTML("afterbegin",
+    document.getElementById("admin-partner-inner").insertAdjacentHTML("afterbegin",
       '<div class="admin-card glass" style="border-color:var(--gold);">' +
         '<div class="admin-form-title">Neuer Schul-Login (nur jetzt sichtbar!)</div>' +
         '<div class="admin-sub">E-Mail: <strong>' + esc(data.email) + '</strong></div>' +
