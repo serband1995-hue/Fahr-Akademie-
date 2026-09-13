@@ -29,6 +29,7 @@
   :root{
     /* Marke / Tinte. Grün ist ab jetzt Marke und Tinte, KEIN Status mehr. */
     --gruen:#2F4A34; --gruen-hell:#4B7A56;
+    --auf-tief:#FFFFFF;                         /* NEU — Tinte auf dunklem Grund: Grün, Warn, Bild-Overlay */
 
     /* Flächen. Das Papier selbst ist die helle Fläche, Karten liegen DARIN
        (vorher lagen sie darauf — deshalb ist --surface jetzt dunkler als --bg). */
@@ -118,6 +119,7 @@
       --muted:#A79E8A;                            /* war #A39A87 */
       --faint:#8C8472;                            /* war #7E7768 — 4,2:1 statt 3,2:1 */
       --gruen-hell:#7FA98A;
+      --auf-tief:#FFFFFF;
       --gold:#E0A868;
       --gold-text:#E9B87E;                        /* im Dunkeln darf Gold Text sein: 7,4:1 */
       --gold-schwach:rgba(224,168,104,.16);       /* war .18 */
@@ -176,7 +178,7 @@
   .sprach-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);
     border-radius:var(--r-m);padding:11px 16px;font-size:14px;font-weight:600;
     font-family:inherit;cursor:pointer;min-height:44px;}
-  .sprach-btn.aktiv{background:var(--gruen);color:#fff;border-color:var(--gruen);}
+  .sprach-btn.aktiv{background:var(--gruen);color:var(--auf-tief);border-color:var(--gruen);}
   /* Bereich 10.9 vorbereitet: bei Arabisch dreht sich die Leserichtung. Nur die
      Ausrichtung anpassen -- Zahlen, Fortschrittsbalken und Symbole bleiben wie sie sind. */
   [dir="rtl"] body{ text-align:right; }
@@ -292,7 +294,7 @@
   }
   .pw-toggle .ic{width:20px;height:20px;}
   .btn-primary{
-    background:var(--gruen);color:#fff;border:none;
+    background:var(--gruen);color:var(--auf-tief);border:none;
     padding:15px;border-radius:100px;font-size:16.5px;font-weight:700;cursor:pointer;
     font-family:'Barlow',sans-serif;letter-spacing:.02em;box-shadow:0 6px 18px rgba(47,74,52,.25);
   }
@@ -330,12 +332,18 @@
 
   .section-label{font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:18px 2px 8px;}
   .stufe-row,.tag-row{display:flex;flex-wrap:wrap;gap:8px;}
+  /* 13.09.2026 (Abnahme 4.10): war 2x hart inline mit 5px Polster = 27px hoch. */
+  .chip-btn{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;
+    border-radius:var(--r-pill);border:1px solid var(--gold);background:transparent;
+    color:var(--text);font-family:'Barlow',sans-serif;font-weight:600;font-size:12.5px;cursor:pointer;}
+  .chip-btn.chip-active{background:var(--gold);color:var(--auf-gold);}
   .chip{
     background:var(--surface);border:1px solid var(--border);color:var(--muted);
     padding:9px 15px;border-radius:24px;font-size:13.5px;cursor:pointer;white-space:nowrap;
+    min-height:44px;display:inline-flex;align-items:center;
     font-family:'Barlow',sans-serif;font-weight:600;transition:all .15s;
   }
-  .chip.active{background:var(--gruen);border-color:var(--gruen-hell);color:#fff;box-shadow:0 4px 14px rgba(47,74,52,.25);}
+  .chip.active{background:var(--gruen);border-color:var(--gruen-hell);color:var(--auf-tief);box-shadow:0 4px 14px rgba(47,74,52,.25);}
   .tag-chip .ort{opacity:.75;font-weight:400;font-size:11.5px;}
 
   .video-list{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
@@ -436,7 +444,7 @@
   .video-card:active{background:var(--surface-strong);}
   .video-play-ic{
     width:38px;height:38px;border-radius:50%;background:var(--gruen);flex-shrink:0;
-    display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;
+    display:flex;align-items:center;justify-content:center;color:var(--auf-tief);font-size:14px;
   }
   .video-title{font-weight:700;font-size:15px;font-family:'Barlow',sans-serif;}
   .video-desc{color:var(--muted);font-size:13px;margin-top:2px;}
@@ -494,7 +502,7 @@
   }
   .video-code{
     min-width:38px;height:38px;border-radius:12px;background:var(--gruen);flex-shrink:0;
-    display:flex;align-items:center;justify-content:center;color:#fff;font-size:12.5px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;color:var(--auf-tief);font-size:12.5px;font-weight:700;
   }
   .stufe-section .video-list{margin-top:8px;}
 
@@ -534,15 +542,16 @@
   .admin-tabs::-webkit-scrollbar{display:none;}
   .admin-tab{flex:1 0 auto;white-space:nowrap;padding-left:14px;padding-right:14px;
     text-align:center;padding-top:11px;padding-bottom:11px;border-radius:12px;background:var(--surface);
+    min-height:44px;
     border:1px solid var(--border);color:var(--muted);font-size:13.5px;font-weight:700;cursor:pointer;
     font-family:'Barlow',sans-serif;}
-  .admin-tab.active{background:var(--gruen);color:#fff;border-color:var(--gruen-hell);}
+  .admin-tab.active{background:var(--gruen);color:var(--auf-tief);border-color:var(--gruen-hell);}
   /* 13.09.2026: Unterreiter innerhalb eines Tabs (Schueler/Kandidaten,
      Fahrlehrer/Pruefer/Schulen) -- gleiche Bausteine wie die Haupt-Tabs,
      aber kleiner und ohne den grossen Abstand nach unten, damit klar bleibt,
      dass sie eine Ebene tiefer sitzen. */
   .admin-unterreiter{margin-bottom:12px;}
-  .admin-unterreiter .admin-tab{padding-top:8px;padding-bottom:8px;font-size:12.5px;min-height:38px;}
+  .admin-unterreiter .admin-tab{padding-top:8px;padding-bottom:8px;font-size:12.5px;min-height:44px;}
   .admin-card{padding:14px 16px;margin-bottom:10px;}
 
   /* ---- Dreistufige Schülerkarte (13.09.2026, Spec 3.14) ----
@@ -610,7 +619,7 @@
   .admin-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:14px;white-space:nowrap;}
   /* ---- Bereich 7+8 (27.08.2026) ---- */
   /* Kompakte Aktions-Buttons in Listen */
-  .btn-klein{background:var(--gruen);color:#fff;border:none;border-radius:8px;
+  .btn-klein{background:var(--gruen);color:var(--auf-tief);border:none;border-radius:8px;
     padding:9px 15px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
   .btn-klein:disabled{opacity:.55;cursor:default;}
   .btn-klein.btn-warn{background:var(--gold);color:var(--auf-gold);}
@@ -666,7 +675,7 @@
     align-items:center; justify-content:center; padding:0; }
   .icon-btn.danger{color:var(--warn);}
   .pin-display{font-family:monospace;font-size:15px;letter-spacing:.1em;color:var(--gold-text);}
-  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--gruen);color:#fff;
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--gruen);color:var(--auf-tief);
     padding:12px 20px;border-radius:14px;font-size:13.5px;font-weight:600;box-shadow:0 8px 24px rgba(43,40,30,.25);
     z-index:50;font-family:'Barlow',sans-serif;}
   /* ================= BEREICH 1 + 2: NEUE BAUSTEINE (24.08.2026) ================= */
@@ -682,10 +691,10 @@
 
   /* --- "Weitermachen"-Karte auf dem Start-Tab (Punkt 1.2) --- */
   .weiter-karte{display:flex;align-items:center;gap:var(--sp-m);background:var(--gruen);
-    color:#fff;border-radius:var(--r-l);padding:var(--sp-m) var(--sp-l);margin-bottom:var(--sp-l);
+    color:var(--auf-tief);border-radius:var(--r-l);padding:var(--sp-m) var(--sp-l);margin-bottom:var(--sp-l);
     cursor:pointer;box-shadow:0 6px 18px rgba(47,74,52,.2);}
   .weiter-karte .wk-play{width:42px;height:42px;border-radius:50%;background:var(--gold);
-    display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#2B2A22;}
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--auf-gold);}
   .weiter-karte .wk-label{font-size:var(--fs-meta);opacity:.8;letter-spacing:.06em;text-transform:uppercase;}
   .weiter-karte .wk-titel{font-size:var(--fs-karte);font-weight:var(--fw-karte);line-height:1.25;}
 
@@ -900,7 +909,7 @@
   .blatt-knoepfe{display:flex;gap:var(--sp-s);margin-top:18px;}
   .blatt-knoepfe > *{flex:1;min-height:46px;}
   /* Gefaehrliche Aktion: rot und klar unterscheidbar, nie als Gold-Hauptknopf. */
-  .blatt-warn{border:none;border-radius:var(--r-m);background:var(--warn);color:#fff;
+  .blatt-warn{border:none;border-radius:var(--r-m);background:var(--warn);color:var(--auf-tief);
     font-family:inherit;font-size:14.5px;font-weight:800;cursor:pointer;}
 
   /* --- Video-Zeile (13.09.2026) — ersetzt die 2:3-Poster (.vg-card) an den drei
@@ -920,7 +929,7 @@
   .video-zeile.gesperrt-klasse .vz-thumb-bg,.video-zeile.gesperrt-klasse .vz-img{
     filter:grayscale(.3) brightness(.7);}
   .vz-dauer{position:absolute;inset-inline-end:4px;inset-block-end:4px;
-    background:rgba(10,12,9,.62);color:#fff;font-size:9px;font-weight:700;
+    background:rgba(10,12,9,.62);color:var(--auf-tief);font-size:9px;font-weight:700;
     padding:1px 5px;border-radius:4px;letter-spacing:.02em;}
   .vz-ergebnis{position:absolute;top:4px;inset-inline-start:4px;font-size:14px;
     text-shadow:0 1px 3px rgba(0,0,0,.5);}
@@ -937,7 +946,7 @@
     background:var(--gold);box-shadow:0 0 0 4px rgba(217,149,76,.32);}
   /* Zustand 3: gesehen -- Haken oben-Start, klein, kein flaechiger Kreis. */
   .vz-mal-gesehen{align-items:flex-start;justify-content:flex-start;padding:4px;}
-  .vz-mal-gesehen .ic{width:15px;height:15px;color:#fff;
+  .vz-mal-gesehen .ic{width:15px;height:15px;color:var(--auf-tief);
     filter:drop-shadow(0 1px 2px rgba(0,0,0,.5));}
   /* Sonderfall Klassensperre: neutrales Schloss, bewusst NICHT gold -- Bezahlen
      hebt eine falsche Fuehrerschein-Klasse nicht auf, Gold hiesse aber ueberall
@@ -987,7 +996,7 @@
 
   /* --- Schritt-Assistent (Video anlegen) --- */
   .schritt-kopf{display:flex;align-items:center;gap:var(--sp-s);margin-bottom:var(--sp-s);}
-  .schritt-nr{width:26px;height:26px;border-radius:50%;background:var(--gruen);color:#fff;
+  .schritt-nr{width:26px;height:26px;border-radius:50%;background:var(--gruen);color:var(--auf-tief);
     display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
   .schritt-titel{font-size:15px;font-weight:700;color:var(--text);}
   .schritt-hilfe{font-size:12.5px;color:var(--muted);line-height:1.45;margin-bottom:var(--sp-s);
@@ -1002,10 +1011,14 @@
   .themen-box{max-height:230px;overflow-y:auto;border:1px solid var(--border);
     border-radius:var(--r-s);padding:4px;background:var(--surface);}
   .themen-gewaehlt{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:var(--sp-s);min-height:4px;}
-  .themen-chip{display:inline-flex;align-items:center;gap:5px;background:var(--gruen);color:#fff;
+  .themen-chip{display:inline-flex;align-items:center;gap:5px;background:var(--gruen);color:var(--auf-tief);
     border-radius:var(--r-pill);padding:5px 10px;font-size:12px;}
-  .themen-chip button{background:none;border:none;color:#fff;cursor:pointer;padding:0;
-    display:flex;opacity:.75;}
+  .themen-chip button{background:none;border:none;color:var(--auf-tief);cursor:pointer;padding:0;
+    display:flex;opacity:.75;position:relative;}
+  /* 13.09.2026 (Abnahme 4.10): Das Kreuz ist nur 14px gross. Statt den Chip
+     aufzublaehen, liegt eine unsichtbare 44x44-Flaeche darueber. */
+  .themen-chip button::after{content:"";position:absolute;top:50%;left:50%;
+    transform:translate(-50%,-50%);width:44px;height:44px;}
   .thema-zeile{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:var(--r-s);
     cursor:pointer;font-size:13.5px;color:var(--text);}
   .thema-zeile:active{background:var(--surface-tint);}
@@ -2285,11 +2298,11 @@ async function maybeShowPushBanner(){
   if(!el || document.getElementById("pushBanner")) return;
   const banner = document.createElement("div");
   banner.id = "pushBanner";
-  banner.style.cssText = "position:sticky;top:0;z-index:50;background:var(--gold,#D9954C);color:#2B2A22;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px;";
+  banner.style.cssText = "position:sticky;top:0;z-index:50;background:var(--gold);color:var(--auf-gold);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px;";
   banner.innerHTML = '<span>🔔 Benachrichtigt werden, wenn neue Videos freigeschaltet werden?</span>' +
     '<span style="display:flex;gap:8px;white-space:nowrap;">' +
-    '<button id="pushBannerYes" style="background:var(--gruen);color:#fff;border:none;border-radius:8px;padding:6px 12px;">Aktivieren</button>' +
-    '<button id="pushBannerNo" style="background:transparent;color:#2B2A22;border:none;">Später</button></span>';
+    '<button id="pushBannerYes" style="background:var(--gruen);color:var(--auf-tief);border:none;border-radius:8px;padding:6px 12px;">Aktivieren</button>' +
+    '<button id="pushBannerNo" style="background:transparent;color:var(--auf-gold);border:none;">Später</button></span>';
   el.prepend(banner);
   document.getElementById("pushBannerYes").addEventListener("click", enablePushClicked);
   document.getElementById("pushBannerNo").addEventListener("click", dismissPushBanner);
@@ -2402,7 +2415,7 @@ function renderZustimmung(){
   cb.addEventListener("change", function(){
     btn.disabled = !cb.checked;
     btn.style.background = cb.checked ? "var(--gruen)" : "var(--border)";
-    btn.style.color = cb.checked ? "#fff" : "var(--faint)";
+    btn.style.color = cb.checked ? "var(--auf-tief)" : "var(--faint)";
   });
   btn.addEventListener("click", async function(){
     if(!cb.checked) return;
@@ -2846,7 +2859,7 @@ function renderBereichDetailHtml(){
         ['alle','bestanden','nicht_bestanden'].map(function(f){
           const label = f === 'alle' ? 'Alle' : (f === 'bestanden' ? '✅ Bestanden' : '❌ Nicht bestanden');
           const aktiv = pruefungFilter === f;
-          return '<button class="chip-btn' + (aktiv?" chip-active":"") + '" data-pruefungfilter="' + f + '" style="padding:5px 12px;border-radius:14px;border:1px solid var(--gold);background:' + (aktiv?"var(--gold)":"transparent") + ';color:' + (aktiv?"#2B2A22":"var(--text)") + ';font-size:12.5px;">' + label + "</button>";
+          return '<button class="chip-btn' + (aktiv?" chip-active":"") + '" data-pruefungfilter="' + f + '">' + label + "</button>";
         }).join("") +
       "</div>"
     : "";
@@ -3073,9 +3086,7 @@ function renderNuetzlichesHtml(){
   const filterBar = '<div style="padding:0 0 var(--sp-m);flex-wrap:wrap;display:flex;gap:6px;">' +
     [["alle","Alle"],["pkw","PKW"],["lkw","LKW"]].map(function(f){
       const aktiv = nuetzlichFilter === f[0];
-      return '<button class="chip-btn' + (aktiv?" chip-active":"") + '" data-nuetzfilter="' + f[0] +
-        '" style="padding:5px 12px;border-radius:14px;border:1px solid var(--gold);background:' +
-        (aktiv?"var(--gold)":"transparent") + ';color:' + (aktiv?"#2B2A22":"var(--text)") + ';font-size:12.5px;">' +
+      return '<button class="chip-btn' + (aktiv?" chip-active":"") + '" data-nuetzfilter="' + f[0] + '">' +
         f[1] + "</button>";
     }).join("") +
   "</div>";
