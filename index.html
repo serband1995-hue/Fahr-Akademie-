@@ -1370,6 +1370,10 @@ let verlaufData = []; // rohe Ansehen-Ereignisse aus academy-progress (oder loka
 let seenVideoIds = new Set(JSON.parse(localStorage.getItem("academy_demo_seen") || "[]"));
 let openStufen = new Set();
 let pruefungFilter = "alle"; // "alle" | "bestanden" | "nicht_bestanden" -- nur für die Stufe "Prüfung"
+// Nützliches (13.09.2026): Klassen-Filter für die neuen Textkarten -- LKW/CE-Themen sollen
+// PKW-Schülern nicht als Rauschen im Weg stehen, und umgekehrt. "alle" ist ungefiltert.
+let nuetzlichFilter = "alle"; // "alle" | "pkw" | "lkw"
+let openNuetzlich = new Set(); // welche Textkarten gerade aufgeklappt sind
 let suchBegriff = "";        // Bereich 1.4: Volltextsuche über Titel/Kategorie
 let statusFilter = "alle";   // Bereich 1.6: "alle" | "offen" | "fertig"
 let drawerOpen = false;      // neues Seitenmenü (☰)
@@ -1408,7 +1412,10 @@ function showLogin(){
       '<div class="tagline">Dein Weg zur Prüfung</div>' +
       '<div class="login-card glass">' +
         '<input id="lo-tel" type="tel" placeholder="Telefonnummer" autocomplete="off">' +
-        '<input id="lo-pin" type="tel" maxlength="4" placeholder="PIN" autocomplete="off">' +
+        '<div class="pw-field">' +
+          '<input id="lo-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="PIN" autocomplete="off">' +
+          '<button type="button" id="lo-pin-toggle" class="pw-toggle" aria-label="PIN anzeigen">👁</button>' +
+        "</div>" +
         '<button class="btn-primary" id="lo-btn">Einloggen</button>' +
         '<div id="lo-err" class="err"></div>' +
       "</div>" +
@@ -1417,14 +1424,21 @@ function showLogin(){
       // zwischen zwei gleich lauten Formularen suchen müssen.
       '<div class="neu-hier">' +
         '<div class="neu-trenner"><span>Noch keinen Zugang?</span></div>' +
-        '<button class="btn-sekundaer" id="zur-reg">Kostenlos starten</button>' +
-        '<div class="neu-klein">Fahrzeug &amp; Technik komplett gratis, dazu eine Prüfungsstrecke zum Testen.</div>' +
+        '<button class="btn-sekundaer" id="zur-reg">Startzugang sichern</button>' +
+        '<div class="neu-klein">✓ Fahrzeug &amp; Technik komplett ✓ 1 Prüfungsstrecke zum Reinschnuppern</div>' +
       "</div>" +
       (DEMO_MODE ? '<div class="demo-badge">Demo-Modus — beliebige Eingabe funktioniert</div>' : "") +
       '<div style="margin-top:22px;"><a id="admin-link" style="color:var(--faint);font-size:12px;cursor:pointer;text-decoration:underline;">Admin-Bereich</a></div>' +
     "</div>";
   document.getElementById("lo-btn").addEventListener("click", doLogin);
   document.getElementById("lo-pin").addEventListener("keydown", function(e){ if(e.key === "Enter") doLogin(); });
+  document.getElementById("lo-pin-toggle").addEventListener("click", function(){
+    const field = document.getElementById("lo-pin");
+    const isHidden = field.type === "password";
+    field.type = isHidden ? "text" : "password";
+    this.textContent = isHidden ? "🙈" : "👁";
+    this.setAttribute("aria-label", isHidden ? "PIN verbergen" : "PIN anzeigen");
+  });
   document.getElementById("zur-reg").addEventListener("click", showRegistrierung);
   document.getElementById("admin-link").addEventListener("click", function(){
     location.hash = "#admin";
@@ -1443,7 +1457,7 @@ function showRegistrierung(){
   document.getElementById("app").innerHTML =
     '<div class="login-screen">' +
       '<img class="logo-img" src="' + LOGO + '" alt="Logo">' +
-      "<h1>Kostenlos starten</h1>" +
+      "<h1>Dein Startzugang</h1>" +
       '<div class="tagline">In 30 Sekunden startklar</div>' +
       '<div class="login-card glass" style="text-align:left;">' +
         '<label class="reg-label">Dein Name</label>' +
@@ -1466,7 +1480,7 @@ function showRegistrierung(){
           '<option value="CE">CE (LKW mit Anhänger)</option>' +
         "</select>" +
         (werbeCode ? '<div class="reg-code">Empfehlungscode erkannt: <b>' + esc(werbeCode) + "</b></div>" : "") +
-        '<button class="btn-primary" id="rg-btn" style="margin-top:14px;">Gratis-Zugang erstellen</button>' +
+        '<button class="btn-primary" id="rg-btn" style="margin-top:14px;">Startzugang erstellen</button>' +
         '<div id="rg-err" class="err"></div>' +
         '<div class="reg-recht">Mit dem Anlegen stimmst du den Nutzungsbedingungen zu. ' +
           'Die Fahr-Akademie ist ein ergänzendes Lernangebot und ersetzt keine Fahrschulausbildung. ' +
@@ -1536,10 +1550,10 @@ async function doRegistrierung(werbeCode){
       return;
     }
     err.textContent = d.error || "Das hat nicht geklappt. Bitte nochmal versuchen.";
-    btn.disabled = false; btn.textContent = "Gratis-Zugang erstellen";
+    btn.disabled = false; btn.textContent = "Startzugang erstellen";
   } catch(e){
     err.textContent = "Keine Verbindung — bitte Internet prüfen.";
-    btn.disabled = false; btn.textContent = "Gratis-Zugang erstellen";
+    btn.disabled = false; btn.textContent = "Startzugang erstellen";
   }
 }
 
@@ -2068,7 +2082,7 @@ function renderStartHtml(){
       '<div class="bt-body">' +
         '<div class="bt-titel">' + esc(bereichName(g.stufe)) +
           (komplettGesperrt ? ' <span class="bt-lock">' + icon("schloss","ic-s") + "</span>" : "") +
-          (komplettFrei ? ' <span class="bt-frei">gratis</span>' : "") +
+          (komplettFrei ? ' <span class="bt-frei">Startzugang</span>' : "") +
         "</div>" +
         (komplettGesperrt ? "" : '<div class="bt-bar"><div class="bt-bar-fill" style="width:' + pct + '%;"></div></div>') +
         '<div class="bt-meta">' + metaZeile + "</div>" +
@@ -2190,7 +2204,7 @@ function renderBereichDetailHtml(){
       ergebnisIcon + check +
       '<div class="vg-info"><div class="vg-code">' + esc(x.code) + '</div><div class="vg-titel">' + esc(x.video.titel) + "</div>" + originalTitel("video", x.video.id, "titel", x.video.titel_de) + dauerBadge(x.video) +
         (x.video.gratis && !(session && session.vollzugang)
-          ? '<div class="kostprobe-badge">gratis testen</div>' : "") +
+          ? '<div class="kostprobe-badge">Kostprobe</div>' : "") +
       "</div>" +
     "</div>";
   }).join("");
@@ -2349,8 +2363,83 @@ const NUETZLICHE_PDFS = [
   { titel: "Fußgängerüberwege — § 26 StVO", datei: "Fussgaengerueberwege_Paragraph26_StVO.pdf",
     meta: "Zebrastreifen, Wartepflicht, Überholverbot · Stand 30.01.2026" }
 ];
+// Kurze Themen als aufklappbare Textkarte statt PDF (13.09.2026) -- spart Gestaltungsarbeit
+// bei jedem neuen Thema. Nur wirklich druckwürdige Sachen bleiben PDF (siehe oben).
+// klasse steuert den Filter: "alle" erscheint überall, "pkw"/"lkw" nur im eigenen Reiter
+// und im Reiter "Alle". Zahlen recherchiert und mit Quellen geprüft, Stand 13.09.2026 --
+// hier steht nichts aus dem Gedächtnis.
+const NUETZLICHE_THEMEN = [
+  { id:"buko_punkte", klasse:"alle", titel:"Bußgeldkatalog — die Punkte-Systematik",
+    html:"<p>Seit der Reform gibt es drei Stufen im Fahreignungsregister (Flensburg):</p>" +
+      "<p><b>1 Punkt</b> — schwere Verstöße, z. B. Handy am Steuer, einfacher Vorfahrtsverstoß.<br>" +
+      "<b>2 Punkte</b> — sehr schwere Verstöße mit Regelfahrverbot, z. B. Rotlichtverstoß mit Gefährdung.<br>" +
+      "<b>3 Punkte</b> — schwere Straftaten: Alkohol/Drogen am Steuer, Unfallflucht, schwere Nötigung.</p>" +
+      "<p>Ab <b>8 Punkten</b> ist die Fahrerlaubnis weg. Das Kraftfahrt-Bundesamt informiert bei Punktestand automatisch.</p>" },
+  { id:"buko_handy", klasse:"alle", titel:"Handyverbot am Steuer — § 23 Abs. 1a StVO",
+    html:"<p>Betrifft nicht nur Telefonieren, sondern jedes elektronische Gerät, das in der Hand gehalten und bedient wird — auch Powerbanks, Taschenrechner oder eine E-Zigarette mit Touchdisplay zählen laut Rechtsprechung dazu.</p>" +
+      "<p><b>100 € + 1 Punkt</b> im Normalfall.<br><b>150 € + 2 Punkte</b> bei Gefährdung anderer.<br><b>200 €</b> bei einer Sachbeschädigung.</p>" +
+      "<p>Erlaubt bleibt die Nutzung über eine Freisprecheinrichtung, ohne das Gerät in der Hand zu halten.</p>" },
+  { id:"buko_rettungsgasse", klasse:"alle", titel:"Rettungsgasse — § 11 Abs. 2 StVO",
+    html:"<p>Pflicht auf Autobahnen und mehrspurigen Außerortsstraßen, sobald der Verkehr auf Schrittgeschwindigkeit abfällt oder steht — nicht erst wenn die Polizei durchfahren will.</p>" +
+      "<p>Gebildet wird sie <b>zwischen dem äußerst linken und dem direkt daneben liegenden Fahrstreifen</b>. Fahren also grundsätzlich ganz links so weit wie möglich links, alle anderen so weit wie möglich rechts.</p>" +
+      "<p>Wer keine Rettungsgasse bildet: ab <b>200 €, 2 Punkte, 1 Monat Fahrverbot</b>. Unbefugtes Befahren der Gasse wird genauso hart geahndet.</p>" },
+  { id:"probezeit", klasse:"pkw", titel:"Probezeit — die Grundregeln",
+    html:"<p>Die Probezeit dauert regulär <b>2 Jahre</b> ab bestandener Prüfung, für alle Führerscheinklassen außer Sonderklassen wie T/L.</p>" +
+      "<p>Bei einem <b>A-Verstoß</b> (schwerwiegend, z. B. Rotlicht, Alkohol) oder <b>zwei B-Verstößen</b> (weniger schwerwiegend): Probezeit verlängert sich einmalig auf <b>4 Jahre</b> plus Pflicht-Aufbauseminar (ASF, meist 300–600 €).</p>" +
+      "<p>Nächster A-Verstoß bzw. zwei weitere B-Verstöße danach: schriftliche Verwarnung + Empfehlung zur freiwilligen verkehrspsychologischen Beratung. Kommt danach noch ein A-Verstoß (bzw. zwei B) dazu: <b>Fahrerlaubnis weg.</b></p>" },
+  { id:"probezeit_alkohol", klasse:"pkw", titel:"Alkoholverbot in der Probezeit — § 24c StVG",
+    html:"<p>Für Fahranfänger in der Probezeit gilt <b>0,0 Promille</b>, ohne Ausnahme — anders als die 0,5-Promille-Grenze für Fahrer außerhalb der Probezeit.</p>" +
+      "<p>Ein Verstoß zählt sofort als schwerwiegender A-Verstoß: Probezeit-Verlängerung und Aufbauseminar sind Pflicht, unabhängig von der gemessenen Menge.</p>" +
+      "<p>Das gilt zusätzlich für alle Fahrer unter 21 Jahren, auch nach Ende der Probezeit.</p>" },
+  { id:"lkw_lenkzeiten", klasse:"lkw", titel:"Lenk- und Ruhezeiten — die zentrale LKW-Vorschrift",
+    html:"<p>Regelt die EU-Verordnung (EG) Nr. 561/2006, kontrolliert über den digitalen Tachographen. Die Kernwerte:</p>" +
+      "<p><b>Tageslenkzeit:</b> max. 9 Stunden, zweimal pro Woche auf 10 Stunden verlängerbar.<br>" +
+      "<b>Pause:</b> spätestens nach 4,5 Stunden Lenkzeit 45 Minuten Pause, teilbar in 15 + 30 Minuten (in dieser Reihenfolge).<br>" +
+      "<b>Tägliche Ruhezeit:</b> mindestens 11 Stunden, dreimal pro Woche auf 9 Stunden verkürzbar.<br>" +
+      "<b>Wochenlenkzeit:</b> max. 56 Stunden, in zwei Wochen zusammen max. 90 Stunden.<br>" +
+      "<b>Wöchentliche Ruhezeit:</b> mindestens 45 Stunden, jede zweite Woche auf 24 Stunden verkürzbar mit Ausgleich innerhalb von 3 Wochen.</p>" },
+  { id:"lkw_ladung", klasse:"lkw", titel:"Ladungssicherung — die Grundpflicht",
+    html:"<p>§ 22 StVO verlangt, dass Ladung so verstaut und gesichert ist, dass sie auch bei einer Vollbremsung, einem plötzlichen Ausweichen oder auf schlechter Fahrbahn <b>nicht verrutschen, kippen oder herunterfallen</b> kann.</p>" +
+      "<p>Verantwortlich sind sowohl der Fahrer als auch der Verlader — beide können bei mangelhafter Sicherung belangt werden. Übliche Hilfsmittel sind Zurrgurte, Sperrbalken und Antirutschmatten.</p>" },
+  { id:"lkw_tacho", klasse:"lkw", titel:"Digitaler Tachograph",
+    html:"<p>Zeichnet Lenk-, Arbeits- und Ruhezeiten automatisch über die persönliche Fahrerkarte auf. Pflicht in praktisch allen neueren LKW über 3,5 t im gewerblichen Verkehr.</p>" +
+      "<p>Die Aufzeichnungen der letzten 28 Tage müssen im Fahrzeug mitgeführt werden — Kontrollen durch Bundesamt für Güterverkehr (BAG) und Polizei greifen direkt darauf zu.</p>" },
+  { id:"lkw_tempo80", klasse:"lkw", titel:"Sondertempo 80 auf der Autobahn",
+    html:"<p>Für LKW über 3,5 t gilt auf Autobahnen und richtungsgetrennten Kraftfahrstraßen einheitlich <b>80 km/h</b> (§ 18 Abs. 5 StVO) — unabhängig vom genauen Gewicht, und unabhängig davon, ob ein Schild eine höhere Geschwindigkeit erlaubt.</p>" +
+      "<p>Auf normalen Landstraßen außerhalb geschlossener Ortschaften gilt dagegen die gestaffelte Regel: bis 7,5 t sind 80 km/h erlaubt, darüber nur noch <b>60 km/h</b> — das gilt dort auch bei mehrspurigem Ausbau.</p>" }
+];
+
+// PDFs sind bewusst ausschließlich "alle" -- allgemeine StVO-Grundlagen, die für
+// jede Führerscheinklasse gelten. Deshalb kein eigenes klasse-Feld am PDF-Objekt nötig.
+function passtZuNuetzlichFilter(klasse){
+  return nuetzlichFilter === "alle" || klasse === "alle" || klasse === nuetzlichFilter;
+}
 function renderNuetzlichesHtml(){
-  const karten = NUETZLICHE_PDFS.map(function(p){
+  const filterBar = '<div style="padding:0 0 var(--sp-m);flex-wrap:wrap;display:flex;gap:6px;">' +
+    [["alle","Alle"],["pkw","PKW"],["lkw","LKW"]].map(function(f){
+      const aktiv = nuetzlichFilter === f[0];
+      return '<button class="chip-btn' + (aktiv?" chip-active":"") + '" data-nuetzfilter="' + f[0] +
+        '" style="padding:5px 12px;border-radius:14px;border:1px solid var(--gold);background:' +
+        (aktiv?"var(--gold)":"transparent") + ';color:' + (aktiv?"#2B2A22":"var(--text)") + ';font-size:12.5px;">' +
+        f[1] + "</button>";
+    }).join("") +
+  "</div>";
+
+  const themenKarten = NUETZLICHE_THEMEN.filter(function(th){ return passtZuNuetzlichFilter(th.klasse); }).map(function(th){
+    const isOpen = openNuetzlich.has(th.id);
+    return '<div class="stufe-section">' +
+      '<div class="stufe-header' + (isOpen ? " open" : "") + '" data-nuetzlich="' + esc(th.id) + '">' +
+        '<div class="stufe-header-left">' +
+          '<span class="stufe-caret">▸</span>' +
+          '<span class="stufe-name">' + esc(th.titel) + "</span>" +
+        "</div>" +
+        (th.klasse !== "alle" ? '<span class="admin-badge badge-gesperrt">' + th.klasse.toUpperCase() + "</span>" : "") +
+      "</div>" +
+      (isOpen ? '<div class="karte info-block" style="margin-top:8px;">' + th.html + "</div>" : "") +
+    "</div>";
+  }).join("") || '<div class="leer-hinweis">Für diesen Filter noch keine Themen hinterlegt.</div>';
+
+  const pdfKarten = NUETZLICHE_PDFS.map(function(p){
     return '<div class="karte pdf-karte">' +
       '<div class="pdf-ic">' + icon("pdf") + "</div>" +
       '<div style="min-width:0;"><div class="pdf-titel">' + esc(p.titel) + "</div>" +
@@ -2360,8 +2449,11 @@ function renderNuetzlichesHtml(){
   }).join("");
   return '<button class="krumen zurueck-zeile" data-zurueckstart>' + icon("zurueck") + "<span>Start</span></button>" +
     '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Nützliches</div>' +
-    '<div class="admin-sub" style="margin-bottom:14px;">Gesetzestexte zu den Themen aus den Videos, zum Nachlesen und Herunterladen.</div>' +
-    karten +
+    '<div class="admin-sub" style="margin-bottom:14px;">Kurz erklärt und zum Nachlesen — inklusive der Gesetzestexte als PDF.</div>' +
+    filterBar +
+    themenKarten +
+    '<div class="admin-sub" style="margin:var(--sp-l) 0 var(--sp-s);">Gesetzestexte zum Herunterladen</div>' +
+    pdfKarten +
     '<div class="leer-hinweis" style="text-align:left;padding:var(--sp-m) 0;">Weitere Themen kommen laufend dazu.</div>';
 }
 
@@ -2464,7 +2556,7 @@ const RECHTSDOKUMENTE = {
       '<p><b>§ 4 Preise und Zahlung</b><br>' +
       "(1) Der Preis beträgt 80 EUR für die gesamte Laufzeit von 6 Monaten.<br>" +
       "(2) Die Zahlung erfolgt bar bei der Fahrschule oder beim vermittelnden Fahrlehrer. Der Zugang wird nach Zahlungseingang manuell freigeschaltet.<br>" +
-      '(3) Ein Teil der Inhalte (ausgewählte Fahrzeug-Check-Themen) ist kostenlos nutzbar.</p>' +
+      '(3) Ein Teil der Inhalte (ausgewählte Fahrzeug-Check-Themen, „Startzugang") ist ohne Zahlung nutzbar.</p>' +
       '<p><b>§ 5 Nutzungsrechte und Schutz der Inhalte</b><br>' +
       "(1) Der Nutzer erhält ein einfaches, nicht übertragbares Recht, die Inhalte während der Laufzeit zu privaten Lernzwecken anzusehen.<br>" +
       "(2) Untersagt sind insbesondere: Aufzeichnen, Herunterladen, Vervielfältigen, Weitergeben, öffentliches Zugänglichmachen sowie jede kommerzielle Nutzung der Inhalte.<br>" +
@@ -2765,6 +2857,19 @@ function renderCatalog(){
     b.addEventListener("click", function(e){
       e.stopPropagation(); // nicht die Stufe zuklappen
       pruefungFilter = b.dataset.pruefungfilter;
+      renderCatalog();
+    });
+  });
+  document.querySelectorAll("[data-nuetzfilter]").forEach(function(b){
+    b.addEventListener("click", function(){
+      nuetzlichFilter = b.dataset.nuetzfilter;
+      renderCatalog();
+    });
+  });
+  document.querySelectorAll(".stufe-header[data-nuetzlich]").forEach(function(h){
+    h.addEventListener("click", function(){
+      const id = h.dataset.nuetzlich;
+      if(openNuetzlich.has(id)){ openNuetzlich.delete(id); } else { openNuetzlich.add(id); }
       renderCatalog();
     });
   });
@@ -3700,7 +3805,7 @@ function renderAdminSchueler(){
     const zugangKnopf =
       '<button class="zugang-btn' + (s.vollzugang ? " ist-bezahlt" : "") + '" data-vollzugang="' + esc(s.id) + '">' +
         icon(s.vollzugang ? "krone" : "schlossOffen") +
-        "<span>" + (s.vollzugang ? "Vollzugang aktiv · antippen zum Entziehen" : "Nur Gratis-Bereich · Vollzugang freischalten") + "</span>" +
+        "<span>" + (s.vollzugang ? "Vollzugang aktiv · antippen zum Entziehen" : "Nur Startzugang · Vollzugang freischalten") + "</span>" +
       "</button>";
 
     return '<div class="admin-card glass ' + (s.vollzugang ? "bezahlt" : "gratis") + '">' +
@@ -3753,7 +3858,7 @@ function renderAdminSchueler(){
         '<input type="checkbox" id="ns-vollzugang" style="width:18px;height:18px;">' +
         '<span>Hat bereits bezahlt — Vollzugang sofort freischalten</span>' +
       "</label>" +
-      '<div class="admin-sub" style="margin-top:2px;">Ohne Haken startet der Schüler im Gratis-Bereich (Fahrzeug &amp; Technik). Den Rest schaltest du später mit dem Knopf unten an seiner Karte frei.</div>' +
+      '<div class="admin-sub" style="margin-top:2px;">Ohne Haken startet der Schüler im Startzugang (Fahrzeug &amp; Technik). Den Rest schaltest du später mit dem Knopf unten an seiner Karte frei.</div>' +
       '<button class="btn-primary" id="ns-btn" style="margin-top:6px;">Zugang anlegen &amp; PIN senden</button>' +
     "</div>" +
     '<div class="admin-card glass" style="margin-bottom:10px;">' +
@@ -3877,7 +3982,7 @@ async function createSchueler(){
       "zugang_von_partner", "schueler", neu.id, neu.name,
       "Angelegt von: " + (adminSession && adminSession.email ? adminSession.email : "Partner") +
       " · Klasse " + klasse +
-      " · " + (vollzugangSofort ? "Vollzugang" : "nur Gratis-Themen") +
+      " · " + (vollzugangSofort ? "Vollzugang" : "nur Startzugang") +
       (schuelernummer ? " · Schüler-Nr. " + schuelernummer : "")
     );
   }
@@ -3981,7 +4086,7 @@ async function toggleVollzugang(id){
     // bewusst bestehen: eine Abrechnung rueckwirkend zu loeschen waere buchhalterisch
     // falsch. Das wird hier offen gesagt, statt es den Nutzer spaeter entdecken zu lassen.
     if(!confirm("Vollzugang für " + s.name + " wirklich entziehen?\n\n" +
-      "Der Schüler sieht dann nur noch die Gratis-Themen.\n" +
+      "Der Schüler sieht dann nur noch den Startzugang.\n" +
       "Hinweis: Eine bereits erstellte Abrechnung bleibt bestehen und wird dadurch nicht storniert.")) return;
   } else {
     // Freischalten kostet Geld -- vorher Preis erfragen und bestaetigen lassen (10.09.2026).
