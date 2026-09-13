@@ -10,48 +10,119 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fahr-Akademie">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#F5F0E3">
+<!-- Statusleisten-Farbe der PWA. Muss dem jeweiligen --bg folgen, sonst entsteht
+     oben am Bildschirm eine sichtbare Kante zwischen Statusleiste und Papier.
+     Reihenfolge wichtig: der Eintrag OHNE media passt immer und muss deshalb
+     zuletzt stehen, als Rueckfallebene fuer alte Browser. -->
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAF6EC">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#191D1A">
+<meta name="theme-color" content="#FAF6EC">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
-  /* ---- DESIGN-TOKENS (Bereich 2, Punkt 1-3) ----
-     Zentrale Werte für Farbe/Abstand/Radius/Schrift. Neue Bausteine greifen
-     ausschließlich hierauf zu, damit spätere Änderungen an EINER Stelle passieren. */
+  /* ---- DESIGN-TOKENS — visuelle Sprache "Papier & Strecke" (13.09.2026) ----
+     Zentrale Werte für Farbe/Abstand/Radius/Schrift/Bewegung. Neue Bausteine greifen
+     ausschließlich hierauf zu, damit spätere Änderungen an EINER Stelle passieren.
+     Alle bisherigen Variablennamen bleiben gültig — nur Werte ändern sich. */
   :root{
-    --gruen:#2F4A34; --gruen-hell:#4B7A56; --bg:#F5F0E3; --bg-2:#F5F0E3;
-    --surface:#FBF8F1; --surface-strong:#EFE8D6; --surface-tint:#E3EADD;
-    --border:rgba(43,40,30,0.10); --text:#2B2A22; --muted:#8A8272; --faint:#AFA68F;
-    --gold:#D9954C;
-    /* Gold ist ab jetzt reserviert für "Aktion / wichtig / geschafft" (Punkt 8) */
-    --gold-schwach:rgba(217,149,76,.15); --gold-rand:rgba(217,149,76,.35);
+    /* Marke / Tinte. Grün ist ab jetzt Marke und Tinte, KEIN Status mehr. */
+    --gruen:#2F4A34; --gruen-hell:#4B7A56;
+
+    /* Flächen. Das Papier selbst ist die helle Fläche, Karten liegen DARIN
+       (vorher lagen sie darauf — deshalb ist --surface jetzt dunkler als --bg). */
+    --bg:#FAF6EC; --bg-2:#FAF6EC;              /* war #F5F0E3 */
+    --surface:#F2ECDE;                          /* war #FBF8F1 — jetzt eingesenkt */
+    --surface-strong:#EAE3D2;                   /* war #EFE8D6 */
+    --surface-tint:#E3EADD;                     /* unverändert */
+
+    /* Linien. --border für Füllungen/Karten, --hairline für Trenner. */
+    --border:rgba(43,40,30,0.10);
+    --hairline:rgba(43,40,30,0.16);             /* NEU */
+
+    /* Text. --muted lag mit 3,5:1 unter der Lesbarkeitsgrenze. */
+    --text:#2B2A22;
+    --muted:#6F6857;                            /* war #8A8272 — jetzt 5,1:1 auf --bg */
+    --faint:#8E8672;                            /* war #AFA68F — nur Label/Deko, nie Fließtext */
+
+    /* Gold = "versiegelt" ODER "hier handeln". Höchstens EIN Gold-Element pro Zeile. */
+    --gold:#D9954C;                             /* Füllung. Trägt IMMER Tinte, nie #fff */
+    --gold-text:#8F5A14;                        /* NEU — Gold als Text, 4,9:1 auf --bg */
+    --gold-schwach:rgba(217,149,76,.13);        /* war .15 */
+    --gold-rand:rgba(217,149,76,.35);
+    --auf-gold:#2B2A22;                         /* NEU — Textfarbe auf Gold-Flächen */
+
+    /* Warnung. Ersetzt das bisher 4x hart notierte #B5573F. */
+    --warn:#A8442B;                             /* NEU */
+
     /* Abstände */
     --sp-xs:4px; --sp-s:8px; --sp-m:12px; --sp-l:18px; --sp-xl:26px;
-    /* Radien */
+    --sp-xxl:40px;                              /* NEU — die Luft, die den Typo-Rhythmus trägt */
+
+    /* Radien. --r-bogen ersetzt die harten 20px/19px am Papierbogen. */
     --r-s:8px; --r-m:12px; --r-l:16px; --r-pill:999px;
-    /* Typografie-Hierarchie (Punkt 2) */
-    --fs-titel:20px; --fs-karte:16px; --fs-body:14px; --fs-meta:12px;
-    --fw-titel:700; --fw-karte:600; --fw-body:400;
-    /* Schatten */
-    --schatten-karte:0 2px 10px rgba(43,40,30,.05);
-    /* Papierbogen (Bereich 2, 27.08.2026): Außenfläche etwas tiefer als das
-       "Papier" selbst, damit auf breiten Bildschirmen eine sichtbare Kante entsteht. */
-    --bogen-aussen:#EAE3D2; --bogen-kante:rgba(43,40,30,.10);
+    --r-bogen:20px;                             /* NEU */
+
+    /* Typografie */
+    --ff-titel:'Playfair Display', Georgia, serif;   /* NEU */
+    --ff-body:'Barlow', -apple-system, sans-serif;   /* NEU */
+    --fs-hero:26px;                             /* NEU — Playfair: "Weiter"-Titel, Bereichstitel */
+    --fs-titel:20px;
+    --fs-karte:15.5px;                          /* war 16px */
+    --fs-body:14px;
+    --fs-meta:12px;
+    --fs-mikro:11px;                            /* NEU — nur Uppercase-Labels */
+    --fw-titel:600;                             /* war 700 — Playfair trägt bei 600 genug */
+    --fw-karte:600; --fw-body:400;
+    --ls-label:.14em;                           /* NEU */
+
+    /* Schatten — vorher fünf handnotierte Rezepte quer durch die Datei */
+    --schatten-1:0 1px 2px rgba(43,40,30,.06);          /* NEU */
+    --schatten-2:0 2px 10px rgba(43,40,30,.05);         /* = bisheriges --schatten-karte */
+    --schatten-3:0 10px 40px rgba(43,40,30,.16);        /* NEU — Bogen/Overlay */
+    --schatten-karte:var(--schatten-2);                 /* Alias: alte Regeln bleiben gültig */
+
+    /* Papierbogen ab 760px: Außenfläche tiefer als das Papier, damit eine Kante entsteht. */
+    --bogen-aussen:#E7DFCC;                     /* war #EAE3D2 — zieht zum helleren Papier nach */
+    --bogen-kante:rgba(43,40,30,.10);
+
+    /* Bewegung */
+    --mo-einfahrt:320ms;                        /* NEU */
+    --mo-strecke:700ms;                         /* NEU */
+    --mo-siegel:520ms;                          /* NEU */
+    --mo-zeile:260ms;                           /* NEU */
+    --ez-raus:cubic-bezier(.2,.7,.1,1);         /* NEU */
+    --ez-standard:cubic-bezier(.4,0,.2,1);      /* NEU */
   }
   /* Dark Mode (Punkt 10): folgt der Systemeinstellung des Geräts.
      Bewusst als eigenes Farbschema, nicht als reine Invertierung. */
   @media (prefers-color-scheme: dark){
     :root{
-      --bg:#1A1E1B; --bg-2:#1A1E1B;
-      --surface:#242A25; --surface-strong:#2E362F; --surface-tint:#2A332B;
-      --border:rgba(245,240,227,0.12); --text:#EDE7D9; --muted:#A39A87; --faint:#7E7768;
+      --bg:#191D1A; --bg-2:#191D1A;               /* war #1A1E1B */
+      --surface:#212722;                          /* war #242A25 */
+      --surface-strong:#2A312B;                   /* war #2E362F */
+      --surface-tint:#28312A;                     /* war #2A332B */
+      --border:rgba(245,240,227,0.12);
+      --hairline:rgba(245,240,227,0.18);
+      --text:#EDE7D9;
+      --muted:#A79E8A;                            /* war #A39A87 */
+      --faint:#8C8472;                            /* war #7E7768 — 4,2:1 statt 3,2:1 */
       --gruen-hell:#7FA98A;
-      --gold:#E0A868; --gold-schwach:rgba(224,168,104,.18); --gold-rand:rgba(224,168,104,.4);
-      --schatten-karte:0 2px 10px rgba(0,0,0,.3);
+      --gold:#E0A868;
+      --gold-text:#E9B87E;                        /* im Dunkeln darf Gold Text sein: 7,4:1 */
+      --gold-schwach:rgba(224,168,104,.16);       /* war .18 */
+      --gold-rand:rgba(224,168,104,.4);
+      --auf-gold:#191D1A;
+      --warn:#E08A70;                             /* aufgehellt, sonst 2,1:1 auf --bg */
+      --schatten-1:0 1px 2px rgba(0,0,0,.3);
+      --schatten-2:0 2px 10px rgba(0,0,0,.3);
+      --schatten-3:0 10px 40px rgba(0,0,0,.45);
+      --schatten-karte:var(--schatten-2);
       /* Im Dunkelmodus umgekehrt: Außen dunkler als das Papier, sonst würde der
          Bogen im Dunkeln "leuchten" statt sich ruhig abzusetzen. */
-      --bogen-aussen:#12150F; --bogen-kante:rgba(245,240,227,.10);
+      --bogen-aussen:#0F1210;                     /* war #12150F */
+      --bogen-kante:rgba(245,240,227,.10);
     }
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
