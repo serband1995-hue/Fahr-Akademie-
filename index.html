@@ -277,11 +277,17 @@
   .login-card input::placeholder{color:var(--faint);}
   .pw-field{position:relative;display:flex;}
   .pw-field input{flex:1;padding-right:44px;}
+  /* 13.09.2026: war 34x34 -- unter der 44px-Mindestflaeche der Abnahmeliste.
+     Die Flaeche waechst, das Symbol bleibt gleich gross.
+     inset-inline-end statt right, damit es bei dir="rtl" mitwandert. */
   .pw-toggle{
-    position:absolute;right:6px;top:50%;transform:translateY(-50%);
-    background:none;border:none;font-size:18px;cursor:pointer;padding:8px;
+    position:absolute;inset-inline-end:2px;top:50%;transform:translateY(-50%);
+    background:none;border:none;cursor:pointer;
+    min-width:44px;min-height:44px;display:inline-flex;
+    align-items:center;justify-content:center;
     line-height:1;color:var(--muted);
   }
+  .pw-toggle .ic{width:20px;height:20px;}
   .btn-primary{
     background:var(--gruen);color:#fff;border:none;
     padding:15px;border-radius:100px;font-size:16.5px;font-weight:700;cursor:pointer;
@@ -481,6 +487,47 @@
     font-family:'Barlow',sans-serif;}
   .admin-tab.active{background:var(--gruen);color:#fff;border-color:var(--gruen-hell);}
   .admin-card{padding:14px 16px;margin-bottom:10px;}
+
+  /* ---- Dreistufige Schülerkarte (13.09.2026, Spec 3.14) ----
+     Ersetzt zehn gestapelte Textzeilen. Ebene 1 (Kopf) immer sichtbar,
+     Ebene 2 (eine Aufgabe) nur wenn es etwas zu tun gibt, Ebene 3 (Details)
+     auf Tipp. Nichts geht verloren -- es ist nur nicht mehr alles gleichzeitig da. */
+  .ak-kopf{display:flex;align-items:center;gap:var(--sp-m);width:100%;min-height:44px;
+    background:none;border:none;padding:4px 0;cursor:pointer;text-align:start;
+    font-family:inherit;color:inherit;}
+  .ak-ampel{flex:none;width:9px;height:9px;border-radius:50%;}
+  .ak-ampel.gruen{background:var(--gruen-hell);}
+  .ak-ampel.gelb{background:var(--gold);}
+  .ak-ampel.rot{background:var(--warn);}
+  .ak-kopf-text{flex:1;min-width:0;}
+  .ak-name{display:block;font-family:var(--ff-titel);font-weight:var(--fw-titel);
+    font-size:18px;line-height:1.25;color:var(--text);}
+  .ak-sub{display:block;font-size:12.5px;line-height:1.45;color:var(--muted);margin-top:2px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .ak-rechts{flex:none;text-align:end;}
+  .ak-zugang{display:block;font-size:var(--fs-mikro);font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;}
+  .ak-zugang.voll{color:var(--gold-text);}
+  .ak-zugang.start{color:var(--muted);}
+  .ak-restzeit{display:block;font-size:11.5px;color:var(--muted);margin-top:2px;white-space:nowrap;}
+  .ak-restzeit.knapp{color:var(--gold-text);font-weight:600;}
+  .ak-pfeil{flex:none;color:var(--faint);display:flex;align-items:center;
+    transition:transform .25s var(--ez-standard);}
+  .ak-pfeil.offen{transform:rotate(90deg);}
+  [dir="rtl"] .ak-pfeil{transform:scaleX(-1);}
+  [dir="rtl"] .ak-pfeil.offen{transform:scaleX(-1) rotate(-90deg);}
+  /* Genau eine Handlungszeile pro Karte. Gibt es nichts zu tun, fehlt sie ganz. */
+  .ak-tun{display:flex;align-items:center;gap:10px;margin-top:12px;padding:11px 13px;
+    background:var(--gold-schwach);border:1px solid var(--gold-rand);border-radius:var(--r-m);}
+  .ak-tun-punkt{flex:none;width:9px;height:9px;border-radius:50%;background:var(--gold);}
+  .ak-tun-text{flex:1;font-size:13px;font-weight:600;line-height:1.4;color:var(--text);}
+  .ak-tun-btn{flex:none;min-height:44px;padding:0 16px;border:none;border-radius:var(--r-s);
+    background:var(--gold);color:var(--auf-gold);font-family:inherit;font-size:13px;
+    font-weight:800;cursor:pointer;}
+  .ak-details{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+  .ak-aktionen{display:flex;flex-wrap:wrap;gap:var(--sp-s);margin-top:14px;}
+  .ak-aktionen > *{flex:1;min-width:120px;min-height:44px;}
+  .ak-loeschen{color:var(--warn);border-color:var(--warn);}
   /* ---- Zugangs-Status (10.09.2026) ----
      Vorher war der Vollzugang nur eine von zehn Textzeilen und wurde ueber ein
      Kronen-Symbol geschaltet, das direkt neben dem Sperr-Schloss sass -- zwei
@@ -1045,7 +1092,12 @@ const ICONS = {
   download:'<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/>',
   hashtag:'<path d="M5 9h14M5 15h14M10 4L8 20M16 4l-2 16"/>',
   krone:'<path d="M3 18h18l-1.5-9-4.5 4-3-6-3 6-4.5-4z"/>',
-  uhr:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>'
+  uhr:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+  // 13.09.2026 -- PIN-/Passwort-Knopf. Bewusst KEIN Emoji: das ist ein
+  // Funktionsknopf, und Emoji sehen auf Honor, Samsung und iPhone verschieden
+  // aus. Das Affen-Emoji heisst ausserdem auf keinem Geraet "PIN verbergen".
+  auge:'<path d="M2 12s3-8 10-8 10 8 10 8-3 8-10 8-10-8-10-8z"/><circle cx="12" cy="12" r="3"/>',
+  augeZu:'<path d="M9.9 4.2A10.9 10.9 0 0112 4c7 0 10 8 10 8a18.5 18.5 0 01-2.2 3.2M6.6 6.6A18.2 18.2 0 002 12s3 8 10 8a10.7 10.7 0 005.4-1.4"/><path d="M9.9 9.9a3 3 0 004.2 4.2"/><path d="M3 3l18 18"/>'
 };
 function icon(name, extraClass){
   return '<svg class="ic ' + (extraClass||"") + '" viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[name]||"") + "</svg>";
@@ -1336,6 +1388,7 @@ let kandidatenSuche = "";          // 8.4 Schnellsuche
 let kandidatenNurOffen = true;     // 8.4 Standard: nur die ohne Zugang
 let schuelerSuche = "";            // 8.4 Schnellsuche in der Schülerliste
 let bulkAuswahl = new Set();       // 8.2 Mehrfachauswahl für Sammelaktionen
+let offeneSchuelerKarten = new Set(); // 13.09.2026: welche Schülerkarten ihre Details zeigen
 let protokollEintraege = [];       // 8.7 Änderungsprotokoll (Admin-Handlungen, nicht Lernfortschritt)
 let videoFilterStufe = "";         // 8.3 Video-Liste nach Stufe filtern
 let videoFilterFahrzeug = "";      // 09.09.2026: Video-Liste nach Fahrzeug filtern (Audi A1, Audi Q5, Cupra, ...)
@@ -1400,7 +1453,7 @@ const I18N = {
     sprache:"Sprache", spracheHinweis:"Videos und Themenbezeichnungen bleiben auf Deutsch.",
     zurueck:"Zurück", zumStart:"Start", laedt:"Wird geladen …",
     gesperrtKlasse:"Nur Klasse {klasse} — bei der Fahrschule freischalten lassen",
-    gesperrtVollzugang:"Gehört zum Vollzugang", vollzugangBanner:"🔒 {anzahl} Videos zu {bereich} warten auf dich. Sprich mit deiner Fahrschule, um den Vollzugang freizuschalten.",
+    gesperrtVollzugang:"Gehört zum Vollzugang", vollzugangBanner:"{anzahl} Videos zu {bereich} warten auf dich. Sprich mit deiner Fahrschule, um den Vollzugang freizuschalten.",
     telefon:"Telefonnummer", pin:"PIN", anmelden:"Anmelden",
     loginFehler:"Telefonnummer oder PIN falsch", keineVerbindung:"Keine Verbindung — versuch es gleich nochmal"
   },
@@ -1415,7 +1468,7 @@ const I18N = {
     sprache:"Dil", spracheHinweis:"Videolar ve konu adları Almanca kalır.",
     zurueck:"Geri", zumStart:"Başlangıç", laedt:"Yükleniyor …",
     gesperrtKlasse:"Sadece {klasse} sınıfı — sürücü kursundan açtır",
-    gesperrtVollzugang:"Tam erişime dahil", vollzugangBanner:"🔒 {bereich} alanında {anzahl} video seni bekliyor. Tam erişim için sürücü kursunla konuş.",
+    gesperrtVollzugang:"Tam erişime dahil", vollzugangBanner:"{bereich} alanında {anzahl} video seni bekliyor. Tam erişim için sürücü kursunla konuş.",
     telefon:"Telefon numarası", pin:"PIN", anmelden:"Giriş yap",
     loginFehler:"Telefon numarası veya PIN hatalı", keineVerbindung:"Bağlantı yok — birazdan tekrar dene"
   },
@@ -1430,7 +1483,7 @@ const I18N = {
     sprache:"Language", spracheHinweis:"Videos and topic names stay in German.",
     zurueck:"Back", zumStart:"Home", laedt:"Loading …",
     gesperrtKlasse:"Class {klasse} only — ask your driving school to unlock",
-    gesperrtVollzugang:"Included in full access", vollzugangBanner:"🔒 {anzahl} videos on {bereich} are waiting for you. Ask your driving school to unlock full access.",
+    gesperrtVollzugang:"Included in full access", vollzugangBanner:"{anzahl} videos on {bereich} are waiting for you. Ask your driving school to unlock full access.",
     telefon:"Phone number", pin:"PIN", anmelden:"Sign in",
     loginFehler:"Phone number or PIN incorrect", keineVerbindung:"No connection — please try again shortly"
   },
@@ -1445,7 +1498,7 @@ const I18N = {
     sprache:"اللغة", spracheHinweis:"تبقى مقاطع الفيديو وأسماء المواضيع بالألمانية.",
     zurueck:"رجوع", zumStart:"الرئيسية", laedt:"جارٍ التحميل …",
     gesperrtKlasse:"الفئة {klasse} فقط — اطلب من مدرسة القيادة تفعيلها",
-    gesperrtVollzugang:"يتطلب الوصول الكامل", vollzugangBanner:"🔒 {anzahl} فيديو في {bereich} بانتظارك. تحدث مع مدرسة القيادة لتفعيل الوصول الكامل.",
+    gesperrtVollzugang:"يتطلب الوصول الكامل", vollzugangBanner:"{anzahl} فيديو في {bereich} بانتظارك. تحدث مع مدرسة القيادة لتفعيل الوصول الكامل.",
     telefon:"رقم الهاتف", pin:"رقم التعريف", anmelden:"تسجيل الدخول",
     loginFehler:"رقم الهاتف أو رقم التعريف غير صحيح", keineVerbindung:"لا يوجد اتصال — حاول مرة أخرى قريباً"
   }
@@ -1642,7 +1695,7 @@ function showLogin(){
         '<input id="lo-tel" type="tel" placeholder="Telefonnummer" autocomplete="off">' +
         '<div class="pw-field">' +
           '<input id="lo-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="PIN" autocomplete="off">' +
-          '<button type="button" id="lo-pin-toggle" class="pw-toggle" aria-label="PIN anzeigen">👁</button>' +
+          '<button type="button" id="lo-pin-toggle" class="pw-toggle" aria-label="PIN anzeigen">' + icon("auge") + '</button>' +
         "</div>" +
         '<button class="btn-primary" id="lo-btn">Einloggen</button>' +
         '<div id="lo-err" class="err"></div>' +
@@ -1664,7 +1717,7 @@ function showLogin(){
     const field = document.getElementById("lo-pin");
     const isHidden = field.type === "password";
     field.type = isHidden ? "text" : "password";
-    this.textContent = isHidden ? "🙈" : "👁";
+    this.innerHTML = icon(isHidden ? "augeZu" : "auge");
     this.setAttribute("aria-label", isHidden ? "PIN verbergen" : "PIN anzeigen");
   });
   document.getElementById("zur-reg").addEventListener("click", showRegistrierung);
@@ -2453,7 +2506,7 @@ function renderBereichDetailHtml(){
   const vollzugangGesperrteAnzahl = gruppe.videos.filter(function(x){ return x.sperrgrund === "vollzugang"; }).length;
   const vollzugangBanner = vollzugangGesperrteAnzahl > 0
     ? '<div class="karte anfrage-karte">' +
-        '<div class="anfrage-text">' + esc(t("vollzugangBanner",{anzahl:vollzugangGesperrteAnzahl, bereich:bereichName(selectedBereich)})) + "</div>" +
+        '<div class="anfrage-text">' + icon("schloss") + " " + esc(t("vollzugangBanner",{anzahl:vollzugangGesperrteAnzahl, bereich:bereichName(selectedBereich)})) + "</div>" +
         '<button class="anfrage-btn" data-zugang-anfragen="' + esc(selectedBereich) + '">' +
           icon("krone") + "<span>Zugang anfragen</span>" +
         "</button>" +
@@ -3661,7 +3714,7 @@ function showAdminLogin(){
         '<input id="ao-email" type="email" placeholder="E-Mail" autocomplete="off">' +
         '<div class="pw-field">' +
           '<input id="ao-pass" type="password" placeholder="Passwort" autocomplete="off">' +
-          '<button type="button" id="ao-pass-toggle" class="pw-toggle" aria-label="Passwort anzeigen">👁</button>' +
+          '<button type="button" id="ao-pass-toggle" class="pw-toggle" aria-label="Passwort anzeigen">' + icon("auge") + '</button>' +
         "</div>" +
         '<button class="btn-primary" id="ao-btn">Anmelden</button>' +
         '<div id="ao-err" class="err"></div>' +
@@ -3674,7 +3727,7 @@ function showAdminLogin(){
     const field = document.getElementById("ao-pass");
     const isHidden = field.type === "password";
     field.type = isHidden ? "text" : "password";
-    this.textContent = isHidden ? "🙈" : "👁";
+    this.innerHTML = icon(isHidden ? "augeZu" : "auge");
     this.setAttribute("aria-label", isHidden ? "Passwort verbergen" : "Passwort anzeigen");
   });
   document.getElementById("back-student-link").addEventListener("click", function(){
@@ -4138,7 +4191,8 @@ function renderAdminSchueler(){
 
   const rows = gefiltert.map(function(s){
     const status = schuelerStatus(s);
-    const badgeClass = status === "aktiv" ? "badge-aktiv" : status === "abgelaufen" ? "badge-abgelaufen" : "badge-gesperrt";
+    // badgeText wird in der Kopfzeile gebraucht, wenn der Zugang nicht aktiv ist.
+    // Eine eigene Badge-Klasse braucht es nicht mehr -- den Status traegt der Ampelpunkt.
     const badgeText = status === "aktiv" ? "Aktiv" : status === "abgelaufen" ? "Abgelaufen" : "Gesperrt";
     const fl = allFahrlehrer.find(function(f){ return f.id === s.fahrlehrer_id; });
     // Bereich 8.5: Vorwarnung, bevor ein Zugang unbemerkt ausläuft
@@ -4148,7 +4202,7 @@ function renderAdminSchueler(){
     const terminZeile = s.pruefungstermin
       ? '<div class="admin-sub">Prüfung: ' + fmtDate(s.pruefungstermin) + "</div>" : "";
     const sperrgrundZeile = (!s.aktiv && s.sperrgrund)
-      ? '<div class="admin-sub" style="color:var(--warn);">🔒 Grund: ' + esc(s.sperrgrund) + "</div>" : "";
+      ? '<div class="admin-sub" style="color:var(--warn);">Grund: ' + esc(s.sperrgrund) + "</div>" : "";
     // Partner-Modell (07.09.2026): Nur Serband sieht den echten PIN und darf ihn
     // verschicken. Ein Partner-Fahrlehrer säh sonst den Klartext-PIN und könnte ihn
     // dem Schüler einfach mündlich sagen -- das würde die ganze Versand-Kontrolle
@@ -4158,11 +4212,11 @@ function renderAdminSchueler(){
     const pinStatusZeile = zeigeKlartext
       ? '<div class="admin-sub">PIN: <span class="pin-display">' + esc(s.pin) + '</span> · gültig bis ' + fmtDate(s.ablauf_am) + "</div>"
       : '<div class="admin-sub">' + (s.pin_versendet_am
-          ? "✅ Zugang verschickt am " + fmtDate(s.pin_versendet_am)
-          : "⏳ Wartet auf Freischaltung durch deinen Ansprechpartner") +
+          ? "Zugang verschickt am " + fmtDate(s.pin_versendet_am)
+          : "Wartet auf Freischaltung durch deinen Ansprechpartner") +
         " · gültig bis " + fmtDate(s.ablauf_am) + "</div>";
     const pinWartetHinweis = (istSuperAdmin && !s.pin_versendet_am)
-      ? '<div class="admin-sub" style="color:var(--gold-text);font-weight:600;">⏳ Noch nicht verschickt</div>' : "";
+      ? '<div class="admin-sub" style="color:var(--gold-text);font-weight:600;">Noch nicht verschickt</div>' : "";
     const agbZeile = s.agb_akzeptiert_am
       ? '<div class="admin-sub" style="opacity:.7;">Nutzungsbedingungen akzeptiert: ' + fmtDate(s.agb_akzeptiert_am) + "</div>"
       : '<div class="admin-sub" style="opacity:.7;color:var(--gold-text);">Nutzungsbedingungen noch nicht akzeptiert</div>';
@@ -4178,7 +4232,7 @@ function renderAdminSchueler(){
       const proTag = s.login_anzahl / tageSeitAnlage;
       const auffaellig = proTag > 3;
       loginZeile = '<div class="admin-sub"' + (auffaellig ? ' style="color:var(--warn);font-weight:600;"' : "") + '>' +
-        (auffaellig ? "⚠️ " : "") + s.login_anzahl + " Login" + (s.login_anzahl === 1 ? "" : "s") +
+        s.login_anzahl + " Login" + (s.login_anzahl === 1 ? "" : "s") +
         (s.letzter_login_am ? " · zuletzt " + fmtDate(s.letzter_login_am) : "") +
         (auffaellig ? " — ungewöhnlich häufig, evtl. geteilter Zugang?" : "") +
       "</div>";
@@ -4193,7 +4247,7 @@ function renderAdminSchueler(){
     if(s.geraetewechsel_anzahl > 0){
       const vielWechsel = s.geraetewechsel_anzahl >= 2;
       wechselZeile = '<div class="admin-sub"' + (vielWechsel ? ' style="color:var(--warn);font-weight:600;"' : "") + '>' +
-        (vielWechsel ? "⚠️ " : "") + s.geraetewechsel_anzahl + "× Gerätewechsel" +
+        s.geraetewechsel_anzahl + "× Gerätewechsel" +
         (vielWechsel ? " — Zugang wird vermutlich weitergegeben" : "") +
       "</div>";
     }
@@ -4202,7 +4256,7 @@ function renderAdminSchueler(){
     // Prüfungsvorbereitung. Serband entscheidet selbst, ob er nachhakt.
     const ul = ueberlappung[s.id];
     const ueberlappZeile = (ul && ul.auffaellig)
-      ? '<div class="admin-sub" style="color:var(--warn);font-weight:600;">⚠️ ' + ul.schnell +
+      ? '<div class="admin-sub" style="color:var(--warn);font-weight:600;">' + ul.schnell +
         "× zwei Videos fast gleichzeitig geöffnet — evtl. mehrere Nutzer</div>"
       : "";
     let stammZeile = "";
@@ -4220,25 +4274,75 @@ function renderAdminSchueler(){
         "<span>" + (s.vollzugang ? "Vollzugang aktiv · antippen zum Entziehen" : "Nur Startzugang · Vollzugang freischalten") + "</span>" +
       "</button>";
 
-    return '<div class="admin-card glass ' + (s.vollzugang ? "bezahlt" : "gratis") + '">' +
-      '<div class="admin-row">' +
-        '<div>' +
-          '<label class="bulk-pick"><input type="checkbox" class="bulk-cb" value="' + esc(s.id) + '"' +
-            (bulkAuswahl.has(s.id) ? " checked" : "") + "> auswählen</label>" +
-          '<div class="admin-name">' + esc(s.name) + "</div>" +
-          '<div class="admin-sub">' + esc(s.telefon) + " · Klasse " + esc(s.klasse) + " · " + esc(fl ? fl.name : "—") + "</div>" +
+    // ---- Dreistufige Karte (13.09.2026) ----
+    // Vorher standen hier zehn Textzeilen untereinander. Bei 70+ Schuelern ist das
+    // nicht lesbar. Jetzt: WER (immer sichtbar) -- WAS JETZT (genau eine Handlung,
+    // faellt weg wenn nichts zu tun ist) -- DETAILS (aufklappbar, nichts geht verloren).
+
+    // Ampelpunkt: rot schlaegt gelb, gelb schlaegt gruen.
+    const verdacht = (ul && ul.auffaellig) || s.geraetewechsel_anzahl >= 2;
+    const ampel = (status !== "aktiv" || verdacht) ? "rot"
+      : ((tageBisAblauf <= 30 || (istSuperAdmin && !s.pin_versendet_am)) ? "gelb" : "gruen");
+
+    // Genau EINE Aufgabe, nach Dringlichkeit. Gibt es nichts zu tun, fehlt der Kasten.
+    let aufgabe = null;
+    if(status === "gesperrt"){
+      aufgabe = { text: "Zugang gesperrt" + (s.sperrgrund ? ": " + s.sperrgrund : ""), knopf: null };
+    } else if(status === "abgelaufen"){
+      aufgabe = { text: "Zugang ist abgelaufen", knopf: null };
+    } else if(verdacht){
+      aufgabe = { text: "Auffälliges Nutzungsmuster — bitte ansehen", knopf: null };
+    } else if(istSuperAdmin && !s.pin_versendet_am && zeigeKlartext){
+      aufgabe = { text: "Zugangsdaten noch nicht verschickt", knopf: { art: "mail", label: "Senden" } };
+    } else if(tageBisAblauf <= 14){
+      aufgabe = { text: "Läuft in " + tageBisAblauf + " Tag" + (tageBisAblauf === 1 ? "" : "en") + " ab", knopf: null };
+    } else if(!s.agb_akzeptiert_am){
+      aufgabe = { text: "Nutzungsbedingungen noch nicht akzeptiert", knopf: null };
+    }
+    const aufgabeHtml = aufgabe
+      ? '<div class="ak-tun">' +
+          '<span class="ak-tun-punkt"></span>' +
+          '<span class="ak-tun-text">' + esc(aufgabe.text) + "</span>" +
+          (aufgabe.knopf
+            ? '<button class="ak-tun-btn druck-1" data-haptik data-' + aufgabe.knopf.art + '="' + esc(s.id) + '">' +
+              esc(aufgabe.knopf.label) + "</button>"
+            : "") +
+        "</div>"
+      : "";
+
+    // Ebene 3: alles Bisherige, nur eingeklappt. Nichts geht verloren.
+    const offen = offeneSchuelerKarten.has(s.id);
+    const detailHtml = offen
+      ? '<div class="ak-details">' +
           pinStatusZeile + pinWartetHinweis +
-          ablaufWarnung + terminZeile + agbZeile + loginZeile + wechselZeile + ueberlappZeile + stammZeile + sperrgrundZeile +
-        "</div>" +
-        '<div style="text-align:right;">' +
-          '<div class="admin-badge ' + badgeClass + '">' + badgeText + "</div>" +
-          '<div style="margin-top:8px;">' +
-            (zeigeKlartext ? '<button class="icon-btn' + (!s.pin_versendet_am ? " danger" : "") + '" data-mail="' + esc(s.id) + '" title="PIN senden">✉️</button>' : "") +
-            '<button class="icon-btn" data-toggle="' + esc(s.id) + '" title="Login sperren/entsperren">' + (s.aktiv ? icon("schloss") : icon("schlossOffen")) + "</button>" +
-            '<button class="icon-btn danger" data-del="' + esc(s.id) + '" title="Löschen">' + icon("papierkorb") + '</button>' +
+          ablaufWarnung + terminZeile + agbZeile + loginZeile + wechselZeile +
+          ueberlappZeile + stammZeile + sperrgrundZeile +
+          '<div class="ak-aktionen">' +
+            (zeigeKlartext ? '<button class="btn-still druck-2" data-mail="' + esc(s.id) + '">Zugangsdaten senden</button>' : "") +
+            '<button class="btn-still druck-2" data-toggle="' + esc(s.id) + '">' + (s.aktiv ? "Login sperren" : "Login entsperren") + "</button>" +
+            '<button class="btn-still druck-2 ak-loeschen" data-del="' + esc(s.id) + '">Löschen</button>' +
           "</div>" +
-        "</div>" +
-      "</div>" +
+        "</div>"
+      : "";
+
+    return '<div class="admin-card glass ' + (s.vollzugang ? "bezahlt" : "gratis") + '">' +
+      '<label class="bulk-pick"><input type="checkbox" class="bulk-cb" value="' + esc(s.id) + '"' +
+        (bulkAuswahl.has(s.id) ? " checked" : "") + "> auswählen</label>" +
+      '<button class="ak-kopf druck-3" data-karte="' + esc(s.id) + '">' +
+        '<span class="ak-ampel ' + ampel + '"></span>' +
+        '<span class="ak-kopf-text">' +
+          '<span class="ak-name">' + esc(s.name) + "</span>" +
+          '<span class="ak-sub">' + esc(s.telefon) + " · Klasse " + esc(s.klasse) + " · " + esc(fl ? fl.name : "—") + "</span>" +
+        "</span>" +
+        '<span class="ak-rechts">' +
+          '<span class="ak-zugang ' + (s.vollzugang ? "voll" : "start") + '">' + (s.vollzugang ? "Voll" : "Start") + "</span>" +
+          '<span class="ak-restzeit' + (tageBisAblauf <= 14 ? " knapp" : "") + '">' +
+            (status === "aktiv" ? tageBisAblauf + " Tage" : badgeText) + "</span>" +
+        "</span>" +
+        '<span class="ak-pfeil' + (offen ? " offen" : "") + '">' + icon("weiter") + "</span>" +
+      "</button>" +
+      aufgabeHtml +
+      detailHtml +
       zugangKnopf +
     "</div>";
   }).join("") || '<div class="empty">Noch keine Schüler angelegt.</div>';
@@ -4326,6 +4430,16 @@ function renderAdminSchueler(){
   });
   document.querySelectorAll("[data-del]").forEach(function(b){
     b.addEventListener("click", function(){ deleteSchueler(b.dataset.del); });
+  });
+  // Karte auf-/zuklappen. Nur diese eine Karte neu zeichnen waere schoener, aber
+  // renderAdminSchueler() ist billig genug und haelt den Zustand an EINER Stelle.
+  document.querySelectorAll("[data-karte]").forEach(function(b){
+    b.addEventListener("click", function(){
+      const id = b.dataset.karte;
+      if(offeneSchuelerKarten.has(id)) offeneSchuelerKarten.delete(id);
+      else offeneSchuelerKarten.add(id);
+      renderAdminSchueler();
+    });
   });
 }
 
