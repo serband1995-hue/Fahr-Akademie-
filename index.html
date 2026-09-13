@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fahr-Akademie</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
@@ -94,6 +94,15 @@
     --mo-zeile:260ms;                           /* NEU */
     --ez-raus:cubic-bezier(.2,.7,.1,1);         /* NEU */
     --ez-standard:cubic-bezier(.4,0,.2,1);      /* NEU */
+
+    /* Druck — drei Tiefen, nie mehr (13.09.2026). Rein schnell, raus langsamer:
+       das ist der ganze Trick, warum sich etwas wie Material anfuehlt statt wie
+       ein Zustandswechsel. Nur transform, damit auch altes Android bei 60fps bleibt. */
+    --druck-1:.965;   /* NEU — Hauptknopf, kleine Flaeche, viel Weg */
+    --druck-2:.98;    /* NEU — Sekundaerknopf */
+    --druck-3:.99;    /* NEU — ganze Zeilen und Karten, wenig Weg */
+    --druck-rein:90ms;   /* NEU */
+    --druck-raus:180ms;  /* NEU */
   }
   /* Dark Mode (Punkt 10): folgt der Systemeinstellung des Geräts.
      Bewusst als eigenes Farbschema, nicht als reine Invertierung. */
@@ -126,6 +135,23 @@
     }
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+  /* --- Druck (13.09.2026) — drei Tiefen, nie mehr. Nur transform, damit auch
+     ein vier Jahre altes Android bei 60fps bleibt. --- */
+  .druck-1,.druck-2,.druck-3{
+    touch-action:manipulation;                 /* nimmt die 300-ms-Verzoegerung */
+    -webkit-tap-highlight-color:transparent;
+    transition:transform var(--druck-raus) var(--ez-raus),
+               background var(--druck-raus) ease;
+  }
+  .druck-1:active{transform:scale(var(--druck-1));transition-duration:var(--druck-rein);}
+  .druck-2:active{transform:scale(var(--druck-2));background:var(--surface);
+    transition-duration:var(--druck-rein);}
+  .druck-3:active{transform:scale(var(--druck-3));background:var(--surface);
+    transition-duration:var(--druck-rein);}
+  /* Deaktivierte Knoepfe geben nicht nach -- sonst luegt die Bewegung. */
+  .druck-1[disabled]:active,.druck-2[disabled]:active,.druck-3[disabled]:active{transform:none;}
+
   body{
     margin:0;font-family:var(--ff-body);
     background:var(--bg);
@@ -330,11 +356,6 @@
   .anfrage-btn:disabled{opacity:.6;cursor:default;}
   .anfrage-btn .ic{width:17px;height:17px;}
   .anfrage-klein{font-size:11.5px;color:var(--muted);margin-top:9px;line-height:1.4;}
-  /* Kostprobe: bewusst GRÜN, nicht gold. Gold steht überall sonst für "kostenpflichtig" --
-     dieselbe Farbe hier würde das Gegenteil signalisieren. */
-  .kostprobe-badge{display:inline-block;margin-top:5px;padding:2px 9px;border-radius:var(--r-pill);
-    background:var(--gruen);color:#fff;font-size:10.5px;font-weight:800;
-    letter-spacing:.04em;text-transform:uppercase;}
   /* Registrierung (12.09.2026) */
   .neu-hier{margin-top:26px;width:100%;max-width:340px;}
   .neu-trenner{display:flex;align-items:center;gap:12px;color:var(--faint);font-size:12.5px;margin-bottom:12px;}
@@ -374,7 +395,6 @@
   .stufe-header{
     display:flex;align-items:center;justify-content:space-between;padding:14px 16px;
     background:var(--surface);border:1px solid var(--border);border-radius:14px;cursor:pointer;
-    transition:border-color .22s ease, background .22s ease;
   }
   .stufe-header.open{border-color:var(--gruen-hell);}
   .stufe-header:active{transform:scale(.995);}
@@ -421,17 +441,12 @@
   }
   .stufe-section .video-list{margin-top:8px;}
 
-  .video-card.highlight-target{
-    border-color:var(--gold);box-shadow:0 0 0 2px var(--gold-rand);
-    animation:dlPulse 1.8s ease-in-out 2;
-  }
-  .vg-card.highlight-target{
-    outline:3px solid var(--gold); outline-offset:2px;
-    animation:dlPulse 1.8s ease-in-out 2;
-  }
+  /* Ruckeln-Fix (13.09.2026): war eine box-shadow-Schleife (Paint pro Bild) --
+     jetzt transform:scale(), GPU-Compositing. Betrifft .video-zeile.highlight-target
+     unten (der einzige noch aktive Nutzer dieses Keyframes). */
   @keyframes dlPulse{
-    0%,100%{box-shadow:0 0 0 2px rgba(217,149,76,.35);}
-    50%{box-shadow:0 0 0 5px rgba(217,149,76,.15);}
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.015);}
   }
 
   .loading{text-align:center;padding:80px 0;color:var(--muted);font-size:14.5px;}
@@ -504,9 +519,6 @@
   .bulk-leiste{border:2px solid var(--gold) !important;position:sticky;top:0;z-index:6;}
   /* 8.5: Ablauf-Vorwarnung */
   .warn-ablauf{color:var(--gold-text);font-weight:600;}
-  /* 7.9: gesperrte Klassen-Inhalte */
-  .video-locked{opacity:.62;cursor:default;}
-  .lock-hint{color:var(--gold-text);font-size:12px;margin-top:2px;}
   /* 7.1/7.2: Empfehlung aus dem Kompass */
   .empf-card{border:2px solid var(--gold) !important;}
   .empf-badge{display:inline-block;background:var(--gold);color:var(--auf-gold);font-size:11px;
@@ -752,6 +764,55 @@
   .btn-gold:active{transform:scale(.985);}
   .btn-gold[disabled]{opacity:.6;cursor:default;}
 
+  /* --- Video-Zeile (13.09.2026) — ersetzt die 2:3-Poster (.vg-card) an den drei
+     Stellen mit kurzer Videoliste: Bereichsseite, Lernpfad-Suche, Themen. Fixe
+     96x54-Vorschau (16:9) statt vollflaechigem Poster, Zustand ueber Icon + Meta-Text
+     statt ueber Farbflaeche -- damit bleibt Platz fuer den echten Videotitel. --- */
+  .video-zeile{display:flex;align-items:flex-start;gap:13px;width:100%;
+    padding:11px 0;border-block-end:1px solid var(--border);cursor:pointer;}
+  .video-zeile:last-child{border-block-end:none;}
+  .video-zeile:active{background:var(--surface);}
+  .video-zeile.gesperrt-klasse,.video-zeile.versiegelt{cursor:default;}
+  .vz-thumb{position:relative;flex:none;width:96px;height:54px;border-radius:var(--r-s);
+    overflow:hidden;background:var(--surface-strong);}
+  .vz-thumb-bg{position:absolute;inset:0;}
+  .vz-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .video-zeile.versiegelt .vz-thumb-bg,.video-zeile.versiegelt .vz-img,
+  .video-zeile.gesperrt-klasse .vz-thumb-bg,.video-zeile.gesperrt-klasse .vz-img{
+    filter:grayscale(.3) brightness(.7);}
+  .vz-dauer{position:absolute;inset-inline-end:4px;inset-block-end:4px;
+    background:rgba(10,12,9,.62);color:#fff;font-size:9px;font-weight:700;
+    padding:1px 5px;border-radius:4px;letter-spacing:.02em;}
+  .vz-ergebnis{position:absolute;top:4px;inset-inline-start:4px;font-size:14px;
+    text-shadow:0 1px 3px rgba(0,0,0,.5);}
+  .vz-mal{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
+  /* Zustand 1: offen -- Play-Dreieck als CSS-Rand, kein SVG. */
+  .vz-mal-offen::after{content:"";width:0;height:0;margin-inline-start:2px;
+    border-inline-start:11px solid rgba(250,246,236,.94);
+    border-block-start:7px solid transparent;border-block-end:7px solid transparent;
+    filter:drop-shadow(0 1px 2px rgba(0,0,0,.35));}
+  [dir="rtl"] .vz-mal-offen::after{transform:scaleX(-1);}
+  /* Zustand 2: versiegelt -- Goldpunkt mit Ring statt Schloss ("ein Siegel sagt
+     'hier liegt etwas fuer dich', ein Schloss sagt 'geh weg'"). */
+  .vz-mal-siegel::after{content:"";width:10px;height:10px;border-radius:50%;
+    background:var(--gold);box-shadow:0 0 0 4px rgba(217,149,76,.32);}
+  /* Zustand 3: gesehen -- Haken oben-Start, klein, kein flaechiger Kreis. */
+  .vz-mal-gesehen{align-items:flex-start;justify-content:flex-start;padding:4px;}
+  .vz-mal-gesehen .ic{width:15px;height:15px;color:#fff;
+    filter:drop-shadow(0 1px 2px rgba(0,0,0,.5));}
+  /* Sonderfall Klassensperre: neutrales Schloss, bewusst NICHT gold -- Bezahlen
+     hebt eine falsche Fuehrerschein-Klasse nicht auf, Gold hiesse aber ueberall
+     sonst "hier handeln". */
+  .vz-mal-klasse .ic{width:18px;height:18px;color:rgba(250,246,236,.85);}
+  .vz-text{flex:1;min-width:0;padding-top:1px;}
+  .vz-titel{display:block;font-size:var(--fs-karte);font-weight:var(--fw-karte);
+    line-height:1.32;color:var(--text);}
+  .video-zeile.versiegelt .vz-titel,.video-zeile.gesperrt-klasse .vz-titel{color:var(--muted);}
+  .vz-meta{display:block;font-size:var(--fs-meta);line-height:1.45;color:var(--muted);margin-top:4px;}
+  .vz-siegelwort{color:var(--gold-text);font-weight:600;}
+  .video-zeile.highlight-target{outline:3px solid var(--gold);outline-offset:2px;
+    animation:dlPulse 1.8s ease-in-out 2;}
+
   /* --- Eigene Bereichsseite (Netflix-artige Videoauswahl) --- */
   .bereich-detail-head{display:flex;align-items:center;gap:var(--sp-m);margin-bottom:var(--sp-m);}
   .bereich-detail-head .bdh-icon{width:52px;height:52px;border-radius:var(--r-m);
@@ -760,27 +821,6 @@
   .bereich-detail-head h2{font-size:19px;margin:0 0 4px;color:var(--text);}
   .bdh-bar{height:6px;border-radius:var(--r-pill);background:var(--border);overflow:hidden;width:100%;max-width:220px;}
   .bdh-bar-fill{height:100%;background:var(--gruen-hell);border-radius:var(--r-pill);}
-
-  .video-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-m);}
-  @media (min-width:520px){ .video-grid{grid-template-columns:1fr 1fr 1fr;} }
-  .vg-card{position:relative;border-radius:var(--r-l);overflow:hidden;cursor:pointer;
-    aspect-ratio:2/3;display:flex;flex-direction:column;justify-content:flex-end;
-    box-shadow:0 4px 12px rgba(20,18,12,.18);transition:transform .12s ease;}
-  .vg-card:active{transform:scale(0.96);}
-  .vg-card .vg-bg{position:absolute;inset:0;}
-  .vg-card .vg-thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-  .vg-card .vg-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-    width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.92);
-    display:flex;align-items:center;justify-content:center;color:var(--gruen);}
-  .vg-card .vg-play .ic{width:20px;height:20px;}
-  .vg-card .vg-info{position:relative;padding:10px;background:linear-gradient(180deg, rgba(20,18,12,0) 0%, rgba(20,18,12,.78) 65%);}
-  .vg-card .vg-code{font-size:9.5px;color:rgba(255,255,255,.7);font-weight:700;letter-spacing:.06em;}
-  .vg-card .vg-titel{color:#fff;font-size:12.5px;font-weight:700;line-height:1.25;
-    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-  .vg-card .vg-check{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;
-    background:var(--gruen);color:#fff;display:flex;align-items:center;justify-content:center;}
-  .vg-card .vg-check .ic{width:13px;height:13px;}
-  .vg-card .vg-ergebnis{position:absolute;top:8px;left:8px;font-size:15px;}
 
   /* --- Kleine "Zurück"-Zeile, einheitlich auf allen Unterseiten --- */
   .zurueck-zeile{margin-bottom:var(--sp-m);}
@@ -1547,6 +1587,7 @@ function esc(s){
 }
 
 function init(){
+  druckSystemStarten(); // einmal pro App-Start: ein Listener statt vieler (13.09.2026)
   if(location.hash === "#admin"){
     if(adminSession){ ensureRoleThenShowAdminApp(); } else { showAdminLogin(); }
     return;
@@ -2098,33 +2139,14 @@ function renderLernpfadHtml(){
   });
 
   const karten = treffer.map(function(x){
-    // Bug-Fix 28.08.2026: Suchergebnisse ignorierten gesperrte Videos bisher komplett --
-    // ein Tippen darauf hätte serverseitig funktioniert (Klassen-Sperre) bzw. abgelehnt
-    // (Vollzugang-Sperre), aber optisch sah es aus wie ein normales, offenes Video.
-    if(x.gesperrt){
-      const hinweis = x.sperrgrund === "klasse" ? t("gesperrtKlasse",{klasse:x.tag.nur_klasse}) : t("gesperrtVollzugang");
-      return '<div class="vg-card video-locked">' +
-        '<div class="vg-bg" style="background:' + vgGradientFuer(x.video.id) + ';"></div>' +
-        '<div class="vg-play">' + icon("schloss") + "</div>" +
-        '<div class="vg-info"><div class="vg-code">' + esc(x.tag.label) + '</div>' +
-          '<div class="vg-titel">' + esc(x.video.titel) + "</div>" + originalTitel("video", x.video.id, "titel", x.video.titel_de) + dauerBadge(x.video) +
-          '<div class="lock-hint">' + esc(hinweis) + "</div>" +
-        "</div>" +
-      "</div>";
-    }
-    const check = seenVideoIds.has(x.video.id) ? '<span class="vg-check">' + icon("check","ic-s") + "</span>" : "";
-    const ergebnisIcon = x.video.pruefung_ergebnis === "bestanden" ? '<span class="vg-ergebnis">✅</span>'
-      : x.video.pruefung_ergebnis === "nicht_bestanden" ? '<span class="vg-ergebnis">❌</span>' : "";
-    return '<div class="vg-card" data-vid="' + esc(x.video.id) + '">' +
-      '<div class="vg-bg" style="background:' + vgGradientFuer(x.video.id) + ';"></div>' + vgBildLayer(x.video) +
-      '<div class="vg-play">' + icon("play") + "</div>" +
-      ergebnisIcon + check +
-      '<div class="vg-info"><div class="vg-code">' + esc(x.tag.label) + '</div><div class="vg-titel">' + esc(x.video.titel) + "</div></div>" +
-    "</div>";
+    return renderVideoZeile({
+      video: x.video, tag: x.tag, code: x.code,
+      gesperrt: x.gesperrt, sperrgrund: x.sperrgrund
+    });
   }).join("");
 
-  return suchLeiste + statusChips + '<div class="video-grid">' + (karten || '<div class="leer-hinweis">' +
-    (suchBegriff ? 'Nichts gefunden für „' + esc(suchBegriff) + '".' : "Nichts in diesem Filter.") + "</div>") + "</div>";
+  return suchLeiste + statusChips + (karten || '<div class="leer-hinweis">' +
+    (suchBegriff ? 'Nichts gefunden für „' + esc(suchBegriff) + '".' : "Nichts in diesem Filter.") + "</div>");
 }
 
 function renderPruefungsstreckenHtml(){
@@ -2209,7 +2231,7 @@ function renderStartHtml(){
     : "";
   const weiterZeile = fortsetzenX
     ? '<div class="fa-label">' + esc(fortsetzenLabel) + "</div>" +
-      '<button class="weiter-zeile" data-vid="' + esc(fortsetzenX.video.id) + '">' +
+      '<button class="weiter-zeile druck-3" data-vid="' + esc(fortsetzenX.video.id) + '">' +
         '<span class="weiter-play"></span>' +
         '<span class="weiter-text">' +
           '<span class="weiter-titel">' + esc(fortsetzenX.video.titel) + "</span>" +
@@ -2282,7 +2304,7 @@ function renderStartHtml(){
         "</span>";
 
     const station =
-      '<button class="station' + (istJetzt ? " jetzt" : "") + '" data-gotostufe="' + esc(g.stufe) + '">' +
+      '<button class="station druck-3' + (istJetzt ? " jetzt" : "") + '" data-gotostufe="' + esc(g.stufe) + '">' +
         kopfOderName +
         '<span class="station-meta">' + meta + "</span>" +
         (istJetzt ? '<span class="station-bar"><span style="width:' + pct + '%;"></span></span>' : "") +
@@ -2294,7 +2316,7 @@ function renderStartHtml(){
   const siegelNotiz = (!(session && session.vollzugang))
     ? '<div class="siegel-notiz">' +
         "<p>Ein Teil der Strecke ist <strong>versiegelt</strong>. Dein Fahrlehrer schaltet den Vollzugang frei.</p>" +
-        '<button class="btn-gold" data-zugang-anfragen="' + esc(ersteGesperrteGruppe || "Start") + '">Zugang anfragen</button>' +
+        '<button class="btn-gold druck-1" data-haptik data-zugang-anfragen="' + esc(ersteGesperrteGruppe || "Start") + '">Zugang anfragen</button>' +
         '<div class="siegel-klein">Kein Kauf in der App. Dein Fahrlehrer schaltet frei.</div>' +
       "</div>"
     : "";
@@ -2386,34 +2408,12 @@ function renderBereichDetailHtml(){
     : gruppe.videos;
 
   const karten = sichtbar.map(function(x){
-    const ergebnisIcon = x.video.pruefung_ergebnis === "bestanden" ? '<span class="vg-ergebnis">✅</span>'
-      : x.video.pruefung_ergebnis === "nicht_bestanden" ? '<span class="vg-ergebnis">❌</span>' : "";
-    const check = seenVideoIds.has(x.video.id) ? '<span class="vg-check">' + icon("check","ic-s") + "</span>" : "";
     const isHighlighted = deepLinkTagId && x.tag.id === deepLinkTagId;
-    const targetId = isHighlighted ? ' id="dl-target"' : "";
-    // Bereich 7.9 + Freemium (28.08.2026): gesperrte Themen bleiben sichtbar, aber
-    // nicht abspielbar. data-vid weglassen, sonst würde der allgemeine Klick-Handler
-    // das Video öffnen. Zwei mögliche Sperrgründe mit jeweils passendem Hinweistext.
-    if(x.gesperrt){
-      const hinweis = x.sperrgrund === "klasse" ? t("gesperrtKlasse",{klasse:x.tag.nur_klasse}) : t("gesperrtVollzugang");
-      return '<div class="vg-card video-locked">' +
-        '<div class="vg-bg" style="background:' + vgGradientFuer(x.video.id) + ';"></div>' +
-        '<div class="vg-play">' + icon("schloss") + "</div>" +
-        '<div class="vg-info"><div class="vg-code">' + esc(x.code) + '</div>' +
-          '<div class="vg-titel">' + esc(x.video.titel) + "</div>" + originalTitel("video", x.video.id, "titel", x.video.titel_de) + dauerBadge(x.video) +
-          '<div class="lock-hint">' + esc(hinweis) + "</div>" +
-        "</div>" +
-      "</div>";
-    }
-    return '<div class="vg-card' + (isHighlighted ? " highlight-target" : "") + '"' + targetId + ' data-vid="' + esc(x.video.id) + '">' +
-      '<div class="vg-bg" style="background:' + vgGradientFuer(x.video.id) + ';"></div>' + vgBildLayer(x.video) +
-      '<div class="vg-play">' + icon("play") + "</div>" +
-      ergebnisIcon + check +
-      '<div class="vg-info"><div class="vg-code">' + esc(x.code) + '</div><div class="vg-titel">' + esc(x.video.titel) + "</div>" + originalTitel("video", x.video.id, "titel", x.video.titel_de) + dauerBadge(x.video) +
-        (x.video.gratis && !(session && session.vollzugang)
-          ? '<div class="kostprobe-badge">Kostprobe</div>' : "") +
-      "</div>" +
-    "</div>";
+    return renderVideoZeile({
+      video: x.video, tag: x.tag, code: x.code,
+      gesperrt: x.gesperrt, sperrgrund: x.sperrgrund,
+      highlighted: isHighlighted
+    });
   }).join("");
 
   // Idee 4 (27.08.2026): konkreter statt generischer Hinweis, WIE VIELE Videos warten.
@@ -2451,7 +2451,7 @@ function renderBereichDetailHtml(){
     "</div>" +
     vollzugangBanner +
     filterBar +
-    '<div class="video-grid">' + (karten || '<div class="leer-hinweis">Noch keine Videos in diesem Bereich.</div>') + "</div>"
+    (karten || '<div class="leer-hinweis">Noch keine Videos in diesem Bereich.</div>')
   );
 }
 
@@ -2868,27 +2868,14 @@ function renderThemenHtml(){
   // zeigen, während er in der Bereichsansicht offen ist -- widersprüchlich und verwirrend.
   const karten = treffer.map(function(v){
     const sperrgrundHier = tag ? videoSperrgrund(tag, v) : null;
-    if(sperrgrundHier){
-      const hinweis = sperrgrundHier === "klasse" ? t("gesperrtKlasse",{klasse:tag.nur_klasse}) : t("gesperrtVollzugang");
-      return '<div class="vg-card video-locked">' +
-        '<div class="vg-bg" style="background:' + vgGradientFuer(v.id) + ';"></div>' +
-        '<div class="vg-play">' + icon("schloss") + "</div>" +
-        '<div class="vg-info"><div class="vg-titel">' + esc(v.titel) + "</div>" +
-          '<div class="lock-hint">' + esc(hinweis) + "</div>" +
-        "</div>" +
-      "</div>";
-    }
-    const check = seenVideoIds.has(v.id) ? '<span class="vg-check">' + icon("check","ic-s") + "</span>" : "";
-    return '<div class="vg-card" data-vid="' + esc(v.id) + '">' +
-      '<div class="vg-bg" style="background:' + vgGradientFuer(v.id) + ';"></div>' + vgBildLayer(v) +
-      '<div class="vg-play">' + icon("play") + "</div>" + check +
-      '<div class="vg-info"><div class="vg-titel">' + esc(v.titel) + "</div></div>" +
-    "</div>";
+    return renderVideoZeile({
+      video: v, tag: tag, gesperrt: !!sperrgrundHier, sperrgrund: sperrgrundHier
+    });
   }).join("");
 
   return '<button class="krumen zurueck-zeile" data-hashtag-zurueck>' + icon("zurueck") + "<span># Themen</span></button>" +
     '<div class="tagline" style="font-size:19px;margin-bottom:14px;">#' + esc(tag ? tag.label : "") + "</div>" +
-    '<div class="video-grid">' + (karten || '<div class="leer-hinweis">Keine Videos gefunden.</div>') + "</div>";
+    (karten || '<div class="leer-hinweis">Keine Videos gefunden.</div>');
 }
 
 /* 27.08.2026: Seit dem Papierbogen-Layout scrollt auf breiten Bildschirmen
@@ -2901,6 +2888,48 @@ function nachObenScrollen(){
     bogen.scrollTo({ top:0, behavior:"smooth" });
   }
   window.scrollTo({ top:0, behavior:"smooth" });
+}
+
+/* ---- Seitenfluss (13.09.2026, "Papier & Strecke") ----
+   Die App zeichnet Seiten per innerHTML komplett neu. Genau das ist der
+   Idealfall fuer die View-Transitions-API: der Browser fotografiert den alten
+   Zustand, laesst die Render-Funktion laufen und blendet selbst hinueber --
+   kein Framework, kein State-Umbau, kein doppeltes DOM.
+   Browser ohne Unterstuetzung (aeltere Android-WebViews, Firefox < 129) und
+   Geraete mit "Bewegung reduzieren" rendern hart wie bisher. */
+function seitenwechsel(renderFn, richtung){
+  if(typeof renderFn !== "function") return;
+  const ruhig = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(ruhig || !document.startViewTransition){
+    renderFn();
+    return;
+  }
+  // "vor" (tiefer in die App) und "zurueck" bekommen unterschiedliche Richtungen --
+  // daran merkt der Schueler, wo er im Stapel ist (CSS greift ueber [data-fluss]).
+  document.documentElement.dataset.fluss = richtung === "zurueck" ? "zurueck" : "vor";
+  const uebergang = document.startViewTransition(function(){ renderFn(); });
+  uebergang.finished.finally(function(){
+    delete document.documentElement.dataset.fluss;
+  });
+}
+
+/* ---- Druck + Haptik (13.09.2026) ----
+   Der eigentliche Druck-Effekt liegt im CSS (:active, drei Tiefen -- .druck-1/
+   -2/-3). Hier kommt nur dazu, was CSS nicht kann: ein 8-ms-Vibrieren bei
+   Tipps, die wirklich etwas VERAENDERN. Bewusst NICHT bei Navigation --
+   sonst brummt das Telefon bei jedem Seitenwechsel. */
+function spuerbar(){
+  if(!navigator.vibrate) return; // iOS ignoriert das still, kein Fehler
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  try { navigator.vibrate(8); } catch(e){ /* egal, kein Vibrationsmotor */ }
+}
+// Ein Listener fuer die ganze App statt einer pro Knopf: billiger und
+// ueberlebt jedes innerHTML-Neuzeichnen. Einmal beim Start aufrufen (siehe init()).
+function druckSystemStarten(){
+  document.addEventListener("pointerdown", function(ev){
+    const ziel = ev.target.closest("[data-haptik]");
+    if(ziel) spuerbar();
+  }, { passive: true });
 }
 
 function renderCatalog(){
@@ -2972,7 +3001,7 @@ function renderCatalog(){
     bottomNav;
 
   document.getElementById("wortmarke-home-btn").addEventListener("click", function(){
-    drawerView = null; mainView = "start"; selectedBereich = null; rechtDoc = null; renderCatalog();
+    drawerView = null; mainView = "start"; selectedBereich = null; rechtDoc = null; seitenwechsel(renderCatalog, "zurueck");
   });
   document.getElementById("drawer-open-btn").addEventListener("click", function(){
     // Direktes Klassen-Umschalten statt Neu-Rendern -- nur so kann die Drawer-Öffnung
@@ -2994,12 +3023,12 @@ function renderCatalog(){
       document.querySelector(".drawer").classList.remove("open");
       document.getElementById("drawer-backdrop").classList.remove("open");
       setTimeout(function(){
-        drawerView = b.dataset.drawer; drawerOpen = false; selectedHashtag = null; rechtDoc = null; renderCatalog();
+        drawerView = b.dataset.drawer; drawerOpen = false; selectedHashtag = null; rechtDoc = null; seitenwechsel(renderCatalog);
       }, 180);
     });
   });
   document.querySelectorAll("[data-view]").forEach(function(t){
-    t.addEventListener("click", function(){ drawerView = null; mainView = t.dataset.view; selectedBereich = null; renderCatalog(); });
+    t.addEventListener("click", function(){ drawerView = null; mainView = t.dataset.view; selectedBereich = null; seitenwechsel(renderCatalog); });
   });
   document.querySelectorAll(".stufe-header[data-pruefer]").forEach(function(h){
     h.addEventListener("click", function(){
@@ -3009,19 +3038,19 @@ function renderCatalog(){
     });
   });
   document.querySelectorAll("[data-hashtag]").forEach(function(b){
-    b.addEventListener("click", function(){ selectedHashtag = b.dataset.hashtag; renderCatalog(); nachObenScrollen(); });
+    b.addEventListener("click", function(){ selectedHashtag = b.dataset.hashtag; seitenwechsel(renderCatalog); nachObenScrollen(); });
   });
   document.querySelectorAll("[data-hashtag-zurueck]").forEach(function(b){
-    b.addEventListener("click", function(){ selectedHashtag = null; renderCatalog(); });
+    b.addEventListener("click", function(){ selectedHashtag = null; seitenwechsel(renderCatalog, "zurueck"); });
   });
   document.querySelectorAll("[data-zurueckstart]").forEach(function(b){
     b.addEventListener("click", function(){
-      drawerView = null; mainView = "start"; selectedBereich = null; selectedHashtag = null; rechtDoc = null; renderCatalog();
+      drawerView = null; mainView = "start"; selectedBereich = null; selectedHashtag = null; rechtDoc = null; seitenwechsel(renderCatalog, "zurueck");
     });
   });
   // Rechtliches (10.09.2026): von der Übersicht in ein einzelnes Dokument, und zurück
   document.querySelectorAll("[data-rechtdoc]").forEach(function(b){
-    b.addEventListener("click", function(){ rechtDoc = b.dataset.rechtdoc; renderCatalog(); nachObenScrollen(); });
+    b.addEventListener("click", function(){ rechtDoc = b.dataset.rechtdoc; seitenwechsel(renderCatalog); nachObenScrollen(); });
   });
   // Zugangsanfrage (12.09.2026)
   document.querySelectorAll("[data-zugang-anfragen]").forEach(function(b){
@@ -3030,7 +3059,7 @@ function renderCatalog(){
   const werbeBtn = document.getElementById("werbe-btn");
   if(werbeBtn) werbeBtn.addEventListener("click", holeWerbecode);
   document.querySelectorAll("[data-zurueck-recht]").forEach(function(b){
-    b.addEventListener("click", function(){ rechtDoc = null; renderCatalog(); });
+    b.addEventListener("click", function(){ rechtDoc = null; seitenwechsel(renderCatalog, "zurueck"); });
   });
   const suchInput = document.getElementById("such-input");
   if(suchInput){
@@ -3053,7 +3082,7 @@ function renderCatalog(){
       selectedBereich = b.dataset.gotostufe;
       drawerView = null; mainView = "bereichdetail";
       pruefungFilter = "alle";
-      renderCatalog();
+      seitenwechsel(renderCatalog);
       nachObenScrollen();
     });
   });
@@ -3218,16 +3247,100 @@ function findeNaechstesOffenes(aktuellId){
 // Lädt ein Bild nicht (z.B. wegen Token-Schutz), fällt die Kachel automatisch
 // auf den Farbverlauf zurück -- es kann also nichts "kaputt" aussehen.
 const BUNNY_PULL_ZONE = "vz-d3992a0e-19f.b-cdn.net";
+// Auf true stellen, sobald im Bunny-Dashboard (Stream -> Pull Zone -> Optimizer) der
+// Image Optimizer fuer diese Pull-Zone aktiv ist. Vorher liefert die Optimizer-Query
+// bestenfalls nichts Zusaetzliches, schlimmstenfalls einen Fehler statt des Bildes --
+// deshalb Standard AUS, bis das im Dashboard bestaetigt ist (offener Punkt, siehe Chat).
+const THUMB_OPTIMIZER_AKTIV = false;
 function vgThumbnail(video){
   if(!BUNNY_PULL_ZONE || !video.bunny_video_id) return "";
-  return "https://" + BUNNY_PULL_ZONE + "/" + video.bunny_video_id + "/thumbnail.jpg";
+  const basis = "https://" + BUNNY_PULL_ZONE + "/" + video.bunny_video_id + "/thumbnail.jpg";
+  // 96x54 CSS-Groesse mal 2 fuer Retina-Displays.
+  return THUMB_OPTIMIZER_AKTIV ? basis + "?width=192&height=108" : basis;
 }
 // Erzeugt den Bild-Layer einer Kachel (leer, wenn kein Thumbnail verfügbar).
-function vgBildLayer(video){
-  const url = vgThumbnail(video);
-  if(!url) return "";
-  return '<img class="vg-thumb" src="' + esc(url) + '" alt="" loading="lazy" ' +
-    'onerror="this.style.display=\'none\';">';
+// ---- Video-Zeile (13.09.2026, "Papier & Strecke") ----
+// Ersetzt die alten 2:3-Poster (.vg-card) an den drei Stellen, wo Videos als
+// Kurz-Liste erscheinen (Bereichsseite, Lernpfad-Suche, Themen). Ein Aufruf,
+// drei sichtbare Zustaende -- Sperrgrund "klasse" ist bewusst ein VIERTER, stiller
+// Zustand: er sieht nicht aus wie "versiegelt", weil Bezahlen ihn nicht aufhebt.
+//
+// cfg: { video, tag, code, gesperrt, sperrgrund, highlighted }
+// - video: Pflichtfeld, das rohe Video-Objekt
+// - tag: optional (fuer Klassensperre wird tag.nur_klasse gebraucht)
+// - code: optional, z.B. "AV-3" aus buildLernpfad(); ohne Code faellt die Kuerzel-
+//   Angabe in der Meta-Zeile einfach weg, es wird nichts erfunden
+// - gesperrt/sperrgrund: wie von videoSperrgrund()/buildLernpfad() geliefert
+// - highlighted: fuer den Kompass-Deeplink-Sprung (bisher .highlight-target)
+function renderVideoZeile(cfg){
+  const v = cfg.video;
+  const gesehen = seenVideoIds.has(v.id);
+  const ergebnisIcon = v.pruefung_ergebnis === "bestanden" ? '<span class="vz-ergebnis">✅</span>'
+    : v.pruefung_ergebnis === "nicht_bestanden" ? '<span class="vz-ergebnis">❌</span>' : "";
+  const originalZeile = originalTitel("video", v.id, "titel", v.titel_de);
+  const dauerTxt = dauerKurz(v.dauer_sekunden);
+  const dauerImBild = dauerTxt ? '<span class="vz-dauer">' + esc(dauerTxt) + "</span>" : "";
+  const thumbUrl = vgThumbnail(v);
+  const thumbImg = thumbUrl
+    ? '<img class="vz-img" src="' + esc(thumbUrl) + '" alt="" loading="lazy" decoding="async" width="96" height="54" onerror="this.style.display=\'none\';">'
+    : "";
+  const codeTeil = cfg.code ? esc(cfg.code) : "";
+
+  let malInhalt, malKlasse, metaTxt, zusatzKlasse, klickbar;
+
+  if(cfg.gesperrt){
+    const istKlasse = cfg.sperrgrund === "klasse";
+    zusatzKlasse = istKlasse ? "gesperrt-klasse" : "versiegelt";
+    klickbar = false; // wie bisher: data-vid weglassen, Klick tut nichts
+    if(istKlasse){
+      const hinweis = t("gesperrtKlasse", { klasse: cfg.tag && cfg.tag.nur_klasse });
+      malInhalt = icon("schloss", "ic-s");
+      malKlasse = "vz-mal-klasse";
+      metaTxt = [codeTeil, esc(hinweis)].filter(Boolean).join(" · ");
+    } else {
+      malInhalt = "";
+      malKlasse = "vz-mal-siegel";
+      metaTxt = [codeTeil, '<span class="vz-siegelwort">versiegelt</span>'].filter(Boolean).join(" · ");
+    }
+  } else if(gesehen){
+    zusatzKlasse = "gesehen";
+    klickbar = true;
+    malInhalt = icon("check", "ic-s");
+    malKlasse = "vz-mal-gesehen";
+    metaTxt = codeTeil;
+  } else {
+    zusatzKlasse = "offen";
+    klickbar = true;
+    malInhalt = "";
+    malKlasse = "vz-mal-offen";
+    // Kostprobe: einzelnes Video frei trotz gesperrtem Thema -- ohne Hinweis wuerde
+    // eine gruene Zeile zwischen goldenen Nachbarn wie ein Fehler aussehen. Nur fuer
+    // Schueler OHNE Vollzugang zeigen: wer bereits bezahlt hat, braucht den Hinweis
+    // nicht -- "Kostprobe" waere fuer ihn nur Rauschen.
+    const ohneVollzugang = !(session && session.vollzugang);
+    const kostprobe = ohneVollzugang && v.gratis && cfg.tag && !cfg.tag.gratis;
+    const themaFrei = ohneVollzugang && cfg.tag && cfg.tag.gratis;
+    const zusatz = kostprobe ? "Kostprobe" : (themaFrei ? "offen für alle" : "");
+    metaTxt = [codeTeil, zusatz].filter(Boolean).join(" · ");
+  }
+
+  const highlightKlasse = cfg.highlighted ? " highlight-target" : "";
+  const highlightId = cfg.highlighted ? ' id="dl-target"' : "";
+  const vidAttr = klickbar ? ' data-vid="' + esc(v.id) + '"' : "";
+
+  return '<div class="video-zeile druck-3 ' + zusatzKlasse + highlightKlasse + '"' + highlightId + vidAttr + '>' +
+      '<div class="vz-thumb">' +
+        '<div class="vz-thumb-bg" style="background:' + vgGradientFuer(v.id) + ';"></div>' +
+        thumbImg + dauerImBild +
+        '<span class="vz-mal ' + malKlasse + '">' + malInhalt + "</span>" +
+        ergebnisIcon +
+      "</div>" +
+      '<div class="vz-text">' +
+        '<span class="vz-titel">' + esc(v.titel) + "</span>" +
+        originalZeile +
+        (metaTxt ? '<span class="vz-meta">' + metaTxt + "</span>" : "") +
+      "</div>" +
+    "</div>";
 }
 
 // Kein Zugriff auf echte Bunny-Thumbnails (CDN-Adresse nicht bekannt) -- stattdessen
