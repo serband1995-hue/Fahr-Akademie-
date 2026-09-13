@@ -764,6 +764,37 @@
   .btn-gold:active{transform:scale(.985);}
   .btn-gold[disabled]{opacity:.6;cursor:default;}
 
+  /* --- Blatt von unten (13.09.2026, Spec 3.16) — ersetzt confirm/prompt/alert.
+     Die Browser-Dialoge sehen auf dem Handy wie ein Systemfehler aus und lassen
+     sich nicht gestalten. Nur transform/opacity animiert. --- */
+  .blatt-overlay{position:fixed;inset:0;z-index:200;background:rgba(43,40,30,.34);
+    display:flex;align-items:flex-end;justify-content:center;
+    opacity:0;transition:opacity 320ms var(--ez-standard);}
+  .blatt-overlay.offen{opacity:1;}
+  .blatt{width:100%;max-width:720px;background:var(--bg);
+    border-radius:22px 22px 0 0;padding:14px 20px calc(20px + env(safe-area-inset-bottom));
+    box-shadow:var(--schatten-3);
+    transform:translateY(100%);transition:transform 320ms var(--ez-raus);}
+  .blatt-overlay.offen .blatt{transform:translateY(0);}
+  .blatt-griff{width:36px;height:4px;border-radius:var(--r-pill);background:var(--hairline);
+    margin:0 auto 14px;}
+  .blatt-kopf{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-m);}
+  .blatt-titel{font-family:var(--ff-titel);font-weight:var(--fw-titel);font-size:19px;
+    line-height:1.25;color:var(--text);}
+  .blatt-zu{flex:none;width:44px;height:44px;border:none;background:none;cursor:pointer;
+    color:var(--muted);display:flex;align-items:center;justify-content:center;border-radius:var(--r-m);}
+  .blatt-text{font-size:var(--fs-body);line-height:1.55;color:var(--muted);
+    margin-top:10px;white-space:pre-line;}
+  .blatt-feld{width:100%;min-height:48px;margin-top:14px;padding:12px 14px;
+    border:1px solid var(--hairline);border-radius:var(--r-m);background:var(--surface);
+    color:var(--text);font-family:inherit;font-size:16px;}
+  .blatt-feld:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-schwach);}
+  .blatt-knoepfe{display:flex;gap:var(--sp-s);margin-top:18px;}
+  .blatt-knoepfe > *{flex:1;min-height:46px;}
+  /* Gefaehrliche Aktion: rot und klar unterscheidbar, nie als Gold-Hauptknopf. */
+  .blatt-warn{border:none;border-radius:var(--r-m);background:var(--warn);color:#fff;
+    font-family:inherit;font-size:14.5px;font-weight:800;cursor:pointer;}
+
   /* --- Video-Zeile (13.09.2026) — ersetzt die 2:3-Poster (.vg-card) an den drei
      Stellen mit kurzer Videoliste: Bereichsseite, Lernpfad-Suche, Themen. Fixe
      96x54-Vorschau (16:9) statt vollflaechigem Poster, Zustand ueber Icon + Meta-Text
@@ -825,7 +856,7 @@
   /* --- Kleine "Zurück"-Zeile, einheitlich auf allen Unterseiten --- */
   .zurueck-zeile{margin-bottom:var(--sp-m);}
 
-  /* ================= ADMIN: DASHBOARD, ASSISTENT, HISTORIE (25.08.2026) ================= */
+  /* ================= ADMIN: DASHBOARD, ASSISTENT (25.08.2026) ================= */
 
   /* --- Kennzahlen-Kacheln --- */
   .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-s);margin-bottom:var(--sp-l);}
@@ -873,7 +904,7 @@
   .thema-zeile input{width:17px;height:17px;flex:none;accent-color:var(--gruen);}
   .thema-bereich{font-size:10.5px;color:var(--faint);margin-left:auto;flex-shrink:0;}
 
-  /* --- Schülerhistorie --- */
+  /* --- Zeilen für anonyme Dashboard-Aggregate (Meistgesehene Videos, Kaufinteresse) --- */
   .hist-zeile{display:flex;align-items:center;gap:var(--sp-s);padding:9px 0;
     border-bottom:1px solid var(--border);font-size:13px;}
   .hist-zeile:last-child{border-bottom:none;}
@@ -881,7 +912,6 @@
   .hist-anzahl{background:var(--surface-tint);color:var(--gruen);border-radius:var(--r-pill);
     padding:2px 9px;font-size:11.5px;font-weight:700;flex-shrink:0;}
   .hist-anzahl.oft{background:var(--gold-schwach);color:var(--gold-text);}
-  .hist-datum{font-size:11px;color:var(--faint);flex-shrink:0;}
   /* ================= SEITENMENÜ (Drawer), Dashboard, Nützliches ================= */
   /* 27.08.2026: Der Menü-Knopf war mit 18px-Symbol in 30px-Fläche viel zu klein
      zum Treffen. Jetzt 44x44px Tap-Fläche mit 26px-Symbol und kräftigerem Strich,
@@ -1306,13 +1336,11 @@ let kandidatenSuche = "";          // 8.4 Schnellsuche
 let kandidatenNurOffen = true;     // 8.4 Standard: nur die ohne Zugang
 let schuelerSuche = "";            // 8.4 Schnellsuche in der Schülerliste
 let bulkAuswahl = new Set();       // 8.2 Mehrfachauswahl für Sammelaktionen
-let protokollEintraege = [];       // 8.7 Änderungsprotokoll (nicht zu verwechseln
-                                   //     mit renderAdminHistorie = Video-Historie je Schüler)
+let protokollEintraege = [];       // 8.7 Änderungsprotokoll (Admin-Handlungen, nicht Lernfortschritt)
 let videoFilterStufe = "";         // 8.3 Video-Liste nach Stufe filtern
 let videoFilterFahrzeug = "";      // 09.09.2026: Video-Liste nach Fahrzeug filtern (Audi A1, Audi Q5, Cupra, ...)
-let adminFortschritt = [];      // alle Videoaufrufe, für Dashboard + Schülerhistorie
+let adminFortschritt = [];      // alle Videoaufrufe, nur fuer anonyme Aggregate + Betrugserkennung
 let adminSperrKlicks = [];      // Freemium: welche gesperrten Bereiche werden angetippt
-let historieSchuelerId = null;  // welcher Schüler gerade in der Historie offen ist
 let allFahrlehrer = [];
 let allPruefer = [];
 let allSchueler = [];
@@ -1510,12 +1538,14 @@ async function holeVideoLaengen(){
     const daten = await res.json();
 
     if(daten.code === "secret_fehlt"){
-      alert("Der Bunny-API-Schlüssel fehlt noch.\n\n" +
-        "So trägst du ihn ein:\n" +
-        "1. Bei Bunny: Stream → deine Library → API → den Schlüssel kopieren\n" +
-        "2. Bei Supabase: Edge Functions → Secrets → neues Geheimnis BUNNY_API_KEY\n\n" +
-        "Danach hier nochmal antippen.\n\n" +
-        "Hinweis: Das ist ein ANDERER Schlüssel als der, mit dem die Videos abgespielt werden.");
+      await blattHinweis({
+        titel: "Der Bunny-API-Schlüssel fehlt noch",
+        text: "So trägst du ihn ein:\n\n" +
+          "1. Bei Bunny: Stream → deine Library → API → den Schlüssel kopieren\n" +
+          "2. Bei Supabase: Edge Functions → Secrets → neues Geheimnis BUNNY_API_KEY\n\n" +
+          "Danach hier nochmal antippen.\n\n" +
+          "Hinweis: Das ist ein ANDERER Schlüssel als der, mit dem die Videos abgespielt werden."
+      });
       return;
     }
     if(daten.error){ showToast("Fehler: " + daten.error); return; }
@@ -3143,11 +3173,13 @@ async function zugangAnfragen(btn, bereich){
     }
     if(d.ok){
       btn.innerHTML = icon("check") + "<span>Anfrage gesendet</span>";
-      alert("Danke! Deine Anfrage ist raus.\n\n" +
-        "So geht es weiter:\n" +
-        "1. Dein Fahrlehrer meldet sich mit den Zahlungsinfos\n" +
-        "2. Nach Zahlung wird dein Zugang freigeschaltet\n" +
-        "3. Alle Bereiche sind dann sofort offen — ohne neu anzumelden");
+      await blattHinweis({
+        titel: "Danke! Deine Anfrage ist raus.",
+        text: "So geht es weiter:\n\n" +
+          "1. Dein Fahrlehrer meldet sich mit den Zahlungsinfos\n" +
+          "2. Nach Zahlung wird dein Zugang freigeschaltet\n" +
+          "3. Alle Bereiche sind dann sofort offen — ohne neu anzumelden"
+      });
       return;
     }
     if(d.code === "hat_schon"){
@@ -3198,7 +3230,9 @@ async function holeWerbecode(){
       } else if(navigator.clipboard){
         navigator.clipboard.writeText(text).then(function(){ showToast("Text kopiert — jetzt einfügen"); });
       } else {
-        prompt("Text zum Kopieren:", text);
+        // Bewusst ohne await: der Handler ist nicht async und es folgt nichts mehr.
+        // Das Ergebnis wird nicht gebraucht -- der Text steht im Feld zum Kopieren.
+        blattEingabe({ titel:"Text zum Kopieren", wert:text, okText:"Fertig" });
       }
     };
   } catch(e){
@@ -3507,6 +3541,116 @@ function showToast(msg){
   setTimeout(function(){ t.remove(); }, 2600);
 }
 
+/* ---- Blatt von unten (13.09.2026, Spec 3.16) ----
+   Ersetzt confirm()/prompt()/alert(). Die Browser-Dialoge sehen auf dem Handy
+   wie ein Systemfehler aus, lassen sich nicht gestalten und blockieren den
+   ganzen Thread. Hier stattdessen ein Blatt, das von unten einfaehrt.
+
+   Alle drei Funktionen geben ein Promise zurueck. Weil jede aufrufende Stelle
+   bereits "async" ist, reicht ueberall ein vorangestelltes "await":
+     if(!confirm("Wirklich?")) return;
+   wird zu
+     if(!await blattBestaetigen({ titel:"Wirklich?" })) return;
+
+   Nur EIN Blatt gleichzeitig: ein zweiter Aufruf schliesst das erste, sonst
+   koennten sich zwei Overlays stapeln und die Seite dauerhaft blockieren. */
+let blattSchliessen = null;
+
+function blattBauen(opts){
+  // Ein eventuell offenes Blatt zuerst sauber beenden (mit "abgebrochen").
+  if(blattSchliessen) blattSchliessen(null);
+
+  const overlay = document.createElement("div");
+  overlay.className = "blatt-overlay";
+  overlay.innerHTML =
+    '<div class="blatt" role="dialog" aria-modal="true">' +
+      '<div class="blatt-griff"></div>' +
+      '<div class="blatt-kopf">' +
+        '<div class="blatt-titel">' + esc(opts.titel || "") + "</div>" +
+        '<button class="blatt-zu druck-2" aria-label="Schließen">' + icon("x") + "</button>" +
+      "</div>" +
+      (opts.text ? '<div class="blatt-text">' + esc(opts.text) + "</div>" : "") +
+      (opts.eingabe
+        ? '<input class="blatt-feld" id="blatt-feld" type="' + esc(opts.eingabeTyp || "text") + '" ' +
+          'value="' + esc(opts.wert || "") + '" placeholder="' + esc(opts.platzhalter || "") + '">'
+        : "") +
+      '<div class="blatt-knoepfe">' +
+        (opts.abbruchText === null ? ""
+          : '<button class="btn-still druck-2" id="blatt-abbruch">' + esc(opts.abbruchText || "Abbrechen") + "</button>") +
+        '<button class="' + (opts.gefaehrlich ? "blatt-warn" : "btn-gold") + ' druck-1" data-haptik id="blatt-ok">' +
+          esc(opts.okText || "Speichern") + "</button>" +
+      "</div>" +
+    "</div>";
+  document.body.appendChild(overlay);
+  // Einfahren erst im naechsten Frame anstossen, sonst gibt es nichts zu animieren.
+  requestAnimationFrame(function(){ overlay.classList.add("offen"); });
+  return overlay;
+}
+
+function blattZeigen(opts){
+  return new Promise(function(aufloesen){
+    const overlay = blattBauen(opts);
+    const feld = overlay.querySelector("#blatt-feld");
+
+    let schonFertig = false;
+    function beenden(wert){
+      if(schonFertig) return;   // doppeltes Antippen darf nicht zweimal aufloesen
+      schonFertig = true;
+      blattSchliessen = null;
+      overlay.classList.remove("offen");
+      // Erst nach der Ausfahr-Bewegung entfernen, sonst verschwindet es hart.
+      setTimeout(function(){ overlay.remove(); }, 320);
+      document.removeEventListener("keydown", beiTaste);
+      aufloesen(wert);
+    }
+    function beiTaste(ev){
+      if(ev.key === "Escape") beenden(null);
+      if(ev.key === "Enter" && feld) beenden(feld.value);
+    }
+    blattSchliessen = beenden;
+
+    overlay.querySelector("#blatt-ok").addEventListener("click", function(){
+      beenden(feld ? feld.value : true);
+    });
+    const abbruchKnopf = overlay.querySelector("#blatt-abbruch");
+    if(abbruchKnopf) abbruchKnopf.addEventListener("click", function(){ beenden(null); });
+    overlay.querySelector(".blatt-zu").addEventListener("click", function(){ beenden(null); });
+    // Tipp auf die Flaeche daneben schliesst -- aber nur dort, nicht im Blatt selbst.
+    overlay.addEventListener("click", function(ev){ if(ev.target === overlay) beenden(null); });
+    document.addEventListener("keydown", beiTaste);
+
+    if(feld){ feld.focus(); try{ feld.select(); }catch(e){} }
+  });
+}
+
+// Ersetzt confirm(): liefert true oder false.
+async function blattBestaetigen(opts){
+  const a = await blattZeigen({
+    titel: opts.titel, text: opts.text,
+    okText: opts.okText || "Ja, weiter",
+    abbruchText: opts.abbruchText || "Abbrechen",
+    gefaehrlich: opts.gefaehrlich
+  });
+  return a !== null;
+}
+
+// Ersetzt prompt(): liefert den Text oder null bei Abbruch.
+async function blattEingabe(opts){
+  return await blattZeigen({
+    titel: opts.titel, text: opts.text, eingabe: true,
+    eingabeTyp: opts.eingabeTyp, wert: opts.wert, platzhalter: opts.platzhalter,
+    okText: opts.okText || "Speichern", abbruchText: opts.abbruchText || "Abbrechen"
+  });
+}
+
+// Ersetzt alert(): nur zur Kenntnis nehmen, ein Knopf.
+async function blattHinweis(opts){
+  await blattZeigen({
+    titel: opts.titel, text: opts.text,
+    okText: opts.okText || "Alles klar", abbruchText: null
+  });
+}
+
 function showAdminLogin(){
   document.getElementById("app").innerHTML =
     '<div class="login-screen">' +
@@ -3637,8 +3781,9 @@ async function loadAdminData(){
   const vdRes = await supa.from("academy_videos").select("*").order("reihenfolge");
   const vtRes = await supa.from("academy_video_tags").select("*");
   const vprRes = await supa.from("academy_video_pruefer").select("*");
-  // Fortschritt für Dashboard/Historie: jede Zeile ist EIN Videoaufruf, Wiederholungen
-  // sind also mit drin -- genau das macht die Historie aussagekräftig.
+  // Rohdaten für die anonymen Dashboard-Aggregate (Meistgesehene Videos, Kaufinteresse)
+  // und die Betrugserkennung (Schnellwechsel). Jede Zeile ist EIN Videoaufruf.
+  // NICHT fuer eine Schueler-Historie -- die gibt es aus rechtlichen Gruenden nicht.
   const fsRes = await supa.from("academy_fortschritt").select("*").order("gesehen_am", {ascending:false});
   const kdRes = await supa.from("academy_kandidaten").select("*"); // Bereich 8.4
   // Freemium (28.08.2026): welche gesperrten Bereiche wecken das meiste Interesse?
@@ -3723,7 +3868,7 @@ function renderAdmin(){
     t.addEventListener("click", function(){ adminTab = t.dataset.tab; renderAdmin(); });
   });
 
-  if(!tabs.find(function(t){ return t[0] === adminTab; }) && adminTab !== "historie") adminTab = "dashboard";
+  if(!tabs.find(function(t){ return t[0] === adminTab; })) adminTab = "dashboard";
 
   // Zusaetzliche Absicherung auf Anzeige-Ebene: diese Bereiche gehoeren ausschliesslich
   // dem Super-Admin. Tabs auszublenden allein reicht nicht -- ein stehengebliebener
@@ -3732,13 +3877,12 @@ function renderAdmin(){
   // "abrechnung" und "fahrlehrer" stehen hier seit 10.09.2026 NICHT mehr drin: der
   // Partner darf beides sehen, aber nur die eigenen Daten -- das erzwingen die
   // Datenbank-Richtlinien, nicht diese Liste.
-  const nurSuper = ["kandidaten","pruefer","schulen","protokoll","historie"];
+  const nurSuper = ["kandidaten","pruefer","schulen","protokoll"];
   if(myRole !== "super_admin" && nurSuper.indexOf(adminTab) !== -1) adminTab = "dashboard";
 
   if(adminTab === "dashboard") renderAdminDashboard();
   if(adminTab === "schueler") renderAdminSchueler();
   if(adminTab === "kandidaten") renderAdminKandidaten();
-  if(adminTab === "historie") renderAdminHistorie();
   if(adminTab === "fahrlehrer") renderAdminFahrlehrer();
   if(adminTab === "videos") renderAdminVideos();
   if(adminTab === "pruefer") renderAdminPruefer();
@@ -3938,58 +4082,6 @@ async function renderAdminDashboard(){
   }
 }
 
-// ---- SCHÜLER-HISTORIE (25.08.2026) ----
-// Zeigt pro Schüler: welches Video wie oft, wann zuletzt, und was noch offen ist.
-// Häufige Wiederholungen sind bewusst hervorgehoben -- das ist ein Signal dafür,
-// dass ein Thema noch nicht sitzt, nicht nur eine Zahl.
-function renderAdminHistorie(){
-  const s = allSchueler.find(function(x){ return x.id === historieSchuelerId; });
-  if(!s){
-    adminTab = "schueler"; renderAdmin(); return;
-  }
-  const eigene = adminFortschritt.filter(function(f){ return f.schueler_id === s.id; });
-
-  const proVideo = {};
-  eigene.forEach(function(f){
-    if(!proVideo[f.video_id]) proVideo[f.video_id] = { anzahl:0, zuletzt:f.gesehen_am };
-    proVideo[f.video_id].anzahl++;
-    if(f.gesehen_am > proVideo[f.video_id].zuletzt) proVideo[f.video_id].zuletzt = f.gesehen_am;
-  });
-
-  const gesehen = Object.keys(proVideo).map(function(vid){
-    const v = allVideos.find(function(x){ return x.id === vid; });
-    return { titel: v ? v.titel : "(gelöschtes Video)", anzahl: proVideo[vid].anzahl, zuletzt: proVideo[vid].zuletzt };
-  }).sort(function(a,b){ return b.anzahl - a.anzahl; });
-
-  const offen = allVideos.filter(function(v){ return !proVideo[v.id]; });
-
-  const kopf =
-    '<button class="krumen zurueck-zeile" id="hist-zurueck">' + icon("zurueck") + "<span>Schülerliste</span></button>" +
-    '<div class="admin-form-title" style="font-size:17px;">' + esc(s.name) + "</div>" +
-    '<div class="admin-sub" style="margin-bottom:14px;">' + eigene.length + " Aufrufe · " + gesehen.length + " von " + allVideos.length + " Videos gesehen" +
-      (eigene.length ? " · zuletzt " + fmtDateTime(eigene[0].gesehen_am) : "") + "</div>";
-
-  const gesehenHtml = '<div class="admin-card glass"><div class="admin-form-title" style="margin-bottom:6px;">Angeschaut</div>' +
-    (gesehen.length ? gesehen.map(function(g){
-      return '<div class="hist-zeile">' +
-        '<span class="hist-titel">' + esc(g.titel) + "</span>" +
-        '<span class="hist-anzahl' + (g.anzahl >= 3 ? " oft" : "") + '">' + g.anzahl + "×</span>" +
-        '<span class="hist-datum">' + fmtDate(g.zuletzt) + "</span>" +
-      "</div>";
-    }).join("") : '<div class="admin-sub">Noch kein Video angeschaut.</div>') + "</div>";
-
-  const offenHtml = '<div class="admin-card glass"><div class="admin-form-title" style="margin-bottom:6px;">Noch offen (' + offen.length + ")</div>" +
-    (offen.length ? offen.slice(0,15).map(function(v){
-      return '<div class="hist-zeile"><span class="hist-titel">' + esc(v.titel) + "</span></div>";
-    }).join("") + (offen.length > 15 ? '<div class="admin-sub" style="padding-top:8px;">… und ' + (offen.length-15) + " weitere</div>" : "")
-    : '<div class="admin-sub">Alles gesehen 🎉</div>') + "</div>";
-
-  document.getElementById("admin-content").innerHTML = kopf + gesehenHtml + offenHtml;
-  document.getElementById("hist-zurueck").addEventListener("click", function(){
-    historieSchuelerId = null; adminTab = "schueler"; renderAdmin();
-  });
-}
-
 function renderAdminSchueler(){
   // --- Betrugsschutz Punkt 4 (09.09.2026): Fortschritts-Plausibilität ---
   // Idee: Eine Person kann nicht zwei verschiedene Videos gleichzeitig schauen.
@@ -4142,7 +4234,6 @@ function renderAdminSchueler(){
           '<div class="admin-badge ' + badgeClass + '">' + badgeText + "</div>" +
           '<div style="margin-top:8px;">' +
             (zeigeKlartext ? '<button class="icon-btn' + (!s.pin_versendet_am ? " danger" : "") + '" data-mail="' + esc(s.id) + '" title="PIN senden">✉️</button>' : "") +
-            '<button class="icon-btn" data-hist="' + esc(s.id) + '" title="Verlauf ansehen">' + icon("dashboard") + "</button>" +
             '<button class="icon-btn" data-toggle="' + esc(s.id) + '" title="Login sperren/entsperren">' + (s.aktiv ? icon("schloss") : icon("schlossOffen")) + "</button>" +
             '<button class="icon-btn danger" data-del="' + esc(s.id) + '" title="Löschen">' + icon("papierkorb") + '</button>' +
           "</div>" +
@@ -4226,11 +4317,6 @@ function renderAdminSchueler(){
   document.getElementById("ns-btn").addEventListener("click", createSchueler);
   document.querySelectorAll("[data-mail]").forEach(function(b){
     b.addEventListener("click", function(){ resendPin(b.dataset.mail); });
-  });
-  document.querySelectorAll("[data-hist]").forEach(function(b){
-    b.addEventListener("click", function(){
-      historieSchuelerId = b.dataset.hist; adminTab = "historie"; renderAdmin();
-    });
   });
   document.querySelectorAll("[data-toggle]").forEach(function(b){
     b.addEventListener("click", function(){ toggleSchueler(b.dataset.toggle); });
@@ -4373,23 +4459,45 @@ async function toggleSchueler(id){
   const s = allSchueler.find(function(x){ return x.id === id; });
   if(!s) return;
 
+  const standVorher = s.aktiv;
   // Nur beim SPERREN nach einem Grund fragen (beim Entsperren nicht nötig) --
   // dient dir als Nachweis, falls es wegen Weitergabe/Missbrauch zum Streit kommt.
   let grund = s.sperrgrund || null;
   if(s.aktiv){
-    grund = prompt("Grund für die Sperrung (optional, z. B. \"Zugangsdaten weitergegeben\"):", "");
+    grund = await blattEingabe({
+      titel: "Zugang sperren",
+      text: s.name + "\n\nGrund für die Sperrung (optional):",
+      platzhalter: "z. B. Zugangsdaten weitergegeben",
+      okText: "Sperren"
+    });
     if(grund === null) return; // Abgebrochen -> nichts ändern
   }
-  s.aktiv = !s.aktiv;
-  s.sperrgrund = s.aktiv ? null : (grund || "Kein Grund angegeben");
+
+  // Wie bei toggleVollzugang: das Blatt blockiert den Browser nicht, deshalb gegen
+  // den Live-Zustand pruefen statt gegen die inzwischen evtl. veraltete Referenz.
+  const aktuell = allSchueler.find(function(x){ return x.id === id; });
+  if(!aktuell){ showToast("Dieser Schüler ist nicht mehr in der Liste."); return; }
+  if(aktuell.aktiv !== standVorher){
+    renderAdminSchueler();
+    showToast("Der Zugang wurde inzwischen schon geändert.");
+    return;
+  }
+
+  aktuell.aktiv = !aktuell.aktiv;
+  aktuell.sperrgrund = aktuell.aktiv ? null : (grund || "Kein Grund angegeben");
 
   if(DEMO_MODE){
     renderAdminSchueler();
     return;
   }
-  const { error } = await supa.from("academy_schueler").update({ aktiv: s.aktiv, sperrgrund: s.sperrgrund }).eq("id", id);
-  if(error){ showToast("Fehler: " + error.message); return; }
-  protokolliere(s.aktiv ? "schueler_entsperrt" : "schueler_gesperrt", "schueler", id, s.name, s.aktiv ? null : s.sperrgrund);
+  const { error } = await supa.from("academy_schueler").update({ aktiv: aktuell.aktiv, sperrgrund: aktuell.sperrgrund }).eq("id", id);
+  if(error){
+    aktuell.aktiv = standVorher;   // Anzeige nicht auf einem Zustand stehen lassen, den die DB nicht hat
+    showToast("Fehler: " + error.message);
+    renderAdminSchueler();
+    return;
+  }
+  protokolliere(aktuell.aktiv ? "schueler_entsperrt" : "schueler_gesperrt", "schueler", id, aktuell.name, aktuell.aktiv ? null : aktuell.sperrgrund);
   renderAdminSchueler();
 }
 
@@ -4398,6 +4506,7 @@ async function toggleVollzugang(id){
   if(!s) return;
 
   const wirdFreigeschaltet = !s.vollzugang;
+  const standVorher = s.vollzugang;   // Ausgangszustand merken, siehe Pruefung unten
   let preisEingabe = null;
 
   if(!wirdFreigeschaltet){
@@ -4405,9 +4514,12 @@ async function toggleVollzugang(id){
     // deshalb eine Bestätigung, wie beim Löschen. Der bereits gebuchte Verkauf bleibt
     // bewusst bestehen: eine Abrechnung rueckwirkend zu loeschen waere buchhalterisch
     // falsch. Das wird hier offen gesagt, statt es den Nutzer spaeter entdecken zu lassen.
-    if(!confirm("Vollzugang für " + s.name + " wirklich entziehen?\n\n" +
-      "Der Schüler sieht dann nur noch den Startzugang.\n" +
-      "Hinweis: Eine bereits erstellte Abrechnung bleibt bestehen und wird dadurch nicht storniert.")) return;
+    if(!await blattBestaetigen({
+      titel: "Vollzugang entziehen?",
+      text: s.name + " sieht dann nur noch den Startzugang.\n\n" +
+        "Eine bereits erstellte Abrechnung bleibt bestehen und wird dadurch nicht storniert.",
+      okText: "Zugang entziehen", gefaehrlich: true
+    })) return;
   } else {
     // Freischalten kostet Geld -- vorher Preis erfragen und bestaetigen lassen (10.09.2026).
     // Vorher loeste ein einziger Klick ohne Rueckfrage sofort eine Abrechnung aus.
@@ -4416,13 +4528,17 @@ async function toggleVollzugang(id){
     const meinAnteil = schule && schule.provision_serband != null ? Number(schule.provision_serband) : null;
     const istPartner = myRole !== "super_admin";
 
-    const eingabe = prompt(
-      "Vollzugang für " + s.name + " freischalten.\n\n" +
-      "Welchen Preis hast du dem Schüler berechnet? (in Euro)\n" +
-      (standard != null ? "Leer lassen = Standardpreis " + standard + " €\n" : "") +
-      (istPartner && meinAnteil != null ? "\nDein Anteil an die Fahr-Akademie: " + meinAnteil + " € pro Zugang." : ""),
-      standard != null ? String(standard) : ""
-    );
+    const eingabe = await blattEingabe({
+      titel: "Vollzugang für " + s.name,
+      text: "Welchen Preis hast du dem Schüler berechnet? (in Euro)" +
+        (standard != null ? "\nLeer lassen = Standardpreis " + standard + " €" : "") +
+        (istPartner && meinAnteil != null
+          ? "\n\nDein Anteil an die Fahr-Akademie: " + meinAnteil + " € pro Zugang." : ""),
+      wert: standard != null ? String(standard) : "",
+      eingabeTyp: "text",          // bewusst nicht "number": Komma-Eingabe soll erlaubt bleiben
+      platzhalter: "z. B. 80",
+      okText: "Weiter"
+    });
     if(eingabe === null) return; // abgebrochen
 
     const roh = String(eingabe).trim().replace(",", ".");
@@ -4433,19 +4549,40 @@ async function toggleVollzugang(id){
       // Verkauf unter dem eigenen Einkaufspreis: rechnerisch erlaubt, aber der Partner
       // soll es bewusst tun und nicht erst auf der Rechnung merken.
       if(istPartner && meinAnteil != null && preisEingabe < meinAnteil){
-        if(!confirm("Achtung: Du berechnest " + preisEingabe + " €, zahlst aber " + meinAnteil +
-          " € an die Fahr-Akademie.\n\nDu machst damit " + (meinAnteil - preisEingabe).toFixed(2) +
-          " € Verlust bei diesem Zugang.\n\nTrotzdem freischalten?")) return;
+        if(!await blattBestaetigen({
+          titel: "Du machst damit Verlust",
+          text: "Du berechnest " + preisEingabe + " €, zahlst aber " + meinAnteil +
+            " € an die Fahr-Akademie.\n\nDas sind " + (meinAnteil - preisEingabe).toFixed(2) +
+            " € Verlust bei diesem Zugang.",
+          okText: "Trotzdem freischalten", gefaehrlich: true
+        })) return;
       }
     }
 
     const anzeigePreis = preisEingabe != null ? preisEingabe : standard;
-    if(!confirm("Vollzugang für " + s.name + " freischalten?\n\n" +
-      (anzeigePreis != null ? "Abrechnungsbetrag: " + anzeigePreis + " €\n" : "") +
-      "Das erstellt sofort eine Abrechnung und lässt sich nicht rückgängig machen.")) return;
+    if(!await blattBestaetigen({
+      titel: "Vollzugang freischalten?",
+      text: (anzeigePreis != null ? "Abrechnungsbetrag: " + anzeigePreis + " €\n\n" : "") +
+        "Das erstellt sofort eine Abrechnung und lässt sich nicht rückgängig machen.",
+      okText: "Jetzt freischalten"
+    })) return;
   }
 
-  s.vollzugang = wirdFreigeschaltet;
+  // Schutz gegen doppelte Abrechnung (13.09.2026): Das Blatt blockiert den Browser
+  // nicht so, wie prompt()/confirm() es getan haben. Zwischen Dialog und Update kann
+  // deshalb etwas dazwischenkommen -- ein zweiter Klick, ein Neuladen der Liste durch
+  // loadAdminData(). Ohne diese Pruefung koennte fuer denselben Schueler ein zweites
+  // Mal gebucht werden. Deshalb gegen den LIVE-Zustand pruefen, nicht gegen die alte
+  // Objektreferenz.
+  const aktuell = allSchueler.find(function(x){ return x.id === id; });
+  if(!aktuell){ showToast("Dieser Schüler ist nicht mehr in der Liste."); return; }
+  if(aktuell.vollzugang !== standVorher){
+    renderAdminSchueler();
+    showToast("Der Zugang wurde inzwischen schon geändert — nichts gebucht.");
+    return;
+  }
+
+  aktuell.vollzugang = wirdFreigeschaltet;
 
   if(DEMO_MODE){
     renderAdminSchueler();
@@ -4455,13 +4592,19 @@ async function toggleVollzugang(id){
   // im selben Moment aus, in dem vollzugang auf true wechselt. Zwei getrennte Schreib-
   // vorgaenge in falscher Reihenfolge wuerden den Standardpreis buchen statt des
   // eingegebenen -- deshalb beides in EINEM Update.
-  const felder = { vollzugang: s.vollzugang };
+  const felder = { vollzugang: aktuell.vollzugang };
   if(wirdFreigeschaltet && preisEingabe != null){
     felder.verkaufspreis = preisEingabe;
-    s.verkaufspreis = preisEingabe;
+    aktuell.verkaufspreis = preisEingabe;
   }
   const { error } = await supa.from("academy_schueler").update(felder).eq("id", id);
-  if(error){ showToast("Fehler: " + error.message); return; }
+  if(error){
+    // Zuruecksetzen: sonst zeigt die Liste einen Zustand an, den die Datenbank nicht hat.
+    aktuell.vollzugang = standVorher;
+    showToast("Fehler: " + error.message);
+    renderAdminSchueler();
+    return;
+  }
 
   // Offene Zugangsanfrage automatisch schließen (12.09.2026). Ohne das bliebe sie für
   // immer im Dashboard stehen -- nach zwei Wochen wäre die Liste wertlos, weil man
@@ -4473,14 +4616,16 @@ async function toggleVollzugang(id){
         .eq("schueler_id", id).is("erledigt_am", null);
     } catch(e){ /* Nebensache -- der Vollzugang ist längst gesetzt */ }
   }
-  protokolliere(wirdFreigeschaltet ? "vollzugang_freigeschaltet" : "vollzugang_entzogen", "schueler", id, s.name,
+  protokolliere(wirdFreigeschaltet ? "vollzugang_freigeschaltet" : "vollzugang_entzogen", "schueler", id, aktuell.name,
     wirdFreigeschaltet && preisEingabe != null ? "Preis: " + preisEingabe + " EUR" : null);
   renderAdminSchueler();
   showToast(wirdFreigeschaltet ? "Vollzugang freigeschaltet — Abrechnung erstellt" : "Vollzugang entzogen");
 }
 
 async function deleteSchueler(id){
-  if(!confirm("Diesen Schüler wirklich löschen?")) return;
+  if(!await blattBestaetigen({ titel:"Diesen Schüler wirklich löschen?",
+    text:"Der Zugang wird vollständig entfernt. Das lässt sich nicht rückgängig machen.",
+    okText:"Endgültig löschen", gefaehrlich:true })) return;
   // Namen VOR dem Löschen sichern -- danach ist er nicht mehr abrufbar
   const weg = allSchueler.find(function(x){ return x.id === id; });
   const wegName = weg ? weg.name : "(unbekannt)";
@@ -4800,7 +4945,8 @@ async function removeVideoPruefer(videoId, prueferId){
 async function editVideoBunnyId(id){
   const v = allVideos.find(function(x){ return x.id === id; });
   if(!v) return;
-  const neueId = prompt("Bunny-Video-ID für „" + v.titel + "\" eintragen:", v.bunny_video_id || "");
+  const neueId = await blattEingabe({ titel:"Bunny-Video-ID eintragen",
+    text:v.titel, wert:v.bunny_video_id || "", platzhalter:"z. B. a1b2c3d4-…" });
   if(neueId === null) return;
   const trimmed = neueId.trim();
 
@@ -4827,8 +4973,10 @@ async function editVideoFahrzeug(id){
   const v = allVideos.find(function(x){ return x.id === id; });
   if(!v) return;
   const bekannte = Array.from(new Set(allVideos.map(function(x){ return x.fahrzeug; }).filter(Boolean))).sort();
-  const hinweis = bekannte.length ? "\n\nBereits verwendet: " + bekannte.join(", ") : "";
-  const neu = prompt("Fahrzeug für „" + v.titel + "\" eintragen (z. B. Audi A1, Audi Q5, Cupra):" + hinweis, v.fahrzeug || "");
+  const hinweis = bekannte.length ? "Bereits verwendet: " + bekannte.join(", ") : "";
+  const neu = await blattEingabe({ titel:"Fahrzeug eintragen",
+    text: v.titel + (hinweis ? "\n\n" + hinweis : ""),
+    wert: v.fahrzeug || "", platzhalter:"z. B. Audi A1, Audi Q5, Cupra" });
   if(neu === null) return;
   const trimmed = neu.trim();
 
@@ -4870,7 +5018,11 @@ async function createVideo(){
   const titelDoppelt = allVideos.find(function(v){
     return (v.titel || "").trim().toLowerCase() === titel.toLowerCase();
   });
-  if(titelDoppelt && !confirm("Es gibt bereits ein Video mit dem Titel „" + titelDoppelt.titel + "“.\n\nTrotzdem anlegen?")) return;
+  if(titelDoppelt && !await blattBestaetigen({
+    titel: "Titel gibt es schon",
+    text: "Es gibt bereits ein Video mit dem Titel „" + titelDoppelt.titel + "“.",
+    okText: "Trotzdem anlegen"
+  })) return;
 
   const neu = { id:"v" + Date.now(), titel:titel, beschreibung: desc || null, bunny_video_id: bunnyId || null, pruefung_ergebnis: pruefungsergebnis, fahrzeug: fahrzeugFeld || null };
   const neuVts = gewaehlteTags.map(function(tagId){ return { video_id: neu.id, tag_id: tagId }; });
@@ -4915,7 +5067,8 @@ async function notifyNeuesVideo(videoId){
 }
 
 async function deleteVideo(id){
-  if(!confirm("Dieses Video wirklich löschen?")) return;
+  if(!await blattBestaetigen({ titel:"Dieses Video wirklich löschen?",
+    okText:"Endgültig löschen", gefaehrlich:true })) return;
   if(DEMO_MODE){
     DEMO_VIDEOS = DEMO_VIDEOS.filter(function(x){ return x.id !== id; });
     DEMO_VIDEO_TAGS = DEMO_VIDEO_TAGS.filter(function(x){ return x.video_id !== id; });
@@ -4978,7 +5131,8 @@ async function createPruefer(){
 }
 
 async function deletePruefer(id){
-  if(!confirm("Diesen Prüfer wirklich löschen?")) return;
+  if(!await blattBestaetigen({ titel:"Diesen Prüfer wirklich löschen?",
+    okText:"Endgültig löschen", gefaehrlich:true })) return;
   if(DEMO_MODE){
     DEMO_PRUEFER = DEMO_PRUEFER.filter(function(x){ return x.id !== id; });
     allPruefer = DEMO_PRUEFER;
@@ -5045,7 +5199,8 @@ async function createFahrlehrer(){
 }
 
 async function deleteFahrlehrer(id){
-  if(!confirm("Diesen Fahrlehrer wirklich löschen?")) return;
+  if(!await blattBestaetigen({ titel:"Diesen Fahrlehrer wirklich löschen?",
+    okText:"Endgültig löschen", gefaehrlich:true })) return;
   if(DEMO_MODE){
     DEMO_FAHRLEHRER = DEMO_FAHRLEHRER.filter(function(x){ return x.id !== id; });
     allFahrlehrer = DEMO_FAHRLEHRER;
@@ -5061,9 +5216,9 @@ async function deleteFahrlehrer(id){
 /* ---------- SCHULEN-TAB (nur Super-Admin) ---------- */
 /* =========================================================
    Bereich 8.7 (27.08.2026) — Änderungsprotokoll.
-   Nicht zu verwechseln mit renderAdminHistorie: das ist die
-   Video-Historie je Schüler. Hier geht es um Admin-Handlungen
-   (gesperrt, gelöscht, verlängert, freigeschaltet).
+   Geht ausschließlich um Admin-Handlungen (gesperrt, gelöscht,
+   verlängert, freigeschaltet) -- niemals um Lernfortschritt
+   einzelner Schüler, das gibt es aus rechtlichen Gründen nicht.
    Bewusst "leise": ein fehlgeschlagener Protokolleintrag darf
    die eigentliche Aktion nie blockieren.
    ========================================================= */
@@ -5441,11 +5596,16 @@ async function verkaufLoeschen(id){
   // Bei bereits bezahlten/gebuchten Belegen strenger warnen -- das ist dann schon
   // verbuchter Umsatz, kein einfacher Tippfehler mehr. Loeschen bleibt trotzdem
   // moeglich (fuer echte Fehlbuchungen/Duplikate), aber bewusst mit Extra-Warnung.
-  const frage = v.bezahlt_am
-    ? "Dieser Beleg (" + esc(v.schueler_name) + ", " + (v.verkaufspreis == null ? "kein Preis" : v.verkaufspreis + " €") +
-      ") ist bereits als BEZAHLT verbucht.\n\nWirklich endgültig löschen? Das entfernt ihn auch aus der Jahresübersicht."
-    : "Beleg für " + esc(v.schueler_name) + " wirklich endgültig löschen?";
-  if(!confirm(frage)) return;
+  // Kein esc() mehr noetig: das Blatt escaped selbst (blattBauen), doppeltes
+  // Escapen wuerde aus "Müller & Sohn" ein "Müller &amp; Sohn" machen.
+  const frageText = v.bezahlt_am
+    ? "Beleg: " + v.schueler_name + ", " + (v.verkaufspreis == null ? "kein Preis" : v.verkaufspreis + " €") +
+      "\n\nDieser Beleg ist bereits als BEZAHLT verbucht. Löschen entfernt ihn auch aus der Jahresübersicht."
+    : "Beleg für " + v.schueler_name + " wirklich endgültig löschen?";
+  if(!await blattBestaetigen({
+    titel: v.bezahlt_am ? "Bezahlten Beleg löschen?" : "Beleg löschen?",
+    text: frageText, okText: "Endgültig löschen", gefaehrlich: true
+  })) return;
 
   const { error } = await supa.from("academy_verkaeufe").delete().eq("id", id);
   if(error){ showToast("Fehler: " + error.message); return; }
@@ -5614,7 +5774,8 @@ async function kandidatenAbgleichen(btn){
         antwort_ohne_schueler_array: "Kompass hat geantwortet, aber ohne Schülerliste.",
         unauthorized: "Keine Berechtigung für den Abgleich."
       };
-      if(!still) alert(meldungen[data.error] || ("Abgleich fehlgeschlagen: " + (data.error || "unbekannt")));
+      if(!still) await blattHinweis({ titel:"Abgleich fehlgeschlagen",
+        text: meldungen[data.error] || (data.error || "Unbekannter Fehler") });
       return;
     }
 
@@ -5630,12 +5791,12 @@ async function kandidatenAbgleichen(btn){
       return;
     }
 
-    let txt = "Abgleich fertig.\n\n" + data.zusammenfassung;
+    let txt = data.zusammenfassung;
     if(data.ohne_email) txt += "\n\n" + data.ohne_email + " davon ohne E-Mail — PIN einfach direkt weitergeben.";
     if(data.probleme && data.probleme.length > 0){
       txt += "\n\nÜbersprungen:\n" + data.probleme.slice(0,10).join("\n");
     }
-    alert(txt);
+    await blattHinweis({ titel:"Abgleich fertig", text: txt });
 
     await ladeKandidaten();
     renderAdminKandidaten();
@@ -5652,7 +5813,10 @@ async function kandidatenAbgleichen(btn){
 async function kandidatMailNachtragen(kandId){
   const k = allKandidaten.find(function(x){ return x.id === kandId; });
   if(!k) return;
-  const mail = prompt("E-Mail-Adresse für " + k.name + ":", k.email || "");
+  const mail = await blattEingabe({
+    titel: "E-Mail-Adresse", text: k.name,
+    wert: k.email || "", eingabeTyp: "email", platzhalter: "name@beispiel.de"
+  });
   if(mail === null) return;
   const sauber = mail.trim();
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(sauber)){ showToast("Keine gültige E-Mail-Adresse"); return; }
@@ -5667,10 +5831,13 @@ async function kandidatMailNachtragen(kandId){
 async function kandidatFreischalten(kandId, btn){
   const k = allKandidaten.find(function(x){ return x.id === kandId; });
   if(!k) return;
-  const frage = k.email
-    ? "Zugang für " + k.name + " freischalten?\n\nEs wird eine PIN erzeugt und an " + k.email + " geschickt."
-    : "Zugang für " + k.name + " freischalten?\n\nEs wird eine PIN erzeugt. Da keine E-Mail hinterlegt ist, bekommst du sie danach zum Weitergeben angezeigt.";
-  if(!confirm(frage)) return;
+  if(!await blattBestaetigen({
+    titel: "Zugang für " + k.name + " freischalten?",
+    text: k.email
+      ? "Es wird eine PIN erzeugt und an " + k.email + " geschickt."
+      : "Es wird eine PIN erzeugt. Da keine E-Mail hinterlegt ist, bekommst du sie danach zum Weitergeben angezeigt.",
+    okText: "Freischalten"
+  })) return;
 
   btn.disabled = true;
   const alterText = btn.textContent;
@@ -5686,7 +5853,7 @@ async function kandidatFreischalten(kandId, btn){
       body: JSON.stringify({ kandidat_id: kandId })
     });
     const data = await res.json();
-    if(!res.ok){ alert("Fehler: " + (data.error || "unbekannt")); return; }
+    if(!res.ok){ await blattHinweis({ titel:"Freischalten fehlgeschlagen", text: data.error || "Unbekannter Fehler" }); return; }
 
     await ladeKandidaten();
     // Auch die Schülerliste neu laden: der Kandidat ist jetzt ein echter Schüler.
@@ -5825,7 +5992,11 @@ async function renderKlassenFreigabe(zielId){
 async function bulkVerlaengern(){
   const ids = Array.from(bulkAuswahl);
   if(ids.length === 0) return;
-  if(!confirm(ids.length + " Zugang/Zugänge um 6 Monate verlängern?")) return;
+  if(!await blattBestaetigen({
+    titel: ids.length + " Zugang/Zugänge verlängern?",
+    text: "Die Laufzeit wird um 6 Monate verlängert.",
+    okText: "Verlängern"
+  })) return;
 
   let ok = 0, fehler = 0;
   for(const id of ids){
@@ -5850,7 +6021,11 @@ async function bulkVerlaengern(){
 async function bulkSperrenSetzen(aktiv){
   const ids = Array.from(bulkAuswahl);
   if(ids.length === 0) return;
-  if(!confirm(ids.length + " Zugang/Zugänge " + (aktiv ? "entsperren" : "sperren") + "?")) return;
+  if(!await blattBestaetigen({
+    titel: ids.length + " Zugang/Zugänge " + (aktiv ? "entsperren" : "sperren") + "?",
+    okText: aktiv ? "Entsperren" : "Sperren",
+    gefaehrlich: !aktiv
+  })) return;
 
   let ok = 0, fehler = 0;
   for(const id of ids){
