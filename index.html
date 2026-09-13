@@ -165,8 +165,11 @@
     display:flex;align-items:center;justify-content:center;padding:20px;}
   .pin-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-l);
     padding:22px;max-width:400px;width:100%;box-shadow:0 12px 44px rgba(0,0,0,.25);}
-  .pin-gross{font-size:26px;font-weight:700;letter-spacing:2px;color:var(--text);}
-  .pin-gross.pin-hervor{color:var(--gold-text);font-size:34px;}
+  /* 13.09.2026 umbenannt: hiess .pin-gross und kollidierte mit der Schueler-PIN-Karte
+     weiter unten (gleicher Name, andere Groesse -- die spaetere Regel gewann und hat
+     das Admin-Overlay ungewollt auf 52px Playfair gesetzt). */
+  .pin-admin-wert{font-size:26px;font-weight:700;letter-spacing:2px;color:var(--text);}
+  .pin-admin-wert.pin-hervor{color:var(--gold-text);font-size:34px;}
 
   /* ---- Bereich 10.5: Sprachauswahl im Konto ---- */
   .sprach-reihe{display:flex;flex-wrap:wrap;gap:8px;}
@@ -410,9 +413,22 @@
   .reg-recht{font-size:10.5px;color:var(--faint);line-height:1.5;margin-top:12px;}
   /* PIN nach der Anmeldung: bewusst riesig. Sie ist der einzige Weg zurueck in die App --
      geht sie hier verloren, ist der Zugang fuer den Schueler praktisch weg. */
-  .pin-label{font-size:12.5px;color:var(--muted);font-weight:700;}
-  .pin-gross{font-family:'Playfair Display',serif;font-size:52px;font-weight:700;
-    letter-spacing:.16em;color:var(--gruen-hell);margin:6px 0 10px;}
+  /* Spec 3.10: "der meistgeschossene Screenshot der App". Label gesperrt, PIN gross
+     in Playfair, Erklaerkasten darunter. */
+  .pin-label{font-size:12.5px;color:var(--muted);font-weight:700;
+    letter-spacing:.16em;text-transform:uppercase;}
+  .pin-gross{font-family:'Playfair Display',serif;font-size:62px;font-weight:600;
+    line-height:1;letter-spacing:.06em;color:var(--gruen-hell);margin:10px 0 14px;
+    /* PIN ist eine Zahl -- bleibt auch bei arabischer Oberflaeche von links nach rechts. */
+    direction:ltr;}
+  /* Spec 3.12: der Knopf zeigt VOR dem Tippen, dass noch etwas fehlt -- statt erst
+     nach dem Tippen eine Fehlermeldung zu werfen. */
+  .btn-primary[disabled]{opacity:.5;cursor:default;}
+  .pin-satz{font-size:var(--fs-body);line-height:1.5;color:var(--text);
+    max-width:260px;margin:0 auto;}
+  .pin-kasten{background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--r-m);padding:12px 14px;margin-top:16px;
+    font-size:var(--fs-meta);line-height:1.5;color:var(--muted);text-align:start;}
   .pin-hinweis{font-size:12.5px;color:var(--muted);line-height:1.5;}
   .pin-zugang{margin-top:12px;padding:9px 12px;border-radius:10px;background:var(--surface-tint);font-size:12.5px;}
   .werbe-code{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;
@@ -1851,6 +1867,122 @@ let drawerView = null;       // null | "dashboard" | "nuetzliches" | "hilfe" | "
 let rechtDoc = null;         // Unterseite in "Rechtliches": null (Übersicht) | "impressum" | "datenschutz" | "agb" | "widerruf" (10.09.2026)
 let selectedBereich = null;  // welcher Bereich gerade als eigene "Netflix-Seite" offen ist
 let selectedHashtag = null;  // welches # gerade angetippt wurde (bereichsübergreifende Themensuche)
+
+/* ---- Stapel-Navigation (13.09.2026, Paket 4.6) ----------------------------
+   Vorher fuehrte JEDER Zurueck-Knopf hart zu "Start" -- wer ueber die Themen-
+   suche in einen Bereich kam, landete beim Zurueck nicht wieder in der Suche,
+   sondern ganz vorne. Jetzt merkt sich ein Stapel den Weg.
+
+   Eine Ansicht ist ein einfaches Objekt:
+     { view, bereich, hashtag, recht, drawer }
+   Das sind genau die fuenf Variablen, die den Bildschirm bestimmen -- der
+   Stapel speichert also nichts Zusaetzliches, nur Momentaufnahmen davon.
+
+   WURZELN leeren den Stapel (Spec: "Wurzeln ohne Zurueck"). Alles andere legt
+   die aktuelle Ansicht ab, bevor es die neue setzt.
+   -------------------------------------------------------------------------- */
+const WURZELN = ["start", "lernpfad", "pruefungsstrecken", "verlauf"];
+let navStapel = [];
+
+// Momentaufnahme des aktuellen Bildschirms
+function navJetzt(){
+  return { view: mainView, bereich: selectedBereich, hashtag: selectedHashtag,
+           recht: rechtDoc, drawer: drawerView };
+}
+
+// Momentaufnahme wieder herstellen
+function navAnwenden(z){
+  mainView = z.view; selectedBereich = z.bereich; selectedHashtag = z.hashtag;
+  rechtDoc = z.recht; drawerView = z.drawer;
+}
+
+// Zwei Ansichten sind gleich, wenn ALLE fuenf Felder uebereinstimmen.
+function navGleich(a, b){
+  return a.view === b.view && a.bereich === b.bereich && a.hashtag === b.hashtag
+    && a.recht === b.recht && a.drawer === b.drawer;
+}
+
+// Ist die Ansicht eine Wurzel? Eine Drawer-Seite ist NIE eine Wurzel -- sie wird
+// immer aus einer anderen Ansicht heraus geoeffnet, also muss man dorthin zurueck.
+function navIstWurzel(z){
+  return !z.drawer && !z.bereich && !z.hashtag && !z.recht && WURZELN.indexOf(z.view) !== -1;
+}
+
+/* Anzeigename einer Ansicht -- steht spaeter auf der Zurueck-Pille ("Zurueck zu X").
+   Reihenfolge der Pruefungen ist wichtig: die SPEZIFISCHSTE Eigenschaft gewinnt,
+   sonst hiesse eine Themenseite innerhalb des Lernpfads faelschlich "Reihenfolge". */
+function navName(z){
+  if(!z) return t("start");
+  if(z.recht) return "Rechtliches";
+  if(z.hashtag) return "# Themen";
+  if(z.drawer === "dashboard") return "Dashboard";
+  if(z.drawer === "themen") return "# Themen";
+  if(z.drawer === "nuetzliches") return "Nützliches";
+  if(z.drawer === "rechtliches") return "Rechtliches";
+  if(z.drawer === "hilfe") return "Hilfe & Kontakt";
+  if(z.drawer === "ueber") return "Über diese App";
+  if(z.bereich) return bereichName(z.bereich);
+  if(z.view === "lernpfad") return t("lernpfad");
+  if(z.view === "pruefungsstrecken") return t("pruefung");
+  if(z.view === "verlauf") return t("verlauf");
+  if(z.view === "konto") return t("konto");
+  return t("start");
+}
+
+/* go(aenderung) -- zu einer neuen Ansicht wechseln.
+   "aenderung" enthaelt nur die Felder, die sich aendern; der Rest wird bewusst
+   auf null gesetzt statt uebernommen. Ein liegengebliebenes selectedHashtag
+   waehrend einer Bereichsseite hat frueher echte Fehlanzeigen verursacht. */
+function go(aenderung){
+  const vorher = navJetzt();
+  const ziel = {
+    view: aenderung.view !== undefined ? aenderung.view : vorher.view,
+    bereich: aenderung.bereich !== undefined ? aenderung.bereich : null,
+    hashtag: aenderung.hashtag !== undefined ? aenderung.hashtag : null,
+    recht: aenderung.recht !== undefined ? aenderung.recht : null,
+    drawer: aenderung.drawer !== undefined ? aenderung.drawer : null
+  };
+  // Ziel ist die Ansicht, auf der wir schon stehen (Doppeltipp aus Ungeduld auf dem
+  // Handy): nur neu zeichnen, nichts ablegen. Sonst zeigte Zurueck auf dieselbe Seite
+  // und wirkte kaputt.
+  if(navGleich(ziel, vorher)){ seitenwechsel(renderCatalog); return; }
+
+  if(navIstWurzel(ziel)){
+    navStapel = [];
+  } else {
+    // Nicht zweimal dasselbe ablegen (z.B. bei einem Doppeltipp) und den Stapel
+    // deckeln -- ohne Deckel wuechse er bei langem Herumtippen unbegrenzt.
+    // WICHTIG: ueber die vollstaendige Identitaet vergleichen, NICHT ueber navName().
+    // Die Themen-Uebersicht und ein geoeffnetes Thema heissen beide "# Themen" --
+    // ein Namensvergleich haette die zweite Ansicht verworfen, und Zurueck waere
+    // aus dem Bereich in die Uebersicht statt ins Thema gesprungen.
+    const oben = navStapel[navStapel.length - 1];
+    if(!oben || !navGleich(oben, vorher)){
+      navStapel.push(vorher);
+    }
+    if(navStapel.length > 12) navStapel.shift();
+  }
+  navAnwenden(ziel);
+  seitenwechsel(renderCatalog);
+}
+
+/* zurueck() -- eine Ebene hoch. Ist der Stapel leer, geht es zur Wurzel "Start";
+   so bleibt der Knopf auch nach einem Deeplink von aussen sinnvoll. */
+function zurueck(){
+  const ziel = navStapel.pop();
+  if(ziel) navAnwenden(ziel);
+  else navAnwenden({ view: "start", bereich: null, hashtag: null, recht: null, drawer: null });
+  seitenwechsel(renderCatalog, "zurueck");
+}
+
+/* Markup fuer die Zurueck-Pille. Zeigt den ZIELNAMEN, nicht pauschal "Start" --
+   der Schueler soll vorher wissen, wo er landet. */
+function zurueckPille(){
+  const ziel = navStapel[navStapel.length - 1];
+  const name = ziel ? navName(ziel) : t("start");
+  return '<button class="krumen zurueck-zeile" data-nav-zurueck>' +
+    icon("zurueck") + "<span>" + esc(name) + "</span></button>";
+}
 let deepLinkTagId = null; // gesetzt bei ?tag=..., steuert einmaligen Scroll+Highlight
 
 function esc(s){
@@ -1882,12 +2014,12 @@ function showLogin(){
       "<h1>Fahr-Akademie</h1>" +
       '<div class="tagline">Dein Weg zur Prüfung</div>' +
       '<div class="login-card glass">' +
-        '<input id="lo-tel" type="tel" placeholder="Telefonnummer" autocomplete="off">' +
+        '<input id="lo-tel" type="tel" placeholder="' + esc(t("telefon")) + '" autocomplete="off">' +
         '<div class="pw-field">' +
-          '<input id="lo-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="PIN" autocomplete="off">' +
+          '<input id="lo-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="' + esc(t("pin")) + '" autocomplete="off">' +
           '<button type="button" id="lo-pin-toggle" class="pw-toggle" aria-label="PIN anzeigen">' + icon("auge") + '</button>' +
         "</div>" +
-        '<button class="btn-primary" id="lo-btn">Einloggen</button>' +
+        '<button class="btn-primary" id="lo-btn">' + esc(t("anmelden")) + "</button>" +
         '<div id="lo-err" class="err"></div>' +
       "</div>" +
       // Einstieg für Neue (12.09.2026). Bewusst UNTER dem Login und optisch ruhiger:
@@ -1959,8 +2091,40 @@ function showRegistrierung(){
       "</div>" +
       '<div style="margin-top:18px;"><a id="zurueck-login" style="color:var(--faint);font-size:13px;cursor:pointer;text-decoration:underline;">Ich habe schon einen Zugang</a></div>' +
     "</div>";
-  document.getElementById("rg-btn").addEventListener("click", function(){ doRegistrierung(werbeCode); });
+  document.getElementById("rg-btn").addEventListener("click", function(){
+    // Nach "bereits vorhanden" wird aus dem Knopf ein Weg zum Login. Bewusst ueber
+    // ein Flag statt btn.onclick: onclick ersetzt diesen Handler hier NICHT, beide
+    // wuerden feuern -- der Schueler haette zusaetzlich einen zweiten, sinnlosen
+    // Registrierungsversuch ausgeloest.
+    if(this.dataset.ziel === "login"){ showLogin(); return; }
+    doRegistrierung(werbeCode);
+  });
   document.getElementById("zurueck-login").addEventListener("click", showLogin);
+
+  // Spec 4.9: per "input" (jeder Tastendruck) auswerten, NICHT per "change" -- sonst
+  // wird der Knopf erst aktiv, wenn der Schueler das Feld verlaesst. Auf dem Handy
+  // heisst das: er tippt alles richtig, der Knopf bleibt grau, er gibt auf.
+  // Die Schwellen sind bewusst DIESELBEN wie in doRegistrierung(); der Server prueft
+  // trotzdem nochmal -- auf eine Pruefung im Browser darf man sich nie verlassen.
+  const regFelder = ["rg-name", "rg-tel", "rg-mail"].map(function(id){ return document.getElementById(id); });
+  const regBtn = document.getElementById("rg-btn");
+  function regPruefen(){
+    const name = regFelder[0].value.trim();
+    const tel  = regFelder[1].value.trim();
+    const mail = regFelder[2].value.trim();
+    const gueltig = name.length >= 2
+      && tel.replace(/[^0-9+]/g, "").length >= 7
+      && (!mail || mail.indexOf("@") !== -1);
+    regBtn.disabled = !gueltig;
+    // Hat der Schueler nach "bereits vorhanden" etwas geaendert, ist der Knopf
+    // wieder ein Registrieren-Knopf -- sonst bliebe er fuer immer ein Login-Link.
+    if(regBtn.dataset.ziel === "login"){
+      delete regBtn.dataset.ziel;
+      regBtn.textContent = "Startzugang erstellen";
+    }
+  }
+  regFelder.forEach(function(f){ f.addEventListener("input", regPruefen); });
+  regPruefen(); // Ausgangszustand setzen, sonst waere der Knopf vor der ersten Eingabe aktiv
 }
 
 async function doRegistrierung(werbeCode){
@@ -1997,11 +2161,17 @@ async function doRegistrierung(werbeCode){
           '<img class="logo-img" src="' + LOGO + '" alt="Logo">' +
           "<h1>Fertig, " + esc(d.name.split(" ")[0]) + "!</h1>" +
           '<div class="login-card glass">' +
-            '<div class="pin-label">Das ist deine PIN</div>' +
+            '<div class="pin-label">' + esc(t("deinPin")) + "</div>" +
             '<div class="pin-gross">' + esc(d.pin) + "</div>" +
-            '<div class="pin-hinweis">Schreib sie dir auf oder mach einen Screenshot.' +
-              (d.mail_versendet ? " Wir haben sie dir auch per E-Mail geschickt." : "") + "</div>" +
+            '<div class="pin-satz">' + esc(t("pinWarnung")) + "</div>" +
+            (d.mail_versendet
+              ? '<div class="pin-hinweis" style="margin-top:8px;">Wir haben sie dir auch per E-Mail geschickt.</div>'
+              : "") +
             '<div class="pin-zugang">Anmelden mit <b>' + esc(d.telefon) + "</b> + PIN</div>" +
+            // Spec 3.10: der Kasten nimmt die Angst vor dem Verlieren -- ohne ihn wirkt
+            // die Warnung darueber wie eine Drohung ohne Ausweg.
+            '<div class="pin-kasten">Kein Passwort, keine E-Mail nötig. Wenn du den PIN ' +
+              'verlierst, hilft dir dein Fahrlehrer — er sieht ihn in seiner Übersicht.</div>' +
             '<button class="btn-primary" id="rg-weiter" style="margin-top:16px;">Jetzt loslegen</button>' +
           "</div>" +
         "</div>";
@@ -2017,7 +2187,7 @@ async function doRegistrierung(werbeCode){
       err.textContent = d.error;
       btn.textContent = "Zum Anmelden";
       btn.disabled = false;
-      btn.onclick = showLogin;
+      btn.dataset.ziel = "login";
       return;
     }
     err.textContent = d.error || "Das hat nicht geklappt. Bitte nochmal versuchen.";
@@ -2663,7 +2833,7 @@ function renderBereichDetailHtml(){
   const pfad = buildLernpfad();
   const gruppe = pfad.find(function(g){ return g.stufe === selectedBereich; });
   if(!gruppe){
-    return '<button class="krumen" data-zurueckstart>' + icon("zurueck") + "<span>Start</span></button>" +
+    return zurueckPille() +
       '<div class="leer-hinweis">Dieser Bereich ist noch leer.</div>';
   }
   const gesamt = gruppe.videos.length;
@@ -2718,7 +2888,7 @@ function renderBereichDetailHtml(){
   }
 
   return (
-    '<button class="krumen zurueck-zeile" data-zurueckstart>' + icon("zurueck") + "<span>Start</span></button>" +
+    zurueckPille() +
     '<div class="bereich-detail-head">' +
       '<div class="bdh-icon">' + bereichIcon(selectedBereich) + "</div>" +
       '<div style="flex:1;">' +
@@ -2820,7 +2990,7 @@ function renderDashboardHtml(){
       '<div class="dr-pct">' + gesehen + "/" + gesamt + "</div>" +
     "</div>";
   }).join("");
-  return '<button class="krumen zurueck-zeile" data-zurueckstart>' + icon("zurueck") + "<span>Start</span></button>" +
+  return zurueckPille() +
     '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Dashboard</div>' +
     '<div class="admin-sub" style="margin-bottom:14px;">Alle Bereiche auf einen Blick — antippen öffnet den Bereich.</div>' +
     '<div class="karte">' + (rows || '<div class="leer-hinweis">Noch keine Bereiche verfügbar.</div>') + "</div>";
@@ -2932,7 +3102,7 @@ function renderNuetzlichesHtml(){
       '<a href="' + esc(p.datei) + '" target="_blank" rel="noopener" aria-label="PDF öffnen">' + icon("download") + "</a>" +
     "</div>";
   }).join("");
-  return '<button class="krumen zurueck-zeile" data-zurueckstart>' + icon("zurueck") + "<span>Start</span></button>" +
+  return zurueckPille() +
     '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Nützliches</div>' +
     '<div class="admin-sub" style="margin-bottom:14px;">Kurz erklärt und zum Nachlesen — inklusive der Gesetzestexte als PDF.</div>' +
     filterBar +
@@ -2943,7 +3113,7 @@ function renderNuetzlichesHtml(){
 }
 
 function renderHilfeHtml(){
-  return '<button class="krumen zurueck-zeile" data-zurueckstart>' + icon("zurueck") + "<span>Start</span></button>" +
+  return zurueckPille() +
     '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Hilfe &amp; Kontakt</div>' +
     '<div class="karte info-block">' +
       '<p><b>Frage zu einem Video oder deinem Zugang?</b><br>Wende dich direkt an deine Fahrschule bzw. deinen Fahrlehrer — dort wurde dein Zugang eingerichtet.</p>' +
@@ -2953,7 +3123,7 @@ function renderHilfeHtml(){
 }
 
 function renderUeberHtml(){
-  return '<button class="krumen zurueck-zeile" data-zurueckstart>' + icon("zurueck") + "<span>Start</span></button>" +
+  return zurueckPille() +
     '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Über diese App</div>' +
     '<div class="karte info-block">' +
       '<p>Fahr-Akademie ist eine <b>Ergänzung zur amtlichen Fahrausbildung</b> — kein Ersatz für den Unterricht bei deiner Fahrschule.</p>' +
@@ -3107,7 +3277,7 @@ function renderRechtlichesHtml(){
     "</div>";
   }).join("");
 
-  return '<button class="krumen zurueck-zeile" data-zurueckstart>' + icon("zurueck") + "<span>Start</span></button>" +
+  return zurueckPille() +
     '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Rechtliches</div>' +
     status +
     '<div class="admin-sub" style="margin-bottom:14px;">Alle rechtlichen Informationen zur Fahr-Akademie.</div>' +
@@ -3128,7 +3298,7 @@ function renderThemenHtml(){
     const chips = genutzteTags.map(function(t){
       return '<button class="sf-chip" data-hashtag="' + esc(t.id) + '" style="margin:3px;">#' + esc(t.label) + ' · ' + nutzung[t.id] + "</button>";
     }).join("");
-    return '<button class="krumen zurueck-zeile" data-zurueckstart>' + icon("zurueck") + "<span>Start</span></button>" +
+    return zurueckPille() +
       '<div class="tagline" style="font-size:20px;margin-bottom:4px;"># Themen</div>' +
       '<div class="admin-sub" style="margin-bottom:14px;">Ein Video kann mehrere Themen haben — tippe eins an, um alle passenden Videos zu sehen.</div>' +
       '<div style="display:flex;flex-wrap:wrap;">' + (chips || '<div class="leer-hinweis">Noch keine Themen vergeben.</div>') + "</div>";
@@ -3279,7 +3449,7 @@ function renderCatalog(){
     bottomNav;
 
   document.getElementById("wortmarke-home-btn").addEventListener("click", function(){
-    drawerView = null; mainView = "start"; selectedBereich = null; rechtDoc = null; seitenwechsel(renderCatalog, "zurueck");
+    go({ view: "start" }); // Wurzel -- leert den Stapel
   });
   document.getElementById("drawer-open-btn").addEventListener("click", function(){
     // Direktes Klassen-Umschalten statt Neu-Rendern -- nur so kann die Drawer-Öffnung
@@ -3301,12 +3471,13 @@ function renderCatalog(){
       document.querySelector(".drawer").classList.remove("open");
       document.getElementById("drawer-backdrop").classList.remove("open");
       setTimeout(function(){
-        drawerView = b.dataset.drawer; drawerOpen = false; selectedHashtag = null; rechtDoc = null; seitenwechsel(renderCatalog);
+        drawerOpen = false;
+        go({ drawer: b.dataset.drawer });
       }, 180);
     });
   });
   document.querySelectorAll("[data-view]").forEach(function(t){
-    t.addEventListener("click", function(){ drawerView = null; mainView = t.dataset.view; selectedBereich = null; seitenwechsel(renderCatalog); });
+    t.addEventListener("click", function(){ go({ view: t.dataset.view }); });
   });
   document.querySelectorAll(".stufe-header[data-pruefer]").forEach(function(h){
     h.addEventListener("click", function(){
@@ -3316,19 +3487,28 @@ function renderCatalog(){
     });
   });
   document.querySelectorAll("[data-hashtag]").forEach(function(b){
-    b.addEventListener("click", function(){ selectedHashtag = b.dataset.hashtag; seitenwechsel(renderCatalog); nachObenScrollen(); });
+    b.addEventListener("click", function(){
+      // drawer bewusst mitgeben: die Themenseite lebt im Drawer-Bereich, ohne das
+      // Feld wuerde go() es auf null setzen und die Ansicht faellt auf Start zurueck.
+      go({ drawer: drawerView, hashtag: b.dataset.hashtag });
+      nachObenScrollen();
+    });
   });
   document.querySelectorAll("[data-hashtag-zurueck]").forEach(function(b){
-    b.addEventListener("click", function(){ selectedHashtag = null; seitenwechsel(renderCatalog, "zurueck"); });
+    b.addEventListener("click", zurueck);
   });
-  document.querySelectorAll("[data-zurueckstart]").forEach(function(b){
-    b.addEventListener("click", function(){
-      drawerView = null; mainView = "start"; selectedBereich = null; selectedHashtag = null; rechtDoc = null; seitenwechsel(renderCatalog, "zurueck");
-    });
+  // Fruehere "[data-zurueckstart]"-Knoepfe: fuehrten ALLE hart zu Start. Jetzt eine
+  // Ebene hoch im Stapel. Beide Kennzeichen werden bedient, damit kein Knopf tot ist,
+  // falls irgendwo noch das alte Attribut steht.
+  document.querySelectorAll("[data-nav-zurueck],[data-zurueckstart]").forEach(function(b){
+    b.addEventListener("click", zurueck);
   });
   // Rechtliches (10.09.2026): von der Übersicht in ein einzelnes Dokument, und zurück
   document.querySelectorAll("[data-rechtdoc]").forEach(function(b){
-    b.addEventListener("click", function(){ rechtDoc = b.dataset.rechtdoc; seitenwechsel(renderCatalog); nachObenScrollen(); });
+    b.addEventListener("click", function(){
+      go({ drawer: drawerView, recht: b.dataset.rechtdoc });
+      nachObenScrollen();
+    });
   });
   // Zugangsanfrage (12.09.2026)
   document.querySelectorAll("[data-zugang-anfragen]").forEach(function(b){
@@ -3337,7 +3517,7 @@ function renderCatalog(){
   const werbeBtn = document.getElementById("werbe-btn");
   if(werbeBtn) werbeBtn.addEventListener("click", holeWerbecode);
   document.querySelectorAll("[data-zurueck-recht]").forEach(function(b){
-    b.addEventListener("click", function(){ rechtDoc = null; seitenwechsel(renderCatalog, "zurueck"); });
+    b.addEventListener("click", zurueck);
   });
   const suchInput = document.getElementById("such-input");
   if(suchInput){
@@ -3357,10 +3537,8 @@ function renderCatalog(){
     b.addEventListener("click", function(){
       // Jeder Bereich hat jetzt EINE eigene "Netflix-artige" Seite -- egal ob der
       // Klick vom Start-Tab, dem Lernpfad oder dem Dashboard kommt.
-      selectedBereich = b.dataset.gotostufe;
-      drawerView = null; mainView = "bereichdetail";
       pruefungFilter = "alle";
-      seitenwechsel(renderCatalog);
+      go({ view: "bereichdetail", bereich: b.dataset.gotostufe });
       nachObenScrollen();
     });
   });
@@ -3768,7 +3946,17 @@ async function openVideo(videoId){
     document.getElementById("back-btn").addEventListener("click", function(){
       // Konsistent: von JEDEM Video führt "Zurück" in dessen eigene Bereichsseite --
       // unabhängig davon, ob man vom Start, vom Lernpfad oder per Suche hierhergekommen ist.
-      if(kontext){ selectedBereich = kontext.stufe; mainView = "bereichdetail"; }
+      //
+      // 13.09.2026 (Bestandsfehler): Vorher wurden nur selectedBereich und mainView
+      // gesetzt. drawerView/selectedHashtag/rechtDoc blieben stehen -- und renderCatalog()
+      // prueft drawerView ZUERST. Wer also ueber "# Themen" in ein Video kam, landete
+      // beim Zurueck wieder in der Themensuche statt auf der Bereichsseite, genau
+      // entgegen dem Versprechen im Kommentar darueber. navAnwenden() setzt alle
+      // fuenf Felder gemeinsam, damit so etwas nicht mehr auseinanderlaufen kann.
+      if(kontext){
+        navAnwenden({ view:"bereichdetail", bereich:kontext.stufe,
+                      hashtag:null, recht:null, drawer:null });
+      }
       renderCatalog();
     });
     const wb = document.querySelector("[data-weiter]");
@@ -6441,9 +6629,9 @@ function zeigeZugangsdaten(data){
       '<div class="admin-form-title" style="margin-bottom:4px;">Zugang aktiv</div>' +
       '<div class="admin-name" style="margin-bottom:12px;">' + esc(data.name) + "</div>" +
       '<div class="admin-sub">Telefonnummer</div>' +
-      '<div class="pin-gross">' + esc(data.telefon) + "</div>" +
+      '<div class="pin-admin-wert">' + esc(data.telefon) + "</div>" +
       '<div class="admin-sub" style="margin-top:10px;">PIN</div>' +
-      '<div class="pin-gross pin-hervor">' + esc(data.pin) + "</div>" +
+      '<div class="pin-admin-wert pin-hervor">' + esc(data.pin) + "</div>" +
       '<div class="admin-sub" style="margin-top:12px;">' + esc(mailZeile) +
         (data.empfehlung === "eingeloest" ? " Eine wartende Kompass-Empfehlung wurde übernommen." : "") + "</div>" +
       '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;">' +
