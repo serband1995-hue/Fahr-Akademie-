@@ -127,11 +127,11 @@
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   body{
-    margin:0;font-family:'Barlow',-apple-system,sans-serif;
+    margin:0;font-family:var(--ff-body);
     background:var(--bg);
     color:var(--text);min-height:100vh;
   }
-  #app{max-width:720px;margin:0 auto;padding:20px 16px 0;min-height:100vh;}
+  #app{max-width:720px;margin:0 auto;padding:20px 20px 0;min-height:100vh;}
   .page-content{padding-bottom:90px;}
 
   /* PIN-Fenster nach der Freischaltung (Bereich 8.4) */
@@ -140,7 +140,7 @@
   .pin-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-l);
     padding:22px;max-width:400px;width:100%;box-shadow:0 12px 44px rgba(0,0,0,.25);}
   .pin-gross{font-size:26px;font-weight:700;letter-spacing:2px;color:var(--text);}
-  .pin-gross.pin-hervor{color:var(--gold);font-size:34px;}
+  .pin-gross.pin-hervor{color:var(--gold-text);font-size:34px;}
 
   /* ---- Bereich 10.5: Sprachauswahl im Konto ---- */
   .sprach-reihe{display:flex;flex-wrap:wrap;gap:8px;}
@@ -358,7 +358,7 @@
   .pin-hinweis{font-size:12.5px;color:var(--muted);line-height:1.5;}
   .pin-zugang{margin-top:12px;padding:9px 12px;border-radius:10px;background:var(--surface-tint);font-size:12.5px;}
   .werbe-code{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;
-    letter-spacing:.14em;color:var(--gold);margin-bottom:6px;}
+    letter-spacing:.14em;color:var(--gold-text);margin-bottom:6px;}
   .video-card:active{background:var(--surface-strong);}
   .video-play-ic{
     width:38px;height:38px;border-radius:50%;background:var(--gruen);flex-shrink:0;
@@ -498,15 +498,15 @@
     color:var(--gruen);min-width:20px;text-align:center;}
   .az-buchstabe:active{background:var(--gold);color:var(--auf-gold);}
   .az-buchstabe.az-leer{opacity:.22;cursor:default;}
-  .az-kopf{font-weight:700;font-size:13px;color:var(--gold);margin:14px 0 6px;letter-spacing:1px;}
+  .az-kopf{font-weight:700;font-size:13px;color:var(--gold-text);margin:14px 0 6px;letter-spacing:1px;}
   /* 8.2: Mehrfachauswahl */
   .bulk-pick{display:flex;align-items:center;gap:6px;font-size:12px;opacity:.7;margin-bottom:6px;}
   .bulk-leiste{border:2px solid var(--gold) !important;position:sticky;top:0;z-index:6;}
   /* 8.5: Ablauf-Vorwarnung */
-  .warn-ablauf{color:var(--gold);font-weight:600;}
+  .warn-ablauf{color:var(--gold-text);font-weight:600;}
   /* 7.9: gesperrte Klassen-Inhalte */
   .video-locked{opacity:.62;cursor:default;}
-  .lock-hint{color:var(--gold);font-size:12px;margin-top:2px;}
+  .lock-hint{color:var(--gold-text);font-size:12px;margin-top:2px;}
   /* 7.1/7.2: Empfehlung aus dem Kompass */
   .empf-card{border:2px solid var(--gold) !important;}
   .empf-badge{display:inline-block;background:var(--gold);color:var(--auf-gold);font-size:11px;
@@ -545,7 +545,7 @@
   .az-buchstabe{ min-width:30px; min-height:34px; display:inline-flex;
     align-items:center; justify-content:center; padding:0; }
   .icon-btn.danger{color:var(--warn);}
-  .pin-display{font-family:monospace;font-size:15px;letter-spacing:.1em;color:var(--gold);}
+  .pin-display{font-family:monospace;font-size:15px;letter-spacing:.1em;color:var(--gold-text);}
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--gruen);color:#fff;
     padding:12px 20px;border-radius:14px;font-size:13.5px;font-weight:600;box-shadow:0 8px 24px rgba(43,40,30,.25);
     z-index:50;font-family:'Barlow',sans-serif;}
@@ -622,7 +622,7 @@
   /* --- Admin-Kennzeichnung (Punkt 1.10) --- */
   .admin-balken{height:3px;background:var(--gold);width:100%;}
   .admin-badge-top{display:inline-flex;align-items:center;gap:5px;background:var(--gold-schwach);
-    color:var(--gold);border:1px solid var(--gold-rand);border-radius:var(--r-pill);
+    color:var(--gold-text);border:1px solid var(--gold-rand);border-radius:var(--r-pill);
     padding:2px 9px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
 
   /* --- Leerer Suchtreffer (Punkt 1.4, freundlich abfangen) --- */
@@ -646,7 +646,7 @@
   .bereich-tile.voll{border-color:var(--gold-rand); box-shadow:0 2px 0 var(--gold-rand), 0 4px 12px rgba(217,149,76,.12);}
   .bt-icon{width:48px;height:48px;border-radius:var(--r-m);background:var(--surface-tint);
     color:var(--gruen);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-  .bereich-tile.voll .bt-icon{background:var(--gold-schwach);color:var(--gold);}
+  .bereich-tile.voll .bt-icon{background:var(--gold-schwach);color:var(--gold-text);}
   .bt-icon .ic{width:26px;height:26px;}
   .bt-body{flex:1;min-width:0;}
   .bt-titel{font-size:16.5px;font-weight:700;margin-bottom:5px;color:var(--text);}
@@ -655,7 +655,7 @@
   .bereich-tile.voll .bt-bar-fill{background:var(--gold);}
   .bt-meta{font-size:11.5px;color:var(--muted);}
   .bt-arrow{flex-shrink:0;color:var(--faint);}
-  .bereich-tile.voll .bt-arrow{color:var(--gold);}
+  .bereich-tile.voll .bt-arrow{color:var(--gold-text);}
   /* Freemium (28.08.2026): komplett gesperrte Bereiche wirken gedämpfter, aber
      bleiben klar antippbar -- man soll sehen, dass es dort was gibt. */
   .bereich-tile.bereich-gesperrt{opacity:.72;}
@@ -665,6 +665,92 @@
   .bt-frei{display:inline-block;vertical-align:1px;margin-left:6px;padding:2px 8px;
     border-radius:var(--r-pill);background:var(--surface-tint);color:var(--gruen-hell);
     font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;}
+
+  /* ================= "PAPIER & STRECKE" — visuelle Sprache (13.09.2026) =================
+     Neue Bausteine fuer den Start-Bildschirm (4.4 der Arbeitsliste). Die Kacheln oben
+     bleiben unangetastet -- Lernpfad-Uebersicht und Bereichsseite nutzen sie noch und
+     werden in eigenen Schritten umgebaut. Alles hier greift ausschliesslich auf Tokens
+     aus Abschnitt 1 (:root) zu. */
+
+  /* --- Kopfzeile: Menue, Wortmarke (= Zuhause-Knopf), Konto mit Initialen --- */
+  .fa-wortmarke-btn{background:none;border:none;cursor:pointer;padding:6px 4px;
+    min-height:44px;display:flex;align-items:center;justify-content:center;}
+  .fa-wortmarke{font-size:10px;font-weight:700;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--faint);}
+  .konto-btn{background:none;border:none;cursor:pointer;padding:0;
+    min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:flex-end;}
+  .konto-kreis{width:30px;height:30px;border-radius:50%;background:var(--surface-tint);
+    color:var(--gruen);display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:700;flex-shrink:0;}
+
+  /* --- Ueberschrift + Quittung (ersetzt Prozentangabe: Zeit kann man nicht durchfallen) --- */
+  .fa-hero{font-family:var(--ff-titel);font-weight:var(--fw-titel);
+    font-size:var(--fs-hero);line-height:1.18;color:var(--text);margin:0;}
+  .fa-label{font-size:var(--fs-mikro);font-weight:600;letter-spacing:var(--ls-label);
+    text-transform:uppercase;color:var(--faint);margin-bottom:6px;}
+  .fa-quittung{font-size:var(--fs-body);line-height:1.55;color:var(--muted);
+    padding:var(--sp-m) 0 var(--sp-l);}
+  .fa-quittung strong{color:var(--text);font-weight:600;}
+
+  /* --- "Weiter"-Zeile: Gold-Kreis mit CSS-Dreieck, kein SVG, kein Zeichensatz --- */
+  .weiter-zeile{display:flex;align-items:center;gap:var(--sp-m);width:100%;
+    background:none;border:none;border-block-end:1px solid var(--hairline);
+    padding:0 0 var(--sp-l);margin-bottom:var(--sp-l);text-align:start;cursor:pointer;
+    font-family:inherit;color:inherit;}
+  .weiter-play{flex:none;width:44px;height:44px;border-radius:50%;background:var(--gold);
+    display:flex;align-items:center;justify-content:center;position:relative;}
+  .weiter-play::after{content:"";width:0;height:0;margin-inline-start:3px;
+    border-inline-start:13px solid var(--auf-gold);
+    border-block-start:8px solid transparent;border-block-end:8px solid transparent;}
+  [dir="rtl"] .weiter-play::after{transform:scaleX(-1);}
+  .weiter-text{flex:1;min-width:0;}
+  .weiter-titel{display:block;font-family:var(--ff-titel);font-weight:var(--fw-titel);
+    font-size:25px;line-height:1.18;color:var(--text);}
+  .weiter-meta{display:block;font-size:12.5px;color:var(--muted);margin-top:4px;}
+
+  /* --- Die Strecke: Grid aus Linie (Spalte 1) und Station (Spalte 2) je Bereich --- */
+  .strecke{display:grid;grid-template-columns:19px 1fr;}
+  .strecke-linie{position:relative;border-inline-start:1px solid var(--hairline);}
+  .strecke-linie.gegangen{border-inline-start-color:var(--gruen-hell);}
+  .strecke-linie:last-of-type{border-inline-start-color:transparent;}
+  .strecke-punkt{position:absolute;top:5px;inset-inline-start:-4.5px;
+    width:8px;height:8px;border-radius:50%;background:var(--gruen-hell);}
+  .strecke-punkt.jetzt{top:9px;inset-inline-start:-6.5px;width:12px;height:12px;
+    background:var(--gruen);box-shadow:0 0 0 4px var(--bg);}
+  .strecke-punkt.siegel{background:var(--gold);}
+  .station{display:block;width:100%;padding:0 0 var(--sp-l);
+    background:none;border:none;text-align:start;cursor:pointer;
+    font-family:inherit;color:inherit;}
+  .station:active{opacity:.7;}
+  .station-kopf{display:flex;align-items:baseline;gap:9px;}
+  .station-kuerzel{font-size:var(--fs-mikro);font-weight:600;letter-spacing:.08em;color:var(--faint);}
+  .station-name{font-size:var(--fs-karte);font-weight:var(--fw-karte);color:var(--muted);}
+  .station-meta{display:block;font-size:var(--fs-meta);line-height:1.5;color:var(--faint);margin-top:2px;}
+  /* Die aktuelle Station ist die einzige in Playfair -- dadurch hoert die Liste auf,
+     eine Liste zu sein, ohne dass dafuer eine Farbe gebraucht wird. */
+  .station.jetzt{padding-bottom:var(--sp-xl);}
+  .station.jetzt .station-name{display:block;font-family:var(--ff-titel);
+    font-weight:var(--fw-titel);font-size:25px;line-height:1.16;color:var(--text);}
+  .station.jetzt .station-meta{font-size:13px;color:var(--muted);margin-top:7px;}
+  .station-bar{display:block;height:3px;max-width:190px;margin-top:11px;overflow:hidden;
+    border-radius:var(--r-pill);background:var(--border);}
+  .station-bar span{display:block;height:100%;border-radius:var(--r-pill);
+    background:var(--gruen-hell);transform-origin:left center;}
+  [dir="rtl"] .station-bar span{transform-origin:right center;}
+  .vz-siegelwort{color:var(--gold-text);font-weight:600;}
+
+  /* --- Siegel-Notiz: ersetzt Schloss-Hinweise. Ein Siegel sagt "hier liegt etwas
+     fuer dich", ein Schloss sagt "geh weg". --- */
+  .siegel-notiz{margin:var(--sp-l) 0 0;padding:15px 17px;background:var(--gold-schwach);
+    border:1px solid var(--gold-rand);border-radius:var(--r-l);}
+  .siegel-notiz p{margin:0;font-size:13.5px;line-height:1.55;color:var(--text);}
+  .siegel-notiz strong{font-weight:600;}
+  .siegel-klein{font-size:11.5px;line-height:1.45;color:var(--muted);margin-top:9px;}
+  .btn-gold{width:100%;min-height:44px;margin-top:var(--sp-m);border:none;border-radius:var(--r-m);
+    background:var(--gold);color:var(--auf-gold);font-family:inherit;font-size:14.5px;
+    font-weight:800;cursor:pointer;transition:transform 120ms var(--ez-standard);}
+  .btn-gold:active{transform:scale(.985);}
+  .btn-gold[disabled]{opacity:.6;cursor:default;}
 
   /* --- Eigene Bereichsseite (Netflix-artige Videoauswahl) --- */
   .bereich-detail-head{display:flex;align-items:center;gap:var(--sp-m);margin-bottom:var(--sp-m);}
@@ -709,7 +795,7 @@
   .kpi .kpi-zahl{font-size:24px;font-weight:700;color:var(--gruen);line-height:1.1;}
   .kpi .kpi-label{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.25;}
   .kpi.warn{border-color:var(--gold-rand);background:var(--gold-schwach);}
-  .kpi.warn .kpi-zahl{color:var(--gold);}
+  .kpi.warn .kpi-zahl{color:var(--gold-text);}
 
   /* --- Handlungsbedarf-Liste --- */
   .todo-zeile{display:flex;align-items:center;gap:var(--sp-s);padding:10px 0;
@@ -754,7 +840,7 @@
   .hist-titel{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;}
   .hist-anzahl{background:var(--surface-tint);color:var(--gruen);border-radius:var(--r-pill);
     padding:2px 9px;font-size:11.5px;font-weight:700;flex-shrink:0;}
-  .hist-anzahl.oft{background:var(--gold-schwach);color:var(--gold);}
+  .hist-anzahl.oft{background:var(--gold-schwach);color:var(--gold-text);}
   .hist-datum{font-size:11px;color:var(--faint);flex-shrink:0;}
   /* ================= SEITENMENÜ (Drawer), Dashboard, Nützliches ================= */
   /* 27.08.2026: Der Menü-Knopf war mit 18px-Symbol in 30px-Fläche viel zu klein
@@ -800,7 +886,7 @@
   /* --- Nützliches: PDF-Karten --- */
   .pdf-karte{display:flex;align-items:center;gap:var(--sp-m);padding:var(--sp-m);margin-bottom:var(--sp-s);}
   .pdf-karte .pdf-ic{width:38px;height:38px;border-radius:var(--r-s);background:var(--gold-schwach);
-    color:var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    color:var(--gold-text);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
   .pdf-karte .pdf-titel{font-size:var(--fs-body);font-weight:var(--fw-karte);}
   .pdf-karte .pdf-meta{font-size:11.5px;color:var(--muted);margin-top:2px;}
   .pdf-karte a{margin-left:auto;color:var(--gruen);flex-shrink:0;}
@@ -817,7 +903,7 @@
   .abr-kachel .k-wert{font-size:19px;font-weight:800;line-height:1.2;}
   .abr-kachel .k-label{font-size:11px;color:var(--muted);margin-top:2px;}
   .abr-kachel.betont{background:var(--gold-schwach);border-color:var(--gold-rand);}
-  .abr-kachel.betont .k-wert{color:var(--gold);}
+  .abr-kachel.betont .k-wert{color:var(--gold-text);}
   .abr-felder{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:flex-end;}
   .abr-feld{display:flex;flex-direction:column;gap:4px;}
   .abr-feld label{font-size:10px;font-weight:700;letter-spacing:.07em;
@@ -833,8 +919,8 @@
   .abr-monat .m-name{font-weight:700;font-size:14px;}
   .abr-monat .m-sub{font-size:11.5px;color:var(--muted);}
   .abr-monat .m-wert{font-weight:800;font-size:15px;white-space:nowrap;}
-  .abr-offen{color:var(--gold);}
-  .badge-offen{background:var(--gold-schwach);color:var(--gold);}
+  .abr-offen{color:var(--gold-text);}
+  .badge-offen{background:var(--gold-schwach);color:var(--gold-text);}
   .badge-bezahlt{background:var(--surface-tint);color:var(--gruen-hell);}
 </style>
 </head>
@@ -2089,83 +2175,134 @@ function renderStartHtml(){
   const totalVideos = offeneVideos.length;
   const seenCount = offeneVideos.filter(function(v){ return seenVideoIds.has(v.id); }).length;
   const name = (session && session.name) ? session.name : "";
-  const prozent = totalVideos ? Math.round(seenCount / totalVideos * 100) : 0;
 
-  // Bereich 1.2: EINE prominente Fortsetzen-Karte -- zuletzt Angesehenes hat Vorrang,
-  // sonst das nächste offene Video. Bewusst nur eine Karte, damit der Start ruhig bleibt.
+  // Bereich 1.2 / Papier & Strecke (13.09.2026): EINE prominente Fortsetzen-Zeile --
+  // zuletzt Angesehenes hat Vorrang, sonst das naechste offene Video. Beide Faelle liefern
+  // ein "x" aus buildLernpfad() (mit echtem code/tag/video), nicht nur ein rohes Video --
+  // sonst fehlen Bereich und Kuerzel fuer die Meta-Zeile.
   const naechste = (function(){
     for(const gruppe of pfad){
-      // Bug-Fix 28.08.2026: gesperrte Videos (Klasse ODER Vollzugang) dürfen hier
-      // nicht als "Als Nächstes" vorgeschlagen werden -- der Schüler könnte sie eh
-      // nicht öffnen. Die Empfehlungskarte weiter unten filtert das schon richtig,
-      // hier fehlte es bisher.
       const offen = gruppe.videos.find(function(x){ return !seenVideoIds.has(x.video.id) && !x.gesperrt; });
       if(offen) return { gruppe: gruppe.stufe, x: offen };
     }
     return null;
   })();
 
-  let fortsetzen = null;
+  let fortsetzenX = null, fortsetzenGruppe = null, fortsetzenLabel = null;
   if(verlaufData.length > 0){
-    const letztesVideo = allVideos.find(function(v){ return v.id === verlaufData[0].video_id; });
-    if(letztesVideo) fortsetzen = { id: letztesVideo.id, titel: letztesVideo.titel, label: t("weiterSchauen") };
+    const letztesId = verlaufData[0].video_id;
+    for(const g of pfad){
+      const x = g.videos.find(function(v){ return v.video.id === letztesId; });
+      if(x){ fortsetzenX = x; fortsetzenGruppe = g.stufe; break; }
+    }
+    if(fortsetzenX) fortsetzenLabel = t("weiterSchauen");
   }
-  if(!fortsetzen && naechste){
-    fortsetzen = { id: naechste.x.video.id, titel: naechste.x.video.titel, label: t("alsNaechstes") + ": " + naechste.gruppe };
+  if(!fortsetzenX && naechste){
+    fortsetzenX = naechste.x; fortsetzenGruppe = naechste.gruppe; fortsetzenLabel = t("alsNaechstes");
   }
 
-  const weiterKarte = fortsetzen
-    ? '<div class="weiter-karte" data-vid="' + esc(fortsetzen.id) + '">' +
-        '<div class="wk-play">' + icon("play") + "</div>" +
-        "<div><div class=\"wk-label\">" + esc(fortsetzen.label) + "</div>" +
-        '<div class="wk-titel">' + esc(fortsetzen.titel) + "</div></div>" +
-      "</div>"
-    : '<div class="karte" style="margin-bottom:var(--sp-l);text-align:center;">' +
+  // "Weiter"-Zeile ersetzt die fruehere gruene Karte: Gold-Kreis mit CSS-Dreieck
+  // (kein SVG), Titel in Playfair, Meta aus echtem Video-Code + Dauer -- beides steht
+  // bereits in buildLernpfad()/STUFE_PREFIX, nichts davon ist erfunden.
+  const weiterMeta = fortsetzenX
+    ? [fortsetzenX.code, dauerKurz(fortsetzenX.video.dauer_sekunden)].filter(Boolean).join(" · ")
+    : "";
+  const weiterZeile = fortsetzenX
+    ? '<div class="fa-label">' + esc(fortsetzenLabel) + "</div>" +
+      '<button class="weiter-zeile" data-vid="' + esc(fortsetzenX.video.id) + '">' +
+        '<span class="weiter-play"></span>' +
+        '<span class="weiter-text">' +
+          '<span class="weiter-titel">' + esc(fortsetzenX.video.titel) + "</span>" +
+          (weiterMeta ? '<span class="weiter-meta">' + esc(weiterMeta) + "</span>" : "") +
+        "</span>" +
+      "</button>"
+    : '<div class="karte" style="text-align:center;margin-bottom:var(--sp-l);">' +
         '<div style="font-size:var(--fs-karte);font-weight:var(--fw-karte);">' + esc(t("allesGesehen")) + "</div>" +
-        '<div class="admin-sub">Schau gern nochmal bei den Prüfungsstrecken vorbei.</div>' +
+        '<div class="admin-sub">' + esc(t("allesGesehenSub")) + "</div>" +
       "</div>";
 
-  // Große, gestapelte 3D-Kacheln statt der wegscrollenden Kreise -- jede Kachel öffnet
-  // die eigene "Netflix-artige" Bereichsseite (renderBereichDetailHtml).
-  const kacheln = pfad.map(function(g){
+  // Quittung statt Prozent: Zeit kann man nicht durchfallen (Design-Prinzip 13.09.2026).
+  // Fallback auf Videoanzahl, falls fuer keines der offenen Videos eine Dauer hinterlegt ist --
+  // sonst wuerde "0 Min von 0 Min" erscheinen, was schlimmer waere als gar keine Zeitangabe.
+  const gesehenSek = offeneVideos.filter(function(v){ return seenVideoIds.has(v.id); })
+    .reduce(function(a,v){ const d=Number(v.dauer_sekunden); return a+(isFinite(d)&&d>0?d:0); },0);
+  const gesamtSek = offeneVideos.reduce(function(a,v){ const d=Number(v.dauer_sekunden); return a+(isFinite(d)&&d>0?d:0); },0);
+  const quittung = gesamtSek > 0
+    ? '<div class="fa-quittung">Du hast <strong>' + esc(dauerKurz(gesehenSek) || "0 Min") + '</strong> von ' +
+        esc(dauerKurz(gesamtSek)) + " gesehen.</div>"
+    : '<div class="fa-quittung">Du hast <strong>' + seenCount + '</strong> von ' + totalVideos + " Videos gesehen.</div>";
+
+  // Die Strecke ersetzt die gestapelten Kacheln: ein Grid aus Linie (Spalte 1) und
+  // Station (Spalte 2) je Bereich. "Jetzt" ist der erste Bereich mit offenem,
+  // nicht abgehaktem Video -- alles davor gilt als "hinter dir" (gruene Linie).
+  const jetztIndex = naechste ? pfad.findIndex(function(g){ return g.stufe === naechste.gruppe; }) : -1;
+  // Fuer die Siegel-Notiz unten wird der ERSTE gesperrte Bereich gebraucht, nicht
+  // "naechste.gruppe" (das waere bei einem Schueler mitten in einem freien Bereich
+  // faelschlich der freie Bereich selbst -- ein echter Fehler, den erst der Testlauf
+  // mit echten Beispieldaten sichtbar gemacht hat).
+  let ersteGesperrteGruppe = null;
+  const strecke = pfad.map(function(g, i){
     const gesamt = g.videos.length;
     const gesehen = g.videos.filter(function(x){ return seenVideoIds.has(x.video.id); }).length;
     const pct = gesamt ? Math.round(gesehen/gesamt*100) : 0;
-    // Freemium (28.08.2026): Bereich gilt als "vollzugangs-gesperrt", wenn JEDES
-    // Video darin aus Bezahlgründen gesperrt ist (Klassen-Sperren zählen hier nicht,
-    // die haben ihre eigene, unabhängige Anzeige weiter unten in der Bereichsseite).
     const komplettGesperrt = g.videos.length > 0 && g.videos.every(function(x){ return x.sperrgrund === "vollzugang"; });
-    // Positives Gegenstueck zum Schloss -- aber nur fuer Schueler OHNE Vollzugang.
-    // Wer bereits bezahlt hat, kann ohnehin alles sehen; dort waere "gratis" nur Rauschen.
     const komplettFrei = !(session && session.vollzugang) &&
       g.videos.length > 0 && g.videos.every(function(x){ return !x.gesperrt && x.tag && x.tag.gratis; });
-    // Gesamtdauer des Bereichs, sofern fuer die Videos hinterlegt. Fehlt sie ueberall,
-    // bleibt die Zeile wie bisher -- kein Platzhalter, keine falsche Zahl.
     const summeSek = g.videos.reduce(function(a,x){
       const d = Number(x.video.dauer_sekunden); return a + (isFinite(d) && d > 0 ? d : 0);
     }, 0);
     const dauerTeil = summeSek > 0 ? " · " + dauerKurz(summeSek) : "";
-    const metaZeile = komplettGesperrt
-      ? gesamt + " Video" + (gesamt === 1 ? "" : "s") + " warten auf dich" + dauerTeil
-      : gesehen + " von " + gesamt + " Video" + (gesamt === 1 ? "" : "s") + " · " + pct + "%" + dauerTeil;
-    return '<button class="bereich-tile' + (pct>=100?" voll":"") + (komplettGesperrt?" bereich-gesperrt":"") + '" data-gotostufe="' + esc(g.stufe) + '">' +
-      '<div class="bt-icon">' + bereichIcon(g.stufe) + "</div>" +
-      '<div class="bt-body">' +
-        '<div class="bt-titel">' + esc(bereichName(g.stufe)) +
-          (komplettGesperrt ? ' <span class="bt-lock">' + icon("schloss","ic-s") + "</span>" : "") +
-          (komplettFrei ? ' <span class="bt-frei">Startzugang</span>' : "") +
-        "</div>" +
-        (komplettGesperrt ? "" : '<div class="bt-bar"><div class="bt-bar-fill" style="width:' + pct + '%;"></div></div>') +
-        '<div class="bt-meta">' + metaZeile + "</div>" +
-      "</div>" +
-      '<span class="bt-arrow">' + icon("weiter") + "</span>" +
-    "</button>";
+    const istJetzt = i === jetztIndex;
+    const gegangen = jetztIndex === -1 ? true : i <= jetztIndex;
+    if(komplettGesperrt && ersteGesperrteGruppe === null) ersteGesperrteGruppe = g.stufe;
+
+    const punktKlasse = "strecke-punkt" + (istJetzt ? " jetzt" : "") + (komplettGesperrt ? " siegel" : "");
+    const linie = '<div class="strecke-linie' + (gegangen ? " gegangen" : "") + '">' +
+      '<span class="' + punktKlasse + '"></span></div>';
+
+    let meta;
+    if(istJetzt){
+      const gesehenSekGruppe = g.videos.filter(function(x){ return seenVideoIds.has(x.video.id); })
+        .reduce(function(a,x){ const d=Number(x.video.dauer_sekunden); return a+(isFinite(d)&&d>0?d:0); },0);
+      const zeitTeil = gesehenSekGruppe > 0 ? " · " + dauerKurz(gesehenSekGruppe) : "";
+      meta = "Du bist hier · " + gesehen + " von " + gesamt + " gesehen" + zeitTeil;
+    } else if(komplettGesperrt){
+      meta = gesamt + " Video" + (gesamt === 1 ? "" : "s") + dauerTeil + ' · <span class="vz-siegelwort">versiegelt</span>';
+    } else if(komplettFrei){
+      meta = gesamt + " Video" + (gesamt === 1 ? "" : "s") + dauerTeil + " · offen für alle";
+    } else {
+      meta = gesehen + " von " + gesamt + " gesehen" + dauerTeil;
+    }
+
+    const kopfOderName = istJetzt
+      ? '<span class="station-name">' + esc(bereichName(g.stufe)) + "</span>"
+      : '<span class="station-kopf">' +
+          '<span class="station-kuerzel">' + esc(STUFE_PREFIX[g.stufe] || "") + "</span>" +
+          '<span class="station-name">' + esc(bereichName(g.stufe)) + "</span>" +
+        "</span>";
+
+    const station =
+      '<button class="station' + (istJetzt ? " jetzt" : "") + '" data-gotostufe="' + esc(g.stufe) + '">' +
+        kopfOderName +
+        '<span class="station-meta">' + meta + "</span>" +
+        (istJetzt ? '<span class="station-bar"><span style="width:' + pct + '%;"></span></span>' : "") +
+      "</button>";
+    return linie + station;
   }).join("");
 
-  // --- Bereich 7.1/7.2 (27.08.2026): Empfehlung aus dem Fahrlehrer-Kompass ---
-  // Kommt beim Login mit (session.empfehlung). Zeigt das konkrete Video zum
-  // gemeldeten Ausbildungsstand -- oder, falls kein Video zum Thema existiert,
-  // wenigstens den Sprung in den passenden Bereich.
+  // Siegel-Notiz nur ohne Vollzugang -- wer bereits bezahlt hat, sieht sie nie.
+  const siegelNotiz = (!(session && session.vollzugang))
+    ? '<div class="siegel-notiz">' +
+        "<p>Ein Teil der Strecke ist <strong>versiegelt</strong>. Dein Fahrlehrer schaltet den Vollzugang frei.</p>" +
+        '<button class="btn-gold" data-zugang-anfragen="' + esc(ersteGesperrteGruppe || "Start") + '">Zugang anfragen</button>' +
+        '<div class="siegel-klein">Kein Kauf in der App. Dein Fahrlehrer schaltet frei.</div>' +
+      "</div>"
+    : "";
+
+  // --- Bereich 7.1/7.2: Empfehlung aus dem Fahrlehrer-Kompass -- unveraendert
+  // gegenueber der bisherigen Fassung, nur an dieser Stelle im neuen Layout platziert.
+  // Eigenes Redesign im Papier-Stil steht noch aus (kein Bildschirm dafuer in der
+  // Spec vorgesehen) -- bewusst mit alter Kartenoptik belassen statt etwas zu erfinden.
   let empfKarte = "";
   const empf = session && session.empfehlung;
   if(empf && (empf.tag_id || empf.stufe)){
@@ -2184,8 +2321,6 @@ function renderStartHtml(){
           '<div class="admin-sub">' + esc(empf.nachricht || treffer.gruppe) + "</div>" +
         "</div>";
     } else if(empf.stufe && pfad.some(function(g){ return g.stufe === empf.stufe; })){
-      // Kein passendes Video: nur anzeigen, wenn der Bereich wirklich existiert,
-      // sonst bliebe ein toter Hinweis stehen.
       empfKarte =
         '<div class="karte empf-card" data-gotostufe="' + esc(empf.stufe) + '" style="cursor:pointer;margin-bottom:var(--sp-l);">' +
           '<div class="empf-badge">' + esc(t("empfohlen")) + "</div>" +
@@ -2195,7 +2330,7 @@ function renderStartHtml(){
     }
   }
 
-  // --- Bereich 7.6: Prüfungstermin-Countdown, sobald Kompass einen Termin gemeldet hat ---
+  // --- Bereich 7.6: Pruefungstermin-Countdown -- unveraendert, siehe Hinweis oben.
   let terminKarte = "";
   if(session && session.pruefungstermin){
     const termin = new Date(session.pruefungstermin + "T00:00:00");
@@ -2213,11 +2348,12 @@ function renderStartHtml(){
   }
 
   return (
-    '<div class="tagline" style="font-size:22px;margin-bottom:var(--sp-m);">' + esc(t("willkommen")) + (name ? ", " + esc(name) : "") + "</div>" +
+    '<h1 class="fa-hero" style="margin-bottom:var(--sp-m);">' + esc(t("willkommen")) + (name ? ", " + esc(name) : "") + "</h1>" +
     empfKarte +
-    weiterKarte +
-    '<div class="section-label" style="margin-top:0;">' + esc(t("deineBereiche")) + "</div>" +
-    '<div class="bereich-stack">' + kacheln + "</div>" +
+    weiterZeile +
+    quittung +
+    '<div class="strecke">' + strecke + "</div>" +
+    siegelNotiz +
     terminKarte
   );
 }
@@ -2769,8 +2905,6 @@ function nachObenScrollen(){
 
 function renderCatalog(){
   stopWatermark(); // Sicherheitsnetz: egal auf welchem Weg man die Videoseite verlaesst
-  const totalVideos = allVideos.length;
-  const seenCount = allVideos.filter(function(v){ return seenVideoIds.has(v.id); }).length;
 
   let content;
   if(drawerView === "dashboard") content = renderDashboardHtml();
@@ -2786,9 +2920,11 @@ function renderCatalog(){
   else if(mainView === "verlauf") content = renderVerlaufHtml();
   else content = renderKontoHtml();
 
+  // Konto ist ab jetzt ueber den Konto-Knopf im Kopf erreichbar (Spec 3.1) --
+  // die untere Leiste zeigt nur noch die vier Kern-Wurzeln der Strecke.
   const tabs = [
     ["start",t("start")],["lernpfad",t("lernpfad")],["pruefungsstrecken",t("pruefung")],
-    ["verlauf",t("verlauf")],["konto",t("konto")]
+    ["verlauf",t("verlauf")]
   ];
   const bottomNav = '<div class="bottom-nav">' +
     tabs.map(function(t){
@@ -2826,16 +2962,16 @@ function renderCatalog(){
     drawerHtml +
     '<div class="header">' +
       '<button class="menu-btn" id="drawer-open-btn" aria-label="Menü">' + icon("menu") + "</button>" +
-      '<button class="logo-center-btn" id="logo-home-btn" aria-label="Zum Start">' +
-        '<img class="logo-img" src="' + LOGO + '" alt="Logo"></button>' +
-      '<div class="header-spacer"></div>' +
+      '<button class="fa-wortmarke-btn" id="wortmarke-home-btn" aria-label="Zum Start">' +
+        '<span class="fa-wortmarke">Fahr-Akademie</span></button>' +
+      '<button class="konto-btn" data-view="konto" aria-label="Konto">' +
+        '<span class="konto-kreis">' + esc(initialen(session && session.name)) + "</span></button>" +
     "</div>" +
-    '<div class="header-txt-center"><h1>Fahr-Akademie</h1><div class="progress-line">' + seenCount + " von " + totalVideos + " Videos gesehen" + (totalVideos ? " · " + Math.round(seenCount/totalVideos*100) + "%" : "") + "</div></div>" +
     (DEMO_MODE ? '<div class="demo-badge">Demo-Modus — Beispieldaten</div>' : "") +
     '<div class="page-content">' + content + "</div>" +
     bottomNav;
 
-  document.getElementById("logo-home-btn").addEventListener("click", function(){
+  document.getElementById("wortmarke-home-btn").addEventListener("click", function(){
     drawerView = null; mainView = "start"; selectedBereich = null; rechtDoc = null; renderCatalog();
   });
   document.getElementById("drawer-open-btn").addEventListener("click", function(){
@@ -3821,10 +3957,10 @@ function renderAdminSchueler(){
           : "⏳ Wartet auf Freischaltung durch deinen Ansprechpartner") +
         " · gültig bis " + fmtDate(s.ablauf_am) + "</div>";
     const pinWartetHinweis = (istSuperAdmin && !s.pin_versendet_am)
-      ? '<div class="admin-sub" style="color:var(--gold);font-weight:600;">⏳ Noch nicht verschickt</div>' : "";
+      ? '<div class="admin-sub" style="color:var(--gold-text);font-weight:600;">⏳ Noch nicht verschickt</div>' : "";
     const agbZeile = s.agb_akzeptiert_am
       ? '<div class="admin-sub" style="opacity:.7;">Nutzungsbedingungen akzeptiert: ' + fmtDate(s.agb_akzeptiert_am) + "</div>"
-      : '<div class="admin-sub" style="opacity:.7;color:var(--gold);">Nutzungsbedingungen noch nicht akzeptiert</div>';
+      : '<div class="admin-sub" style="opacity:.7;color:var(--gold-text);">Nutzungsbedingungen noch nicht akzeptiert</div>';
     // Zugangs-Status wird nicht mehr als Textzeile gezeigt, sondern als farbige
     // Kartenkante + beschrifteter Knopf unten (siehe zugangKnopf weiter unten).
     // Betrugsschutz (09.09.2026, Punkt 2): Login-Haeufigkeit sichtbar machen.
@@ -4954,7 +5090,7 @@ async function renderAdminAbrechnung(){
         '<div class="admin-sub">Anteil Fahr-Akademie gesamt</div>' +
         '<div class="admin-name" style="margin-bottom:10px;">' + summeSchuld.toFixed(2) + " €</div>" +
         '<div class="admin-sub">Davon noch offen</div>' +
-        '<div class="admin-name" style="color:var(--gold);">' + offeneSchuld.toFixed(2) + " €</div>" +
+        '<div class="admin-name" style="color:var(--gold-text);">' + offeneSchuld.toFixed(2) + " €</div>" +
         '<div class="admin-sub" style="margin-top:12px;opacity:.8;">Was du darüber hinaus einnimmst, behältst du. Den Preis legst du bei jedem Schüler selbst fest.</div>' +
       "</div>" +
       '<div class="section-label" style="margin:18px 0 8px;">Einzelne Zugänge</div>' +
@@ -5273,7 +5409,7 @@ function renderAdminKandidaten(){
           '<div class="admin-name" style="flex:1;min-width:120px;">' + esc(k.name) + "</div>" + badge +
         "</div>" +
         '<div class="admin-sub">' + esc(k.telefon) +
-          (k.email ? " · " + esc(k.email) : ' · <span style="color:var(--gold);">keine E-Mail hinterlegt</span>') +
+          (k.email ? " · " + esc(k.email) : ' · <span style="color:var(--gold-text);">keine E-Mail hinterlegt</span>') +
           (k.klasse ? " · Klasse " + esc(k.klasse) : "") + "</div>" +
         (k.quelle ? '<div class="admin-sub" style="opacity:.6;">Quelle: ' + esc(k.quelle) + "</div>" : "") +
         (aktion ? '<div style="margin-top:8px;">' + aktion + "</div>" : "") +
