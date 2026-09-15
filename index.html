@@ -414,6 +414,8 @@
     transition:background .2s ease,color .2s ease;}
   .btn-sekundaer:active{transform:scale(.98);}
   .neu-klein{font-size:11.5px;color:var(--muted);margin-top:9px;line-height:1.45;text-align:center;}
+  .login-sprachen{justify-content:center;margin:0 0 14px;}
+  .login-sprachen .sprach-btn{padding:8px 12px;font-size:13px;}
   .reg-label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:12px 0 5px;}
   .reg-hinweis{font-size:11px;color:var(--faint);margin-top:-4px;margin-bottom:2px;}
   .reg-code{margin-top:12px;padding:9px 12px;border-radius:10px;background:var(--surface-tint);
@@ -1475,6 +1477,12 @@ let videoFilterStufe = "";         // 8.3 Video-Liste nach Stufe filtern
 let videoFilterFahrzeug = "";      // 09.09.2026: Video-Liste nach Fahrzeug filtern (Audi A1, Audi Q5, Cupra, ...)
 let adminFortschritt = [];      // alle Videoaufrufe, nur fuer anonyme Aggregate + Betrugserkennung
 let adminSperrKlicks = [];      // Freemium: welche gesperrten Bereiche werden angetippt
+// 15.09.2026: academy_fortschritt/academy_sperre_klicks haben keine RLS-Policy,
+// adminFortschritt/adminSperrKlicks oben kommen deshalb immer leer zurueck.
+// Diese beiden hier kommen stattdessen aus fertigen, anonymen DB-Funktionen
+// (academy_dash_top_videos/-sperr_stufen) -- kein schueler_id enthalten.
+let adminTopVideos = [];
+let adminTopSperr = [];
 let allFahrlehrer = [];
 let allPruefer = [];
 let allSchueler = [];
@@ -1724,6 +1732,96 @@ const I18N = {
   }
 };
 
+// ---- Punkt 5 (15.09.2026): Login-Rest, Registrierung, PIN-Seite, Rechtshinweis ----
+// Bis hierher waren diese Bildschirme fest auf Deutsch -- ausgerechnet der erste Kontakt
+// eines neuen Schuelers, der die App wegen der Mehrsprachigkeit nutzen soll.
+// Als eigener Block statt verstreut in die vier Objekte oben: eine Stelle, leicht zu pruefen.
+// TR/EN/AR sind NICHT von Muttersprachlern geprueft -- vor breitem Einsatz gegenlesen lassen.
+Object.assign(I18N.de, {
+  tagline:"Dein Weg zur Prüfung", pinVerbergen:"PIN verbergen",
+  nochKeinZugang:"Noch keinen Zugang?", startzugangSichern:"Startzugang sichern",
+  startzugangVorteile:"✓ Fahrzeug & Technik komplett ✓ 1 Prüfungsstrecke zum Reinschnuppern",
+  regTitel:"Dein Startzugang", regTagline:"In 30 Sekunden startklar",
+  regName:"Dein Name", regNamePh:"Vor- und Nachname",
+  regTel:"Handynummer", regTelHinweis:"Damit meldest du dich später an.",
+  regMail:"E-Mail", regMailHinweis:"Dorthin schicken wir dir deine PIN.",
+  regKlasse:"Führerscheinklasse",
+  klB:"B (Auto)", klBE:"BE (Auto mit Anhänger)", klA:"A (Motorrad)", klAM:"AM (Roller)", klC:"C (LKW)", klCE:"CE (LKW mit Anhänger)",
+  regCode:"Empfehlungscode erkannt:", regBtn:"Startzugang erstellen", regLaeuft:"Wird angelegt …",
+  regRecht:"Mit dem Anlegen stimmst du den Nutzungsbedingungen zu. Die Fahr-Akademie ist ein ergänzendes Lernangebot und ersetzt keine Fahrschulausbildung. Unter 18? Dann brauchst du die Zustimmung deiner Eltern.",
+  regSchonZugang:"Ich habe schon einen Zugang",
+  regErrName:"Bitte gib deinen Namen ein.", regErrTel:"Bitte gib deine Handynummer ein.",
+  regErrMail:"Die E-Mail sieht nicht richtig aus.", regErrAllg:"Das hat nicht geklappt. Bitte nochmal versuchen.",
+  regErrNetz:"Keine Verbindung — bitte Internet prüfen.",
+  regFertig:"Fertig, {name}!", regMailGesendet:"Wir haben sie dir auch per E-Mail geschickt.",
+  regAnmeldenMit:"Anmelden mit {tel} + PIN",
+  regPinKasten:"Kein Passwort nötig. Wenn du den PIN verlierst, hilft dir dein Fahrlehrer — er sieht ihn in seiner Übersicht.",
+  regLoslegen:"Jetzt loslegen", regZumAnmelden:"Zum Anmelden"
+});
+Object.assign(I18N.tr, {
+  tagline:"Sınava giden yolun", pinVerbergen:"PIN'i gizle",
+  nochKeinZugang:"Henüz erişimin yok mu?", startzugangSichern:"Başlangıç erişimi al",
+  startzugangVorteile:"✓ Araç ve Teknik tamamen ✓ Denemek için 1 sınav güzergâhı",
+  regTitel:"Başlangıç erişimin", regTagline:"30 saniyede hazırsın",
+  regName:"Adın", regNamePh:"Ad ve soyad",
+  regTel:"Cep telefonu", regTelHinweis:"Daha sonra bununla giriş yaparsın.",
+  regMail:"E-posta", regMailHinweis:"PIN'ini buraya göndeririz.",
+  regKlasse:"Ehliyet sınıfı",
+  klB:"B (Otomobil)", klBE:"BE (Römorklu otomobil)", klA:"A (Motosiklet)", klAM:"AM (Scooter)", klC:"C (Kamyon)", klCE:"CE (Römorklu kamyon)",
+  regCode:"Tavsiye kodu tanındı:", regBtn:"Başlangıç erişimi oluştur", regLaeuft:"Oluşturuluyor …",
+  regRecht:"Kaydolarak kullanım koşullarını kabul etmiş olursun. Fahr-Akademie tamamlayıcı bir öğrenme hizmetidir ve sürücü kursu eğitiminin yerini tutmaz. 18 yaşından küçük müsün? O zaman ailenin onayına ihtiyacın var.",
+  regSchonZugang:"Zaten erişimim var",
+  regErrName:"Lütfen adını gir.", regErrTel:"Lütfen cep telefonu numaranı gir.",
+  regErrMail:"E-posta adresi doğru görünmüyor.", regErrAllg:"Bu olmadı. Lütfen tekrar dene.",
+  regErrNetz:"Bağlantı yok — lütfen internetini kontrol et.",
+  regFertig:"Tamam, {name}!", regMailGesendet:"Ayrıca e-postayla da gönderdik.",
+  regAnmeldenMit:"{tel} + PIN ile giriş yap",
+  regPinKasten:"Şifre gerekmez. PIN'ini kaybedersen sürüş hocan yardımcı olur — kendi listesinde görebilir.",
+  regLoslegen:"Hemen başla", regZumAnmelden:"Girişe git"
+});
+Object.assign(I18N.en, {
+  tagline:"Your way to the test", pinVerbergen:"Hide PIN",
+  nochKeinZugang:"No access yet?", startzugangSichern:"Get starter access",
+  startzugangVorteile:"✓ Vehicle & technology complete ✓ 1 test route to try",
+  regTitel:"Your starter access", regTagline:"Ready in 30 seconds",
+  regName:"Your name", regNamePh:"First and last name",
+  regTel:"Mobile number", regTelHinweis:"You'll use this to log in later.",
+  regMail:"Email", regMailHinweis:"We'll send your PIN there.",
+  regKlasse:"Licence class",
+  klB:"B (car)", klBE:"BE (car with trailer)", klA:"A (motorcycle)", klAM:"AM (scooter)", klC:"C (truck)", klCE:"CE (truck with trailer)",
+  regCode:"Referral code detected:", regBtn:"Create starter access", regLaeuft:"Creating …",
+  regRecht:"By signing up you agree to the terms of use. Fahr-Akademie is a supplementary learning service and does not replace driving school training. Under 18? Then you need your parents' consent.",
+  regSchonZugang:"I already have access",
+  regErrName:"Please enter your name.", regErrTel:"Please enter your mobile number.",
+  regErrMail:"That email doesn't look right.", regErrAllg:"That didn't work. Please try again.",
+  regErrNetz:"No connection — please check your internet.",
+  regFertig:"Done, {name}!", regMailGesendet:"We've also sent it to you by email.",
+  regAnmeldenMit:"Log in with {tel} + PIN",
+  regPinKasten:"No password needed. If you lose your PIN, your instructor can help — they can see it in their overview.",
+  regLoslegen:"Get started", regZumAnmelden:"Go to login"
+});
+Object.assign(I18N.ar, {
+  tagline:"طريقك إلى الامتحان", pinVerbergen:"إخفاء الرمز",
+  nochKeinZugang:"ليس لديك وصول بعد؟", startzugangSichern:"احصل على وصول البداية",
+  startzugangVorteile:"✓ المركبة والتقنية كاملة ✓ مسار امتحان واحد للتجربة",
+  regTitel:"وصول البداية", regTagline:"جاهز خلال 30 ثانية",
+  regName:"اسمك", regNamePh:"الاسم الأول واسم العائلة",
+  regTel:"رقم الجوال", regTelHinweis:"ستستخدمه لتسجيل الدخول لاحقًا.",
+  regMail:"البريد الإلكتروني", regMailHinweis:"سنرسل رمز PIN إلى هنا.",
+  regKlasse:"فئة رخصة القيادة",
+  klB:"B (سيارة)", klBE:"BE (سيارة مع مقطورة)", klA:"A (دراجة نارية)", klAM:"AM (سكوتر)", klC:"C (شاحنة)", klCE:"CE (شاحنة مع مقطورة)",
+  regCode:"تم التعرف على رمز الإحالة:", regBtn:"إنشاء وصول البداية", regLaeuft:"جارٍ الإنشاء …",
+  regRecht:"بالتسجيل فإنك توافق على شروط الاستخدام. أكاديمية القيادة خدمة تعليمية مكمّلة ولا تحل محل التدريب في مدرسة القيادة. عمرك أقل من 18 عامًا؟ إذن تحتاج إلى موافقة والديك.",
+  regSchonZugang:"لدي وصول بالفعل",
+  regErrName:"يرجى إدخال اسمك.", regErrTel:"يرجى إدخال رقم جوالك.",
+  regErrMail:"يبدو أن البريد الإلكتروني غير صحيح.", regErrAllg:"لم ينجح ذلك. يرجى المحاولة مرة أخرى.",
+  regErrNetz:"لا يوجد اتصال — يرجى التحقق من الإنترنت.",
+  regFertig:"تم، {name}!", regMailGesendet:"أرسلناه إليك أيضًا عبر البريد الإلكتروني.",
+  regAnmeldenMit:"سجّل الدخول باستخدام {tel} + رمز PIN",
+  regPinKasten:"لا حاجة لكلمة مرور. إذا فقدت رمز PIN، يساعدك مدرّبك — فهو يراه في قائمته.",
+  regLoslegen:"ابدأ الآن", regZumAnmelden:"إلى تسجيل الدخول"
+});
+
 let sprache = localStorage.getItem("academy_sprache") || "de";
 if(!I18N[sprache]) sprache = "de"; // unbekannter gespeicherter Wert -> sicher auf Deutsch
 
@@ -1850,6 +1948,41 @@ function setzeSprache(code){
   // Darum den Katalog neu laden. Die Uebersetzungen liegen bereits im Nachschlagewerk,
   // der Abruf ist klein und passiert nur beim bewussten Sprachwechsel.
   loadCatalog().then(function(){ renderCatalog(); }).catch(function(){ renderCatalog(); });
+}
+
+// Sprachwahl VOR dem Login (15.09.2026). setzeSprache() oben laedt den Katalog neu --
+// ohne Sitzung geht das nicht. Hier nur Sprache setzen und den aktuellen Bildschirm
+// neu zeichnen. Bereits getippte Eingaben werden mitgenommen, sonst waeren sie weg.
+function sprachReiheVorLogin(){
+  return '<div class="sprach-reihe login-sprachen">' +
+    SPRACHEN.map(function(s){
+      return '<button type="button" class="sprach-btn' + (s.code === sprache ? " aktiv" : "") + '" data-sprachevor="' + esc(s.code) + '">' +
+        esc(s.name) + "</button>";
+    }).join("") +
+  "</div>";
+}
+function bindeSprachReiheVorLogin(neuZeichnen){
+  document.querySelectorAll("[data-sprachevor]").forEach(function(b){
+    b.addEventListener("click", function(){
+      const code = b.dataset.sprachevor;
+      if(!I18N[code] || code === sprache) return;
+      const gemerkt = {};
+      document.querySelectorAll(".login-screen input, .login-screen select").forEach(function(f){
+        if(f.id) gemerkt[f.id] = f.value;
+      });
+      sprache = code;
+      localStorage.setItem("academy_sprache", code);
+      wendeSprachRichtungAn();
+      neuZeichnen();
+      Object.keys(gemerkt).forEach(function(id){
+        const f = document.getElementById(id);
+        if(f) f.value = gemerkt[id];
+      });
+      // Registrierungsknopf-Zustand an die mitgenommenen Werte anpassen
+      const erstes = document.getElementById("rg-name");
+      if(erstes) erstes.dispatchEvent(new Event("input"));
+    });
+  });
 }
 
 // Bereich 10.9 vorbereitet: Arabisch läuft von rechts nach links. lang/dir werden am
@@ -2026,12 +2159,13 @@ function showLogin(){
     '<div class="login-screen">' +
       '<img class="logo-img" src="' + LOGO + '" alt="Logo">' +
       "<h1>Fahr-Akademie</h1>" +
-      '<div class="tagline">Dein Weg zur Prüfung</div>' +
+      '<div class="tagline">' + esc(t("tagline")) + "</div>" +
+      sprachReiheVorLogin() +
       '<div class="login-card glass">' +
         '<input id="lo-tel" type="tel" placeholder="' + esc(t("telefon")) + '" autocomplete="off">' +
         '<div class="pw-field">' +
           '<input id="lo-pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="' + esc(t("pin")) + '" autocomplete="off">' +
-          '<button type="button" id="lo-pin-toggle" class="pw-toggle" aria-label="PIN anzeigen">' + icon("auge") + '</button>' +
+          '<button type="button" id="lo-pin-toggle" class="pw-toggle" aria-label="' + esc(t("pinAnzeigen")) + '">' + icon("auge") + '</button>' +
         "</div>" +
         '<button class="btn-primary" id="lo-btn">' + esc(t("anmelden")) + "</button>" +
         '<div id="lo-err" class="err"></div>' +
@@ -2040,9 +2174,9 @@ function showLogin(){
       // die meisten Aufrufe sind Anmeldungen von Bestandsschülern, die sollen nicht
       // zwischen zwei gleich lauten Formularen suchen müssen.
       '<div class="neu-hier">' +
-        '<div class="neu-trenner"><span>Noch keinen Zugang?</span></div>' +
-        '<button class="btn-sekundaer" id="zur-reg">Startzugang sichern</button>' +
-        '<div class="neu-klein">✓ Fahrzeug &amp; Technik komplett ✓ 1 Prüfungsstrecke zum Reinschnuppern</div>' +
+        '<div class="neu-trenner"><span>' + esc(t("nochKeinZugang")) + "</span></div>" +
+        '<button class="btn-sekundaer" id="zur-reg">' + esc(t("startzugangSichern")) + "</button>" +
+        '<div class="neu-klein">' + esc(t("startzugangVorteile")) + "</div>" +
       "</div>" +
       (DEMO_MODE ? '<div class="demo-badge">Demo-Modus — beliebige Eingabe funktioniert</div>' : "") +
       '<div style="margin-top:22px;"><a id="admin-link" style="color:var(--faint);font-size:12px;cursor:pointer;text-decoration:underline;">Admin-Bereich</a></div>' +
@@ -2054,9 +2188,10 @@ function showLogin(){
     const isHidden = field.type === "password";
     field.type = isHidden ? "text" : "password";
     this.innerHTML = icon(isHidden ? "augeZu" : "auge");
-    this.setAttribute("aria-label", isHidden ? "PIN verbergen" : "PIN anzeigen");
+    this.setAttribute("aria-label", isHidden ? t("pinVerbergen") : t("pinAnzeigen"));
   });
   document.getElementById("zur-reg").addEventListener("click", showRegistrierung);
+  bindeSprachReiheVorLogin(showLogin);
   document.getElementById("admin-link").addEventListener("click", function(){
     location.hash = "#admin";
     init();
@@ -2074,36 +2209,35 @@ function showRegistrierung(){
   document.getElementById("app").innerHTML =
     '<div class="login-screen">' +
       '<img class="logo-img" src="' + LOGO + '" alt="Logo">' +
-      "<h1>Dein Startzugang</h1>" +
-      '<div class="tagline">In 30 Sekunden startklar</div>' +
+      "<h1>" + esc(t("regTitel")) + "</h1>" +
+      '<div class="tagline">' + esc(t("regTagline")) + "</div>" +
+      sprachReiheVorLogin() +
       '<div class="login-card glass" style="text-align:left;">' +
-        '<label class="reg-label">Dein Name</label>' +
-        '<input id="rg-name" type="text" placeholder="Vor- und Nachname" autocomplete="name">' +
-        '<label class="reg-label">Handynummer</label>' +
+        '<label class="reg-label">' + esc(t("regName")) + "</label>" +
+        '<input id="rg-name" type="text" placeholder="' + esc(t("regNamePh")) + '" autocomplete="name">' +
+        '<label class="reg-label">' + esc(t("regTel")) + "</label>" +
         '<input id="rg-tel" type="tel" placeholder="0176 12345678" autocomplete="tel">' +
-        '<div class="reg-hinweis">Damit meldest du dich später an.</div>' +
-        '<label class="reg-label">E-Mail</label>' +
+        '<div class="reg-hinweis">' + esc(t("regTelHinweis")) + "</div>" +
+        '<label class="reg-label">' + esc(t("regMail")) + "</label>" +
         '<input id="rg-mail" type="email" placeholder="name@beispiel.de" autocomplete="email">' +
-        '<div class="reg-hinweis">Dorthin schicken wir dir deine PIN.</div>' +
-        '<label class="reg-label">Führerscheinklasse</label>' +
+        '<div class="reg-hinweis">' + esc(t("regMailHinweis")) + "</div>" +
+        '<label class="reg-label">' + esc(t("regKlasse")) + "</label>" +
         '<select id="rg-klasse">' +
-          '<option value="B">B (Auto)</option>' +
-          '<option value="BE">BE (Auto mit Anhänger)</option>' +
-          '<option value="A">A (Motorrad)</option>' +
+          '<option value="B">' + esc(t("klB")) + "</option>" +
+          '<option value="BE">' + esc(t("klBE")) + "</option>" +
+          '<option value="A">' + esc(t("klA")) + "</option>" +
           '<option value="A1">A1</option>' +
           '<option value="A2">A2</option>' +
-          '<option value="AM">AM (Roller)</option>' +
-          '<option value="C">C (LKW)</option>' +
-          '<option value="CE">CE (LKW mit Anhänger)</option>' +
+          '<option value="AM">' + esc(t("klAM")) + "</option>" +
+          '<option value="C">' + esc(t("klC")) + "</option>" +
+          '<option value="CE">' + esc(t("klCE")) + "</option>" +
         "</select>" +
-        (werbeCode ? '<div class="reg-code">Empfehlungscode erkannt: <b>' + esc(werbeCode) + "</b></div>" : "") +
-        '<button class="btn-primary" id="rg-btn" style="margin-top:14px;">Startzugang erstellen</button>' +
+        (werbeCode ? '<div class="reg-code">' + esc(t("regCode")) + " <b>" + esc(werbeCode) + "</b></div>" : "") +
+        '<button class="btn-primary" id="rg-btn" style="margin-top:14px;">' + esc(t("regBtn")) + "</button>" +
         '<div id="rg-err" class="err"></div>' +
-        '<div class="reg-recht">Mit dem Anlegen stimmst du den Nutzungsbedingungen zu. ' +
-          'Die Fahr-Akademie ist ein ergänzendes Lernangebot und ersetzt keine Fahrschulausbildung. ' +
-          'Unter 18? Dann brauchst du die Zustimmung deiner Eltern.</div>' +
+        '<div class="reg-recht">' + esc(t("regRecht")) + "</div>" +
       "</div>" +
-      '<div style="margin-top:18px;"><a id="zurueck-login" style="color:var(--faint);font-size:13px;cursor:pointer;text-decoration:underline;">Ich habe schon einen Zugang</a></div>' +
+      '<div style="margin-top:18px;"><a id="zurueck-login" style="color:var(--faint);font-size:13px;cursor:pointer;text-decoration:underline;">' + esc(t("regSchonZugang")) + "</a></div>" +
     "</div>";
   document.getElementById("rg-btn").addEventListener("click", function(){
     // Nach "bereits vorhanden" wird aus dem Knopf ein Weg zum Login. Bewusst ueber
@@ -2114,6 +2248,7 @@ function showRegistrierung(){
     doRegistrierung(werbeCode);
   });
   document.getElementById("zurueck-login").addEventListener("click", showLogin);
+  bindeSprachReiheVorLogin(showRegistrierung);
 
   // Spec 4.9: per "input" (jeder Tastendruck) auswerten, NICHT per "change" -- sonst
   // wird der Knopf erst aktiv, wenn der Schueler das Feld verlaesst. Auf dem Handy
@@ -2134,7 +2269,7 @@ function showRegistrierung(){
     // wieder ein Registrieren-Knopf -- sonst bliebe er fuer immer ein Login-Link.
     if(regBtn.dataset.ziel === "login"){
       delete regBtn.dataset.ziel;
-      regBtn.textContent = "Startzugang erstellen";
+      regBtn.textContent = t("regBtn");
     }
   }
   regFelder.forEach(function(f){ f.addEventListener("input", regPruefen); });
@@ -2153,12 +2288,12 @@ async function doRegistrierung(werbeCode){
   // Prüfung schon hier, nicht erst am Server: eine sofortige Rückmeldung ist freundlicher
   // als eine Wartezeit mit anschließender Fehlermeldung. Der Server prüft trotzdem nochmal --
   // auf eine Prüfung im Browser darf man sich nie verlassen.
-  if(name.length < 2){ err.textContent = "Bitte gib deinen Namen ein."; return; }
-  if(tel.replace(/[^0-9+]/g,"").length < 7){ err.textContent = "Bitte gib deine Handynummer ein."; return; }
-  if(mail && mail.indexOf("@") === -1){ err.textContent = "Die E-Mail sieht nicht richtig aus."; return; }
+  if(name.length < 2){ err.textContent = t("regErrName"); return; }
+  if(tel.replace(/[^0-9+]/g,"").length < 7){ err.textContent = t("regErrTel"); return; }
+  if(mail && mail.indexOf("@") === -1){ err.textContent = t("regErrMail"); return; }
 
   btn.disabled = true;
-  btn.textContent = "Wird angelegt …";
+  btn.textContent = t("regLaeuft");
   try{
     const res = await fetch(SUPABASE_URL + "/functions/v1/academy-selbstregistrierung", {
       method: "POST",
@@ -2173,20 +2308,20 @@ async function doRegistrierung(werbeCode){
       document.getElementById("app").innerHTML =
         '<div class="login-screen">' +
           '<img class="logo-img" src="' + LOGO + '" alt="Logo">' +
-          "<h1>Fertig, " + esc(d.name.split(" ")[0]) + "!</h1>" +
+          "<h1>" + esc(t("regFertig", { name: d.name.split(" ")[0] })) + "</h1>" +
           '<div class="login-card glass">' +
             '<div class="pin-label">' + esc(t("deinPin")) + "</div>" +
             '<div class="pin-gross">' + esc(d.pin) + "</div>" +
             '<div class="pin-satz">' + esc(t("pinWarnung")) + "</div>" +
             (d.mail_versendet
-              ? '<div class="pin-hinweis" style="margin-top:8px;">Wir haben sie dir auch per E-Mail geschickt.</div>'
+              ? '<div class="pin-hinweis" style="margin-top:8px;">' + esc(t("regMailGesendet")) + "</div>"
               : "") +
-            '<div class="pin-zugang">Anmelden mit <b>' + esc(d.telefon) + "</b> + PIN</div>" +
+            // Platzhalter erst NACH dem Escapen ersetzen, sonst wuerde das <b> mit escaped.
+            '<div class="pin-zugang">' + esc(t("regAnmeldenMit", { tel: "@@TEL@@" })).split("@@TEL@@").join("<b>" + esc(d.telefon) + "</b>") + "</div>" +
             // Spec 3.10: der Kasten nimmt die Angst vor dem Verlieren -- ohne ihn wirkt
             // die Warnung darueber wie eine Drohung ohne Ausweg.
-            '<div class="pin-kasten">Kein Passwort, keine E-Mail nötig. Wenn du den PIN ' +
-              'verlierst, hilft dir dein Fahrlehrer — er sieht ihn in seiner Übersicht.</div>' +
-            '<button class="btn-primary" id="rg-weiter" style="margin-top:16px;">Jetzt loslegen</button>' +
+            '<div class="pin-kasten">' + esc(t("regPinKasten")) + "</div>" +
+            '<button class="btn-primary" id="rg-weiter" style="margin-top:16px;">' + esc(t("regLoslegen")) + "</button>" +
           "</div>" +
         "</div>";
       document.getElementById("rg-weiter").addEventListener("click", function(){
@@ -2199,16 +2334,16 @@ async function doRegistrierung(werbeCode){
 
     if(d.code === "bereits_vorhanden"){
       err.textContent = d.error;
-      btn.textContent = "Zum Anmelden";
+      btn.textContent = t("regZumAnmelden");
       btn.disabled = false;
       btn.dataset.ziel = "login";
       return;
     }
-    err.textContent = d.error || "Das hat nicht geklappt. Bitte nochmal versuchen.";
-    btn.disabled = false; btn.textContent = "Startzugang erstellen";
+    err.textContent = d.error || t("regErrAllg");
+    btn.disabled = false; btn.textContent = t("regBtn");
   } catch(e){
-    err.textContent = "Keine Verbindung — bitte Internet prüfen.";
-    btn.disabled = false; btn.textContent = "Startzugang erstellen";
+    err.textContent = t("regErrNetz");
+    btn.disabled = false; btn.textContent = t("regBtn");
   }
 }
 
@@ -2608,29 +2743,56 @@ function renderLernpfadHtml(){
 
 function renderPruefungsstreckenHtml(){
   const gruppen = buildPruefungsstrecken();
+  // 15.09.2026 (Punkt 2): Früher waren hier ALLE Videos anklickbar, auch gesperrte --
+  // der Gratis-Schüler landete dann in einer nackten Fehlermeldung vom Server.
+  // Jetzt: Sperrstatus kommt aus buildLernpfad() (dieselbe Quelle wie Bereichsseite,
+  // also dieselbe videoSperrgrund()-Logik wie der Server). Gesperrte Videos
+  // erscheinen versiegelt und sind nicht klickbar; darunter eine Anfrage-Karte.
+  const lernpfadIndex = {};
+  buildLernpfad().forEach(function(g){
+    g.videos.forEach(function(x){ lernpfadIndex[x.video.id] = x; });
+  });
   return gruppen.map(function(g){
     const isOpen = openPruefer.has(g.pruefer.id);
+    let gesperrtAnzahl = 0;
     const videoRows = g.videos.map(function(v){
+      const x = lernpfadIndex[v.id];
+      // Fallback ohne Themen-Zuordnung: dieselbe Funktion, nur ohne Thema.
+      // Bei Vollzugang liefert sie IMMER null -- Zahler werden nie gesperrt.
+      const sperrgrund = x ? x.sperrgrund : videoSperrgrund(null, v);
+      if(sperrgrund === "vollzugang") gesperrtAnzahl++;
       const tagsForVideo = videoTags.filter(function(vt){ return vt.video_id === v.id; })
-        .map(function(vt){ const t = allTags.find(function(x){ return x.id === vt.tag_id; }); return t ? t.label : null; })
+        .map(function(vt){ const t = allTags.find(function(y){ return y.id === vt.tag_id; }); return t ? t.label : null; })
         .filter(Boolean).join(", ");
-      const check = seenVideoIds.has(v.id) ? '<span class="video-check">✓</span>' : "";
-      return '<div class="video-card glass" data-vid="' + esc(v.id) + '">' +
-        '<div><div class="video-title">' + esc(v.titel) + "</div>" + originalTitel("video", v.id, "titel", v.titel_de) + dauerBadge(v) +
-          (tagsForVideo ? '<div class="video-desc" style="opacity:.7;">Enthält: ' + esc(tagsForVideo) + "</div>" : "") +
-        "</div>" + check +
-      "</div>";
+      return renderVideoZeile({
+        video: v, tag: x ? x.tag : null, code: x ? x.code : null,
+        gesperrt: !!sperrgrund, sperrgrund: sperrgrund,
+        unterzeile: tagsForVideo ? "Enthält: " + tagsForVideo : ""
+      });
     }).join("");
 
+    const anfrageKarte = gesperrtAnzahl > 0
+      ? '<div class="karte anfrage-karte">' +
+          '<div class="anfrage-text">' + icon("schloss") + " " + esc(t("vollzugangBanner",{anzahl:gesperrtAnzahl, bereich:g.pruefer.name})) + "</div>" +
+          '<button class="anfrage-btn" data-zugang-anfragen="Prüfungsstrecken">' +
+            icon("krone") + "<span>" + esc(t("zugangAnfragen")) + "</span>" +
+          "</button>" +
+          '<div class="anfrage-klein">Du bekommst dann die Zahlungsinfos. Erst nach Zahlung wird freigeschaltet.</div>' +
+        "</div>"
+      : "";
+
+    const alleGesperrt = gesperrtAnzahl > 0 && gesperrtAnzahl === g.videos.length;
     return '<div class="stufe-section">' +
       '<div class="stufe-header' + (isOpen ? " open" : "") + '" data-pruefer="' + esc(g.pruefer.id) + '">' +
         '<div class="stufe-header-left">' +
           '<span class="stufe-caret">▸</span>' +
           '<span class="stufe-name">' + esc(g.pruefer.name) + "</span>" +
         "</div>" +
-        '<span class="admin-badge badge-gesperrt">' + g.videos.length + " Video" + (g.videos.length === 1 ? "" : "s") + "</span>" +
+        '<span class="admin-badge badge-gesperrt">' + g.videos.length + " Video" + (g.videos.length === 1 ? "" : "s") +
+          (alleGesperrt ? ' · <span class="vz-siegelwort">' + esc(t("versiegelt")) + "</span>" : "") +
+        "</span>" +
       "</div>" +
-      (isOpen ? '<div class="video-list">' + videoRows + "</div>" : "") +
+      (isOpen ? '<div class="video-list">' + videoRows + anfrageKarte + "</div>" : "") +
     "</div>";
   }).join("") || '<div class="empty">Noch keine Prüfungsstrecken hinterlegt.</div>';
 }
@@ -3811,6 +3973,9 @@ function renderVideoZeile(cfg){
         '<span class="vz-titel">' + esc(v.titel) + "</span>" +
         originalZeile +
         (metaTxt ? '<span class="vz-meta">' + metaTxt + "</span>" : "") +
+        // Optionale zweite Meta-Zeile (15.09.2026, Prüfer-Ansicht: "Enthält: ...").
+        // Wird bereits escaped übergeben NICHT erwartet -- hier escaped.
+        (cfg.unterzeile ? '<span class="vz-meta">' + esc(cfg.unterzeile) + "</span>" : "") +
       "</div>" +
     "</div>";
 }
@@ -4229,13 +4394,19 @@ async function loadAdminData(){
   const vdRes = await supa.from("academy_videos").select("*").order("reihenfolge");
   const vtRes = await supa.from("academy_video_tags").select("*");
   const vprRes = await supa.from("academy_video_pruefer").select("*");
-  // Rohdaten für die anonymen Dashboard-Aggregate (Meistgesehene Videos, Kaufinteresse)
-  // und die Betrugserkennung (Schnellwechsel). Jede Zeile ist EIN Videoaufruf.
-  // NICHT fuer eine Schueler-Historie -- die gibt es aus rechtlichen Gruenden nicht.
+  // Rohdaten für die Betrugserkennung (Schnellwechsel) und die Inaktiv-Kachel.
+  // Kommen wegen fehlender RLS-Policy auf academy_fortschritt aktuell IMMER leer
+  // zurueck (bekannt, siehe Übergabe 5.2/5.4) -- braucht erst die rechtliche
+  // Freigabe fuer Einzelauswertung, bevor das repariert wird. NICHT anfassen.
   const fsRes = await supa.from("academy_fortschritt").select("*").order("gesehen_am", {ascending:false});
   const kdRes = await supa.from("academy_kandidaten").select("*"); // Bereich 8.4
   // Freemium (28.08.2026): welche gesperrten Bereiche wecken das meiste Interesse?
   const skRes = await supa.from("academy_sperre_klicks").select("stufe");
+  // 15.09.2026: Meistgesehene Videos + Kaufinteresse laufen jetzt separat über
+  // fertige, anonyme DB-Funktionen (kein schueler_id in der Antwort) -- die
+  // Rohzeilen oben bleiben dafür ungenutzt, RLS-Fix ist bewusst nicht angefasst.
+  const topVidRes = await supa.rpc("academy_dash_top_videos");
+  const topSperrRes = await supa.rpc("academy_dash_sperr_stufen");
   allFahrlehrer = flRes.data || [];
   allPruefer = prRes.data || [];
   allSchueler = scRes.data || [];
@@ -4248,6 +4419,8 @@ async function loadAdminData(){
   adminFortschritt = fsRes.data || [];
   allKandidaten = kdRes.data || [];
   adminSperrKlicks = skRes.data || [];
+  adminTopVideos = topVidRes.data || [];
+  adminTopSperr = topSperrRes.data || [];
   if(myRole === "super_admin"){
     const schRes = await supa.from("academy_schulen").select("*").order("name");
     allSchulen = schRes.data || [];
@@ -4547,13 +4720,13 @@ async function renderAdminDashboard(){
       return '<div class="todo-zeile ' + t[0] + '"><span class="td-dot"></span><span>' + t[1] + "</span></div>";
     }).join("") + "</div>";
 
-  // Meistgesehene Videos -- zeigt dir, welche Inhalte wirklich genutzt werden
-  const proVideo = {};
-  adminFortschritt.forEach(function(f){ proVideo[f.video_id] = (proVideo[f.video_id]||0)+1; });
-  const topVideos = Object.keys(proVideo).map(function(vid){
-    const v = allVideos.find(function(x){ return x.id === vid; });
-    return { titel: v ? v.titel : "(gelöscht)", anzahl: proVideo[vid] };
-  }).sort(function(a,b){ return b.anzahl - a.anzahl; }).slice(0,5);
+  // Meistgesehene Videos -- zeigt dir, welche Inhalte wirklich genutzt werden.
+  // 15.09.2026: kommt jetzt fertig sortiert/aggregiert aus academy_dash_top_videos(),
+  // adminFortschritt bleibt dafuer ungenutzt (siehe loadAdminData).
+  const topVideos = adminTopVideos.map(function(row){
+    const v = allVideos.find(function(x){ return x.id === row.video_id; });
+    return { titel: v ? v.titel : "(gelöscht)", anzahl: Number(row.anzahl) };
+  });
 
   const topHtml = '<div class="admin-card glass"><div class="admin-form-title" style="margin-bottom:6px;">Meistgesehene Videos</div>' +
     (topVideos.length ? topVideos.map(function(t){
@@ -4562,11 +4735,10 @@ async function renderAdminDashboard(){
 
   // Freemium Idee 3 (28.08.2026): welche gesperrten Bereiche wecken das meiste
   // Kaufinteresse -- direktes Signal, wo Vollzugang-Verkäufe am ehesten reinkommen.
-  const proSperrBereich = {};
-  adminSperrKlicks.forEach(function(k){ proSperrBereich[k.stufe] = (proSperrBereich[k.stufe]||0)+1; });
-  const topSperr = Object.keys(proSperrBereich).map(function(stufe){
-    return { stufe: stufe, anzahl: proSperrBereich[stufe] };
-  }).sort(function(a,b){ return b.anzahl - a.anzahl; }).slice(0,5);
+  // 15.09.2026: kommt jetzt fertig aus academy_dash_sperr_stufen(), siehe oben.
+  const topSperr = adminTopSperr.map(function(row){
+    return { stufe: row.stufe, anzahl: Number(row.anzahl) };
+  });
 
   const sperrHtml = '<div class="admin-card glass"><div class="admin-form-title" style="margin-bottom:6px;">👑 Meistgeklickte gesperrte Bereiche</div>' +
     '<div class="admin-sub" style="margin-bottom:8px;">Zeigt, wo Schüler ohne Vollzugang am meisten reinschauen wollen.</div>' +
