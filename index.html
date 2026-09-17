@@ -1334,13 +1334,35 @@ function tagGesperrt(tag){
 // Verhindert Doppel-Protokollierung, wenn dieselbe Bereichsseite mehrfach neu
 // gerendert wird (z.B. durch Antippen des Prüfungsfilters) -- pro Chat-Sitzung reicht.
 const bereitsProtokollierteSperrKlicks = new Set();
-function protokolliereSperrKlick(stufe){
+function protokolliereSperrKlick(stufe, videoId){
   if(!session || !session.session_token) return;
   fetch(SUPABASE_URL + "/functions/v1/academy-log-sperre-klick", {
     method: "POST",
     headers: { "Content-Type": "application/json", "Authorization": "Bearer " + SUPABASE_ANON_KEY },
-    body: JSON.stringify({ session_token: session.session_token, stufe: stufe })
+    body: JSON.stringify({ session_token: session.session_token, stufe: stufe, video_id: videoId || null })
   }).catch(function(){}); // Fire-and-forget -- ein Fehler hier darf niemanden stören
+}
+
+/* Ein versiegeltes Video wurde angetippt (18.09.2026).
+   Zwei Dinge passieren: das Interesse wird protokolliert (einmal pro Video und
+   Sitzung, damit Ungeduld nicht als zehnfaches Interesse zaehlt) und der Schueler
+   bekommt sofort den Weg zum Zugang, statt nur ein stummes Schloss. */
+const bereitsGemeldeteVideos = new Set();
+async function gesperrtesVideoAngetippt(videoId, stufe, el){
+  const v = allVideos.find(function(x){ return x.id === videoId; });
+  if(!bereitsGemeldeteVideos.has(videoId)){
+    bereitsGemeldeteVideos.add(videoId);
+    protokolliereSperrKlick(stufe || "Start", videoId);
+  }
+  spuerbar();
+  // Nur vorhandene Sprachschluessel verwenden -- ein deutscher Festtext waere fuer
+  // die tuerkischen und arabischen Schueler ein Rueckschritt.
+  const weiter = await blattBestaetigen({
+    titel: v ? v.titel : t("versiegelt"),
+    text: t("gesperrtVollzugang") + ". " + t("siegelSatz"),
+    okText: t("zugangAnfragen")
+  });
+  if(weiter) zugangAnfragen(el, stufe || "Start");
 }
 // Kostprobe (12.09.2026): Das Video wird zusaetzlich uebergeben, weil "gratis" auf ZWEI
 // Ebenen gelten kann -- das ganze Thema (academy_tags.gratis) oder ein einzelnes Video
@@ -3805,6 +3827,12 @@ function renderCatalog(){
   document.querySelectorAll("[data-vid]").forEach(function(c){
     c.addEventListener("click", function(){ openVideo(c.dataset.vid); });
   });
+  // Antippen einer versiegelten Zeile: Interesse merken und Zugang anbieten.
+  document.querySelectorAll("[data-sperr-vid]").forEach(function(c){
+    c.addEventListener("click", function(){
+      gesperrtesVideoAngetippt(c.dataset.sperrVid, c.dataset.sperrStufe, c);
+    });
+  });
   const kontoLogout = document.getElementById("konto-logout-btn");
   if(kontoLogout) kontoLogout.addEventListener("click", doLogout);
   // Bereich 10.5: Sprachwechsel -- setzeSprache rendert selbst neu
@@ -3988,7 +4016,11 @@ function renderVideoZeile(cfg){
   if(cfg.gesperrt){
     const istKlasse = cfg.sperrgrund === "klasse";
     zusatzKlasse = istKlasse ? "gesperrt-klasse" : "versiegelt";
-    klickbar = false; // wie bisher: data-vid weglassen, Klick tut nichts
+    // 18.09.2026: Ein Schloss, das gar nichts tut, sagt dem Schueler nur "geh weg".
+    // Jetzt ist die versiegelte Zeile antippbar: sie protokolliert das Interesse und
+    // zeigt die Zugangsanfrage. Die KLASSEN-Sperre bleibt stumm -- die loest die
+    // Fahrschule, nicht der Schueler, da waere ein Kauf-Blatt falsch.
+    klickbar = false; // kein data-vid: das Video selbst darf nicht geoeffnet werden
     if(istKlasse){
       const hinweis = t("gesperrtKlasse", { klasse: cfg.tag && cfg.tag.nur_klasse });
       malInhalt = icon("schloss", "ic-s");
@@ -4024,8 +4056,12 @@ function renderVideoZeile(cfg){
   const highlightKlasse = cfg.highlighted ? " highlight-target" : "";
   const highlightId = cfg.highlighted ? ' id="dl-target"' : "";
   const vidAttr = klickbar ? ' data-vid="' + esc(v.id) + '"' : "";
+  // Interesse-Kennung nur bei der Vollzugang-Sperre (siehe Kommentar oben).
+  const sperrAttr = (cfg.gesperrt && cfg.sperrgrund !== "klasse")
+    ? ' data-sperr-vid="' + esc(v.id) + '" data-sperr-stufe="' + esc((cfg.tag && cfg.tag.stufe) || selectedBereich || "Start") + '"'
+    : "";
 
-  return '<div class="video-zeile druck-3 ' + zusatzKlasse + highlightKlasse + '"' + highlightId + vidAttr + '>' +
+  return '<div class="video-zeile druck-3 ' + zusatzKlasse + highlightKlasse + '"' + highlightId + vidAttr + sperrAttr + '>' +
       '<div class="vz-thumb">' +
         '<div class="vz-thumb-bg" style="background:' + vgGradientFuer(v.id) + ';"></div>' +
         thumbImg + dauerImBild +
@@ -4742,7 +4778,7 @@ async function renderAdminSchuelerTab(){
   // Kandidaten sind Serbands Vertriebswerkzeug -- ein Partner sieht sie nicht.
   // Stehengebliebener Zustand (z.B. Rollenwechsel im selben Tab) wird hier
   // zurueckgesetzt, dieselbe Absicherung wie vorher die nurSuper-Liste.
-  if(myRole !== "super_admin") schuelerAnsicht = "schueler";
+  if(myRole !== "super_admin" && schuelerAnsicht === "kandidaten") schuelerAnsicht = "schueler";
 
   // Fuer den Abrechnung-Knopf in der Karte gebraucht. Immer frisch laden (nicht nur
   // wenn leer), sonst zeigt die Karte nach einer Aenderung im Abrechnung-Tab einen
@@ -4756,11 +4792,16 @@ async function renderAdminSchuelerTab(){
 function renderAdminSchuelerPillen(){
   const pillenEl = document.getElementById("admin-pillen");
   if(!pillenEl) return;
-  if(myRole !== "super_admin"){ pillenEl.innerHTML = ""; return; }
+  // 18.09.2026: "Interesse" gibt es auch fuer Partner -- die Server-Funktion zeigt
+  // ihnen ohnehin nur ihre eigenen Schueler. "Kandidaten" bleibt beim Super-Admin.
+  const reiter = [["schueler", "Schüler"]];
+  if(myRole === "super_admin") reiter.push(["kandidaten", "Kandidaten"]);
+  reiter.push(["interesse", "Interesse"]);
   pillenEl.innerHTML =
     '<div class="admin-tabs admin-unterreiter">' +
-      '<div class="admin-tab' + (schuelerAnsicht === "schueler" ? " active" : "") + '" data-ansicht="schueler">Schüler</div>' +
-      '<div class="admin-tab' + (schuelerAnsicht === "kandidaten" ? " active" : "") + '" data-ansicht="kandidaten">Kandidaten</div>' +
+      reiter.map(function(r){
+        return '<div class="admin-tab' + (schuelerAnsicht === r[0] ? " active" : "") + '" data-ansicht="' + r[0] + '">' + r[1] + "</div>";
+      }).join("") +
     "</div>";
   pillenEl.querySelectorAll("[data-ansicht]").forEach(function(b){
     b.addEventListener("click", function(){
@@ -4773,6 +4814,7 @@ function renderAdminSchuelerPillen(){
 
 function renderAdminSchuelerUnter(){
   if(schuelerAnsicht === "kandidaten" && myRole === "super_admin") renderAdminKandidaten();
+  else if(schuelerAnsicht === "interesse") renderAdminInteresse("admin-unter-inner");
   else renderAdminSchueler();
 }
 
@@ -4826,6 +4868,88 @@ function renderAdminPartnerUnter(){
      2. Welche Fahrschule darf welches Gebiet zeigen?
    Ein Video ohne Gebiet ist allgemeiner Inhalt und fuer alle sichtbar.
    Nur der Super-Admin sieht diese Seite. */
+/* ---------- INTERESSE AN GESPERRTEN VIDEOS (18.09.2026) ----------
+   Zeigt, wer auf ein versiegeltes Video getippt hat und wie oft. Zweck ist Vertrieb:
+   bei wem lohnt das Nachhaken, wem schenkt man ein Video. Bewusst KEINE Auswertung
+   dessen, was jemand angeschaut hat -- diese Tabelle bleibt ohne Namen.
+   Die Daten kommen aus academy_sperr_klicks_liste(): Super-Admin sieht alle,
+   eine Partnerschule nur ihre eigenen Schüler. */
+let interesseDaten = null;
+
+async function renderAdminInteresse(zielId){
+  const el = document.getElementById(zielId || "admin-unter-inner");
+  if(!el) return;
+  el.innerHTML = '<div class="loading">Wird geladen …</div>';
+
+  if(DEMO_MODE){ el.innerHTML = '<div class="empty">Im Demo-Modus nicht verfügbar.</div>'; return; }
+
+  const { data, error } = await supa.rpc("academy_sperr_klicks_liste");
+  if(error){ el.innerHTML = '<div class="empty">Konnte nicht geladen werden: ' + esc(error.message) + "</div>"; return; }
+  interesseDaten = data || [];
+
+  const mitVideo = interesseDaten.filter(function(r){ return !!r.video_id; });
+  const ohneVideo = interesseDaten.filter(function(r){ return !r.video_id; });
+
+  // Nach Video gruppieren: pro Video die Schüler, sortiert nach Klicks.
+  const proVideo = {};
+  mitVideo.forEach(function(r){
+    if(!proVideo[r.video_id]) proVideo[r.video_id] = { titel: r.video_titel, zeilen: [], klicks: 0, personen: 0 };
+    proVideo[r.video_id].zeilen.push(r);
+    proVideo[r.video_id].klicks += Number(r.klicks);
+    proVideo[r.video_id].personen += 1;
+  });
+
+  const videoKarten = Object.keys(proVideo)
+    .sort(function(a, b){ return proVideo[b].klicks - proVideo[a].klicks; })
+    .map(function(vid){
+      const g = proVideo[vid];
+      const zeilen = g.zeilen.sort(function(a, b){ return Number(b.klicks) - Number(a.klicks); }).map(function(r){
+        const hinweis = r.hatte_vollzugang
+          ? ' <span class="admin-badge badge-gesperrt">hat Vollzugang</span>'
+          : "";
+        return '<div class="admin-sub" style="padding:5px 0;border-top:1px solid var(--hairline);">' +
+          "<b>" + esc(r.schueler_name) + "</b> · " + esc(String(r.klicks)) + "× · zuletzt " + esc(fmtDate(r.letzter)) + hinweis +
+        "</div>";
+      }).join("");
+      return '<div class="admin-card glass">' +
+        '<div class="admin-name">' + esc(g.titel) + "</div>" +
+        '<div class="admin-sub" style="margin-bottom:4px;">' + g.personen + " Person(en) · " + g.klicks + " Klick(s)</div>" +
+        zeilen +
+      "</div>";
+    }).join("");
+
+  // Nach Person: bei wem lohnt das Nachhaken?
+  const proPerson = {};
+  mitVideo.forEach(function(r){
+    if(!proPerson[r.schueler_id]) proPerson[r.schueler_id] = { name: r.schueler_name, videos: 0, klicks: 0, letzter: r.letzter, voll: r.hatte_vollzugang };
+    proPerson[r.schueler_id].videos += 1;
+    proPerson[r.schueler_id].klicks += Number(r.klicks);
+    if(r.letzter > proPerson[r.schueler_id].letzter) proPerson[r.schueler_id].letzter = r.letzter;
+  });
+  const personenZeilen = Object.keys(proPerson)
+    .sort(function(a, b){ return proPerson[b].videos - proPerson[a].videos; })
+    .map(function(id){
+      const p = proPerson[id];
+      return '<div class="admin-card glass">' +
+        '<div class="admin-row">' +
+          "<div><div class=\"admin-name\">" + esc(p.name) + "</div>" +
+          '<div class="admin-sub">' + p.videos + " verschiedene Videos · " + p.klicks + " Klick(s) · zuletzt " + esc(fmtDate(p.letzter)) + "</div></div>" +
+          (p.voll ? '<div class="admin-badge badge-gesperrt">Vollzugang</div>' : '<div class="admin-badge badge-aktiv">Startzugang</div>') +
+        "</div>" +
+      "</div>";
+    }).join("");
+
+  el.innerHTML =
+    '<div class="admin-sub" style="margin-bottom:12px;">Wer hat auf ein versiegeltes Video getippt? Ein Klick ist Interesse, kein Kauf — schau immer auf Personen UND Klicks. Wer schon Vollzugang hat, ist extra markiert: da ging es um eine Klassen-Freigabe, nicht ums Kaufen.</div>' +
+    '<div class="admin-form-title">Wer zeigt Interesse?</div>' +
+    (personenZeilen || '<div class="empty">Noch keine Klicks auf versiegelte Videos.</div>') +
+    '<div class="admin-form-title" style="margin-top:18px;">Welche Videos werden angetippt?</div>' +
+    (videoKarten || '<div class="empty">Noch nichts.</div>') +
+    (ohneVideo.length
+      ? '<div class="admin-sub" style="margin-top:16px;">Dazu ' + ohneVideo.length + " ältere Eintrag/Einträge nur mit Bereich, ohne Video — die stammen aus der Zeit vor dem 18.09.2026.</div>"
+      : "");
+}
+
 async function renderAdminGebiete(){
   const el = document.getElementById("admin-partner-inner");
   if(!el) return;
