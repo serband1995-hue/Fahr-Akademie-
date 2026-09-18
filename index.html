@@ -1375,6 +1375,13 @@ function videoSperrgrund(tag, video){
   if(session && session.vollzugang) return null;
   if(video && video.gratis) return null;   // Kostprobe: einzelnes Video frei
   if(tag && tag.gratis) return null;       // ganzes Thema frei
+  // 18.09.2026: persoenlich freigeschaltet -- geschenktes Einzelvideo oder gekauftes
+  // Paket. Muss mit academy-video-token uebereinstimmen, sonst zeigt die App ein
+  // Schloss, wo der Server durchlaesst.
+  if(video && session && Array.isArray(session.freigabe_videos)
+     && session.freigabe_videos.indexOf(video.id) !== -1) return null;
+  if(tag && tag.stufe && session && Array.isArray(session.freigabe_stufen)
+     && session.freigabe_stufen.indexOf(tag.stufe) !== -1) return null;
   return "vollzugang";
 }
 
@@ -2065,6 +2072,7 @@ let videoPruefer = [];
    meineGebiete = null bedeutet bewusst "sieht alles" (Schüler ohne Fahrschule),
    eine Liste bedeutet "sieht nur diese Gebiete". */
 let allGebiete = [];
+let allPakete = [];
 let alleSchuleGebiete = [];
 let meineGebiete = null;
 let mainView = "start"; // "start" | "lernpfad" | "pruefungsstrecken" | "verlauf" | "konto"
@@ -4335,6 +4343,12 @@ function blattBauen(opts){
         ? '<input class="blatt-feld" id="blatt-feld" type="' + esc(opts.eingabeTyp || "text") + '" ' +
           'value="' + esc(opts.wert || "") + '" placeholder="' + esc(opts.platzhalter || "") + '">'
         : "") +
+      // Auswahlliste im Blatt (18.09.2026), z. B. welches Paket freigeschaltet wird.
+      (opts.auswahl
+        ? '<select class="blatt-feld" id="blatt-auswahl">' +
+          opts.auswahl.map(function(o){ return '<option value="' + esc(o.wert) + '">' + esc(o.text) + "</option>"; }).join("") +
+          "</select>"
+        : "") +
       (opts.haken
         ? '<label class="blatt-haken"><input type="checkbox" id="blatt-haken"><span>' +
           esc(opts.haken) + "</span></label>"
@@ -4376,7 +4390,14 @@ function blattZeigen(opts){
 
     overlay.querySelector("#blatt-ok").addEventListener("click", function(){
       const haken = overlay.querySelector("#blatt-haken");
-      if(haken){ beenden({ haken: haken.checked }); return; }
+      const auswahl = overlay.querySelector("#blatt-auswahl");
+      if(haken || auswahl){
+        beenden({
+          haken: haken ? haken.checked : false,
+          wert: auswahl ? auswahl.value : (feld ? feld.value : null)
+        });
+        return;
+      }
       beenden(feld ? feld.value : true);
     });
     const abbruchKnopf = overlay.querySelector("#blatt-abbruch");
@@ -4633,6 +4654,8 @@ async function loadAdminData(){
   const vtRes = await supa.from("academy_video_tags").select("*");
   const vprRes = await supa.from("academy_video_pruefer").select("*");
   // Gebiete + Freigaben (15.09.2026)
+  const pkRes = await supa.from("academy_pakete").select("*").order("reihenfolge");
+  allPakete = pkRes.data || [];
   const gbRes = await supa.from("academy_gebiete").select("*").order("name");
   const sgRes = await supa.from("academy_schule_gebiete").select("*");
   allGebiete = gbRes.data || [];
@@ -4837,8 +4860,8 @@ function renderAdminPartnerPillen(){
   const pillenEl = document.getElementById("admin-partner-pillen");
   if(!pillenEl) return;
   const optionen = myRole === "super_admin"
-    ? [["fahrlehrer","Fahrlehrer"],["pruefer","Prüfer"],["schulen","Schulen"],["gebiete","Gebiete"]]
-    : [["fahrlehrer","Fahrlehrer"]];
+    ? [["fahrlehrer","Fahrlehrer"],["pruefer","Prüfer"],["schulen","Schulen"],["gebiete","Gebiete"],["pakete","Pakete"]]
+    : [["fahrlehrer","Fahrlehrer"],["pakete","Pakete"]];
   if(optionen.length < 2){ pillenEl.innerHTML = ""; return; }
   pillenEl.innerHTML =
     '<div class="admin-tabs admin-unterreiter">' +
@@ -4859,7 +4882,116 @@ function renderAdminPartnerUnter(){
   if(partnerSub === "pruefer" && myRole === "super_admin") renderAdminPruefer();
   else if(partnerSub === "schulen" && myRole === "super_admin") renderAdminSchulen();
   else if(partnerSub === "gebiete" && myRole === "super_admin") renderAdminGebiete();
+  else if(partnerSub === "pakete") renderAdminPakete();
   else renderAdminFahrlehrer();
+}
+
+/* ---------- PAKETE (18.09.2026) ----------
+   Ein Paket ist ein Teil der Videothek zu einem kleineren Preis, z. B.
+   "Prüfungsstrecken 40 €". Umfang = ein oder mehrere Bereiche.
+   Du pflegst deine Pakete, ein Partner seine eigenen -- sonst würde dein Preis
+   ihn in seinem eigenen Bezirk unterbieten.
+   Bewusst höchstens drei Pakete empfohlen: mehr Preise verkaufen nicht besser. */
+async function renderAdminPakete(){
+  const el = document.getElementById("admin-partner-inner");
+  if(!el) return;
+
+  const meine = allPakete.filter(function(p){
+    return myRole === "super_admin" ? !p.schule_id : p.schule_id === mySchule;
+  });
+
+  const karten = meine.map(function(p){
+    return '<div class="admin-card glass">' +
+      '<div class="admin-row">' +
+        "<div><div class=\"admin-name\">" + esc(p.name) + "</div>" +
+        '<div class="admin-sub">' + esc(fmtEuro(p.preis)) + " · " + esc((p.umfang_stufen || []).join(", ") || "kein Bereich") + "</div></div>" +
+        '<button class="icon-btn danger" data-delpaket="' + esc(p.id) + '" title="Paket löschen">' + icon("papierkorb") + "</button>" +
+      "</div>" +
+    "</div>";
+  }).join("") || '<div class="empty">Noch kein Paket. Drei reichen völlig.</div>';
+
+  // Bereiche kommen aus den vorhandenen Themen, damit nichts erfunden wird.
+  const bereiche = Array.from(new Set(allTags.map(function(t){ return t.stufe; }).filter(Boolean))).sort();
+
+  el.innerHTML =
+    '<div class="admin-form glass">' +
+      '<div class="admin-form-title">Neues Paket</div>' +
+      '<div class="admin-sub" style="margin-bottom:10px;">Das Paket ist dein Rückfall-Angebot, wenn jemand beim Vollzugang zögert. Es steht nirgends offen aus.</div>' +
+      '<label>Name</label><input id="npak-name" placeholder="z. B. Prüfungsstrecken">' +
+      '<label style="margin-top:10px;">Preis in Euro</label><input id="npak-preis" type="number" inputmode="decimal" step="1" placeholder="40">' +
+      '<label style="margin-top:10px;">Welche Bereiche sind enthalten?</label>' +
+      bereiche.map(function(b){
+        return '<label style="display:flex;align-items:center;gap:10px;padding:6px 0;font-weight:400;text-transform:none;letter-spacing:0;font-size:15px;color:var(--text);">' +
+          '<input type="checkbox" class="npak-bereich" value="' + esc(b) + '"> ' + esc(b) + "</label>";
+      }).join("") +
+      '<button class="btn-primary" id="npak-btn" style="margin-top:10px;">Paket anlegen</button>' +
+    "</div>" +
+    karten;
+
+  const btn = document.getElementById("npak-btn");
+  if(btn) btn.addEventListener("click", createPaket);
+  el.querySelectorAll("[data-delpaket]").forEach(function(b){
+    b.addEventListener("click", function(){ deletePaket(b.dataset.delpaket); });
+  });
+}
+
+async function createPaket(){
+  const name = (document.getElementById("npak-name").value || "").trim();
+  const preis = parseFloat((document.getElementById("npak-preis").value || "").replace(",", "."));
+  const bereiche = Array.from(document.querySelectorAll(".npak-bereich:checked")).map(function(c){ return c.value; });
+  if(!name){ showToast("Name ist Pflicht"); return; }
+  if(!(preis > 0)){ showToast("Preis fehlt"); return; }
+  if(!bereiche.length){ showToast("Mindestens einen Bereich auswählen"); return; }
+
+  // Vollpreis live nachschlagen statt zu raten: als Super-Admin der Direktpreis,
+  // als Partner der eigene Schulpreis. Ein Paket, das so viel kostet wie alles,
+  // kauft niemand -- deshalb die Rueckfrage.
+  let vollpreis = 0;
+  try{
+    if(myRole === "super_admin"){
+      const { data } = await supa.from("academy_einstellungen").select("wert").eq("schluessel","preis_direktverkauf").maybeSingle();
+      vollpreis = Number((data && data.wert) || 0);
+    } else {
+      const schule = allSchulen.find(function(x){ return x.id === mySchule; });
+      vollpreis = Number((schule && schule.preis_schueler) || 0);
+    }
+  } catch(e){ vollpreis = 0; }
+  if(vollpreis && preis >= vollpreis){
+    if(!await blattBestaetigen({
+      titel: "Paket teurer als der Vollzugang?",
+      text: "Der Vollzugang kostet " + fmtEuro(vollpreis) + ". Ein Paket, das genauso viel oder mehr kostet, kauft niemand.",
+      okText: "Trotzdem anlegen"
+    })) return;
+  }
+
+  if(DEMO_MODE){ showToast("Im Demo-Modus nicht möglich"); return; }
+  const id = "pak" + Date.now();
+  const { error } = await supa.from("academy_pakete").insert({
+    id: id, name: name, preis: preis, umfang_stufen: bereiche,
+    schule_id: myRole === "super_admin" ? null : mySchule
+  });
+  if(error){ showToast("Fehler: " + error.message); return; }
+  await protokolliere("paket_angelegt", "paket", id, name, fmtEuro(preis) + " · " + bereiche.join(", "));
+  await loadAdminData();
+  renderAdminPakete();
+  showToast("Paket angelegt");
+}
+
+async function deletePaket(id){
+  const p = allPakete.find(function(x){ return x.id === id; });
+  if(!p) return;
+  if(!await blattBestaetigen({
+    titel: "Paket „" + p.name + "\u201c löschen?",
+    text: "Bereits freigeschaltete Schüler behalten ihren Zugang. Nur neue Freischaltungen sind dann nicht mehr möglich.",
+    okText: "Löschen"
+  })) return;
+  if(DEMO_MODE) return;
+  const { error } = await supa.from("academy_pakete").delete().eq("id", id);
+  if(error){ showToast("Fehler: " + error.message); return; }
+  await protokolliere("paket_geloescht", "paket", id, p.name, null);
+  await loadAdminData();
+  renderAdminPakete();
+  showToast("Paket gelöscht");
 }
 
 /* ---------- PRÜFGEBIETE (15.09.2026) ----------
@@ -4907,8 +5039,15 @@ async function renderAdminInteresse(zielId){
         const hinweis = r.hatte_vollzugang
           ? ' <span class="admin-badge badge-gesperrt">hat Vollzugang</span>'
           : "";
-        return '<div class="admin-sub" style="padding:5px 0;border-top:1px solid var(--hairline);">' +
+        // Zwei Tipps bis zur Freischaltung: Knopf hier, Auswahl im Blatt.
+        const knoepfe = r.hatte_vollzugang ? "" :
+          '<div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;">' +
+            '<button class="chip-btn" data-schenk-video="' + esc(r.video_id) + '" data-schenk-schueler="' + esc(r.schueler_id) + '">🎁 Video schenken</button>' +
+            '<button class="chip-btn" data-paket-schueler="' + esc(r.schueler_id) + '">📦 Paket freischalten</button>' +
+          "</div>";
+        return '<div class="admin-sub" style="padding:7px 0;border-top:1px solid var(--hairline);">' +
           "<b>" + esc(r.schueler_name) + "</b> · " + esc(String(r.klicks)) + "× · zuletzt " + esc(fmtDate(r.letzter)) + hinweis +
+          knoepfe +
         "</div>";
       }).join("");
       return '<div class="admin-card glass">' +
@@ -4948,6 +5087,87 @@ async function renderAdminInteresse(zielId){
     (ohneVideo.length
       ? '<div class="admin-sub" style="margin-top:16px;">Dazu ' + ohneVideo.length + " ältere Eintrag/Einträge nur mit Bereich, ohne Video — die stammen aus der Zeit vor dem 18.09.2026.</div>"
       : "");
+
+  el.querySelectorAll("[data-schenk-video]").forEach(function(b){
+    b.addEventListener("click", function(){
+      videoSchenken(b.dataset.schenkSchueler, b.dataset.schenkVideo);
+    });
+  });
+  el.querySelectorAll("[data-paket-schueler]").forEach(function(b){
+    b.addEventListener("click", function(){ paketFreischalten(b.dataset.paketSchueler); });
+  });
+}
+
+/* Ein einzelnes Video schenken (18.09.2026).
+   Geschenke erzeugen bewusst KEINEN Beleg -- sonst stünde Umsatz in der Abrechnung,
+   den es nie gab. Das ist die billigste Verkaufsansprache, die es gibt. */
+async function videoSchenken(schuelerId, videoId){
+  const sch = allSchueler.find(function(x){ return x.id === schuelerId; });
+  const v = allVideos.find(function(x){ return x.id === videoId; });
+  if(!sch || !v) { showToast("Schüler oder Video nicht gefunden"); return; }
+  if(!await blattBestaetigen({
+    titel: "Video schenken?",
+    text: sch.name + " bekommt „" + v.titel + "\u201c dauerhaft frei. Es entsteht kein Verkaufsbeleg.",
+    okText: "Schenken"
+  })) return;
+
+  if(DEMO_MODE){ showToast("Im Demo-Modus nicht möglich"); return; }
+  const { error } = await supa.from("academy_freischaltungen").insert({
+    schueler_id: schuelerId, art: "video", video_id: videoId, geschenkt: true,
+    erstellt_von: (adminSession && adminSession.email) ? adminSession.email : "Admin"
+  });
+  if(error){
+    showToast(error.code === "23505" ? "Hat er schon frei" : ("Fehler: " + error.message));
+    return;
+  }
+  await protokolliere("video_geschenkt", "schueler", schuelerId, sch.name, v.titel);
+  showToast("Geschenkt — sag ihm Bescheid");
+  renderAdminInteresse("admin-unter-inner");
+}
+
+/* Ein Paket freischalten (18.09.2026).
+   Kaufen erzeugt über den Trigger automatisch einen Beleg mit dem Paketpreis,
+   Schenken nicht. Angeboten werden nur Pakete, die zur Schule des Schülers passen. */
+async function paketFreischalten(schuelerId){
+  const sch = allSchueler.find(function(x){ return x.id === schuelerId; });
+  if(!sch){ showToast("Schüler nicht gefunden"); return; }
+  const passend = allPakete.filter(function(p){
+    return p.aktiv !== false && (p.schule_id || null) === (sch.schule_id || null);
+  });
+  if(!passend.length){
+    showToast("Erst ein Paket anlegen (Partner → Pakete)");
+    return;
+  }
+  // Ein Blatt statt zwei: Paket auswählen und gleich sagen, ob bezahlt wurde.
+  // Der Haken ist standardmäßig AUS, damit ein versehentliches Antippen niemals
+  // einen Beleg erzeugt. Abbrechen macht gar nichts.
+  const wahl = await blattZeigen({
+    titel: "Paket für " + sch.name,
+    text: "Ohne Haken gilt es als Geschenk und es entsteht kein Verkaufsbeleg.",
+    auswahl: passend.map(function(p){
+      return { wert: p.id, text: p.name + " · " + fmtEuro(p.preis) };
+    }),
+    haken: "Wurde bezahlt — Verkaufsbeleg buchen",
+    okText: "Freischalten"
+  });
+  if(!wahl || !wahl.wert) return;
+  const geschenkt = !wahl.haken;
+
+  if(DEMO_MODE){ showToast("Im Demo-Modus nicht möglich"); return; }
+  const paket = passend.find(function(p){ return p.id === wahl.wert; });
+  const { error } = await supa.from("academy_freischaltungen").insert({
+    schueler_id: schuelerId, art: "paket", paket_id: wahl.wert, geschenkt: geschenkt,
+    preis: geschenkt ? null : paket.preis,
+    erstellt_von: (adminSession && adminSession.email) ? adminSession.email : "Admin"
+  });
+  if(error){
+    showToast(error.code === "23505" ? "Hat er schon frei" : ("Fehler: " + error.message));
+    return;
+  }
+  await protokolliere(geschenkt ? "paket_geschenkt" : "paket_verkauft", "schueler", schuelerId, sch.name, paket.name);
+  await ladeVerkaeufe();
+  showToast(geschenkt ? "Paket geschenkt" : "Paket verkauft — Beleg ist gebucht");
+  renderAdminInteresse("admin-unter-inner");
 }
 
 async function renderAdminGebiete(){
@@ -7616,7 +7836,9 @@ async function toggleSchule(id){
   "verkaufSpeichern", "verkaufBezahltUmschalten", "verkaufGeschenktUmschalten",
   "verkaufLoeschen", "kandidatMailNachtragen", "kandidatFreischalten",
   "kandidatenAbgleichen", "bulkVerlaengern", "bulkSperrenSetzen",
-  "createSchule", "toggleSchule", "zugangAnfragen", "doRegistrierung", "doLogin"
+  "createSchule", "toggleSchule", "zugangAnfragen", "doRegistrierung", "doLogin",
+  "createGebiet", "deleteGebiet", "setzeVideoGebiet", "setzeGebietsFreigabe",
+  "createPaket", "deletePaket", "videoSchenken", "paketFreischalten"
 ].forEach(function(name){
   const original = window[name];
   if(typeof original !== "function") return;
