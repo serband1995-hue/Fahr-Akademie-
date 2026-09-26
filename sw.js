@@ -15,8 +15,13 @@
 // bleiben cache-first, die ändern sich praktisch nie.
 // CACHE_NAME wurde auf v2 erhöht -> der alte, verklebte Cache wird beim Aktivieren gelöscht.
 
-const CACHE_NAME = "fahr-akademie-shell-v2";
+// v3 (26.09.2026): supabase-js liegt jetzt im Repo. Der Dateiname traegt die Version,
+// deshalb ist cache-first hier sicher -- eine neue Version bekommt einen neuen Namen.
+// v4 (26.09.2026): Logo als eigene kleine Datei (vorher 46 KB im HTML).
+const CACHE_NAME = "fahr-akademie-shell-v4";
 const STATIC_ASSETS = [
+  "./vendor/supabase-js-2.117.2.min.js",
+  "./logo-264.jpg",
   "./manifest.json",
   "./icon-192.png",
   "./icon-512.png",
