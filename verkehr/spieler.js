@@ -19,22 +19,26 @@ const UI = {
     halb: "½ Tempo", vonVorn: "Von vorn", kamFolgt: "Kamera folgt der Erklärung", mitdenken: "Mitdenken: Szene hält bei Fragen an", md: "Mitdenken", aufl: "Auflösung zeigen", weiter: "Weiter",
     richtigIst: "Richtig ist", reihenfolge: "Die Reihenfolge", kein3d: "Dein Gerät kann die 3D-Darstellung leider nicht anzeigen. Die Erklärungen findest du unten.",
     worum: "Worum geht's?", merken: "Die Regel zum Merken", rf: "Richtig und falsch", zeit: "Zeitleiste", kapitel: "Kapitel", blick: "Blickwinkel", tageszeit: "Tageszeit wechseln", fassung: "Fassung",
-    teaserTitel: "Weiter geht's mit dem Vollzugang", teaserText: "Das war die Kostprobe. Mit dem Vollzugang siehst du die ganze Szene mit allen Kapiteln und Fragen:", teaserKnopf: "Zugang anfragen", nochmal: "Kostprobe nochmal", gesperrt: "Mit Vollzugang", buehne: "Animierte 3D-Szene" },
+    teaserTitel: "Weiter geht's mit dem Vollzugang", teaserText: "Das war die Kostprobe. Mit dem Vollzugang siehst du die ganze Szene mit allen Kapiteln und Fragen:", teaserKnopf: "Zugang anfragen", nochmal: "Kostprobe nochmal", gesperrt: "Mit Vollzugang", buehne: "Animierte 3D-Szene",
+    kapZurueck: "Zurück", kapWeiter: "Weiter", alleKap: "Alle Kapitel", ende: "Ende der Szene" },
   en: { abspielen: "Play", anhalten: "Pause", uebersicht: "Overview", schraeg: "Follow", oben: "Top", fahrer: "Driver", tag: "Day", daemmerung: "Dusk", nacht: "Night",
     halb: "½ speed", vonVorn: "Restart", kamFolgt: "Camera follows the explanation", mitdenken: "Think along: scene pauses at questions", md: "Think along", aufl: "Show answer", weiter: "Continue",
     richtigIst: "Correct is", reihenfolge: "The order", kein3d: "Your device cannot show the 3D view. You'll find the explanations below.",
     worum: "What is it about?", merken: "Rules to remember", rf: "Right and wrong", zeit: "Timeline", kapitel: "Chapters", blick: "View", tageszeit: "Change time of day", fassung: "Version",
-    teaserTitel: "Continue with full access", teaserText: "That was the preview. With full access you get the whole scene with all chapters and questions:", teaserKnopf: "Request access", nochmal: "Preview again", gesperrt: "Full access", buehne: "Animated 3D scene" },
+    teaserTitel: "Continue with full access", teaserText: "That was the preview. With full access you get the whole scene with all chapters and questions:", teaserKnopf: "Request access", nochmal: "Preview again", gesperrt: "Full access", buehne: "Animated 3D scene",
+    kapZurueck: "Back", kapWeiter: "Next", alleKap: "All chapters", ende: "End of scene" },
   tr: { abspielen: "Oynat", anhalten: "Durdur", uebersicht: "Genel bakış", schraeg: "Takip", oben: "Üstten", fahrer: "Sürücü", tag: "Gündüz", daemmerung: "Alacakaranlık", nacht: "Gece",
     halb: "½ hız", vonVorn: "Baştan", kamFolgt: "Kamera açıklamayı takip eder", mitdenken: "Birlikte düşün: sahne sorularda durur", md: "Birlikte düşün", aufl: "Cevabı göster", weiter: "Devam",
     richtigIst: "Doğru cevap", reihenfolge: "Sıralama", kein3d: "Cihazın 3D görünümü gösteremiyor. Açıklamaları aşağıda bulabilirsin.",
     worum: "Konu ne?", merken: "Akılda tutulacak kurallar", rf: "Doğru ve yanlış", zeit: "Zaman çizelgesi", kapitel: "Bölümler", blick: "Bakış açısı", tageszeit: "Günün saatini değiştir", fassung: "Sürüm",
-    teaserTitel: "Tam erişimle devam et", teaserText: "Bu bir tadımlıktı. Tam erişimle sahnenin tamamını tüm bölümler ve sorularla görürsün:", teaserKnopf: "Erişim iste", nochmal: "Tadımlığı tekrar izle", gesperrt: "Tam erişim", buehne: "Hareketli 3D sahne" },
+    teaserTitel: "Tam erişimle devam et", teaserText: "Bu bir tadımlıktı. Tam erişimle sahnenin tamamını tüm bölümler ve sorularla görürsün:", teaserKnopf: "Erişim iste", nochmal: "Tadımlığı tekrar izle", gesperrt: "Tam erişim", buehne: "Hareketli 3D sahne",
+    kapZurueck: "Geri", kapWeiter: "İleri", alleKap: "Tüm bölümler", ende: "Sahnenin sonu" },
   ar: { abspielen: "تشغيل", anhalten: "إيقاف مؤقت", uebersicht: "نظرة عامة", schraeg: "متابعة", oben: "من الأعلى", fahrer: "السائق", tag: "نهار", daemmerung: "غسق", nacht: "ليل",
     halb: "½ السرعة", vonVorn: "من البداية", kamFolgt: "الكاميرا تتبع الشرح", mitdenken: "فكّر معنا: يتوقف المشهد عند الأسئلة", md: "فكّر معنا", aufl: "أظهر الإجابة", weiter: "متابعة",
     richtigIst: "الإجابة الصحيحة", reihenfolge: "الترتيب", kein3d: "جهازك لا يستطيع عرض المشهد ثلاثي الأبعاد. تجد الشرح في الأسفل.",
     worum: "عمّ يدور الأمر؟", merken: "قواعد للحفظ", rf: "الصحيح والخطأ", zeit: "الخط الزمني", kapitel: "الفصول", blick: "زاوية الرؤية", tageszeit: "تغيير وقت اليوم", fassung: "النسخة",
-    teaserTitel: "تابع مع الوصول الكامل", teaserText: "كان هذا عرضًا تجريبيًا. مع الوصول الكامل ترى المشهد كاملًا بكل الفصول والأسئلة:", teaserKnopf: "اطلب الوصول", nochmal: "شاهد العرض مرة أخرى", gesperrt: "وصول كامل", buehne: "مشهد متحرك ثلاثي الأبعاد" }
+    teaserTitel: "تابع مع الوصول الكامل", teaserText: "كان هذا عرضًا تجريبيًا. مع الوصول الكامل ترى المشهد كاملًا بكل الفصول والأسئلة:", teaserKnopf: "اطلب الوصول", nochmal: "شاهد العرض مرة أخرى", gesperrt: "وصول كامل", buehne: "مشهد متحرك ثلاثي الأبعاد",
+    kapZurueck: "رجوع", kapWeiter: "التالي", alleKap: "كل الفصول", ende: "نهاية المشهد" }
 };
 const BUCHST = ["A", "B", "C", "D"];
 
@@ -55,7 +59,7 @@ const CSS = `
 @media (min-width:700px){.vv .vv-buehne{aspect-ratio:16/10;}}
 .vv .vv-buehne canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
 .vv .vv-schicht{position:absolute;inset:0;pointer-events:none;}
-.vv .vv-marke{position:absolute;transform:translate(-50%,-120%);padding:3px 9px;border-radius:999px;font-size:13px;font-weight:700;color:#fff;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.25);}
+.vv .vv-marke{position:absolute;transform:translate(-50%,-120%);max-width:none;padding:3px 9px;border-radius:999px;font-size:13px;font-weight:700;color:#fff;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.25);}
 .vv .vv-ol{position:absolute;left:10px;top:10px;right:120px;display:flex;gap:6px;flex-wrap:wrap;}
 .vv .vv-or{position:absolute;right:10px;top:10px;display:flex;gap:6px;}
 [dir="rtl"].vv .vv-ol{left:120px;right:10px;} [dir="rtl"].vv .vv-or{right:auto;left:10px;}
@@ -67,19 +71,17 @@ const CSS = `
 .vv .vv-tempo small{font-size:12.5px;opacity:.8;font-weight:600;}
 .vv .vv-fehler{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;background:var(--vv-surface);}
 .vv .vv-teaser{margin-top:10px;}
+.vv .vv-kamreihe{display:none;}
+.vv .vv-kapliste{display:none;}
+.vv .vv-kk-nav{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.vv .vv-kk-nav .vv-knopf{flex:1 1 0;min-width:0;}
+.vv .vv-knopf.haupt-leicht{background:var(--vv-tint);color:var(--vv-gruen-text);border-color:var(--vv-gruen-hell);}
+.vv .vv-knopf:disabled{opacity:.45;cursor:default;}
+.vv .vv-knopf{white-space:normal;text-align:center;line-height:1.2;padding:6px 14px;}
 .vv .vv-teaser-karte{background:var(--vv-surface);border:2px solid var(--vv-gold-r);border-radius:16px;padding:16px 18px;box-shadow:0 6px 20px rgba(0,0,0,.12);}
 .vv .vv-buehne.gedimmt canvas{filter:brightness(.55) saturate(.7);}
 .vv .vv-teaser-karte h3{font-family:var(--ff-titel,'Playfair Display',Georgia,serif);font-size:20px;margin:0 0 6px;}
 .vv .vv-teaser-karte ul{margin:8px 0 12px;padding-inline-start:20px;font-size:14.5px;}
-/* Handy: Kamera-Knöpfe in EINER schmalen Reihe, damit sie die Szene nicht verdecken */
-@media (max-width:560px){
-  .vv .vv-ol{right:62px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:5px;}
-  .vv .vv-ol::-webkit-scrollbar{display:none;}
-  [dir="rtl"].vv .vv-ol{left:62px;}
-  .vv .vv-pille{min-height:36px;padding:0 10px;font-size:12.5px;flex:none;}
-  .vv .vv-anz{font-size:12.5px;padding:5px 10px;max-width:calc(100% - 110px);}
-  .vv .vv-tempo{font-size:14px;padding:5px 10px;}
-}
 .vv .vv-steuer{display:flex;align-items:center;gap:8px;margin:10px 0 0;}
 .vv .vv-knopf{min-height:44px;min-width:44px;padding:0 14px;border-radius:999px;border:1px solid var(--vv-hair);background:var(--vv-surface);font-weight:700;font-size:14.5px;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;}
 .vv .vv-knopf.haupt{background:var(--vv-gruen);color:#fff;border-color:transparent;min-width:52px;}
@@ -127,6 +129,30 @@ const CSS = `
 .vv .vv-merken li::before{content:counter(m);width:26px;height:26px;border-radius:50%;background:var(--vv-tint);color:var(--vv-gruen-text);font-weight:700;font-size:13.5px;display:flex;align-items:center;justify-content:center;}
 .vv .vv-merken .par{display:block;color:var(--vv-gold-text);font-size:13.5px;font-weight:700;margin-top:2px;}
 .vv :focus-visible{outline:3px solid var(--vv-gold);outline-offset:2px;}
+/* Handy: nichts über dem Bild außer Tageszeit und Tempo, nichts seitlich abgeschnitten */
+@media (max-width:560px){
+  .vv .vv-ol,.vv .vv-anz,.vv .vv-chips{display:none;}
+  .vv .vv-pille{min-height:36px;padding:0 12px;font-size:13px;}
+  .vv .vv-tempo{font-size:14px;padding:5px 10px;}
+  .vv .vv-buehne{aspect-ratio:4/3.2;border-radius:14px;}
+  .vv .vv-kamreihe{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;padding:4px;margin-top:8px;border-radius:14px;background:var(--vv-strong);border:1px solid var(--vv-border);}
+  .vv .vv-kamreihe button{min-height:42px;border:none;border-radius:10px;background:none;font-weight:700;font-size:13.5px;color:var(--vv-muted);cursor:pointer;padding:2px 4px;line-height:1.15;overflow-wrap:anywhere;}
+  .vv .vv-kamreihe button[aria-pressed="true"]{background:var(--vv-bg);color:var(--vv-text);box-shadow:0 1px 4px rgba(0,0,0,.12);}
+  .vv .vv-kapliste{display:block;margin-top:10px;border:1px solid var(--vv-hair);border-radius:14px;background:var(--vv-surface);}
+  .vv .vv-kapliste summary{min-height:48px;display:flex;align-items:center;gap:6px;padding:0 16px;font-weight:700;cursor:pointer;list-style:none;}
+  .vv .vv-kapliste summary::-webkit-details-marker{display:none;}
+  .vv .vv-kapliste summary::after{content:"▾";margin-inline-start:auto;color:var(--vv-muted);}
+  .vv .vv-kapliste[open] summary::after{content:"▴";}
+  .vv .vv-kapliste-inhalt{display:flex;flex-direction:column;padding:0 8px 8px;gap:4px;}
+  .vv .vv-kl-zeile{display:flex;align-items:center;gap:10px;min-height:48px;padding:6px 10px;border:none;border-radius:10px;background:none;text-align:start;font-size:15px;font-weight:600;cursor:pointer;}
+  .vv .vv-kl-zeile b{flex:none;width:28px;height:28px;border-radius:50%;background:var(--vv-tint);color:var(--vv-gruen-text);display:inline-flex;align-items:center;justify-content:center;font-size:13.5px;}
+  .vv .vv-kl-zeile span:first-of-type{flex:1;min-width:0;}
+  .vv .vv-kl-zeile.aktiv{background:var(--vv-gold-s);}
+  .vv .vv-kl-zeile.aktiv b{background:var(--vv-gold);color:#2B2A22;}
+  .vv .vv-kl-zeile.zu{opacity:.65;}
+  .vv .vv-kl-zeile .fz{color:var(--vv-gold-text);font-weight:800;}
+  .vv .vv-reihe .vv-knopf{flex:1 1 auto;}
+}
 @media (prefers-color-scheme: dark){.vv .vv-buehne{background:#3a4650;}}
 `;
 
@@ -202,13 +228,17 @@ export function starte(el, daten, opt){
       '<div class="vv-ol" role="group" aria-label="' + esc(U.blick) + '"></div>' +
       '<div class="vv-or"><button type="button" class="vv-pille" data-tz aria-label="' + esc(U.tageszeit) + '">' + esc(U.tag) + "</button></div>" +
       '<div class="vv-anz" aria-live="polite"></div><div class="vv-tempo" aria-hidden="true"></div>' +
-      '<div class="vv-fehler" hidden><p>' + esc(U.kein3d) + '</p></div></div><div class="vv-teaser" hidden></div>' +
+      '<div class="vv-fehler" hidden><p>' + esc(U.kein3d) + '</p></div></div>' +
+    '<div class="vv-kamreihe" role="group" aria-label="' + esc(U.blick) + '"></div>' +
+    '<div class="vv-teaser" hidden></div>' +
     '<div class="vv-steuer"><button type="button" class="vv-knopf haupt" data-spielen aria-label="' + esc(U.abspielen) + '"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>' +
       '<div class="vv-zl" role="slider" tabindex="0" aria-label="' + esc(U.zeit) + '" aria-valuemin="0"><div class="vv-zl-bahn"></div><div class="vv-zl-fuell"></div></div></div>' +
+    '<section class="vv-karte vv-kk" aria-live="polite"><div class="vv-kk-kopf"><span class="vv-kk-nr"></span><h3 class="vv-kk-titel"></h3></div><p class="vv-kk-text"></p><span class="vv-regel vv-kk-regel"></span><div class="vv-kk-frage"></div>' +
+      '<div class="vv-kk-nav"><button type="button" class="vv-knopf" data-kapzur>‹ ' + esc(U.kapZurueck) + '</button><button type="button" class="vv-knopf haupt-leicht" data-kapvor>' + esc(U.kapWeiter) + " ›</button></div></section>" +
     '<div class="vv-chips" role="group" aria-label="' + esc(U.kapitel) + '"></div>' +
+    '<details class="vv-kapliste"><summary>' + esc(U.alleKap) + ' <span class="vv-kapliste-n"></span></summary><div class="vv-kapliste-inhalt"></div></details>' +
     '<div class="vv-reihe"><button type="button" class="vv-knopf" data-halb aria-pressed="false">' + esc(U.halb) + '</button><button type="button" class="vv-knopf" data-vorn>' + esc(U.vonVorn) + '</button><button type="button" class="vv-knopf" data-autokam aria-pressed="true">' + esc(U.kamFolgt) + "</button></div>" +
     '<label class="vv-schalter"><input type="checkbox" data-md> ' + esc(U.mitdenken) + "</label>" +
-    '<section class="vv-karte vv-kk" aria-live="polite"><div class="vv-kk-kopf"><span class="vv-kk-nr"></span><h3 class="vv-kk-titel"></h3></div><p class="vv-kk-text"></p><span class="vv-regel vv-kk-regel"></span><div class="vv-kk-frage"></div></section>' +
     (mehrere && (T.rf || TD.rf) ? '<section class="vv-karte"><h3>' + esc(U.rf) + '</h3><p style="margin:0" class="vv-rf-text"></p><div class="vv-md-knoepfe"><button type="button" class="vv-knopf" data-rf></button></div></section>' : "") +
     (merken ? '<section class="vv-karte vv-merken"><h3>' + esc(U.merken) + "</h3><ol>" + merken.map((m) => "<li><span>" + esc(m[0]) + '<span class="par">' + esc(m[1]) + "</span></span></li>").join("") + "</ol></section>" : "");
   el.appendChild(wurzel);
@@ -225,6 +255,7 @@ export function starte(el, daten, opt){
   function kameraKnoepfe(){
     const arten = (V.kameraOpt && V.kameraOpt.fest ? ["uebersicht"] : []).concat(["schraeg", "oben", "fahrer"]);
     $(".vv-ol").innerHTML = arten.map((a) => '<button type="button" class="vv-pille" data-kam="' + a + '" aria-pressed="false">' + esc(U[a]) + "</button>").join("");
+    $(".vv-kamreihe").innerHTML = arten.map((a) => '<button type="button" data-kam="' + a + '" aria-pressed="false">' + esc(U[a]) + "</button>").join("");
     $$("[data-kam]").forEach((b) => b.addEventListener("click", () => kameraSetzen(b.dataset.kam, true)));
   }
 
@@ -262,6 +293,23 @@ export function starte(el, daten, opt){
       b.addEventListener("click", () => springe(k.t + 0.01, true));
       chips.appendChild(b);
     });
+    const liste = $(".vv-kapliste-inhalt");
+    liste.innerHTML = "";
+    V.kapitel.forEach((k, i) => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "vv-kl-zeile";
+      const tx = kapTxt(k.id);
+      b.innerHTML = "<b>" + (i + 1) + "</b><span>" + esc(tx.titel) + "</span>" + (tx.frage ? '<span class="fz" aria-hidden="true">?</span>' : "");
+      b.addEventListener("click", () => { springe(k.t + 0.01, true); $(".vv-kapliste").open = false; $(".vv-buehne").scrollIntoView({ block: "start", behavior: ruhig ? "auto" : "smooth" }); });
+      liste.appendChild(b);
+    });
+    if(teaser && teaser.gesperrt) teaser.gesperrt.forEach((titel, j) => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "vv-kl-zeile zu";
+      b.innerHTML = "<b>" + (V.kapitel.length + j + 1) + "</b><span>" + esc(titel) + '</span><span class="fz" aria-hidden="true">🔒</span>';
+      b.setAttribute("aria-label", titel + " · " + U.gesperrt);
+      b.addEventListener("click", () => { spielen(false); $(".vv-kapliste").open = false; teaserZeigen(); });
+      liste.appendChild(b);
+    });
+    $(".vv-kapliste-n").textContent = "(" + (V.kapitel.length + (teaser && teaser.gesperrt ? teaser.gesperrt.length : 0)) + ")";
     if(teaser && teaser.gesperrt){
       teaser.gesperrt.forEach((titel, j) => {
         const b = document.createElement("button"); b.type = "button"; b.className = "vv-chip zu";
@@ -283,6 +331,10 @@ export function starte(el, daten, opt){
     $(".vv-kk-regel").textContent = tx.regel || ""; $(".vv-kk-regel").hidden = !tx.regel;
     $(".vv-anz").textContent = (Math.max(0, n) + 1) + " · " + tx.titel;
     $$(".vv-zl-strich").forEach((m, i) => m.classList.toggle("aktiv", i === n));
+    $$(".vv-kl-zeile").forEach((m, i) => m.classList.toggle("aktiv", i === Math.max(0, n)));
+    const nr = Math.max(0, n), letztes = nr >= V.kapitel.length - 1;
+    $("[data-kapzur]").disabled = nr === 0;
+    $("[data-kapvor]").disabled = letztes && !teaser;
     $$(".vv-chip").forEach((m, i) => {
       m.classList.toggle("aktiv", i === n);
       if(i === n && m.scrollIntoView && st.laeuft) try{ m.scrollIntoView({ block: "nearest", inline: "center", behavior: ruhig ? "auto" : "smooth" }); }catch(e){}
@@ -374,8 +426,12 @@ export function starte(el, daten, opt){
       if(!m){ m = document.createElement("div"); m.className = "vv-marke"; schicht.appendChild(m); marken[h.id] = m; }
       const p = welt.aufsBild(h.bei[0], h.bei[1], h.bei[2]);
       m.style.display = p.sichtbar ? "block" : "none";
-      m.style.left = p.x + "px"; m.style.top = p.y + "px"; m.style.background = h.farbe === "#ffffff" ? "#555" : h.farbe;
+      m.style.background = h.farbe === "#ffffff" ? "#555" : h.farbe;
       m.textContent = h.text[sprache] || h.text.de;
+      // im Bild halten: nie über den Rand hinaus (sonst abgeschnitten)
+      const bw = schicht.clientWidth, bh = schicht.clientHeight, halb = m.offsetWidth / 2 + 6, hoch = m.offsetHeight * 1.2 + 52;
+      m.style.left = Math.max(halb, Math.min(bw - halb, p.x)) + "px";
+      m.style.top = Math.max(hoch, Math.min(bh - 52, p.y)) + "px";
     });
   }
 
@@ -411,6 +467,12 @@ export function starte(el, daten, opt){
 
   // Bedienung
   $("[data-spielen]").addEventListener("click", () => { st.wartet = false; spielen(!st.laeuft); });
+  $("[data-kapzur]").addEventListener("click", () => { const n = Math.max(0, aktKapitel(st.t)); const ziel = st.t > V.kapitel[n].t + 1.5 ? n : Math.max(0, n - 1); spielen(false); springe(V.kapitel[ziel].t + 0.01, true); });
+  $("[data-kapvor]").addEventListener("click", () => {
+    const n = Math.max(0, aktKapitel(st.t));
+    if(n >= V.kapitel.length - 1){ if(teaser){ spielen(false); teaserZeigen(); } return; }
+    springe(V.kapitel[n + 1].t + 0.01, true); spielen(true);
+  });
   $("[data-halb]").addEventListener("click", () => { st.tempo = st.tempo === 1 ? 0.5 : 1; $("[data-halb]").setAttribute("aria-pressed", String(st.tempo === 0.5)); });
   $("[data-vorn]").addEventListener("click", () => { springe(0, true); spielen(true); });
   $("[data-autokam]").addEventListener("click", () => { st.autoKam = !st.autoKam; $("[data-autokam]").setAttribute("aria-pressed", String(st.autoKam)); if(st.autoKam) kapitelZeigen(st.kapitel); });
