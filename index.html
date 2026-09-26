@@ -3082,7 +3082,9 @@ async function loadCatalog(){
   });
   // Schüler sehen nur Videos, die tatsächlich mit Bunny verknüpft sind — sonst
   // klickt jemand auf ein "leeres" Video, das noch gar nicht abspielbar ist.
-  allVideos = (videosRes.data || []).filter(function(v){ return !!v.bunny_video_id && !v.ausgeblendet; });
+  // hat_video: vom Server gesetzt, wenn ein Video hinterlegt ist -- die Bunny-ID selbst
+  // schickt academy-katalog seit 26.09.2026 nicht mehr mit.
+  allVideos = (videosRes.data || []).filter(function(v){ return (!!v.bunny_video_id || v.hat_video === true) && !v.ausgeblendet; });
 
   /* --- Gebietsfilter (15.09.2026) ---
      Die Liste der freigegebenen Gebiete kommt beim Login mit (session.gebiete).
@@ -4347,6 +4349,8 @@ const BUNNY_PULL_ZONE = "vz-d3992a0e-19f.b-cdn.net";
 // deshalb Standard AUS, bis das im Dashboard bestaetigt ist (offener Punkt, siehe Chat).
 const THUMB_OPTIMIZER_AKTIV = false;
 function vgThumbnail(video){
+  // 26.09.2026: Vorschaubild ueber academy-vorschaubild (ohne Bunny-ID in der App).
+  if(video.thumb) return video.thumb;
   if(!BUNNY_PULL_ZONE || !video.bunny_video_id) return "";
   const basis = "https://" + BUNNY_PULL_ZONE + "/" + video.bunny_video_id + "/thumbnail.jpg";
   // 96x54 CSS-Groesse mal 2 fuer Retina-Displays.
