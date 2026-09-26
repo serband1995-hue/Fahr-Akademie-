@@ -18,6 +18,15 @@ minderjährig — entsprechend vorsichtig mit Daten umgehen.
 6. **Geheimnisse nicht durch den Chat schleusen.** Secrets bleiben im Supabase
    Vault oder in Umgebungsvariablen.
 
+## Handy zuerst (26.09.2026)
+
+Die Schüler nutzen die App fast ausschließlich auf dem **Handy**; nur Serband
+arbeitet am Tablet. Jede Änderung zuerst auf 360–412 px Breite bauen und prüfen:
+nichts abgeschnitten, nichts seitlich wischbar, was wie abgehackt wirkt, keine
+Knöpfe auf dem Bild, lange Texte (TR/AR) brechen um. Die automatische Prüfung
+dafür (Überstand, Abschneiden, Überdeckung, Knopfgrößen) lief für
+"Verkehr verstehen" über alle Szenen und Sprachen.
+
 ## Vor jedem Bau-Schritt
 
 - Betrifft es die Datenbank: `get_advisors` danach ausführen (security +
