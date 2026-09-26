@@ -66,6 +66,18 @@ minderjährig — entsprechend vorsichtig mit Daten umgehen.
   Verwaltung per Admin-JWT für die Vorschau). Der direkte Lesezugriff mit dem
   anon-Key wird mit `db/nach-livegang-stufe3.sql` geschlossen — ERST nachdem
   diese App-Version live ist.
+- **Video-Status** (26.09.2026): `academy_videos.status` = entwurf |
+  verarbeitung | bereit | live. Nur `live` sehen Schüler (Katalog, Token,
+  Vorschau). Hochladen über `academy-upload` (TUS direkt zu Bunny, API-Key
+  bleibt auf dem Server), Push erst beim Veröffentlichen.
+- **Bunny schützt Dateien nur per Referer** (Stand 26.09.2026, geprüft).
+  Deshalb verlässt `bunny_video_id` den Server nur über `academy-video-token`
+  (bei Freigabe). Vorschaubilder: `academy-vorschaubild`, Vorschau gesperrter
+  Videos: `academy-vorschau` (liefert nur die ersten N Sekunden, N in
+  `academy_einstellungen.vorschau_sekunden`).
+- **Kapitel/Fehlerstellen** als jsonb `[{t, titel}]` / `[{t, text}]`; Sprünge im
+  Player über das player.js-Protokoll (postMessage). Abspielstelle nur lokal
+  (`localStorage.academy_pos`), nie auf dem Server.
 - **supabase-js liegt im Repo** (`vendor/`, feste Version). Bei einem Update
   neue Datei mit neuer Versionsnummer anlegen, Script-Tag und `sw.js`
   (STATIC_ASSETS + CACHE_NAME) anpassen.

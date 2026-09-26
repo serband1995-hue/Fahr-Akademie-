@@ -1224,6 +1224,46 @@
   .vorschau-leiste{position:fixed;top:0;left:0;right:0;z-index:250;display:flex;align-items:center;justify-content:space-between;gap:10px;
     padding:8px 16px calc(8px);padding-top:calc(8px + env(safe-area-inset-top));background:var(--gold);color:var(--auf-gold);font-weight:700;font-size:14px;}
   .vorschau-leiste .btn-still{min-height:40px;}
+
+  /* ================= STUFE 4 (26.09.2026) =================
+     Upload-Balken, Video-Status, Dreh-Leitfaden, Kapitel/Fehlerstellen, Vorschau-Player. */
+  .datei-feld{width:100%;min-height:48px;padding:10px;border:1.5px dashed var(--hairline);border-radius:var(--r-m);background:var(--surface);color:var(--text);font-size:15px;}
+  .upload-balken{position:relative;height:26px;margin-top:10px;border-radius:var(--r-pill);background:var(--surface-strong);overflow:hidden;}
+  .upload-fuellung{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--gruen);transition:width .3s ease;}
+  .upload-balken span{position:relative;display:flex;align-items:center;justify-content:center;height:100%;font-size:13px;font-weight:700;color:var(--text);}
+  .nv-guid{margin-top:10px;} .nv-guid summary{cursor:pointer;min-height:44px;display:flex;align-items:center;color:var(--muted);font-weight:600;}
+  .status-entwurf{background:var(--surface-strong);color:var(--muted);}
+  .status-verarbeitung{background:var(--gold-schwach);color:var(--gold-text);}
+  .status-bereit{background:var(--surface-tint);color:var(--gruen-text);}
+  .video-status-aktion{margin-top:8px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;}
+  .video-status-aktion .btn-primary{width:auto;padding:10px 18px;font-size:15px;}
+  .vs-einstellung{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted);flex-wrap:wrap;}
+  .vs-einstellung select{width:auto;min-height:40px;}
+  .leitfaden summary{cursor:pointer;list-style:none;display:flex;flex-direction:column;gap:4px;min-height:44px;}
+  .leitfaden summary::-webkit-details-marker{display:none;}
+  .leitfaden-inhalt h4{margin:14px 0 6px;font-size:14px;color:var(--gruen-text);}
+  .leitfaden-inhalt ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px;font-size:14.5px;line-height:1.5;color:var(--text);}
+  .vb-hilfe{font-weight:400;color:var(--muted);font-size:12.5px;}
+  textarea.blatt-feld{min-height:90px;resize:vertical;font-family:inherit;line-height:1.5;}
+  .weiter-bei{display:flex;align-items:center;gap:8px;margin:12px 0 0;min-height:44px;padding:10px 16px;border-radius:var(--r-pill);
+    border:1px solid var(--gold-rand);background:var(--gold-schwach);color:var(--text);font:inherit;font-weight:700;cursor:pointer;}
+  .kapitel-box,.fehler-box{margin-top:14px;}
+  .kapitel-liste{display:flex;flex-wrap:wrap;gap:8px;}
+  .kapitel-chip{min-height:44px;padding:8px 14px;border-radius:var(--r-pill);border:1px solid var(--hairline);background:var(--surface);color:var(--text);font:inherit;font-size:14.5px;cursor:pointer;}
+  .sprung-zeit{font-variant-numeric:tabular-nums;font-weight:700;color:var(--gruen-text);margin-right:6px;}
+  .fehler-box{padding:12px 14px;border-radius:var(--r-m);background:var(--surface);border-left:4px solid var(--warn);}
+  .fehler-titel{font-weight:700;margin-bottom:6px;color:var(--text);}
+  .sprung-zeile{display:flex;align-items:baseline;gap:8px;width:100%;min-height:44px;padding:8px 0;border:none;background:none;color:var(--text);font:inherit;text-align:left;cursor:pointer;border-bottom:1px solid var(--border);}
+  .fehler-normal{margin-top:8px;font-size:13.5px;color:var(--muted);}
+  .vorschau-kopf{margin:12px 0 8px;}
+  .vorschau-marke{display:inline-block;padding:4px 10px;border-radius:var(--r-pill);background:var(--gold);color:var(--auf-gold);font-size:12.5px;font-weight:700;}
+  .vorschau-titel{font-family:var(--ff-titel);font-size:var(--fs-titel);margin-top:6px;}
+  .vorschau-player{position:relative;background:#000;}
+  .vorschau-player video{width:100%;aspect-ratio:16/9;display:block;background:#000;}
+  .vorschau-ende{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px;text-align:center;
+    background:rgba(20,22,20,.86);color:#fff;}
+  .vorschau-ende p{margin:0 0 4px;font-size:16px;line-height:1.45;max-width:420px;}
+  .vorschau-ende .btn-still{background:transparent;color:#fff;border-color:rgba(255,255,255,.5);}
 </style>
 </head>
 <body>
@@ -1422,6 +1462,9 @@ async function gesperrtesVideoAngetippt(videoId, stufe, el){
     protokolliereSperrKlick(stufe || "Start", videoId);
   }
   spuerbar();
+  // 26.09.2026 (W9): zuerst die Vorschau der ersten Sekunden zeigen. Klappt das nicht
+  // (offline, alter Server), kommt wie bisher direkt das Anfrage-Blatt.
+  if(await vorschauOeffnen(videoId, stufe)) return;
   // Nur vorhandene Sprachschluessel verwenden -- ein deutscher Festtext waere fuer
   // die tuerkischen und arabischen Schueler ein Rueckschritt.
   const weiter = await blattBestaetigen({
@@ -2156,6 +2199,16 @@ Object.assign(I18N.ar, {
   mDashboard:"نظرة عامة", mThemen:"# المواضيع", mNuetzliches:"معلومات مفيدة", mRechtliches:"معلومات قانونية",
   mHilfe:"المساعدة والتواصل", mUeber:"حول هذا التطبيق"
 });
+
+/* 26.09.2026 (Stufe 4): Player-Texte fuer Vorschau, Kapitel, Weiterschauen, Fehlerstellen. */
+Object.assign(I18N.de, { vorschauHinweis:"Vorschau: die ersten {n} Sekunden", vorschauEnde:"Das war die Vorschau. Das ganze Video gibt's mit dem Vollzugang.",
+  weiterBei:"Weiter bei {zeit}", kapitelTitel:"Kapitel", fehlerTitel:"Hier lag der Fehler", fehlerNormal:"Durchfallen gehört dazu — genau aus diesen Stellen lernst du am meisten." });
+Object.assign(I18N.tr, { vorschauHinweis:"Önizleme: ilk {n} saniye", vorschauEnde:"Önizleme bu kadar. Videonun tamamı tam erişimle.",
+  weiterBei:"{zeit} noktasından devam et", kapitelTitel:"Bölümler", fehlerTitel:"Hata burada yapıldı", fehlerNormal:"Kalmak da işin parçası — en çok bu anlardan öğrenirsin." });
+Object.assign(I18N.en, { vorschauHinweis:"Preview: the first {n} seconds", vorschauEnde:"That was the preview. The full video comes with full access.",
+  weiterBei:"Continue at {zeit}", kapitelTitel:"Chapters", fehlerTitel:"This is where it went wrong", fehlerNormal:"Failing is part of it — these moments teach you the most." });
+Object.assign(I18N.ar, { vorschauHinweis:"معاينة: أول {n} ثانية", vorschauEnde:"انتهت المعاينة. الفيديو كاملًا متاح مع الوصول الكامل.",
+  weiterBei:"تابع من {zeit}", kapitelTitel:"الفصول", fehlerTitel:"هنا حدث الخطأ", fehlerNormal:"الرسوب جزء من الطريق — من هذه اللحظات تتعلم أكثر." });
 
 /* 26.09.2026: Abmelden NUR bei eindeutigem Grund vom Server. Frueher fuehrte jede
    401/403-Antwort zum Abmelden mit dem Text "anderes Geraet" -- auch ein falsch
@@ -3084,7 +3137,10 @@ async function loadCatalog(){
   // klickt jemand auf ein "leeres" Video, das noch gar nicht abspielbar ist.
   // hat_video: vom Server gesetzt, wenn ein Video hinterlegt ist -- die Bunny-ID selbst
   // schickt academy-katalog seit 26.09.2026 nicht mehr mit.
-  allVideos = (videosRes.data || []).filter(function(v){ return (!!v.bunny_video_id || v.hat_video === true) && !v.ausgeblendet; });
+  allVideos = (videosRes.data || []).filter(function(v){
+    // Nur veroeffentlichte Videos (Entwuerfe/Verarbeitung sieht kein Schueler, 26.09.2026)
+    return (!!v.bunny_video_id || v.hat_video === true) && !v.ausgeblendet && (!v.status || v.status === "live");
+  });
 
   /* --- Gebietsfilter (15.09.2026) ---
      Die Liste der freigegebenen Gebiete kommt beim Login mit (session.gebiete).
@@ -4518,6 +4574,7 @@ function stopWatermark(){
 
 async function openVideo(videoId){
   stopWatermark(); // vorheriges Wasserzeichen (falls von Video zu Video gesprungen wird) sauber entfernen
+  playerSteuerungStoppen(); vorschauAufraeumen();
   if(session && session.vorschau){ showToast("In der Vorschau werden keine Videos abgespielt"); return; }
   if(DEMO_MODE){
     markSeen(videoId);
@@ -4589,12 +4646,32 @@ async function openVideo(videoId){
         "</button>"
       : "";
 
+    // 26.09.2026 (L1/L2/L4): Sprungmarken unter dem Video
+    const vObj = allVideos.find(function(x){ return x.id === videoId; }) || {};
+    const pos = positionLesen(videoId);
+    const weiterBeiHtml = (pos && pos.s > 15 && (!pos.d || pos.s < pos.d - 15))
+      ? '<button class="weiter-bei druck-2" data-springen="' + Math.floor(pos.s) + '">' + icon("weiter") + "<span>" + esc(t("weiterBei", { zeit: zeitFormat(pos.s) })) + "</span></button>" : "";
+    const fehler = (vObj.pruefung_ergebnis === "nicht_bestanden" && Array.isArray(vObj.fehlerstellen)) ? vObj.fehlerstellen : [];
+    const fehlerHtml = fehler.length
+      ? '<div class="fehler-box"><div class="fehler-titel">' + esc(t("fehlerTitel")) + "</div>" +
+          fehler.map(function(f){ return '<button class="sprung-zeile druck-3" data-springen="' + Math.floor(f.t) + '"><span class="sprung-zeit">' + esc(zeitFormat(f.t)) + '</span><span>' + esc(f.text || "") + "</span></button>"; }).join("") +
+          '<div class="fehler-normal">' + esc(t("fehlerNormal")) + "</div></div>" : "";
+    const kapitel = Array.isArray(vObj.kapitel) ? vObj.kapitel : [];
+    const kapitelHtml = kapitel.length
+      ? '<div class="kapitel-box"><div class="section-label" style="margin:0 0 6px;">' + esc(t("kapitelTitel")) + "</div>" +
+          '<div class="kapitel-liste">' + kapitel.map(function(k){ return '<button class="kapitel-chip druck-2" data-springen="' + Math.floor(k.t) + '"><span class="sprung-zeit">' + esc(zeitFormat(k.t)) + "</span> " + esc(k.titel || "") + "</button>"; }).join("") + "</div></div>" : "";
+
     document.getElementById("app").innerHTML =
       krume +
       '<div class="player-wrap"><iframe src="' + esc(embedUrl) + '" ' +
       'style="border:0;width:100%;aspect-ratio:16/9;display:block;" allow="autoplay; fullscreen"></iframe></div>' +
+      weiterBeiHtml + fehlerHtml + kapitelHtml +
       weiterBtn;
     startWatermark();
+    playerSteuerungStarten(videoId);
+    document.querySelectorAll("[data-springen]").forEach(function(b){
+      b.addEventListener("click", function(){ playerSpringen(Number(b.dataset.springen)); if(b.classList.contains("weiter-bei")) b.remove(); });
+    });
     document.getElementById("back-btn").addEventListener("click", function(){
       // Konsistent: von JEDEM Video führt "Zurück" in dessen eigene Bereichsseite --
       // unabhängig davon, ob man vom Start, vom Lernpfad oder per Suche hierhergekommen ist.
@@ -4617,6 +4694,139 @@ async function openVideo(videoId){
     // Vorher: Sackgasse ohne Zurueck-Knopf.
     zeigeVideoFehler(t("videoFehler"));
   }
+}
+
+/* ---- Player-Steuerung (26.09.2026, L1/L2) ----
+   Bunny-Player sprechen das player.js-Protokoll (postMessage). Darueber: springen
+   (Kapitel, Fehlerstellen, Weiterschauen) und die Abspielstelle merken -- NUR auf diesem
+   Geraet (localStorage), nichts geht an den Server. Antwortet der Player nicht, wird zum
+   Springen die Quelle mit Startzeit neu geladen. */
+let playerSt = null;
+function playerSteuerungStoppen(){
+  if(playerSt){ window.removeEventListener("message", playerSt.handler); clearTimeout(playerSt.rueckfall); playerSt = null; }
+}
+function playerSteuerungStarten(videoId){
+  playerSteuerungStoppen();
+  const iframe = document.querySelector(".player-wrap iframe");
+  if(!iframe) return;
+  const st = { videoId: videoId, iframe: iframe, bereit: false, wartend: null, zuletzt: 0 };
+  st.senden = function(method, value){
+    const nachricht = { context: "player.js", version: "0.0.11", method: method };
+    if(value !== undefined) nachricht.value = value;
+    if(method === "addEventListener") nachricht.listener = "fa-" + value;
+    try{ iframe.contentWindow.postMessage(JSON.stringify(nachricht), "*"); } catch(e){}
+  };
+  st.handler = function(ev){
+    let host = "";
+    try{ host = new URL(ev.origin).hostname; } catch(e){ return; }
+    if(!/(^|\.)mediadelivery\.net$/.test(host)) return;
+    let d = ev.data;
+    if(typeof d === "string"){ try{ d = JSON.parse(d); } catch(e){ return; } }
+    if(!d || d.context !== "player.js") return;
+    if(d.event === "ready" && !st.bereit){
+      st.bereit = true;
+      st.senden("addEventListener", "timeupdate");
+      st.senden("addEventListener", "ended");
+      if(st.wartend !== null){ const z = st.wartend; st.wartend = null; playerSpringen(z); }
+    } else if(d.event === "timeupdate" && d.value){
+      const jetzt = Date.now();
+      if(jetzt - st.zuletzt > 5000){ st.zuletzt = jetzt; positionMerken(videoId, d.value.seconds, d.value.duration); }
+    } else if(d.event === "ended"){
+      positionLoeschen(videoId);
+    }
+  };
+  window.addEventListener("message", st.handler);
+  playerSt = st;
+}
+function playerSpringen(sek){
+  const st = playerSt;
+  if(!st) return;
+  if(st.bereit){ st.senden("setCurrentTime", sek); st.senden("play"); return; }
+  st.wartend = sek;
+  clearTimeout(st.rueckfall);
+  st.rueckfall = setTimeout(function(){
+    if(!st.bereit && st.wartend !== null){
+      const basis = st.iframe.src.replace(/&t=\d+/, "").replace(/&autoplay=true/, "");
+      st.iframe.src = basis + "&t=" + Math.floor(st.wartend) + "&autoplay=true";
+      st.wartend = null;
+    }
+  }, 2500);
+}
+function positionenLesen(){ const p = lsLesen("academy_pos", {}); return (p && typeof p === "object") ? p : {}; }
+function positionLesen(videoId){ return positionenLesen()[videoId] || null; }
+function positionMerken(videoId, sek, dauer){
+  if(!(sek >= 0)) return;
+  const p = positionenLesen();
+  if(dauer && sek > dauer - 15){ delete p[videoId]; }
+  else p[videoId] = { s: Math.floor(sek), d: Math.floor(dauer || 0), z: Date.now() };
+  const schluessel = Object.keys(p);
+  if(schluessel.length > 150){ schluessel.sort(function(a, b){ return p[a].z - p[b].z; }).slice(0, schluessel.length - 150).forEach(function(k){ delete p[k]; }); }
+  try{ localStorage.setItem("academy_pos", JSON.stringify(p)); } catch(e){}
+}
+function positionLoeschen(videoId){
+  const p = positionenLesen(); delete p[videoId];
+  try{ localStorage.setItem("academy_pos", JSON.stringify(p)); } catch(e){}
+}
+
+/* ---- Vorschau gesperrter Videos (26.09.2026, W9 / E7 = a) ----
+   Der Server (academy-vorschau) gibt nur die ersten Sekunden heraus; der Rest des Videos
+   verlaesst ihn gar nicht. Hier wird zusaetzlich bei der eingestellten Sekunde angehalten
+   und der Weg zum Vollzugang angeboten. */
+let vorschauHls = null;
+function vorschauAufraeumen(){ if(vorschauHls){ try{ vorschauHls.destroy(); } catch(e){} vorschauHls = null; } }
+async function vorschauOeffnen(videoId, stufe){
+  if(!session || !session.session_token || DEMO_MODE) return false;
+  const v = allVideos.find(function(x){ return x.id === videoId; });
+  let data;
+  try{
+    const res = await fetch(SUPABASE_URL + "/functions/v1/academy-vorschau", {
+      method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + SUPABASE_ANON_KEY },
+      body: JSON.stringify({ session_token: session.session_token, video_id: videoId })
+    });
+    data = await res.json();
+    if(!res.ok || !data.ok){
+      if(istAbmeldeGrund(data)){ abmeldenWegen(data.code); return true; }
+      return false;
+    }
+  } catch(e){ return false; }
+  stopWatermark(); playerSteuerungStoppen(); vorschauAufraeumen();
+  const kontext = findeVideoKontext(videoId);
+  document.getElementById("app").innerHTML =
+    '<button id="back-btn" class="krumen">' + icon("zurueck") + "<span>" + esc(kontext ? bereichName(kontext.stufe) : t("lernpfad")) + "</span></button>" +
+    '<div class="vorschau-kopf"><span class="vorschau-marke">' + esc(t("vorschauHinweis", { n: data.sekunden })) + "</span>" +
+      '<div class="vorschau-titel">' + esc(v ? v.titel : "") + "</div></div>" +
+    '<div class="player-wrap vorschau-player"><video id="vs-video" playsinline controls preload="auto"></video>' +
+      '<div class="vorschau-ende" id="vs-ende" hidden><p>' + esc(t("vorschauEnde")) + "</p>" +
+        '<button class="anfrage-btn" id="vs-anfragen">' + icon("krone") + "<span>" + esc(t("zugangAnfragen")) + "</span></button>" +
+        '<button class="btn-still" id="vs-zurueck">' + esc(t("zurueck")) + "</button></div></div>" +
+    '<div class="anfrage-klein" style="margin-top:10px;">' + esc(t("zahlungsinfo")) + "</div>";
+  const zurueck = function(){ vorschauAufraeumen(); if(kontext) navAnwenden({ view:"bereichdetail", bereich:kontext.stufe, hashtag:null, recht:null, drawer:null }); renderCatalog(); };
+  document.getElementById("back-btn").addEventListener("click", zurueck);
+  document.getElementById("vs-zurueck").addEventListener("click", zurueck);
+  document.getElementById("vs-anfragen").addEventListener("click", function(){ zugangAnfragen(null, stufe || "Start"); });
+  const video = document.getElementById("vs-video");
+  let beendet = false;
+  const ende = function(){
+    if(beendet) return; beendet = true;
+    try{ video.pause(); } catch(e){}
+    video.removeAttribute("controls");
+    document.getElementById("vs-ende").hidden = false;
+  };
+  video.addEventListener("timeupdate", function(){ if(video.currentTime >= data.sekunden) ende(); });
+  video.addEventListener("ended", ende);
+  if(video.canPlayType("application/vnd.apple.mpegurl")){
+    video.src = data.playlist;
+  } else {
+    try{
+      const Hls = await skriptLaden("vendor/hls-light-1.7.3.min.js", "Hls");
+      if(!Hls.isSupported()) throw new Error("kein HLS");
+      vorschauHls = new Hls({ maxBufferLength: 30 });
+      vorschauHls.loadSource(data.playlist);
+      vorschauHls.attachMedia(video);
+    } catch(e){ ende(); }
+  }
+  video.play().catch(function(){ /* Autoplay blockiert -- Schueler tippt selbst auf Play */ });
+  return true;
 }
 
 function zeigeVideoFehler(meldung){
@@ -5111,6 +5321,9 @@ async function loadAdminData(){
   if(myRole === "super_admin"){
     const schRes = await supa.from("academy_schulen").select("*").order("name");
     allSchulen = schRes.data || [];
+    // 26.09.2026 (W9): Laenge der Vorschau gesperrter Videos
+    const vsRes = await supa.from("academy_einstellungen").select("wert").eq("schluessel", "vorschau_sekunden").maybeSingle();
+    if(vsRes && vsRes.data) vorschauSekundenAdmin = parseInt(vsRes.data.wert, 10) || 10;
   } else if(mySchule){
     // Partner-Modell (07.09.2026): Schul-Admin muss wissen, ob SEINE eigene Schule
     // selbst verschicken darf (Boost: ja) oder nicht (z.B. Bilal: nein, Serband
@@ -6890,7 +7103,17 @@ function renderAdminVideos(){
     return '<div class="admin-card glass' + (v.ausgeblendet ? " video-ausgeblendet" : "") + '">' +
       '<div class="admin-row">' +
         '<div>' +
-          '<div class="admin-name">' + esc(v.titel) + (v.ausgeblendet ? ' <span class="admin-badge badge-gesperrt">ausgeblendet</span>' : "") + "</div>" +
+          '<div class="admin-name">' + esc(v.titel) + (v.ausgeblendet ? ' <span class="admin-badge badge-gesperrt">ausgeblendet</span>' : "") +
+            (v.status && v.status !== "live" ? ' <span class="admin-badge status-' + esc(v.status) + '">' + ({ entwurf:"Entwurf", verarbeitung:"Wird verarbeitet", bereit:"Bereit" }[v.status] || esc(v.status)) + "</span>" : "") + "</div>" +
+          (!nurLesen && v.status === "entwurf"
+            ? '<div class="video-status-aktion"><div class="admin-sub">Noch keine fertige Videodatei.</div>' +
+                '<div class="upload-balken" id="up-balken-' + esc(v.id) + '" hidden><div class="upload-fuellung"></div><span>0 %</span></div>' +
+                '<button class="btn-still druck-2" data-hochladen="' + esc(v.id) + '">' + (v.bunny_video_id ? "Upload fortsetzen / neu hochladen" : "Datei hochladen") + "</button></div>" : "") +
+          (!nurLesen && v.status === "verarbeitung"
+            ? '<div class="video-status-aktion"><div class="admin-sub">Bunny verarbeitet das Video. Das dauert meist einige Minuten.</div>' +
+                '<button class="btn-still druck-2" data-statuscheck="' + esc(v.id) + '">Status prüfen</button></div>' : "") +
+          (!nurLesen && v.status === "bereit"
+            ? '<div class="video-status-aktion"><button class="btn-primary" data-veroeff="' + esc(v.id) + '">Veröffentlichen</button></div>' : "") +
           (v.beschreibung ? '<div class="admin-sub">' + esc(v.beschreibung) + "</div>" : "") +
           (tagsForVideo ? '<div class="admin-sub">Tags: ' + esc(tagsForVideo) + "</div>" : "") +
           '<div class="admin-sub" style="margin-top:4px;">🚗 ' + (v.fahrzeug ? esc(v.fahrzeug) : '<span style="opacity:.6;">kein Fahrzeug hinterlegt</span>') + "</div>" +
@@ -6940,14 +7163,15 @@ function renderAdminVideos(){
   const anlegeForm = nurLesen ? "" :
     '<div class="admin-form glass">' +
       '<div class="admin-form-title" style="font-size:17px;">Neues Video anlegen</div>' +
-      '<div class="admin-sub" style="margin-bottom:14px;">So kommt ein Video von deinem Handy zu den Schülern — 4 Schritte.</div>' +
+      '<div class="admin-sub" style="margin-bottom:14px;">So kommt ein Video von deinem Handy zu den Schülern — 4 Schritte. Erst nach „Veröffentlichen“ sehen es die Schüler.</div>' +
 
-      // Schritt 1
+      // Schritt 1 -- 26.09.2026 (P1): Datei direkt hier waehlen statt Bunny-Dashboard
       '<div class="schritt-block">' +
-        '<div class="schritt-kopf"><span class="schritt-nr">1</span><span class="schritt-titel">Video zu Bunny hochladen</span></div>' +
-        '<div class="schritt-hilfe">Öffne <b>bunny.net</b> → links „Stream" → deine Library → Button <b>„Upload Video"</b>. ' +
-        'Warte, bis der Balken bei 100 % ist. Tipp danach auf das Video — dort steht eine lange Zeichenfolge namens ' +
-        '<b>„Video GUID"</b>. Die kopierst du und fügst sie unten in Schritt 3 ein.</div>' +
+        '<div class="schritt-kopf"><span class="schritt-nr">1</span><span class="schritt-titel">Videodatei auswählen</span></div>' +
+        '<div class="schritt-hilfe">Tippe auf „Datei wählen“ und nimm das Video aus deiner Galerie. Es wird direkt zu Bunny hochgeladen — ' +
+        'bricht die Verbindung ab, geht es an derselben Stelle weiter. Lass die Seite während des Hochladens offen.</div>' +
+        '<input type="file" id="nv-datei" accept="video/*" class="datei-feld">' +
+        '<div class="upload-balken" id="nv-balken" hidden><div class="upload-fuellung" id="nv-fuellung"></div><span id="nv-prozent">0 %</span></div>' +
       "</div>" +
 
       // Schritt 2
@@ -6960,10 +7184,11 @@ function renderAdminVideos(){
 
       // Schritt 3
       '<div class="schritt-block">' +
-        '<div class="schritt-kopf"><span class="schritt-nr">3</span><span class="schritt-titel">Video-ID einfügen</span></div>' +
-        '<div class="schritt-hilfe">Die „Video GUID" aus Schritt 1 hier einfügen. Ohne sie ist das Video für Schüler ' +
-        'nicht abspielbar — du kannst sie aber auch später über das Stift-Symbol nachtragen.</div>' +
-        '<label>Bunny-Video-ID</label><input id="nv-bunny" placeholder="z. B. 3a1f9c2e-8b4d-...">' +
+        '<div class="schritt-kopf"><span class="schritt-nr">3</span><span class="schritt-titel">Fahrzeug und Gebiet</span></div>' +
+        '<details class="nv-guid"><summary>Video liegt schon bei Bunny? Video-ID einfügen</summary>' +
+          '<div class="schritt-hilfe">Nur nötig, wenn du das Video selbst im Bunny-Dashboard hochgeladen hast. Dann oben keine Datei wählen.</div>' +
+          '<label>Bunny-Video-ID</label><input id="nv-bunny" placeholder="z. B. 3a1f9c2e-8b4d-...">' +
+        "</details>" +
         // 09.09.2026: Fahrzeug direkt beim Anlegen mit erfassen, damit der Filter
         // ab dem ersten Tag vollstaendig bleibt statt erst nachtraeglich gepflegt
         // werden zu muessen. Datalist schlaegt bereits verwendete Namen vor.
@@ -6999,8 +7224,8 @@ function renderAdminVideos(){
         '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:4px 10px;">' + (prueferCheckboxes || '<span class="admin-sub">Noch keine Prüfer angelegt</span>') + "</div>" +
       "</div>" +
 
-      '<button class="btn-primary" id="nv-btn" style="margin-top:6px;">Video anlegen &amp; Schüler benachrichtigen</button>' +
-      '<div class="admin-sub" style="margin-top:6px;">Nach dem Anlegen erscheint das Video sofort bei allen Schülern — und alle mit aktivierten Benachrichtigungen bekommen automatisch eine Push-Nachricht.</div>' +
+      '<button class="btn-primary" id="nv-btn" style="margin-top:6px;">Hochladen &amp; als Entwurf anlegen</button>' +
+      '<div class="admin-sub" style="margin-top:6px;">Das Video ist danach ein <b>Entwurf</b>: Bunny verarbeitet es, dann erscheint bei dem Video „Veröffentlichen“. Erst dann sehen es die Schüler — und erst dann gibt es auf Wunsch eine Push-Nachricht.</div>' +
     "</div>";
 
   const ohneDauer = allVideos.filter(function(v){ return v.bunny_video_id && !v.dauer_sekunden; }).length;
@@ -7016,11 +7241,14 @@ function renderAdminVideos(){
     "</div>";
 
   if(videoReihenfolgeModus && !nurLesen){ renderVideoReihenfolge(); return; }
-  const werkzeugKarte = nurLesen ? "" :
+  const werkzeugKarte = (nurLesen ? "" :
     '<div class="admin-card glass vid-werkzeug" style="margin-bottom:10px;">' +
       '<button class="btn-still druck-2" id="vid-reihenfolge">Reihenfolge ändern</button>' +
       '<button class="btn-still druck-2" id="vid-vorschau">Als Schüler ansehen</button>' +
-    "</div>";
+      '<label class="vs-einstellung">Vorschau gesperrter Videos: <select id="vorschau-sek">' +
+        [5,10,15,20,30].map(function(n){ return '<option value="' + n + '"' + (n === vorschauSekundenAdmin ? " selected" : "") + ">" + n + " Sekunden</option>"; }).join("") +
+      "</select></label>" +
+    "</div>") + drehLeitfadenHtml();
   document.getElementById("admin-content").innerHTML =
     werkzeugKarte +
     anlegeForm +
@@ -7121,6 +7349,21 @@ function renderAdminVideos(){
   });
   document.querySelectorAll("[data-bearbv]").forEach(function(b){
     b.addEventListener("click", function(){ videoBearbeiten(b.dataset.bearbv); });
+  });
+  document.querySelectorAll("[data-hochladen]").forEach(function(b){
+    b.addEventListener("click", function(){ videoDateiNachreichen(b.dataset.hochladen); });
+  });
+  document.querySelectorAll("[data-statuscheck]").forEach(function(b){
+    b.addEventListener("click", function(){ einmal("status-" + b.dataset.statuscheck, function(){ return videoStatusPruefen(b.dataset.statuscheck); }); });
+  });
+  document.querySelectorAll("[data-veroeff]").forEach(function(b){
+    b.addEventListener("click", function(){ einmal("veroeff-" + b.dataset.veroeff, function(){ return videoVeroeffentlichen(b.dataset.veroeff); }); });
+  });
+  if(allVideos.some(function(v){ return v.status === "verarbeitung"; })) statusAbfrageStarten();
+  const vsSek = document.getElementById("vorschau-sek");
+  if(vsSek) vsSek.addEventListener("change", async function(){
+    const r = await supa.from("academy_einstellungen").update({ wert: vsSek.value, geaendert_am: new Date().toISOString() }).eq("schluessel", "vorschau_sekunden").select("schluessel");
+    showToast(aenderungOk(r) ? "Vorschau: " + vsSek.value + " Sekunden" : "Konnte nicht gespeichert werden");
   });
   const rfBtn = document.getElementById("vid-reihenfolge");
   if(rfBtn) rfBtn.addEventListener("click", function(){ videoReihenfolgeModus = true; renderAdminVideos(); });
@@ -7304,7 +7547,14 @@ async function createVideo(){
     okText: "Trotzdem anlegen"
   })) return;
 
-  const neu = { id:"v" + Date.now(), titel:titel, beschreibung: desc || null, bunny_video_id: bunnyId || null, pruefung_ergebnis: pruefungsergebnis, fahrzeug: fahrzeugFeld || null, gebiet_id: gebietId };
+  const dateiFeld = document.getElementById("nv-datei");
+  const datei = dateiFeld && dateiFeld.files && dateiFeld.files[0] ? dateiFeld.files[0] : null;
+  if(datei && bunnyId){ showToast("Bitte entweder eine Datei wählen ODER eine Bunny-ID einfügen"); return; }
+  // 26.09.2026 (P2): Neue Videos starten als Entwurf. Mit fertiger Bunny-ID sind sie
+  // sofort "bereit" (Knopf Veroeffentlichen), mit Datei erst nach Upload + Verarbeitung.
+  const neu = { id:"v" + Date.now(), titel:titel, beschreibung: desc || null, bunny_video_id: bunnyId || null, pruefung_ergebnis: pruefungsergebnis, fahrzeug: fahrzeugFeld || null, gebiet_id: gebietId,
+    status: bunnyId ? "bereit" : "entwurf", push_gesendet: false,
+    reihenfolge: allVideos.reduce(function(m, v){ return Math.max(m, v.reihenfolge || 0); }, 0) + 10 };
   const neuVts = gewaehlteTags.map(function(tagId){ return { video_id: neu.id, tag_id: tagId }; });
 
   if(DEMO_MODE){
@@ -7322,10 +7572,150 @@ async function createVideo(){
   if(gewaehltePruefer.length){
     await supa.from("academy_video_pruefer").insert(gewaehltePruefer.map(function(pid){ return { video_id:neu.id, pruefer_id:pid }; }));
   }
+  await protokolliere("video_angelegt", "video", neu.id, titel, datei ? "Upload gestartet" : (bunnyId ? "mit Bunny-ID" : "ohne Video"));
+  if(datei){
+    const hochgeladen = await videoDateiHochladen(neu.id, titel, datei, null);
+    await loadAdminData();
+    renderAdminVideos();
+    showToast(hochgeladen ? "Hochgeladen — Bunny verarbeitet das Video jetzt" : "Entwurf angelegt, Upload nicht fertig — du kannst ihn beim Video fortsetzen");
+    if(hochgeladen) statusAbfrageStarten();
+    return;
+  }
   await loadAdminData();
   renderAdminVideos();
-  showToast("Video angelegt (" + gewaehlteTags.length + " Thema/Themen)");
-  notifyNeuesVideo(neu.id); // löst im Hintergrund Push an alle aktiven Schüler aus, blockiert die Admin-Ansicht nicht
+  showToast(bunnyId ? "Angelegt — jetzt beim Video auf „Veröffentlichen“ tippen" : "Als Entwurf angelegt");
+}
+
+// ---------- 26.09.2026 (P1): Hochladen direkt zu Bunny (TUS, fortsetzbar) ----------
+function skriptLaden(src, globalName){
+  return new Promise(function(ok, fehler){
+    if(window[globalName]) return ok(window[globalName]);
+    const s = document.createElement("script");
+    s.src = src;
+    s.onload = function(){ window[globalName] ? ok(window[globalName]) : fehler(new Error(globalName + " fehlt")); };
+    s.onerror = function(){ fehler(new Error(src + " nicht geladen")); };
+    document.head.appendChild(s);
+  });
+}
+async function adminFunktion(name, body){
+  const { data: sd } = await supa.auth.getSession();
+  const token = sd && sd.session ? sd.session.access_token : SUPABASE_ANON_KEY;
+  const res = await fetch(SUPABASE_URL + "/functions/v1/" + name, {
+    method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token }, body: JSON.stringify(body || {})
+  });
+  const data = await res.json().catch(function(){ return {}; });
+  if(!res.ok || !data.ok) throw new Error(data.error || ("Fehler " + res.status));
+  return data;
+}
+let uploadLaeuft = false;
+function beimVerlassenWarnen(ev){ if(uploadLaeuft){ ev.preventDefault(); ev.returnValue = ""; } }
+// Laedt eine Datei zu Bunny hoch. Hat das Video schon eine Bunny-ID (fortsetzen), wird
+// nur eine neue Signatur geholt; sonst legt der Server das Video bei Bunny neu an.
+async function videoDateiHochladen(videoId, titel, datei, vorhandeneGuid){
+  const balken = document.getElementById("nv-balken") || document.getElementById("up-balken-" + videoId);
+  const fuellung = balken ? balken.querySelector(".upload-fuellung") : null;
+  const prozent = balken ? balken.querySelector("span") : null;
+  let auth;
+  try{
+    auth = vorhandeneGuid ? await adminFunktion("academy-upload", { aktion:"signatur", guid: vorhandeneGuid })
+                          : await adminFunktion("academy-upload", { aktion:"start", titel: titel });
+  } catch(e){ showToast("Upload konnte nicht starten: " + e.message); return false; }
+  if(!vorhandeneGuid){
+    // Bunny-ID sofort am Entwurf speichern -- bricht der Upload ab, kann er spaeter
+    // an dasselbe Video fortgesetzt werden.
+    const r = await supa.from("academy_videos").update({ bunny_video_id: auth.guid }).eq("id", videoId).select("id");
+    if(!aenderungOk(r)){ showToast("Entwurf konnte nicht gespeichert werden"); return false; }
+  }
+  let tus;
+  try{ tus = await skriptLaden("vendor/tus-4.3.1.min.js", "tus"); }
+  catch(e){ showToast("Upload-Baustein fehlt — bitte Seite neu laden"); return false; }
+  if(balken) balken.hidden = false;
+  uploadLaeuft = true;
+  window.addEventListener("beforeunload", beimVerlassenWarnen);
+  const erfolg = await new Promise(function(fertig){
+    const upload = new tus.Upload(datei, {
+      endpoint: auth.endpoint,
+      retryDelays: [0, 3000, 5000, 10000, 20000, 60000],
+      chunkSize: 16 * 1024 * 1024,
+      headers: { AuthorizationSignature: auth.signature, AuthorizationExpire: String(auth.expire), VideoId: auth.guid, LibraryId: String(auth.library_id) },
+      metadata: { filetype: datei.type || "video/mp4", title: titel },
+      onProgress: function(gesendet, gesamt){
+        const p = gesamt ? Math.floor(gesendet / gesamt * 100) : 0;
+        if(fuellung) fuellung.style.width = p + "%";
+        if(prozent) prozent.textContent = p + " %";
+      },
+      onSuccess: function(){ fertig(true); },
+      onError: function(err){ showToast("Upload unterbrochen: " + (err && err.message ? err.message.slice(0, 120) : "Fehler")); fertig(false); }
+    });
+    // Frueheren, abgebrochenen Upload derselben Datei fortsetzen, statt neu zu beginnen.
+    upload.findPreviousUploads().then(function(frueher){
+      if(frueher && frueher.length) upload.resumeFromPreviousUpload(frueher[0]);
+      upload.start();
+    }).catch(function(){ upload.start(); });
+  });
+  uploadLaeuft = false;
+  window.removeEventListener("beforeunload", beimVerlassenWarnen);
+  if(!erfolg) return false;
+  await supa.from("academy_videos").update({ status: "verarbeitung" }).eq("id", videoId);
+  await protokolliere("video_hochgeladen", "video", videoId, titel, null);
+  return true;
+}
+
+// Fuer ein Entwurfs-Video (ohne oder mit abgebrochenem Upload) die Datei (erneut) hochladen.
+async function videoDateiNachreichen(videoId){
+  const v = allVideos.find(function(x){ return x.id === videoId; });
+  if(!v) return;
+  const feld = document.createElement("input");
+  feld.type = "file"; feld.accept = "video/*";
+  feld.addEventListener("change", async function(){
+    const datei = feld.files && feld.files[0];
+    if(!datei) return;
+    const ok = await videoDateiHochladen(videoId, v.titel, datei, v.bunny_video_id || null);
+    await loadAdminData(); renderAdminVideos();
+    if(ok){ showToast("Hochgeladen — Bunny verarbeitet das Video jetzt"); statusAbfrageStarten(); }
+  });
+  feld.click();
+}
+
+// ---------- 26.09.2026 (P2): Verarbeitung pruefen und veroeffentlichen ----------
+let statusAbfrageTimer = null;
+function statusAbfrageStarten(){
+  if(statusAbfrageTimer) return;
+  statusAbfrageTimer = setInterval(async function(){
+    const offen = allVideos.filter(function(v){ return v.status === "verarbeitung"; });
+    const imVideoTab = !!document.querySelector("[data-bearbv]");
+    if(!offen.length || !imVideoTab){ clearInterval(statusAbfrageTimer); statusAbfrageTimer = null; return; }
+    let geaendert = false;
+    for(const v of offen){
+      try{ const r = await adminFunktion("academy-upload", { aktion:"status", video_id: v.id }); if(r.status !== v.status) geaendert = true; } catch(e){}
+    }
+    if(geaendert){ await loadAdminData(); renderAdminVideos(); showToast("Ein Video ist fertig verarbeitet — du kannst es jetzt veröffentlichen"); }
+  }, 20000);
+}
+async function videoStatusPruefen(videoId){
+  try{
+    const r = await adminFunktion("academy-upload", { aktion:"status", video_id: videoId });
+    if(r.fehler){ showToast("Bunny meldet einen Fehler bei der Verarbeitung — bitte Datei neu hochladen"); return; }
+    await loadAdminData(); renderAdminVideos();
+    showToast(r.fertig ? "Fertig — jetzt veröffentlichen" : "Wird noch verarbeitet (" + (r.fortschritt || 0) + " %)");
+  } catch(e){ showToast("Status nicht abrufbar: " + e.message); }
+}
+async function videoVeroeffentlichen(videoId){
+  const v = allVideos.find(function(x){ return x.id === videoId; });
+  if(!v) return;
+  const antwort = await blattZeigen({
+    titel: "„" + v.titel + "“ veröffentlichen?",
+    text: "Das Video erscheint danach bei allen Schülern, die es sehen dürfen.",
+    haken: "Schüler per Push-Nachricht benachrichtigen",
+    okText: "Veröffentlichen", abbruchText: "Abbrechen"
+  });
+  if(!antwort) return;
+  const res = await supa.from("academy_videos").update({ status: "live", veroeffentlicht_am: new Date().toISOString() }).eq("id", videoId).select("id");
+  if(!aenderungOk(res)){ showToast("Konnte nicht veröffentlicht werden — keine Berechtigung oder keine Verbindung"); return; }
+  await protokolliere("video_veroeffentlicht", "video", videoId, v.titel, antwort.haken ? "mit Push" : "ohne Push");
+  await loadAdminData(); renderAdminVideos();
+  showToast("Veröffentlicht");
+  if(antwort.haken) notifyNeuesVideo(videoId);
 }
 
 async function notifyNeuesVideo(videoId){
@@ -7421,6 +7811,11 @@ async function videoBearbeiten(id){
     '<label>Prüfgebiet</label><select id="vb-gebiet" class="blatt-feld"><option value="">Kein Gebiet — für alle sichtbar</option>' +
       allGebiete.map(function(g){ return '<option value="' + esc(g.id) + '"' + (v.gebiet_id === g.id ? " selected" : "") + ">" + esc(g.name) + "</option>"; }).join("") + "</select>" +
     '<label>Prüfer</label><div class="vb-pruefer-liste">' + (pruefer || '<span class="admin-sub">Noch keine Prüfer angelegt</span>') + "</div>" +
+    // 26.09.2026 (L1): Kapitelmarken, (L4): Fehlerstellen bei nicht bestandenen Fahrten
+    '<label>Kapitelmarken <span class="vb-hilfe">eine pro Zeile, z. B. „02:40 Kreisverkehr Bieber“</span></label>' +
+    '<textarea id="vb-kapitel" class="blatt-feld" rows="4" placeholder="00:00 Start am TÜV&#10;02:40 Kreisverkehr&#10;05:10 Schulzone">' + esc(zeitListeText(v.kapitel, "titel")) + "</textarea>" +
+    '<label>Fehlerstellen <span class="vb-hilfe">nur bei „nicht bestanden“ — z. B. „07:15 Schulterblick beim Abbiegen fehlte“</span></label>' +
+    '<textarea id="vb-fehler" class="blatt-feld" rows="3" placeholder="07:15 Schulterblick beim Abbiegen fehlte">' + esc(zeitListeText(v.fehlerstellen, "text")) + "</textarea>" +
     '<label>Themen</label><input id="vb-tag-suche" class="blatt-feld" placeholder="Thema suchen, z. B. Zebra">' +
     '<div class="themen-box">' + themen + "</div>";
   const werte = await blattFormular({
@@ -7440,6 +7835,8 @@ async function videoBearbeiten(id){
         gratis: o.querySelector("#vb-gratis").checked,
         fahrzeug: o.querySelector("#vb-fahrzeug").value.trim() || null,
         gebiet_id: o.querySelector("#vb-gebiet").value || null,
+        kapitelRoh: o.querySelector("#vb-kapitel").value,
+        fehlerRoh: o.querySelector("#vb-fehler").value,
         tags: Array.from(o.querySelectorAll(".vb-tag:checked")).map(function(c){ return c.value; }),
         pruefer: Array.from(o.querySelectorAll(".vb-pruefer:checked")).map(function(c){ return c.value; })
       };
@@ -7448,9 +7845,14 @@ async function videoBearbeiten(id){
   if(!werte) return;
   if(!werte.titel){ showToast("Der Titel darf nicht leer sein"); return; }
   if(!werte.tags.length){ showToast("Bitte mindestens ein Thema wählen — sonst taucht das Video in keinem Bereich auf"); return; }
+  const kap = zeitListeLesen(werte.kapitelRoh, "titel");
+  if(kap.fehler){ showToast("Kapitelmarke nicht verstanden: „" + kap.fehler + "“ — Format 02:40 Titel"); return; }
+  const fst = zeitListeLesen(werte.fehlerRoh, "text");
+  if(fst.fehler){ showToast("Fehlerstelle nicht verstanden: „" + fst.fehler + "“ — Format 07:15 Text"); return; }
   if(DEMO_MODE){ Object.assign(v, werte); renderAdminVideos(); return; }
   const felder = { titel: werte.titel, beschreibung: werte.beschreibung || null, pruefung_ergebnis: werte.pruefung_ergebnis,
-    gratis: werte.gratis, fahrzeug: werte.fahrzeug, gebiet_id: werte.gebiet_id };
+    gratis: werte.gratis, fahrzeug: werte.fahrzeug, gebiet_id: werte.gebiet_id,
+    kapitel: kap.liste, fehlerstellen: fst.liste };
   const res = await supa.from("academy_videos").update(felder).eq("id", id).select("id");
   if(!aenderungOk(res)){ showToast("Konnte nicht gespeichert werden — keine Berechtigung oder keine Verbindung"); return; }
   // Themen und Pruefer: nur die Unterschiede schreiben. Erst hinzufuegen, dann entfernen --
@@ -7470,8 +7872,64 @@ async function videoBearbeiten(id){
   showToast(teilFehler ? "Gespeichert, aber Themen/Prüfer nur teilweise — bitte prüfen" : "Gespeichert");
 }
 
+// "02:40 Kreisel" <-> {t:160, titel:"Kreisel"}. Stunden optional (1:02:40).
+function zeitFormat(sek){
+  sek = Math.max(0, Math.floor(Number(sek) || 0));
+  const h = Math.floor(sek / 3600), m = Math.floor((sek % 3600) / 60), s = sek % 60;
+  const zz = function(n){ return (n < 10 ? "0" : "") + n; };
+  return (h ? h + ":" + zz(m) : zz(m)) + ":" + zz(s);
+}
+function zeitListeText(liste, feld){
+  return (Array.isArray(liste) ? liste : []).map(function(e){ return zeitFormat(e.t) + " " + (e[feld] || ""); }).join("\n");
+}
+function zeitListeLesen(text, feld){
+  const liste = [];
+  const zeilen = String(text || "").split(/\r?\n/).map(function(z){ return z.trim(); }).filter(Boolean);
+  for(const z of zeilen){
+    const m = z.match(/^(?:(\d{1,2}):)?(\d{1,2}):(\d{2})\s+(.+)$/);
+    if(!m || Number(m[3]) > 59) return { fehler: z.slice(0, 40), liste: [] };
+    const eintrag = { t: (Number(m[1] || 0) * 3600) + Number(m[2]) * 60 + Number(m[3]) };
+    eintrag[feld] = m[4].slice(0, 120);
+    liste.push(eintrag);
+  }
+  liste.sort(function(a, b){ return a.t - b.t; });
+  return { liste: liste };
+}
+
 // ---------- 26.09.2026 (P5): Reihenfolge per Ziehen ----------
 let videoReihenfolgeModus = false;
+let vorschauSekundenAdmin = 10;
+
+// 26.09.2026 (P7): Dreh-Leitfaden fuer Partner-Fahrlehrer, die Pruefungsstrecken filmen.
+function drehLeitfadenHtml(){
+  return '<details class="admin-card glass leitfaden">' +
+    '<summary><span class="admin-form-title" style="margin:0;">Dreh-Leitfaden für Prüfungsstrecken</span>' +
+      '<span class="admin-sub">So werden die Videos einheitlich, gut zu sehen und rechtlich sauber.</span></summary>' +
+    '<div class="leitfaden-inhalt">' +
+      '<h4>Vor der Fahrt</h4><ul>' +
+        '<li>Handy <b>quer</b>, fest in einer Halterung <b>mittig an der Frontscheibe</b> — Blick wie aus dem Fahrersitz, nicht vom Beifahrer.</li>' +
+        '<li>Kamera auf <b>1080p, 30 Bilder/s</b>, Bildstabilisierung an. Linse und Scheibe putzen, Sonnenblende nicht ins Bild.</li>' +
+        '<li><b>Nicht stören</b> einschalten, Akku voll oder Powerbank, mindestens 10 GB frei.</li>' +
+        '<li>Radio aus, Lüftung leise — der Ton soll die Ansagen tragen.</li>' +
+      "</ul>" +
+      '<h4>Während der Fahrt</h4><ul>' +
+        '<li>Die Strecke so fahren, wie sie in der Prüfung gefahren wird — Start am Treffpunkt bzw. TÜV.</li>' +
+        '<li>Jede besondere Stelle <b>kurz ansagen</b>: „Gleich Kreisverkehr, zweite Ausfahrt“, „Achtung, Tempo 30 endet“.</li>' +
+        '<li>Uhrzeit im Video von wichtigen Stellen notieren (z. B. 02:40 Kreisel). Daraus werden später die <b>Kapitelmarken</b>.</li>' +
+        '<li>Das Handy wird während der Fahrt <b>nie bedient</b>. Die Sicherheit geht immer vor.</li>' +
+      "</ul>" +
+      '<h4>Datenschutz — bitte unbedingt</h4><ul>' +
+        '<li>Keine erkennbaren Gesichter heranzoomen, keine lesbaren Kennzeichen in Nahaufnahme.</li>' +
+        '<li><b>Keine Prüfernamen</b> im Ton und keine Aufnahmen, die einzelne Personen bloßstellen.</li>' +
+        '<li>Fährt ein Schüler, braucht es seine schriftliche Einwilligung — bei Minderjährigen die der Eltern.</li>' +
+      "</ul>" +
+      '<h4>Übergabe</h4><ul>' +
+        '<li>Dateiname: <b>Gebiet_Strecke_Datum</b>, z. B. „Bieber_Strecke2_2026-10-03“.</li>' +
+        '<li>Zu jeder Strecke dazuschreiben: Gebiet, Fahrzeug (Schalter/Automatik), bestanden oder nicht bestanden, deine Kapitelmarken.</li>' +
+        '<li>Die Fahr-Akademie lädt hoch, setzt die Kapitel und veröffentlicht. Vorher sieht kein Schüler etwas.</li>' +
+      "</ul>" +
+    "</div></details>";
+}
 function sortableLaden(){
   return new Promise(function(ok, fehler){
     if(window.Sortable) return ok();
