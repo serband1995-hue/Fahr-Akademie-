@@ -1,6 +1,6 @@
 # Fahr-Akademie — Projektgedächtnis
 
-Vanilla-JS-App (eine `index.html`, ~8.300 Zeilen) für Fahrschüler. Backend:
+Vanilla-JS-App (eine `index.html`, ~9.500 Zeilen) für Fahrschüler. Backend:
 Supabase-Projekt `fxgljvhpikjcejhghgbp` (eu-central-1). Nutzer teilweise
 minderjährig — entsprechend vorsichtig mit Daten umgehen.
 
@@ -81,6 +81,11 @@ minderjährig — entsprechend vorsichtig mit Daten umgehen.
 - **supabase-js liegt im Repo** (`vendor/`, feste Version). Bei einem Update
   neue Datei mit neuer Versionsnummer anlegen, Script-Tag und `sw.js`
   (STATIC_ASSETS + CACHE_NAME) anpassen.
+- **Logo** ist die Datei `logo-264.jpg` (nicht mehr im HTML eingebettet), im
+  Service Worker vorgeladen. Neues Logo = neuer Dateiname + `sw.js` anpassen.
+- **Anklickbare `<div>`s** bekommen automatisch `role="button"`/`tabindex`
+  (`KLICK_FLAECHEN` + `tastaturSystemStarten`). Neue Klickflächen mit
+  `data-…`-Attribut dort eintragen — oder gleich `<button>` verwenden.
 - **Zweites Supabase-Projekt `oectrvkjunntzsggyhxv`** (Fahrlehrer-Kompass) ist
   ein separates Projekt mit eigenem Chat. Hier nur als Bridge-Partner
   relevant — nicht versehentlich hineinschreiben.
