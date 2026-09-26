@@ -1240,6 +1240,33 @@
     background:var(--gold-schwach);border:1px solid var(--gold-rand);color:var(--text);font-size:14px;line-height:1.5;text-align:start;}
   .admin-link-btn{appearance:none;border:none;background:none;padding:10px 12px;min-height:44px;color:var(--faint);font:inherit;font-size:13px;cursor:pointer;text-decoration:underline;}
   :focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+
+  /* ================= D12 "Behutsam" (26.09.2026, vom Inhaber gewaehlt) =================
+     Gleiche Farben und Aufbau, nur ruhiger: Karten liegen hell AUF dem Papier (weicher
+     Schatten) statt eingesenkt. Nur im hellen Modus -- der Dunkelmodus bleibt, wie er ist. */
+  @media (prefers-color-scheme: light){
+    :root{ --surface:#FFFDF8; --surface-strong:#F3EDE0; --border:rgba(43,40,30,.10);
+      --schatten-2:0 1px 2px rgba(43,40,30,.05), 0 6px 18px rgba(43,40,30,.07); --r-l:20px; --fs-hero:30px; }
+    .header{padding-top:6px;}
+    .fa-hero{letter-spacing:-.01em;}
+    .weiter-zeile{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:16px;box-shadow:var(--schatten-2);margin-top:10px;}
+    .weiter-play{width:52px;height:52px;box-shadow:0 6px 14px rgba(217,149,76,.35);}
+    .weiter-titel{font-size:22px;}
+    .bereich-tile{background:var(--surface);border-color:var(--border);box-shadow:var(--schatten-2);border-radius:20px;padding:18px;}
+    .bt-icon{border-radius:14px;}
+    .karte{background:var(--surface);box-shadow:var(--schatten-2);border-color:var(--border);}
+    .bottom-nav-item.active{background:var(--surface-tint);border-radius:16px;}
+    .login-card{background:var(--surface);box-shadow:var(--schatten-2);border-color:var(--border);border-radius:24px;}
+    .login-card input{background:#F6F1E6;}
+    #such-input{background:var(--surface);}
+  }
+  /* Schwebende untere Leiste nur auf dem Handy; ab 760px sitzt sie wie bisher im Papierbogen. */
+  @media (prefers-color-scheme: light) and (max-width: 759px){
+    .bottom-nav{left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));border-radius:22px;border:1px solid var(--border);
+      box-shadow:0 8px 28px rgba(43,40,30,.14);padding:6px;background:rgba(255,253,248,.94);
+      -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
+    .page-content{padding-bottom:110px;}
+  }
   [role="button"]:focus-visible,.bottom-nav-item:focus-visible,.drawer-item:focus-visible{outline:3px solid var(--gold);outline-offset:-3px;}
 </style>
 </head>
