@@ -20,25 +20,25 @@ const UI = {
     richtigIst: "Richtig ist", reihenfolge: "Die Reihenfolge", kein3d: "Dein Gerät kann die 3D-Darstellung leider nicht anzeigen. Die Erklärungen findest du unten.",
     worum: "Worum geht's?", merken: "Die Regel zum Merken", rf: "Richtig und falsch", zeit: "Zeitleiste", kapitel: "Kapitel", blick: "Blickwinkel", tageszeit: "Tageszeit wechseln", fassung: "Fassung",
     teaserTitel: "Weiter geht's mit dem Vollzugang", teaserText: "Das war die Kostprobe. Mit dem Vollzugang siehst du die ganze Szene mit allen Kapiteln und Fragen:", teaserKnopf: "Zugang anfragen", nochmal: "Kostprobe nochmal", gesperrt: "Mit Vollzugang", buehne: "Animierte 3D-Szene",
-    kapZurueck: "Zurück", kapWeiter: "Weiter", alleKap: "Alle Kapitel", ende: "Ende der Szene" },
+    kapZurueck: "Zurück", kapWeiter: "Weiter", alleKap: "Alle Kapitel", ende: "Ende der Szene", aufbau: "Szene wird aufgebaut …" },
   en: { abspielen: "Play", anhalten: "Pause", uebersicht: "Overview", schraeg: "Follow", oben: "Top", fahrer: "Driver", tag: "Day", daemmerung: "Dusk", nacht: "Night",
     halb: "½ speed", vonVorn: "Restart", kamFolgt: "Camera follows the explanation", mitdenken: "Think along: scene pauses at questions", md: "Think along", aufl: "Show answer", weiter: "Continue",
     richtigIst: "Correct is", reihenfolge: "The order", kein3d: "Your device cannot show the 3D view. You'll find the explanations below.",
     worum: "What is it about?", merken: "Rules to remember", rf: "Right and wrong", zeit: "Timeline", kapitel: "Chapters", blick: "View", tageszeit: "Change time of day", fassung: "Version",
     teaserTitel: "Continue with full access", teaserText: "That was the preview. With full access you get the whole scene with all chapters and questions:", teaserKnopf: "Request access", nochmal: "Preview again", gesperrt: "Full access", buehne: "Animated 3D scene",
-    kapZurueck: "Back", kapWeiter: "Next", alleKap: "All chapters", ende: "End of scene" },
+    kapZurueck: "Back", kapWeiter: "Next", alleKap: "All chapters", ende: "End of scene", aufbau: "Building the scene …" },
   tr: { abspielen: "Oynat", anhalten: "Durdur", uebersicht: "Genel bakış", schraeg: "Takip", oben: "Üstten", fahrer: "Sürücü", tag: "Gündüz", daemmerung: "Alacakaranlık", nacht: "Gece",
     halb: "½ hız", vonVorn: "Baştan", kamFolgt: "Kamera açıklamayı takip eder", mitdenken: "Birlikte düşün: sahne sorularda durur", md: "Birlikte düşün", aufl: "Cevabı göster", weiter: "Devam",
     richtigIst: "Doğru cevap", reihenfolge: "Sıralama", kein3d: "Cihazın 3D görünümü gösteremiyor. Açıklamaları aşağıda bulabilirsin.",
     worum: "Konu ne?", merken: "Akılda tutulacak kurallar", rf: "Doğru ve yanlış", zeit: "Zaman çizelgesi", kapitel: "Bölümler", blick: "Bakış açısı", tageszeit: "Günün saatini değiştir", fassung: "Sürüm",
     teaserTitel: "Tam erişimle devam et", teaserText: "Bu bir tadımlıktı. Tam erişimle sahnenin tamamını tüm bölümler ve sorularla görürsün:", teaserKnopf: "Erişim iste", nochmal: "Tadımlığı tekrar izle", gesperrt: "Tam erişim", buehne: "Hareketli 3D sahne",
-    kapZurueck: "Geri", kapWeiter: "İleri", alleKap: "Tüm bölümler", ende: "Sahnenin sonu" },
+    kapZurueck: "Geri", kapWeiter: "İleri", alleKap: "Tüm bölümler", ende: "Sahnenin sonu", aufbau: "Sahne hazırlanıyor …" },
   ar: { abspielen: "تشغيل", anhalten: "إيقاف مؤقت", uebersicht: "نظرة عامة", schraeg: "متابعة", oben: "من الأعلى", fahrer: "السائق", tag: "نهار", daemmerung: "غسق", nacht: "ليل",
     halb: "½ السرعة", vonVorn: "من البداية", kamFolgt: "الكاميرا تتبع الشرح", mitdenken: "فكّر معنا: يتوقف المشهد عند الأسئلة", md: "فكّر معنا", aufl: "أظهر الإجابة", weiter: "متابعة",
     richtigIst: "الإجابة الصحيحة", reihenfolge: "الترتيب", kein3d: "جهازك لا يستطيع عرض المشهد ثلاثي الأبعاد. تجد الشرح في الأسفل.",
     worum: "عمّ يدور الأمر؟", merken: "قواعد للحفظ", rf: "الصحيح والخطأ", zeit: "الخط الزمني", kapitel: "الفصول", blick: "زاوية الرؤية", tageszeit: "تغيير وقت اليوم", fassung: "النسخة",
     teaserTitel: "تابع مع الوصول الكامل", teaserText: "كان هذا عرضًا تجريبيًا. مع الوصول الكامل ترى المشهد كاملًا بكل الفصول والأسئلة:", teaserKnopf: "اطلب الوصول", nochmal: "شاهد العرض مرة أخرى", gesperrt: "وصول كامل", buehne: "مشهد متحرك ثلاثي الأبعاد",
-    kapZurueck: "رجوع", kapWeiter: "التالي", alleKap: "كل الفصول", ende: "نهاية المشهد" }
+    kapZurueck: "رجوع", kapWeiter: "التالي", alleKap: "كل الفصول", ende: "نهاية المشهد", aufbau: "جارٍ تجهيز المشهد …" }
 };
 const BUCHST = ["A", "B", "C", "D"];
 
@@ -71,6 +71,8 @@ const CSS = `
 .vv .vv-tempo small{font-size:12.5px;opacity:.8;font-weight:600;}
 .vv .vv-fehler{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;background:var(--vv-surface);}
 .vv .vv-teaser{margin-top:10px;}
+.vv .vv-bau{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.vv .vv-bau span{padding:8px 16px;border-radius:999px;background:rgba(20,24,22,.7);color:#fff;font-weight:700;font-size:14px;}
 .vv .vv-kamreihe{display:none;}
 .vv .vv-kapliste{display:none;}
 .vv .vv-kk-nav{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
@@ -156,6 +158,11 @@ const CSS = `
 @media (prefers-color-scheme: dark){.vv .vv-buehne{background:#3a4650;}}
 `;
 
+// Eine 3D-Welt (WebGL) für alle Szenen: Anlegen kostet auf dem Handy bis 1 s, Verwerfen
+// (forceContextLoss) bis 4 s -- beides passierte bei jedem Öffnen und Verlassen (Ruckler).
+// Jetzt wird die Welt beim Verlassen nur ausgeräumt und von der nächsten Szene übernommen.
+let geteilteWelt = null, geteiltBelegt = false;
+
 function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
 function winkelDiff(a, b){ return Math.atan2(Math.sin(b - a), Math.cos(b - a)); }
 
@@ -228,6 +235,7 @@ export function starte(el, daten, opt){
       '<div class="vv-ol" role="group" aria-label="' + esc(U.blick) + '"></div>' +
       '<div class="vv-or"><button type="button" class="vv-pille" data-tz aria-label="' + esc(U.tageszeit) + '">' + esc(U.tag) + "</button></div>" +
       '<div class="vv-anz" aria-live="polite"></div><div class="vv-tempo" aria-hidden="true"></div>' +
+      '<div class="vv-bau" aria-live="polite"><span>' + esc(U.aufbau) + '</span></div>' +
       '<div class="vv-fehler" hidden><p>' + esc(U.kein3d) + '</p></div></div>' +
     '<div class="vv-kamreihe" role="group" aria-label="' + esc(U.blick) + '"></div>' +
     '<div class="vv-teaser" hidden></div>' +
@@ -245,9 +253,12 @@ export function starte(el, daten, opt){
   const $ = (s) => wurzel.querySelector(s);
   const $$ = (s) => Array.from(wurzel.querySelectorAll(s));
 
-  let welt = null;
-  try{ welt = erstelleWelt($("canvas"), { qualitaet: opt.qualitaet || "hoch" }); }
-  catch(e){ $(".vv-fehler").hidden = false; $(".vv-tempo").hidden = true; }
+  // 26.09.2026 (Ruckler): Die 3D-Welt wird stückweise aufgebaut, mit einer Pause nach
+  // jedem Schritt. Vorher lief alles in einem Stück, das Handy reagierte beim Öffnen einer
+  // Szene 1-3 Sekunden lang nicht. Texte und Kapitel stehen sofort da.
+  let welt = null, bauNr = 0;
+  const naechstesBild = () => new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
+  const luftHolen = () => new Promise((r) => setTimeout(r, 0));   // Eingaben durchlassen, ohne auf ein Bild zu warten
 
   const st = { variante: null, t: 0, laeuft: false, tempo: 1, mitdenken: false, autoKam: true, kapitel: -1, wartet: false, aufgeloest: false, tz: "tag", bedarf: 2, aus: false };
   let V = null, VB = null;
@@ -265,19 +276,54 @@ export function starte(el, daten, opt){
     $$("[data-var]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.var === V.name)));
     $(".vv-kk").classList.toggle("falsch", V.name === "falsch");
     kameraKnoepfe();
-    if(welt){
-      if(welt.strasse){ welt.szene.remove(welt.strasse); welt.freigeben(welt.strasse); welt.strasse = null; }
-      welt.dreher = []; welt.ticker = [];
-      welt.kameraOpt = V.kameraOpt || {};
-      welt.strasse = V.welt.art === "landstrasse" ? baueLandstrasse(welt, V.welt.def)
-        : baueKompassWelt(welt, V.welt.strasse, { kategorie: daten.kategorie, spuren: VB.spuren });
-      welt.leereFahrzeuge();
-      VB.fahrzeuge.forEach((f, i) => welt.fahrzeug(f.id, baueTeilnehmer(welt.M, f.spec, i), f.pose, f.sig));
-    }
     zeitleisteBauen();
     const rt = $(".vv-rf-text");
     if(rt){ const rf = T.rf || TD.rf, kn = T.rfKnopf || TD.rfKnopf, andere = daten.varianten.find((v) => v.name !== V.name); rt.textContent = rf[V.name] || ""; $("[data-rf]").textContent = andere ? kn[andere.name] : ""; }
     springe(0, true);
+    aufbau3d();
+  }
+
+  async function aufbau3d(){
+    const nr = ++bauNr, Vb = V, VBb = VB;
+    const weg = () => nr !== bauNr || st.aus;
+    st.bauend = true; $(".vv-bau").hidden = false;
+    await naechstesBild(); if(weg()) return;
+    if(!welt){
+      if(geteilteWelt && !geteiltBelegt && !geteilteWelt.renderer.getContext().isContextLost()){
+        welt = geteilteWelt;
+        const alt = $(".vv-buehne canvas"), neu = welt.renderer.domElement;
+        neu.setAttribute("aria-label", alt.getAttribute("aria-label") || "");
+        alt.replaceWith(neu);
+        welt.alleHilfenAus(); if(welt.zeitStufe !== "tag") welt.setzeTageszeit("tag");
+      } else {
+        try{ welt = erstelleWelt($("canvas"), { qualitaet: opt.qualitaet || "hoch" }); }
+        catch(e){ st.bauend = false; $(".vv-bau").hidden = true; $(".vv-fehler").hidden = false; $(".vv-tempo").hidden = true; return; }
+        if(!geteilteWelt || geteilteWelt.renderer.getContext().isContextLost()) geteilteWelt = welt;
+      }
+      if(welt === geteilteWelt) geteiltBelegt = true;
+      beobachten();
+      if(st.tz !== "tag") welt.setzeTageszeit(st.tz);
+      await naechstesBild(); if(weg()) return;
+    }
+    welt.leereFahrzeuge();
+    if(welt.strasse){ welt.szene.remove(welt.strasse); welt.freigeben(welt.strasse); welt.strasse = null; }
+    welt.dreher = []; welt.ticker = [];
+    welt.kameraOpt = Vb.kameraOpt || {};
+    welt.strasse = Vb.welt.art === "landstrasse" ? baueLandstrasse(welt, Vb.welt.def)
+      : baueKompassWelt(welt, Vb.welt.strasse, { kategorie: daten.kategorie, spuren: VBb.spuren });
+    await luftHolen(); if(weg()) return;
+    for(let i = 0; i < VBb.fahrzeuge.length; i++){
+      const f = VBb.fahrzeuge[i];
+      welt.fahrzeug(f.id, baueTeilnehmer(welt.M, f.spec, i), f.pose, f.sig);
+      if(i % 2 === 1){ await luftHolen(); if(weg()) return; }
+    }
+    welt.groesse(); welt.stellen(st.t);
+    // Grafik-Programme möglichst im Hintergrund übersetzen (wo das Gerät das kann)
+    try{ if(welt.renderer.compileAsync) await welt.renderer.compileAsync(welt.szene, welt.kamera); }catch(e){}
+    if(weg()) return;
+    st.bauend = false; $(".vv-bau").hidden = true;
+    welt.setzeKamera(st.kamera || Vb.grundKamera || "schraeg", true);
+    st.bedarf = Math.max(st.bedarf, 3);
   }
 
   function zeitleisteBauen(){
@@ -340,7 +386,7 @@ export function starte(el, daten, opt){
       if(i === n && m.scrollIntoView && st.laeuft) try{ m.scrollIntoView({ block: "nearest", inline: "center", behavior: ruhig ? "auto" : "smooth" }); }catch(e){}
     });
     frageZeigen(tx.frage, false);
-    if(st.autoKam && welt && k.kamera) kameraSetzen(k.kamera, false);
+    if(st.autoKam && k.kamera) kameraSetzen(k.kamera, false);
   }
 
   // Mitdenken ohne Bewertung: keine Antwortknöpfe, kein Rot/Grün, nichts gespeichert
@@ -363,10 +409,11 @@ export function starte(el, daten, opt){
 
   function kameraSetzen(art, vonHand){
     if(vonHand){ st.autoKam = false; $("[data-autokam]").setAttribute("aria-pressed", "false"); }
-    if(!welt) return;
     if(art === "uebersicht" && !(V.kameraOpt && V.kameraOpt.fest)) art = "schraeg";
-    welt.setzeKamera(art, ruhig);
+    st.kamera = art;
     $$("[data-kam]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.kam === art)));
+    if(!welt || st.bauend) return;
+    welt.setzeKamera(art, ruhig);
     st.bedarf = 90;
   }
 
@@ -409,7 +456,7 @@ export function starte(el, daten, opt){
   function zeichnen(dt){
     $(".vv-zl-fuell").style.width = (st.t / V.dauer * 100) + "%";
     $(".vv-zl").setAttribute("aria-valuenow", st.t.toFixed(1));
-    if(!welt) return;
+    if(!welt || st.bauend) return;
     welt.stellen(st.t);
     const stand = {}; welt.fahrzeuge.forEach((f) => { stand[f.id] = f.stand; });
     const fs = stand[V.fokus];
@@ -442,7 +489,7 @@ export function starte(el, daten, opt){
     raf = requestAnimationFrame(schleife);
     const dt = Math.min(0.1, (jetzt - letzte) / 1000); letzte = jetzt;
     if(!imBild || document.hidden) return;
-    if(st.laeuft){
+    if(st.laeuft && !st.bauend){
       const tNeu = st.t + dt * st.tempo, nNeu = aktKapitel(tNeu);
       if(nNeu !== st.kapitel){
         st.t = V.kapitel[nNeu].t; kapitelZeigen(nNeu);
@@ -502,8 +549,8 @@ export function starte(el, daten, opt){
     if(e.key === zur){ springe(st.t - 2, false); e.preventDefault(); }
   });
   let ro = null, io = null;
-  if(welt){
-    ro = new ResizeObserver(() => { welt.groesse(); st.bedarf = Math.max(st.bedarf, 2); });
+  function beobachten(){
+    ro = new ResizeObserver(() => { if(welt) welt.groesse(); st.bedarf = Math.max(st.bedarf, 2); });
     ro.observe($(".vv-buehne"));
     if(window.IntersectionObserver){ io = new IntersectionObserver((e) => { imBild = e[0].isIntersecting; if(imBild) st.bedarf = Math.max(st.bedarf, 2); }); io.observe($(".vv-buehne")); }
     welt.groesse();
@@ -512,13 +559,19 @@ export function starte(el, daten, opt){
   raf = requestAnimationFrame(schleife);
 
   return {
-    zustand: () => ({ t: st.t, laeuft: st.laeuft, kapitel: st.kapitel, variante: st.variante, dauer: V.dauer, kamera: welt ? welt.kameraArt() : null, fehler3d: !welt }),
+    zustand: () => ({ t: st.t, laeuft: st.laeuft, kapitel: st.kapitel, variante: st.variante, dauer: V.dauer, kamera: welt ? welt.kameraArt() : null, fehler3d: !$(".vv-fehler").hidden, bereit: !!welt && !st.bauend }),
     springe, spielen, variante, kameraSetzen, welt: () => welt,
     zerstoeren(){
       st.aus = true; cancelAnimationFrame(raf);
       if(ro) ro.disconnect(); if(io) io.disconnect();
       if(welt){
-        try{ welt.leereFahrzeuge(); if(welt.strasse){ welt.szene.remove(welt.strasse); welt.freigeben(welt.strasse); } welt.renderer.dispose(); welt.renderer.forceContextLoss(); }catch(e){}
+        try{
+          welt.leereFahrzeuge(); if(welt.strasse){ welt.szene.remove(welt.strasse); welt.freigeben(welt.strasse); welt.strasse = null; }
+          welt.dreher = []; welt.ticker = []; welt.alleHilfenAus();
+          // die gemeinsame Welt bleibt für die nächste Szene; eine zusätzliche wird verworfen
+          if(welt === geteilteWelt) geteiltBelegt = false;
+          else { welt.renderer.dispose(); welt.renderer.forceContextLoss(); }
+        }catch(e){}
       }
       wurzel.remove();
     }

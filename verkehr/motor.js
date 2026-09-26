@@ -1280,6 +1280,7 @@ export function erstelleWelt(canvas, opt){
 
   // Hilfsflaechen (halbtransparent auf der Fahrbahn): { id, farbe }
   const hilfen = {};
+  welt.alleHilfenAus = function(){ Object.keys(hilfen).forEach(function(id){ hilfen[id].visible = false; }); };
   welt.hilfe = function(id, sichtbar, x0, x1, z0, z1, farbe, deckkraft){
     let m = hilfen[id];
     if(!m){
