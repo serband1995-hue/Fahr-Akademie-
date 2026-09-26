@@ -1068,7 +1068,7 @@
   .abr-kachel.betont .k-wert{color:var(--gold-text);}
   .abr-felder{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:flex-end;}
   .abr-feld{display:flex;flex-direction:column;gap:4px;}
-  .abr-feld label{font-size:10px;font-weight:700;letter-spacing:.07em;
+  .abr-feld label{font-size:12.5px;font-weight:700;letter-spacing:.07em;
     text-transform:uppercase;color:var(--faint);}
   .abr-feld input{width:96px;padding:9px 10px;border-radius:var(--r-m);
     border:1px solid var(--border);background:var(--surface-strong);color:var(--text);
@@ -1334,6 +1334,73 @@
   .vz-menue button:hover{background:var(--surface);}
   .vz-menue .vz-gefahr{color:var(--warn);}
   .video-ausgeblendet{opacity:.72;}
+
+  /* Admin-Struktur Teil 2: Abrechnung, Anlegen hinter Knopf, Protokoll */
+  .neu-box{margin-bottom:12px;}
+  .neu-knopf{list-style:none;display:inline-flex;align-items:center;min-height:48px;padding:0 20px;border-radius:var(--r-pill);background:var(--gruen);color:var(--auf-tief);font-weight:700;font-size:15px;cursor:pointer;}
+  .neu-knopf::-webkit-details-marker{display:none;}
+  .neu-box[open] > .neu-knopf{background:var(--surface);color:var(--text);border:1px solid var(--border);}
+  .neu-knopf .nk-auf,.neu-box[open] > .neu-knopf .nk-zu{display:none;}
+  .neu-box[open] > .neu-knopf .nk-auf{display:inline;}
+  .neu-box > .admin-form{margin-top:10px;}
+  #admin-partner-inner .admin-card{padding:10px 14px;margin-bottom:6px;}
+  .abr-kacheln{grid-template-columns:repeat(2,1fr);}
+  @media (min-width:700px){ .abr-kacheln{grid-template-columns:repeat(4,1fr);} }
+  button.abr-kachel{font:inherit;color:inherit;text-align:start;cursor:pointer;width:100%;}
+  button.abr-kachel:hover{border-color:var(--gruen-hell);}
+  .abr-filter{margin-bottom:8px;}
+  .abr-filter select{min-height:44px;}
+  .sch-chip.warn:not(.aktiv){border-color:var(--gold-rand);color:var(--gold-text);}
+  .abr-hinweis{font-weight:600;color:var(--gold-text);margin-inline-start:6px;}
+  .abr-tabelle{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:var(--r-l);background:var(--surface);overflow:hidden;box-shadow:var(--schatten-2);}
+  .abr-kopfzeile{display:none;}
+  .abr-beleg{position:relative;border-top:1px solid var(--border);}
+  .abr-beleg:first-of-type{border-top:none;}
+  /* Handy: links Datum + Name, rechts Anteil + Status. Tablet: echte Tabellenspalten. */
+  .abr-zeile{appearance:none;border:none;background:none;width:100%;font:inherit;color:inherit;text-align:start;cursor:pointer;
+    display:grid;grid-template-columns:1fr auto;grid-template-areas:"datum anteil" "wer status";gap:2px 12px;align-items:center;padding:10px 14px;min-height:56px;}
+  .abr-zeile.abr-nurlesen{cursor:default;}
+  .abr-datum{grid-area:datum;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .abr-wer{grid-area:wer;display:flex;flex-direction:column;min-width:0;}
+  .abr-wer b{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .abr-wer small{font-size:12.5px;color:var(--muted);}
+  .abr-zahl{text-align:end;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .abr-zeile > .abr-zahl{display:none;font-size:14px;color:var(--muted);}
+  .abr-zeile > .abr-anteil{display:block;grid-area:anteil;font-weight:800;color:var(--text);font-size:15px;}
+  .abr-zeile > span:nth-child(5){grid-area:status;justify-self:end;}
+  .abr-zeile > .ak-pfeil{display:none;}
+  .abr-pill{display:inline-block;font-size:12.5px;font-weight:700;padding:3px 10px;border-radius:var(--r-pill);white-space:nowrap;}
+  .p-offen{background:var(--gold-schwach);color:var(--gold-text);border:1px solid var(--gold-rand);}
+  .p-fehlt{background:var(--gold);color:var(--auf-gold);}
+  .p-bezahlt{background:var(--surface-tint);color:var(--gruen-text);}
+  .p-geschenkt{background:var(--surface-strong);color:var(--muted);}
+  .abr-schnell{position:absolute;inset-inline-end:14px;bottom:8px;appearance:none;border:1px solid var(--gruen-hell);background:var(--bg);color:var(--gruen-text);border-radius:var(--r-pill);font:inherit;font-size:13px;font-weight:700;min-height:36px;padding:0 12px;cursor:pointer;display:none;}
+  .abr-beleg.offen{background:var(--bg);}
+  .abr-bearbeiten{padding:0 14px 14px;}
+  .abr-bearbeiten .btn-primary{width:auto;padding:0 18px;min-height:44px;}
+  @media (min-width:700px){
+    .abr-kopfzeile{display:grid;grid-template-columns:110px 1fr 100px 110px 120px 96px;gap:12px;padding:10px 14px;font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);background:var(--surface-strong);}
+    .abr-kopfzeile.abr-nurlesen{grid-template-columns:110px 1fr 150px 170px 110px;}
+    .abr-zeile{grid-template-columns:110px 1fr 100px 110px 120px 96px;grid-template-areas:none;gap:12px;min-height:52px;}
+    .abr-zeile.abr-nurlesen{grid-template-columns:110px 1fr 150px 170px 110px;}
+    .abr-zeile > *{grid-area:auto!important;}
+    .abr-zeile > .abr-zahl{display:block;}
+    .abr-zeile > span:nth-child(5){justify-self:start;}
+    .abr-zeile > .ak-pfeil{display:flex;justify-self:end;}
+    .abr-schnell{display:inline-flex;align-items:center;top:50%;bottom:auto;transform:translateY(-50%);inset-inline-end:44px;}
+  }
+  @media (max-width:699px){ .abr-schnell{display:inline-flex;align-items:center;position:static;margin:0 14px 10px;} }
+  .abr-uebersichten{display:grid;gap:0 16px;}
+  @media (min-width:700px){ .abr-uebersichten{grid-template-columns:1fr 1fr;} }
+  .pr-liste{padding:4px 14px;}
+  .pr-tag{font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);padding:14px 0 4px;}
+  .pr-zeile{display:grid;grid-template-columns:52px 1fr;gap:4px 12px;padding:8px 0;border-top:1px solid var(--border);}
+  .pr-tag + .pr-zeile{border-top:none;}
+  .pr-zeit{font-variant-numeric:tabular-nums;color:var(--muted);font-size:13.5px;}
+  .pr-was{min-width:0;font-size:14.5px;}
+  .pr-was small{display:block;color:var(--muted);font-size:13px;}
+  .pr-wer{grid-column:2;font-size:12.5px;color:var(--faint);}
+  @media (min-width:700px){ .pr-zeile{grid-template-columns:60px 1fr 220px;} .pr-wer{grid-column:auto;text-align:end;} }
 
   /* ================= D12 "Behutsam" (26.09.2026, vom Inhaber gewaehlt) =================
      Gleiche Farben und Aufbau, nur ruhiger: Karten liegen hell AUF dem Papier (weicher
@@ -1839,7 +1906,11 @@ let allSchueler = [];
 let allVerkaeufe = [];      // Belege aus academy_verkaeufe
 let abrJahr = null;         // Filter: Jahr, null = alle
 let abrSchule = "";         // Filter: Schul-ID, "__direkt__" = nur Direktverkauf
-let abrNurOffen = false;    // Filter: nur unbezahlte Belege
+let abrNurOffen = false;    // Filter: nur unbezahlte Belege (alt, bleibt fuer Kompatibilitaet)
+let abrStatus = "";         // 26.09.2026 Admin-Struktur: "", "offen", "bezahlt", "geschenkt", "fehlt"
+let offeneBelege = new Set(); // welche Belegzeilen gerade zum Bearbeiten aufgeklappt sind
+let protokollSuche = "";
+let protokollArt = "";
 
 let session = lsLesen("academy_session", null);
 let wzInterval = null; // 07.09.2026: Timer-Handle fuer das wandernde Wasserzeichen im Player
@@ -5871,7 +5942,7 @@ async function renderAdminPakete(){
   const bereiche = Array.from(new Set(allTags.map(function(t){ return t.stufe; }).filter(Boolean))).sort();
 
   el.innerHTML =
-    '<div class="admin-form glass">' +
+    neuBoxAnfang("Paket anlegen", !karten || karten.indexOf("data-delpaket") === -1) +
       '<div class="admin-form-title">Neues Paket</div>' +
       '<div class="admin-sub" style="margin-bottom:10px;">Das Paket ist dein Rückfall-Angebot, wenn jemand beim Vollzugang zögert. Es steht nirgends offen aus.</div>' +
       '<label>Name</label><input id="npak-name" placeholder="z. B. Prüfungsstrecken">' +
@@ -5882,7 +5953,7 @@ async function renderAdminPakete(){
           '<input type="checkbox" class="npak-bereich" value="' + esc(b) + '"> ' + esc(b) + "</label>";
       }).join("") +
       '<button class="btn-primary" id="npak-btn" style="margin-top:10px;">Paket anlegen</button>' +
-    "</div>" +
+    "</div></details>" +
     karten;
 
   const btn = document.getElementById("npak-btn");
@@ -6162,12 +6233,12 @@ async function renderAdminGebiete(){
   }).join("");
 
   el.innerHTML =
-    '<div class="admin-form glass">' +
+    neuBoxAnfang("Gebiet anlegen", allGebiete.length === 0) +
       '<div class="admin-form-title">Neues Prüfgebiet</div>' +
       '<div class="admin-sub" style="margin-bottom:10px;">So fein, wie ihr wirklich fahrt — z. B. „Offenbach" oder „Frankfurt-Höchst". Jedes Video bekommt danach im Video-Tab sein Gebiet.</div>' +
       '<label>Name des Gebiets</label><input id="ngeb-name" placeholder="z. B. Frankfurt-Höchst">' +
       '<button class="btn-primary" id="ngeb-btn" style="margin-top:6px;">Gebiet anlegen</button>' +
-    "</div>" +
+    "</div></details>" +
     gebietsKarten +
     '<div class="admin-form-title" style="margin-top:18px;">Welche Fahrschule sieht welches Gebiet?</div>' +
     '<div class="admin-sub" style="margin-bottom:10px;">Ohne Haken sehen die Schüler dieser Fahrschule nur Videos ohne Gebiet. Schüler ohne Fahrschule (deine eigenen) sehen immer alles.</div>' +
@@ -8467,11 +8538,11 @@ function renderAdminPruefer(){
   }).join("") || '<div class="empty">Noch keine Prüfer angelegt.</div>';
 
   el.innerHTML =
-    '<div class="admin-form glass">' +
+    neuBoxAnfang("Prüfer anlegen", allPruefer.length === 0) +
       '<div class="admin-form-title">Neuen Prüfer anlegen</div>' +
       '<label>Name</label><input id="np-name" placeholder="Vor- und Nachname">' +
       '<button class="btn-primary" id="np-btn" style="margin-top:6px;">Prüfer anlegen</button>' +
-    "</div>" +
+    "</div></details>" +
     '<div class="section-label">Alle Prüfer (' + allPruefer.length + ")</div>" +
     rows;
 
@@ -8516,6 +8587,13 @@ async function deletePruefer(id){
 }
 
 /* ---------- FAHRLEHRER-TAB (Schul-Admin verwaltet eigene, Super-Admin sieht alle) ---------- */
+/* 26.09.2026 (Admin-Struktur): Anlege-Formulare stehen nicht mehr dauernd offen ganz oben,
+   sondern hinter einem Knopf. Ist die Liste noch leer, ist das Formular gleich offen. */
+function neuBoxAnfang(knopf, offen){
+  return '<details class="neu-box"' + (offen ? " open" : "") + '><summary class="neu-knopf"><span class="nk-zu">+ ' + esc(knopf) + '</span><span class="nk-auf">Formular schließen</span></summary>' +
+    '<div class="admin-form glass">';
+}
+
 function renderAdminFahrlehrer(){
   const el = document.getElementById("admin-partner-inner");
   if(!el) return;
@@ -8537,11 +8615,11 @@ function renderAdminFahrlehrer(){
   }).join("") || '<div class="empty">Noch keine Fahrlehrer angelegt.</div>';
 
   el.innerHTML =
-    '<div class="admin-form glass">' +
+    neuBoxAnfang("Fahrlehrer anlegen", visible.length === 0) +
       '<div class="admin-form-title">Neuen Fahrlehrer anlegen</div>' +
       '<label>Name</label><input id="nfl-name" placeholder="Vor- und Nachname">' +
       '<button class="btn-primary" id="nfl-btn" style="margin-top:6px;">Fahrlehrer anlegen</button>' +
-    "</div>" +
+    "</div></details>" +
     '<div class="section-label">Fahrlehrer (' + visible.length + ")</div>" +
     rows;
 
@@ -8623,19 +8701,58 @@ async function renderAdminProtokoll(){
     return;
   }
 
+  zeichneProtokoll();
+}
+
+// 26.09.2026 (Admin-Struktur): lesbare Namen fuer die Aktionen im Protokoll
+const PROTOKOLL_ARTEN = { schueler: "Schüler", video: "Videos", verkauf: "Abrechnung", schule: "Schulen", paket: "Pakete", gebiet: "Gebiete", pruefer: "Prüfer", fahrlehrer: "Fahrlehrer" };
+function protokollText(aktion){
+  const a = String(aktion || "");
+  return (a.charAt(0).toUpperCase() + a.slice(1)).replace(/_/g, " ").replace(/ae/g, "ä").replace(/oe/g, "ö").replace(/ue/g, "ü").replace(/Ae/g, "Ä").replace(/Ue/g, "Ü").replace(/Oe/g, "Ö");
+}
+function zeichneProtokoll(){
+  const el = document.getElementById("admin-content");
+  if(!el) return;
+  const q = protokollSuche.trim().toLowerCase();
+  const arten = Array.from(new Set(protokollEintraege.map(function(e){ return e.objekt_typ; }).filter(Boolean)));
+  const liste = protokollEintraege.filter(function(e){
+    if(protokollArt && e.objekt_typ !== protokollArt) return false;
+    if(!q) return true;
+    return [e.aktion, e.objekt_name, e.akteur, e.details].join(" ").toLowerCase().indexOf(q) !== -1;
+  });
+  let tag = "";
+  const zeilen = liste.map(function(e){
+    const d = new Date(e.zeitpunkt), t = isNaN(d) ? "" : d.toLocaleDateString("de-DE", { weekday:"long", day:"2-digit", month:"long", year:"numeric" });
+    const kopf = t !== tag ? '<div class="pr-tag">' + esc(t || "Ohne Datum") + "</div>" : "";
+    tag = t;
+    return kopf + '<div class="pr-zeile">' +
+      '<span class="pr-zeit">' + (isNaN(d) ? "" : d.toLocaleTimeString("de-DE", { hour:"2-digit", minute:"2-digit" })) + "</span>" +
+      '<span class="pr-was"><b>' + esc(protokollText(e.aktion)) + "</b>" + (e.objekt_name ? " · " + esc(e.objekt_name) : "") +
+        (e.details ? '<small>' + esc(e.details) + "</small>" : "") + "</span>" +
+      '<span class="pr-wer">' + esc(e.akteur || "") + "</span>" +
+    "</div>";
+  }).join("");
   el.innerHTML =
-    '<div class="admin-card glass" style="margin-bottom:12px;">' +
-      '<div class="admin-form-title" style="margin-bottom:4px;">Änderungsprotokoll</div>' +
-      '<div class="admin-sub">Die letzten ' + protokollEintraege.length + " Einträge</div>" +
+    '<div class="sch-werkzeug">' +
+      '<div class="sch-zeile1"><input id="pr-suche" type="search" placeholder="Protokoll durchsuchen: Name, Aktion, E-Mail …" aria-label="Protokoll durchsuchen" value="' + esc(protokollSuche) + '"></div>' +
+      '<div class="sch-filter" role="group" aria-label="Bereich">' +
+        '<button type="button" class="sch-chip' + (!protokollArt ? " aktiv" : "") + '" data-prart="">Alle <span class="sch-chip-n">' + protokollEintraege.length + "</span></button>" +
+        arten.map(function(a){
+          const n = protokollEintraege.filter(function(e){ return e.objekt_typ === a; }).length;
+          return '<button type="button" class="sch-chip' + (protokollArt === a ? " aktiv" : "") + '" data-prart="' + esc(a) + '">' + esc(PROTOKOLL_ARTEN[a] || a) + ' <span class="sch-chip-n">' + n + "</span></button>";
+        }).join("") +
+      "</div>" +
     "</div>" +
-    protokollEintraege.map(function(e){
-      return '<div class="admin-card glass">' +
-        '<div class="admin-name">' + esc(e.aktion.replace(/_/g, " ")) +
-          (e.objekt_name ? " · " + esc(e.objekt_name) : "") + "</div>" +
-        '<div class="admin-sub">' + fmtDateTime(e.zeitpunkt) + " · " + esc(e.akteur) + "</div>" +
-        (e.details ? '<div class="admin-sub" style="opacity:.75;">' + esc(e.details) + "</div>" : "") +
-      "</div>";
-    }).join("");
+    '<div class="section-label">Änderungsprotokoll (' + liste.length + (liste.length !== protokollEintraege.length ? " von " + protokollEintraege.length : "") + ") · die letzten 200 Einträge</div>" +
+    '<div class="admin-card glass pr-liste">' + (zeilen || '<div class="empty">Keine Einträge für diese Suche.</div>') + "</div>";
+  const s = el.querySelector("#pr-suche");
+  s.addEventListener("input", function(){
+    protokollSuche = s.value; const pos = s.selectionStart; zeichneProtokoll();
+    const n = document.getElementById("pr-suche"); if(n){ n.focus(); try{ n.setSelectionRange(pos, pos); }catch(e){} }
+  });
+  el.querySelectorAll("[data-prart]").forEach(function(b){
+    b.addEventListener("click", function(){ protokollArt = b.dataset.prart; zeichneProtokoll(); });
+  });
 }
 
 /* =========================================================
@@ -8722,6 +8839,13 @@ function verkaeufeGefiltert(){
     return true;
   });
 }
+// 26.09.2026 (Admin-Struktur): Zustand eines Belegs -- eine Regel fuer Chip, Filter und Anzeige.
+function belegZustand(v){
+  if(v.geschenkt) return "geschenkt";
+  if(v.bezahlt_am) return "bezahlt";
+  if(v.provision === null || v.provision === undefined) return "fehlt";
+  return "offen";
+}
 
 async function renderAdminAbrechnung(){
   const el = document.getElementById("admin-content");
@@ -8748,37 +8872,33 @@ async function renderAdminAbrechnung(){
       summeSchuld += Number(v.provision || 0);
       if(!v.bezahlt_am) offeneSchuld += Number(v.provision || 0);
     });
+    // 26.09.2026 (Admin-Struktur): gleiche Kacheln wie beim Super-Admin, Zugaenge als Tabelle.
     const zeilen = allVerkaeufe.slice().sort(function(a,b){
       return new Date(b.verkauft_am) - new Date(a.verkauft_am);
     }).map(function(v){
-      return '<div class="admin-card glass' + (v.bezahlt_am ? "" : " gratis") + '">' +
-        '<div class="admin-row"><div>' +
-          '<div class="admin-name">' + esc(v.schueler_name || "—") + "</div>" +
-          '<div class="admin-sub">Freigeschaltet am ' + fmtDate(v.verkauft_am) + "</div>" +
-          '<div class="admin-sub">Du hast berechnet: <b>' + fmtEuro(Number(v.verkaufspreis || 0)) + "</b></div>" +
-          '<div class="admin-sub">Anteil Fahr-Akademie: <b>' + fmtEuro(Number(v.provision || 0)) + "</b></div>" +
-        "</div>" +
-        '<div style="text-align:right;"><div class="admin-badge ' + (v.bezahlt_am ? "ok" : "warn") + '">' +
-          (v.bezahlt_am ? "beglichen" : "offen") + "</div></div>" +
-        "</div>" +
-      "</div>";
+      const z = v.geschenkt ? "geschenkt" : v.bezahlt_am ? "bezahlt" : "offen";
+      return '<div class="abr-beleg z-' + z + '" role="row"><div class="abr-zeile abr-nurlesen">' +
+        '<span class="abr-datum">' + fmtDate(v.verkauft_am) + "</span>" +
+        '<span class="abr-wer"><b>' + esc(v.schueler_name || "—") + "</b></span>" +
+        '<span class="abr-zahl">' + fmtEuro(Number(v.verkaufspreis || 0)) + "</span>" +
+        '<span class="abr-zahl abr-anteil">' + fmtEuro(Number(v.provision || 0)) + "</span>" +
+        '<span><span class="abr-pill p-' + z + '">' + ({ geschenkt: "Geschenkt", bezahlt: "Beglichen", offen: "Offen" }[z]) + "</span></span>" +
+      "</div></div>";
     }).join("");
 
     el.innerHTML =
-      '<div class="admin-card glass" style="border-left:4px solid var(--gold);">' +
-        '<div class="section-label" style="margin:0 0 10px;">Deine Abrechnung</div>' +
-        '<div class="admin-sub">Freigeschaltete Zugänge</div>' +
-        '<div class="admin-name" style="margin-bottom:10px;">' + allVerkaeufe.length + "</div>" +
-        '<div class="admin-sub">Von dir eingenommen</div>' +
-        '<div class="admin-name" style="margin-bottom:10px;">' + fmtEuro(summeEinnahmen) + "</div>" +
-        '<div class="admin-sub">Anteil Fahr-Akademie gesamt</div>' +
-        '<div class="admin-name" style="margin-bottom:10px;">' + fmtEuro(summeSchuld) + "</div>" +
-        '<div class="admin-sub">Davon noch offen</div>' +
-        '<div class="admin-name" style="color:var(--gold-text);">' + fmtEuro(offeneSchuld) + "</div>" +
-        '<div class="admin-sub" style="margin-top:12px;opacity:.8;">Was du darüber hinaus einnimmst, behältst du. Den Preis legst du bei jedem Schüler selbst fest.</div>' +
+      '<div class="abr-kacheln">' +
+        '<div class="abr-kachel"><div class="k-wert">' + allVerkaeufe.length + '</div><div class="k-label">Freigeschaltete Zugänge</div></div>' +
+        '<div class="abr-kachel"><div class="k-wert">' + fmtEuro(summeEinnahmen) + '</div><div class="k-label">Von dir eingenommen</div></div>' +
+        '<div class="abr-kachel"><div class="k-wert">' + fmtEuro(summeSchuld) + '</div><div class="k-label">Anteil Fahr-Akademie gesamt</div></div>' +
+        '<div class="abr-kachel' + (offeneSchuld > 0 ? " betont" : "") + '"><div class="k-wert">' + fmtEuro(offeneSchuld) + '</div><div class="k-label">Davon noch offen</div></div>' +
       "</div>" +
-      '<div class="section-label" style="margin:18px 0 8px;">Einzelne Zugänge</div>' +
-      zeilen;
+      '<div class="admin-sub" style="margin:0 2px 8px;">Was du darüber hinaus einnimmst, behältst du. Den Preis legst du bei jedem Schüler selbst fest.</div>' +
+      '<div class="section-label">Einzelne Zugänge (' + allVerkaeufe.length + ")</div>" +
+      '<div class="abr-tabelle" role="table" aria-label="Zugänge">' +
+        '<div class="abr-kopfzeile abr-nurlesen" role="row"><span>Datum</span><span>Schüler</span><span class="abr-zahl">Du hast berechnet</span><span class="abr-zahl">Anteil Fahr-Akademie</span><span>Status</span></div>' +
+        zeilen +
+      "</div>";
     return;
   }
 
@@ -8791,74 +8911,79 @@ async function renderAdminAbrechnung(){
     return new Date(v.verkauft_am).getFullYear();
   }))).sort(function(a,b){ return b - a; });
 
+  // Jahr und Quelle gelten fuer alles (Kacheln, Monate), der Status nur fuer die Belegliste.
   const liste = verkaeufeGefiltert();
+  const ZUSTAND = { offen: "Offen", bezahlt: "Bezahlt", geschenkt: "Geschenkt", fehlt: "Betrag fehlt" };
+  const nZustand = { "": liste.length };
+  Object.keys(ZUSTAND).forEach(function(z){ nZustand[z] = liste.filter(function(v){ return belegZustand(v) === z; }).length; });
+  const sichtbar = liste.filter(function(v){ return !abrStatus || belegZustand(v) === abrStatus; })
+    .sort(function(a, b){ return new Date(b.verkauft_am) - new Date(a.verkauft_am); });
 
   /* ---- Filterzeile ---- */
   const filterHtml =
     '<div class="abr-filter">' +
-      '<select id="abr-jahr"><option value="">Alle Jahre</option>' +
+      '<select id="abr-jahr" aria-label="Jahr"><option value="">Alle Jahre</option>' +
         jahre.map(function(j){
           return '<option value="' + j + '"' + (String(abrJahr) === String(j) ? " selected" : "") + ">" + j + "</option>";
         }).join("") +
       "</select>" +
-      '<select id="abr-schule"><option value="">Alle Quellen</option>' +
+      '<select id="abr-schule" aria-label="Quelle"><option value="">Alle Quellen</option>' +
         '<option value="__direkt__"' + (abrSchule === "__direkt__" ? " selected" : "") + ">Nur Direktverkauf</option>" +
         allSchulen.map(function(s){
           return '<option value="' + esc(s.id) + '"' + (abrSchule === s.id ? " selected" : "") + ">" + esc(s.name) + "</option>";
         }).join("") +
       "</select>" +
-      '<select id="abr-offen">' +
-        '<option value="0"' + (abrNurOffen ? "" : " selected") + ">Alle Belege</option>" +
-        '<option value="1"' + (abrNurOffen ? " selected" : "") + ">Nur offene</option>" +
-      "</select>" +
+    "</div>" +
+    '<div class="sch-filter" role="group" aria-label="Status">' +
+      [["", "Alle"], ["offen", "Offen"], ["fehlt", "Betrag fehlt"], ["bezahlt", "Bezahlt"], ["geschenkt", "Geschenkt"]].map(function(f){
+        if(f[0] && f[0] !== abrStatus && nZustand[f[0]] === 0) return "";
+        return '<button type="button" class="sch-chip' + (abrStatus === f[0] ? " aktiv" : "") + (f[0] === "fehlt" ? " warn" : "") + '" data-abrstatus="' + f[0] + '" aria-pressed="' + (abrStatus === f[0]) + '">' +
+          f[1] + ' <span class="sch-chip-n">' + nZustand[f[0]] + "</span></button>";
+      }).join("") +
     "</div>";
 
-  /* ---- Einzelbelege mit Eingabefeldern ---- */
-  const belegeHtml = liste.length === 0
+  /* ---- Belege als kompakte Zeilen, Bearbeiten klappt auf ---- */
+  const belegeHtml = sichtbar.length === 0
     ? '<div class="empty">Keine Belege für diese Auswahl.</div>'
-    : liste.map(function(v){
-        const bezahlt = !!v.bezahlt_am;
-        const quelle = v.schule_id
-          ? (v.schule_name || v.schule_id)
-          : "Direktverkauf";
-        const fehlt = (v.provision === null || v.provision === undefined);
-        return '<div class="admin-card glass" data-beleg="' + esc(v.id) + '">' +
-          '<div class="admin-row">' +
-            "<div>" +
-              '<div class="admin-name">' + esc(v.schueler_name) + "</div>" +
-              '<div class="admin-sub">' + fmtDate(v.verkauft_am) + " · " + esc(quelle) +
-                (v.fahrlehrer_name ? " · " + esc(v.fahrlehrer_name) : "") + "</div>" +
-              (v.notiz ? '<div class="admin-sub" style="opacity:.7;">' + esc(v.notiz) + "</div>" : "") +
-            "</div>" +
-            '<div style="display:flex;align-items:center;gap:8px;">' +
-              '<div class="admin-badge ' + (v.geschenkt ? "badge-geschenkt" : (bezahlt ? "badge-bezahlt" : "badge-offen")) + '">' +
-                (v.geschenkt ? "Geschenkt" : (bezahlt ? "Bezahlt" : (fehlt ? "Betrag fehlt" : "Offen"))) +
-              "</div>" +
-              '<button class="icon-btn danger" data-delverkauf="' + esc(v.id) + '" title="Löschen">' + icon("papierkorb") + '</button>' +
-            "</div>" +
-          "</div>" +
-          '<div class="abr-felder">' +
-            '<div class="abr-feld"><label>Preis</label>' +
-              '<input type="text" inputmode="decimal" data-f="preis" value="' +
-                (v.verkaufspreis == null ? "" : String(v.verkaufspreis).replace(".", ",")) + '" placeholder="0,00"></div>' +
-            '<div class="abr-feld"><label>Dein Anteil</label>' +
-              '<input type="text" inputmode="decimal" data-f="provision" value="' +
-                (v.provision == null ? "" : String(v.provision).replace(".", ",")) + '" placeholder="0,00"></div>' +
-            '<div class="abr-feld"><label>Rechnung</label>' +
-              '<input type="text" class="breit" data-f="rechnung" value="' + esc(v.rechnung_nr || "") + '" placeholder="z. B. 2026-014"></div>' +
-          "</div>" +
-          '<div class="abr-felder" style="margin-top:10px;">' +
-            '<button class="btn-primary" data-speichern="' + esc(v.id) + '" style="padding:9px 16px;font-size:13px;">Speichern</button>' +
-            '<button class="icon-btn" data-bezahlt="' + esc(v.id) + '" style="padding:9px 14px;font-size:13px;font-weight:700;'
-              + 'border:1px solid var(--border);border-radius:var(--r-m);background:var(--surface);color:var(--text);">' +
-              (bezahlt ? "Auf offen setzen" : "Als bezahlt markieren") + "</button>" +
-            '<button class="icon-btn" data-geschenkt="' + esc(v.id) + '" style="padding:9px 14px;font-size:13px;font-weight:700;'
-              + 'border:1px solid var(--border);border-radius:var(--r-m);background:var(--surface);color:var(--text);">' +
-              (v.geschenkt ? "Geschenkt aufheben" : "Als geschenkt markieren") + "</button>" +
-          "</div>" +
-          (bezahlt ? '<div class="admin-sub" style="margin-top:6px;">Bezahlt am ' + fmtDate(v.bezahlt_am) + "</div>" : "") +
-        "</div>";
-      }).join("");
+    : '<div class="abr-tabelle" role="table" aria-label="Belege">' +
+        '<div class="abr-kopfzeile" role="row"><span>Datum</span><span>Schüler</span><span class="abr-zahl">Preis</span><span class="abr-zahl">Dein Anteil</span><span>Status</span><span></span></div>' +
+        sichtbar.map(function(v){
+          const z = belegZustand(v);
+          const offen = offeneBelege.has(v.id);
+          const quelle = v.schule_id ? (v.schule_name || (allSchulen.find(function(sc){ return sc.id === v.schule_id; }) || {}).name || v.schule_id) : "Direktverkauf";
+          return '<div class="abr-beleg' + (offen ? " offen" : "") + " z-" + z + '" data-beleg="' + esc(v.id) + '" role="row">' +
+            '<button type="button" class="abr-zeile" data-belegauf="' + esc(v.id) + '" aria-expanded="' + offen + '">' +
+              '<span class="abr-datum">' + fmtDate(v.verkauft_am) + "</span>" +
+              '<span class="abr-wer"><b>' + esc(v.schueler_name || "—") + "</b><small>" + esc(quelle) + (v.fahrlehrer_name ? " · " + esc(v.fahrlehrer_name) : "") + "</small></span>" +
+              '<span class="abr-zahl">' + fmtEuro(v.verkaufspreis) + "</span>" +
+              '<span class="abr-zahl abr-anteil">' + fmtEuro(v.provision) + "</span>" +
+              '<span><span class="abr-pill p-' + z + '">' + ZUSTAND[z] + "</span></span>" +
+              '<span class="ak-pfeil' + (offen ? " offen" : "") + '">' + icon("weiter") + "</span>" +
+            "</button>" +
+            (z === "offen" && !offen ? '<button type="button" class="abr-schnell" data-bezahlt="' + esc(v.id) + '">Bezahlt ✓</button>' : "") +
+            (offen
+              ? '<div class="abr-bearbeiten">' +
+                  (v.notiz ? '<div class="admin-sub">' + esc(v.notiz) + "</div>" : "") +
+                  '<div class="abr-felder">' +
+                    '<div class="abr-feld"><label>Preis</label>' +
+                      '<input type="text" inputmode="decimal" data-f="preis" value="' + (v.verkaufspreis == null ? "" : String(v.verkaufspreis).replace(".", ",")) + '" placeholder="0,00"></div>' +
+                    '<div class="abr-feld"><label>Dein Anteil</label>' +
+                      '<input type="text" inputmode="decimal" data-f="provision" value="' + (v.provision == null ? "" : String(v.provision).replace(".", ",")) + '" placeholder="0,00"></div>' +
+                    '<div class="abr-feld"><label>Rechnung</label>' +
+                      '<input type="text" class="breit" data-f="rechnung" value="' + esc(v.rechnung_nr || "") + '" placeholder="z. B. 2026-014"></div>' +
+                  "</div>" +
+                  '<div class="ak-aktionen">' +
+                    '<button class="btn-primary" data-speichern="' + esc(v.id) + '">Speichern</button>' +
+                    '<button class="btn-still druck-2" data-bezahlt="' + esc(v.id) + '">' + (v.bezahlt_am ? "Auf offen setzen" : "Als bezahlt markieren") + "</button>" +
+                    '<button class="btn-still druck-2" data-geschenkt="' + esc(v.id) + '">' + (v.geschenkt ? "Geschenkt aufheben" : "Als geschenkt markieren") + "</button>" +
+                    '<button class="btn-still druck-2 ak-loeschen" data-delverkauf="' + esc(v.id) + '">Beleg löschen</button>' +
+                  "</div>" +
+                  (v.bezahlt_am ? '<div class="admin-sub" style="margin-top:6px;">Bezahlt am ' + fmtDate(v.bezahlt_am) + "</div>" : "") +
+                "</div>"
+              : "") +
+          "</div>";
+        }).join("") +
+      "</div>";
 
   /* ---- Monatsübersicht ---- */
   const proMonat = {};
@@ -8935,25 +9060,22 @@ async function renderAdminAbrechnung(){
   const offen  = liste.reduce(function(a,v){ return a + (v.geschenkt || v.bezahlt_am ? 0 : Number(v.provision || 0)); }, 0);
   const ohneBetrag = liste.filter(function(v){ return !v.geschenkt && v.provision == null; }).length;
 
+  // Kacheln sind Knoepfe: "offen" und "ohne Betrag" filtern die Belegliste darunter.
   el.innerHTML =
-    filterHtml +
     '<div class="abr-kacheln">' +
-      '<div class="abr-kachel"><div class="k-wert">' + liste.length + '</div><div class="k-label">Zugänge</div></div>' +
-      '<div class="abr-kachel"><div class="k-wert">' + fmtEuro(gesamt) + '</div><div class="k-label">Dein Anteil gesamt</div></div>' +
-      '<div class="abr-kachel' + (offen > 0 ? " betont" : "") + '"><div class="k-wert">' + fmtEuro(offen) + '</div><div class="k-label">Davon noch offen</div></div>' +
-      '<div class="abr-kachel"><div class="k-wert">' + ohneBetrag + '</div><div class="k-label">Ohne Betrag</div></div>' +
+      '<button type="button" class="abr-kachel" data-abrkachel=""><div class="k-wert">' + liste.length + '</div><div class="k-label">Zugänge</div></button>' +
+      '<button type="button" class="abr-kachel" data-abrkachel=""><div class="k-wert">' + fmtEuro(gesamt) + '</div><div class="k-label">Dein Anteil gesamt</div></button>' +
+      '<button type="button" class="abr-kachel' + (offen > 0 ? " betont" : "") + '" data-abrkachel="offen"><div class="k-wert">' + fmtEuro(offen) + '</div><div class="k-label">Davon noch offen</div></button>' +
+      '<button type="button" class="abr-kachel' + (ohneBetrag > 0 ? " betont" : "") + '" data-abrkachel="fehlt"><div class="k-wert">' + ohneBetrag + '</div><div class="k-label">Ohne Betrag</div></button>' +
     "</div>" +
-    (ohneBetrag > 0
-      ? '<div class="admin-card glass" style="border-color:var(--gold-rand);background:var(--gold-schwach);">' +
-          '<div class="admin-sub" style="color:var(--text);">' + ohneBetrag +
-          ' Beleg(e) haben noch keinen Betrag. Trag ihn unten ein, dann zählen sie in den Summen mit.</div></div>'
-      : "") +
-    '<div class="section-label">Belege — Beträge eintragen</div>' +
+    filterHtml +
+    '<div class="section-label">Belege (' + sichtbar.length + (sichtbar.length !== liste.length ? " von " + liste.length : "") + ")" +
+      (ohneBetrag > 0 && abrStatus !== "fehlt" ? ' <span class="abr-hinweis">' + ohneBetrag + " ohne Betrag: antippen und eintragen</span>" : "") + "</div>" +
     belegeHtml +
-    '<div class="section-label">Monat für Monat</div>' +
-    '<div class="admin-card glass">' + monatsHtml + "</div>" +
-    '<div class="section-label">Jahresübersicht</div>' +
-    '<div class="admin-card glass">' + jahresHtml + "</div>";
+    '<div class="abr-uebersichten">' +
+      '<section><div class="section-label">Monat für Monat</div><div class="admin-card glass">' + monatsHtml + "</div></section>" +
+      '<section><div class="section-label">Jahresübersicht</div><div class="admin-card glass">' + jahresHtml + "</div></section>" +
+    "</div>";
 
   /* ---- Ereignisse ---- */
   document.getElementById("abr-jahr").addEventListener("change", function(){
@@ -8962,8 +9084,18 @@ async function renderAdminAbrechnung(){
   document.getElementById("abr-schule").addEventListener("change", function(){
     abrSchule = this.value; renderAdminAbrechnung();
   });
-  document.getElementById("abr-offen").addEventListener("change", function(){
-    abrNurOffen = this.value === "1"; renderAdminAbrechnung();
+  el.querySelectorAll("[data-abrstatus]").forEach(function(b){
+    b.addEventListener("click", function(){ abrStatus = b.dataset.abrstatus; renderAdminAbrechnung(); });
+  });
+  el.querySelectorAll("[data-abrkachel]").forEach(function(b){
+    b.addEventListener("click", function(){ abrStatus = b.dataset.abrkachel; renderAdminAbrechnung(); });
+  });
+  el.querySelectorAll("[data-belegauf]").forEach(function(b){
+    b.addEventListener("click", function(){
+      const id = b.dataset.belegauf;
+      if(offeneBelege.has(id)) offeneBelege.delete(id); else offeneBelege.add(id);
+      renderAdminAbrechnung();
+    });
   });
   document.querySelectorAll("[data-speichern]").forEach(function(b){
     b.addEventListener("click", function(){ verkaufSpeichern(b.dataset.speichern); });
@@ -9517,13 +9649,13 @@ function renderAdminSchulen(){
   }).join("") || '<div class="empty">Noch keine Schulen angelegt.</div>';
 
   el.innerHTML =
-    '<div class="admin-form glass">' +
+    neuBoxAnfang("Schule anlegen", allSchulen.length === 0) +
       '<div class="admin-form-title">Neue Schule + Schul-Login anlegen</div>' +
       '<label>Name der Schule</label><input id="nsch-name" placeholder="z. B. Fahrschule Boost">' +
       '<label>Login-E-Mail für die Schule</label><input id="nsch-email" type="email" placeholder="schule@mail.de">' +
       '<button class="btn-primary" id="nsch-btn" style="margin-top:6px;">Schule &amp; Login anlegen</button>' +
       '<div class="admin-sub" style="margin-top:4px;">Die Schule kann sich danach selbst über den Admin-Bereich einloggen und NUR ihre eigenen Schüler und Fahrlehrer verwalten. Du als Super-Admin siehst und kontrollierst weiterhin alles, inkl. sofortigem Sperren (Kill-Switch).</div>' +
-    "</div>" +
+    "</div></details>" +
     '<div class="section-label">Alle Schulen (' + allSchulen.length + ")</div>" +
     rows +
     '<div id="klassen-freigabe-bereich"></div>';
