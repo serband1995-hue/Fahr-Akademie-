@@ -1241,6 +1241,100 @@
   .admin-link-btn{appearance:none;border:none;background:none;padding:10px 12px;min-height:44px;color:var(--faint);font:inherit;font-size:13px;cursor:pointer;text-decoration:underline;}
   :focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
 
+  /* ================= Admin-Struktur (26.09.2026) =================
+     Verwaltung auf dem Tablet breiter, Schüler und Videos als kompakte Zeilen,
+     Filter als Chips mit Anzahl, Seltenes eingeklappt. */
+  @media (min-width:760px){ #app:has(> .admin-balken){ max-width:1120px; } }
+  .kpi{font:inherit;text-align:start;cursor:pointer;color:inherit;width:100%;}
+  .kpi:hover{border-color:var(--gruen-hell);}
+  details.hb-box,details.ausw-box,details.vid-werkzeuge{padding:0;}
+  .hb-kopf{display:flex;align-items:center;gap:10px;min-height:52px;padding:10px 16px;cursor:pointer;list-style:none;}
+  .hb-kopf::-webkit-details-marker{display:none;}
+  .hb-kopf::after{content:"";margin-inline-start:auto;width:9px;height:9px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:rotate(45deg);transition:transform .2s ease;}
+  details[open] > .hb-kopf::after{transform:rotate(-135deg);}
+  .hb-kopf .admin-form-title{margin:0;}
+  .hb-zahl{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;padding:0 8px;border-radius:var(--r-pill);background:var(--gold);color:var(--auf-gold);font-size:13px;font-weight:800;}
+  .hb-ok{font-size:13px;color:var(--gruen-text);font-weight:600;}
+  details.hb-box > .todo-zeile{margin:0 16px;}
+  details.hb-box > .todo-zeile:last-child{margin-bottom:12px;}
+  .ausw-raster{display:grid;gap:14px;padding:0 16px 14px;}
+  @media (min-width:700px){ .ausw-raster{grid-template-columns:1fr 1fr;} }
+  .btn-link{appearance:none;border:none;background:none;padding:0 4px;min-height:32px;color:var(--gruen-text);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;}
+
+  .sch-werkzeug{display:flex;flex-direction:column;gap:10px;margin-bottom:6px;}
+  .sch-zeile1{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap;}
+  .sch-zeile1 input{flex:1 1 220px;min-width:0;min-height:48px;padding:0 14px;border-radius:var(--r-m);border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:15px;}
+  .sch-zeile1 .btn-primary{width:auto;padding:0 20px;min-height:48px;font-size:15px;}
+  .sch-filter{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+  .sch-filter::-webkit-scrollbar{display:none;}
+  .sch-chip{flex:none;min-height:40px;padding:0 12px;border-radius:var(--r-pill);border:1px solid var(--border);background:var(--surface);color:var(--muted);font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+  .sch-chip.aktiv{background:var(--gruen);border-color:var(--gruen);color:var(--auf-tief);}
+  .sch-chip-n{font-variant-numeric:tabular-nums;opacity:.75;font-weight:600;}
+  .sch-zeile3{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .sch-zeile3 .btn-still{min-height:40px;}
+  .sch-sort{display:flex;align-items:center;gap:6px;font-size:13.5px;color:var(--muted);margin-inline-end:auto;}
+  .sch-sort select{min-height:40px;padding:0 10px;border-radius:var(--r-m);border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:14px;}
+  .sch-liste{display:flex;flex-direction:column;gap:8px;}
+  .sch-liste > .admin-card{margin-bottom:0;padding:8px 14px;}
+  .sch-karte .ak-name{font-size:16.5px;}
+  .sch-karte .ak-tun{margin:4px 0 6px;padding:7px 10px;}
+  .sch-karte .ak-tun-btn{min-height:36px;padding:0 14px;}
+  .sch-karte .bulk-pick{margin:4px 0 0;min-height:36px;}
+  .sch-karte.ist-offen{box-shadow:var(--schatten-3);}
+  .ak-raster{display:grid;gap:12px;}
+  @media (min-width:700px){ .ak-raster{grid-template-columns:repeat(3,1fr);} }
+  .ak-feld h4{margin:0 0 4px;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);}
+  .ak-voll{color:var(--gold-text);font-weight:700;display:flex;align-items:center;gap:4px;}
+  .ak-freischalten{background:var(--gold);border-color:var(--gold);color:var(--auf-gold);display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:800;}
+  .ak-freischalten .ic{width:16px;height:16px;}
+  .ak-mehr summary{min-height:44px;display:flex;align-items:center;cursor:pointer;color:var(--muted);font-weight:600;font-size:14px;}
+  .ns-raster{display:grid;gap:10px;}
+  @media (min-width:700px){ .ns-raster{grid-template-columns:1fr 1fr;} }
+  .ns-feld{display:flex;flex-direction:column;gap:6px;}
+  .ns-haken{display:flex!important;align-items:center;gap:10px;text-transform:none!important;letter-spacing:0!important;font-size:15px!important;color:var(--text)!important;font-weight:600!important;margin:6px 0 0!important;}
+
+  .vid-kopf{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+  .vid-kopf .btn-primary{width:auto;padding:0 20px;min-height:48px;font-size:15px;}
+  .vid-kopf .btn-still{min-height:48px;}
+  @media (max-width:520px){ .vid-kopf .btn-primary{flex:1 1 100%;} .vid-kopf .btn-still{flex:1 1 0;min-width:0;padding:0 8px;font-size:14px;} }
+  .nv-form-kopf{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .vw-raster{display:grid;gap:14px;padding:0 16px 10px;}
+  @media (min-width:700px){ .vw-raster{grid-template-columns:1fr 1fr;} }
+  .vw-teil{display:flex;flex-direction:column;gap:6px;align-items:flex-start;}
+  .vw-teil select{min-height:40px;padding:0 10px;border-radius:var(--r-m);border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;}
+  details.vid-werkzeuge .leitfaden{margin:0 16px 14px;}
+  .vid-filter-leiste{display:grid;gap:8px;margin:4px 0 8px;}
+  @media (min-width:700px){ .vid-filter-leiste{grid-template-columns:2fr 1fr 1fr;} }
+  .vid-filter-leiste input,.vid-filter-leiste select{min-height:44px;padding:0 12px;border-radius:var(--r-m);border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:14.5px;width:100%;}
+  .vz-liste{display:flex;flex-direction:column;gap:8px;margin-top:6px;}
+  .vz-liste .section-label{margin:14px 2px 2px;}
+  .vz-zeile{display:grid;grid-template-columns:96px 1fr;gap:12px;align-items:start;margin-bottom:0;padding:10px 12px;}
+  @media (min-width:700px){ .vz-zeile{grid-template-columns:128px 1fr auto;align-items:center;} }
+  .vz-bild{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;background:var(--surface-strong);display:flex;align-items:center;justify-content:center;color:var(--faint);}
+  .vz-bild.leer .ic,span.vz-bild .ic{width:22px;height:22px;}
+  .vz-text{min-width:0;}
+  .vz-titel{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+  .vz-name{font-weight:700;font-size:15.5px;line-height:1.3;}
+  .vz-status{font-size:12.5px;font-weight:700;padding:2px 9px;border-radius:var(--r-pill);white-space:nowrap;}
+  .vz-status.st-live{background:var(--surface-tint);color:var(--gruen-text);}
+  .vz-status.st-arbeit{background:var(--gold-schwach);color:var(--gold-text);}
+  .vz-status.st-aus,.vz-status.st-fehlt{background:var(--surface-strong);color:var(--muted);}
+  .vz-meta{font-size:13px;color:var(--muted);margin-top:3px;line-height:1.45;}
+  .vz-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+  .vz-chip{font-size:12.5px;padding:2px 8px;border-radius:var(--r-pill);border:1px solid var(--border);color:var(--text);background:var(--bg);}
+  .vz-chip-mehr{color:var(--muted);}
+  .vz-aktionen{display:flex;gap:6px;align-items:center;grid-column:1 / -1;justify-content:flex-end;}
+  @media (min-width:700px){ .vz-aktionen{grid-column:auto;} }
+  .vz-aktionen .btn-still{min-height:40px;}
+  .vz-mehr{position:relative;}
+  .vz-mehr summary{list-style:none;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-m);border:1px solid var(--border);cursor:pointer;color:var(--muted);}
+  .vz-mehr summary::-webkit-details-marker{display:none;}
+  .vz-menue{position:absolute;inset-inline-end:0;top:calc(100% + 6px);z-index:20;min-width:240px;display:flex;flex-direction:column;padding:6px;border-radius:var(--r-m);background:var(--bg);border:1px solid var(--border);box-shadow:var(--schatten-3);}
+  .vz-menue button{appearance:none;border:none;background:none;text-align:start;min-height:44px;padding:0 12px;border-radius:8px;font:inherit;font-size:14.5px;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:8px;}
+  .vz-menue button:hover{background:var(--surface);}
+  .vz-menue .vz-gefahr{color:var(--warn);}
+  .video-ausgeblendet{opacity:.72;}
+
   /* ================= D12 "Behutsam" (26.09.2026, vom Inhaber gewaehlt) =================
      Gleiche Farben und Aufbau, nur ruhiger: Karten liegen hell AUF dem Papier (weicher
      Schatten) statt eingesenkt. Nur im hellen Modus -- der Dunkelmodus bleibt, wie er ist. */
@@ -1313,6 +1407,7 @@ const ICONS = {
   check:'<path d="M20 6L9 17l-5-5"/>',
   schild:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
   menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
+  punkte:'<circle cx="5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
   dashboard:'<rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/>',
   buch:'<path d="M4 5a2 2 0 012-2h11v16H6a2 2 0 00-2 2z"/><path d="M6 3v16"/>',
   pdf:'<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 13h1.5a1.5 1.5 0 010 3H9zM14 13v3h1.5a1.5 1.5 0 000-3z"/>',
@@ -1714,6 +1809,16 @@ let schuelerSuche = "";            // 8.4 Schnellsuche in der Schülerliste
 let bulkAuswahl = new Set();       // 8.2 Mehrfachauswahl für Sammelaktionen
 let offeneSchuelerKarten = new Set(); // 13.09.2026: welche Schülerkarten ihre Details zeigen
 let neuSchuelerOffen = false;      // 26.09.2026: Formular "Neuer Schüler" nur auf Knopfdruck
+// 26.09.2026 (Admin-Struktur): Filter, Sortierung und Auswahl-Modus der Schülerliste,
+// eingeklappte Übersicht, Video-Liste mit Suche und Statusfilter.
+let schuelerFilter = "alle";
+let schuelerSortierung = "name";
+let bulkModus = false;             // Ankreuzfelder nur, wenn "Auswählen" aktiv ist
+let hbOffen = null;                // Handlungsbedarf auf/zu (null = automatisch)
+let auswertungOffen = false;
+let nvOffen = false;               // Formular "Neues Video" nur auf Knopfdruck
+let videoSuche = "";
+let videoFilterStatus = "";
 let schuelerArchivAnsicht = false; // 26.09.2026: Archiv statt aktiver Liste anzeigen
 let vollzugangEntzugLaeuft = {};   // 26.09.2026: id -> Timer der 10-Sekunden-Rückgängig-Frist
 let protokollEintraege = [];       // 8.7 Änderungsprotokoll (Admin-Handlungen, nicht Lernfortschritt)
@@ -6199,12 +6304,13 @@ async function renderAdminDashboard(){
     return (jetzt - new Date(s.letzter_login_am)) / 86400000 > 14;
   });
 
+  // 26.09.2026 (Admin-Struktur): Kacheln sind Knöpfe -- ein Tipp filtert die Liste darunter.
   const kpis =
     '<div class="kpi-grid">' +
-      '<div class="kpi"><div class="kpi-zahl">' + aktiv.length + '</div><div class="kpi-label">Aktive Schüler</div></div>' +
-      '<div class="kpi"><div class="kpi-zahl">' + allVideos.length + '</div><div class="kpi-label">Videos</div></div>' +
-      '<div class="kpi' + (laeuftAb.length ? " warn" : "") + '"><div class="kpi-zahl">' + laeuftAb.length + '</div><div class="kpi-label">Läuft in 14 Tagen ab</div></div>' +
-      '<div class="kpi' + (inaktiv.length ? " warn" : "") + '"><div class="kpi-zahl">' + inaktiv.length + '</div><div class="kpi-label">Nicht angemeldet &gt; 14 Tage</div></div>' +
+      '<button type="button" class="kpi" data-kpi="alle"><div class="kpi-zahl">' + aktiv.length + '</div><div class="kpi-label">Aktive Schüler</div></button>' +
+      '<button type="button" class="kpi" data-kpi="videos"><div class="kpi-zahl">' + allVideos.length + '</div><div class="kpi-label">Videos</div></button>' +
+      '<button type="button" class="kpi' + (laeuftAb.length ? " warn" : "") + '" data-kpi="bald"><div class="kpi-zahl">' + laeuftAb.length + '</div><div class="kpi-label">Läuft in 14 Tagen ab</div></button>' +
+      '<button type="button" class="kpi' + (inaktiv.length ? " warn" : "") + '" data-kpi="inaktiv"><div class="kpi-zahl">' + inaktiv.length + '</div><div class="kpi-label">Nicht angemeldet &gt; 14 Tage</div></button>' +
     "</div>";
 
   const todos = [];
@@ -6265,10 +6371,16 @@ async function renderAdminDashboard(){
   });
   if(todos.length === 0) todos.push(["gruen", "Alles im grünen Bereich — nichts zu tun."]);
 
-  const todoHtml = '<div class="admin-card glass"><div class="admin-form-title" style="margin-bottom:6px;">Handlungsbedarf</div>' +
+  // Eingeklappt, damit die Schülerliste nicht erst nach einer langen Liste beginnt.
+  // Offen von selbst nur, wenn etwas Rotes dabei ist; sonst merkt sich die Seite den Zustand.
+  const zuTun = todos.filter(function(t){ return t[0] !== "gruen"; }).length;
+  const hbAuf = hbOffen !== null ? hbOffen : todos.some(function(t){ return t[0] === "rot"; });
+  const todoHtml = '<details class="admin-card glass hb-box" id="hb-box"' + (hbAuf ? " open" : "") + '>' +
+    '<summary class="hb-kopf"><span class="admin-form-title">Handlungsbedarf</span>' +
+      (zuTun ? '<span class="hb-zahl">' + zuTun + "</span>" : '<span class="hb-ok">alles erledigt</span>') + "</summary>" +
     todos.map(function(t){
       return '<div class="todo-zeile ' + t[0] + '"><span class="td-dot"></span><span>' + t[1] + "</span></div>";
-    }).join("") + "</div>";
+    }).join("") + "</details>";
 
   // Meistgesehene Videos -- zeigt dir, welche Inhalte wirklich genutzt werden.
   // 15.09.2026: kommt jetzt fertig sortiert/aggregiert aus academy_dash_top_videos(),
@@ -6278,7 +6390,7 @@ async function renderAdminDashboard(){
     return { titel: v ? v.titel : "(gelöscht)", anzahl: Number(row.anzahl) };
   });
 
-  const topHtml = '<div class="admin-card glass"><div class="admin-form-title" style="margin-bottom:6px;">Meistgesehene Videos</div>' +
+  const topHtml = '<div class="ausw-teil"><div class="admin-form-title" style="margin-bottom:6px;">Meistgesehene Videos</div>' +
     (topVideos.length ? topVideos.map(function(t){
       return '<div class="hist-zeile"><span class="hist-titel">' + esc(t.titel) + '</span><span class="hist-anzahl">' + t.anzahl + "×</span></div>";
     }).join("") : '<div class="admin-sub">Noch keine Aufrufe.</div>') + "</div>";
@@ -6290,7 +6402,7 @@ async function renderAdminDashboard(){
     return { stufe: row.stufe, anzahl: Number(row.anzahl) };
   });
 
-  const sperrHtml = '<div class="admin-card glass"><div class="admin-form-title" style="margin-bottom:6px;">👑 Meistgeklickte gesperrte Bereiche</div>' +
+  const sperrHtml = '<div class="ausw-teil"><div class="admin-form-title" style="margin-bottom:6px;">Meistgeklickte gesperrte Bereiche</div>' +
     '<div class="admin-sub" style="margin-bottom:8px;">Zeigt, wo Schüler ohne Vollzugang am meisten reinschauen wollen.</div>' +
     (topSperr.length ? topSperr.map(function(t){
       return '<div class="hist-zeile"><span class="hist-titel">' + esc(t.stufe) + '</span><span class="hist-anzahl oft">' + t.anzahl + "×</span></div>";
@@ -6323,7 +6435,24 @@ async function renderAdminDashboard(){
     }
   } catch(e){ /* Dashboard darf an einer Nebenabfrage nie scheitern */ }
 
-  zielEl.innerHTML = anfrageHtml + kpis + todoHtml + topHtml + sperrHtml;
+  const auswertungHtml = '<details class="admin-card glass ausw-box" id="ausw-box"' + (auswertungOffen ? " open" : "") + '>' +
+    '<summary class="hb-kopf"><span class="admin-form-title">Auswertung</span><span class="admin-sub" style="margin:0;">meistgesehene Videos, gesperrte Bereiche</span></summary>' +
+    '<div class="ausw-raster">' + topHtml + sperrHtml + "</div></details>";
+  zielEl.innerHTML = anfrageHtml + kpis + todoHtml + auswertungHtml;
+  const hb = zielEl.querySelector("#hb-box");
+  if(hb) hb.addEventListener("toggle", function(){ hbOffen = hb.open; });
+  const aw = zielEl.querySelector("#ausw-box");
+  if(aw) aw.addEventListener("toggle", function(){ auswertungOffen = aw.open; });
+  zielEl.querySelectorAll("[data-kpi]").forEach(function(k){
+    k.addEventListener("click", function(){
+      if(k.dataset.kpi === "videos"){ adminTab = "videos"; renderAdmin(); return; }
+      schuelerFilter = k.dataset.kpi;
+      schuelerAnsicht = "schueler"; schuelerArchivAnsicht = false;
+      renderAdminSchuelerPillen(); renderAdminSchueler();
+      const liste = document.getElementById("sch-liste-anfang");
+      if(liste && liste.scrollIntoView) liste.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
   // WICHTIG: auf zielEl scopen, nicht global -- die Schueler-Karten-Liste steht in
   // einem GESCHWISTER-Container gleichzeitig im DOM und hat eigene data-mail-Knoepfe
   // (Regel: neue Klasse/ID immer gegen ihre tatsaechliche Verwendung kreuzpruefen).
@@ -6362,6 +6491,42 @@ async function renderAdminDashboard(){
   }
 }
 
+/* 26.09.2026 (Admin-Struktur): Die EINE offene Aufgabe eines Schülers -- für die Karte
+   und für den Filter "Zu erledigen". Reihenfolge = Dringlichkeit. */
+function schuelerAufgabe(s){
+  if(s.archiviert_am) return null;
+  const status = schuelerStatus(s);
+  const tage = Math.ceil((new Date(s.ablauf_am) - new Date()) / 86400000);
+  const zeigeKlartext = myRole === "super_admin" || darfSelbstVersenden();
+  if(status === "gesperrt") return { text: "Zugang gesperrt" + (s.sperrgrund ? ": " + s.sperrgrund : ""), knopf: null };
+  if(status === "abgelaufen") return { text: "Zugang ist abgelaufen", knopf: null };
+  if((s.geraetewechsel_anzahl || 0) >= 2) return { text: "Auffälliges Nutzungsmuster — bitte ansehen", knopf: null };
+  if(myRole === "super_admin" && !s.pin_versendet_am && zeigeKlartext) return { text: "Zugangsdaten noch nicht verschickt", knopf: { art: "mail", label: "Senden" } };
+  if(tage <= 14) return { text: "Läuft in " + tage + " Tag" + (tage === 1 ? "" : "en") + " ab", knopf: null };
+  if(!s.agb_akzeptiert_am) return { text: "Nutzungsbedingungen noch nicht akzeptiert", knopf: null };
+  return null;
+}
+function schuelerInaktiv(s){
+  if(schuelerStatus(s) !== "aktiv") return false;
+  if(!s.letzter_login_am) return true;
+  return (new Date() - new Date(s.letzter_login_am)) / 86400000 > 14;
+}
+const SCHUELER_FILTER = [
+  ["alle", "Alle", function(){ return true; }],
+  ["todo", "Zu erledigen", function(s){ return !!schuelerAufgabe(s); }],
+  ["voll", "Vollzugang", function(s){ return !!s.vollzugang; }],
+  ["start", "Startzugang", function(s){ return !s.vollzugang; }],
+  ["bald", "Läuft bald ab", function(s){ return schuelerStatus(s) === "aktiv" && (new Date(s.ablauf_am) - new Date()) / 86400000 <= 14; }],
+  ["inaktiv", "Nicht angemeldet", schuelerInaktiv],
+  ["gesperrt", "Gesperrt/abgelaufen", function(s){ return schuelerStatus(s) !== "aktiv"; }]
+];
+const SCHUELER_SORT = {
+  name: function(a, b){ return (a.name || "").localeCompare(b.name || "", "de"); },
+  neu: function(a, b){ return new Date(b.erstellt_am || 0) - new Date(a.erstellt_am || 0); },
+  ablauf: function(a, b){ return new Date(a.ablauf_am || 0) - new Date(b.ablauf_am || 0); },
+  login: function(a, b){ return new Date(b.letzter_login_am || 0) - new Date(a.letzter_login_am || 0); }
+};
+
 function renderAdminSchueler(){
   const el = document.getElementById("admin-unter-inner");
   if(!el) return; // Tab wurde in der Zwischenzeit verlassen
@@ -6377,13 +6542,17 @@ function renderAdminSchueler(){
   // 26.09.2026: Archivierte Schueler stehen in einer eigenen Ansicht.
   const imArchiv = allSchueler.filter(function(s){ return !!s.archiviert_am; });
   const basisListe = schuelerArchivAnsicht ? imArchiv : allSchueler.filter(function(s){ return !s.archiviert_am; });
-  const gefiltert = basisListe.filter(function(s){
+  const passtSuche = function(s){
     if(!suche) return true;
     const telNorm = (s.telefon || "").replace(/[\s\-\/]/g, "");
     return (s.name || "").toLowerCase().includes(suche)
       || (s.email || "").toLowerCase().includes(suche)
       || (sucheNorm.length > 0 && telNorm.includes(sucheNorm));
-  });
+  };
+  const filterDef = SCHUELER_FILTER.find(function(f){ return f[0] === schuelerFilter; }) || SCHUELER_FILTER[0];
+  const nachSuche = basisListe.filter(passtSuche);
+  const gefiltert = nachSuche.filter(function(s){ return schuelerArchivAnsicht || filterDef[2](s); })
+    .sort(SCHUELER_SORT[schuelerSortierung] || SCHUELER_SORT.name);
 
   const rows = gefiltert.map(function(s){
     const status = schuelerStatus(s);
@@ -6466,10 +6635,10 @@ function renderAdminSchueler(){
     // Ein Knopf, der sagt was er tut -- statt eines Kronen-Symbols neben dem Schloss.
     // 26.09.2026: Entziehen ist kein Ein-Tipp-Knopf mehr (liegt jetzt unter "Mehr" in den
     // Details, mit Rueckfrage und 10 s Rueckgaengig). Hier steht bei Vollzugang nur der Status.
-    const zugangKnopf = s.archiviert_am ? "" : (s.vollzugang
-      ? '<div class="zugang-btn ist-bezahlt zugang-status">' + icon("krone") + "<span>Vollzugang aktiv</span></div>"
-      : '<button class="zugang-btn" data-vollzugang="' + esc(s.id) + '">' + icon("schlossOffen") +
-          "<span>Nur Startzugang · Vollzugang freischalten</span></button>");
+    // 26.09.2026 (Admin-Struktur): Freischalten ist eine Aktion in den Details, der
+    // Zugang selbst steht als Kennzeichen im Kopf ("Voll"/"Start").
+    const zugangKnopf = (s.archiviert_am || s.vollzugang) ? "" :
+      '<button class="btn-still druck-2 ak-freischalten" data-vollzugang="' + esc(s.id) + '">' + icon("schlossOffen") + "<span>Vollzugang freischalten</span></button>";
 
     // ---- Dreistufige Karte (13.09.2026) ----
     // Vorher standen hier zehn Textzeilen untereinander. Bei 70+ Schuelern ist das
@@ -6481,20 +6650,7 @@ function renderAdminSchueler(){
     const ampel = schuelerAmpel(s); // 26.09.2026: eine Regel fuer Karte und Uebersicht
 
     // Genau EINE Aufgabe, nach Dringlichkeit. Gibt es nichts zu tun, fehlt der Kasten.
-    let aufgabe = null;
-    if(status === "gesperrt"){
-      aufgabe = { text: "Zugang gesperrt" + (s.sperrgrund ? ": " + s.sperrgrund : ""), knopf: null };
-    } else if(status === "abgelaufen"){
-      aufgabe = { text: "Zugang ist abgelaufen", knopf: null };
-    } else if(verdacht){
-      aufgabe = { text: "Auffälliges Nutzungsmuster — bitte ansehen", knopf: null };
-    } else if(istSuperAdmin && !s.pin_versendet_am && zeigeKlartext){
-      aufgabe = { text: "Zugangsdaten noch nicht verschickt", knopf: { art: "mail", label: "Senden" } };
-    } else if(tageBisAblauf <= 14){
-      aufgabe = { text: "Läuft in " + tageBisAblauf + " Tag" + (tageBisAblauf === 1 ? "" : "en") + " ab", knopf: null };
-    } else if(!s.agb_akzeptiert_am){
-      aufgabe = { text: "Nutzungsbedingungen noch nicht akzeptiert", knopf: null };
-    }
+    const aufgabe = schuelerAufgabe(s);
     const aufgabeHtml = aufgabe
       ? '<div class="ak-tun">' +
           '<span class="ak-tun-punkt"></span>' +
@@ -6513,11 +6669,18 @@ function renderAdminSchueler(){
     // der Knopf waere fuer ihn nur eine leere Weiterleitung ins Nichts.
     const abrOffen = offeneAbrechnungKarten.has(s.id);
     const kontaktZeile = '<div class="admin-sub">Tel. ' + esc(s.telefon) + (s.email ? " · " + esc(s.email) : "") + "</div>";
+    const zugangStatus = s.vollzugang
+      ? '<div class="admin-sub ak-voll">' + icon("krone", "ic-s") + " Vollzugang aktiv</div>"
+      : '<div class="admin-sub">Startzugang (Fahrzeug &amp; Technik)</div>';
+    const nutzung = loginZeile || '<div class="admin-sub">Noch nie angemeldet</div>';
     const detailHtml = offen
       ? '<div class="ak-details">' +
-          kontaktZeile + pinStatusZeile + pinWartetHinweis +
-          ablaufWarnung + terminZeile + agbZeile + loginZeile + wechselZeile +
-          ueberlappZeile + stammZeile + sperrgrundZeile +
+          '<div class="ak-raster">' +
+            '<section class="ak-feld"><h4>Kontakt</h4>' + kontaktZeile + stammZeile + "</section>" +
+            '<section class="ak-feld"><h4>Zugang</h4>' + zugangStatus + pinStatusZeile + pinWartetHinweis +
+              ablaufWarnung + terminZeile + agbZeile + sperrgrundZeile + "</section>" +
+            '<section class="ak-feld"><h4>Nutzung</h4>' + nutzung + wechselZeile + ueberlappZeile + "</section>" +
+          "</div>" +
           (s.archiviert_am
             ? '<div class="admin-sub" style="color:var(--gold-text);font-weight:600;">Archiviert am ' + fmtDate(s.archiviert_am) + "</div>" +
               '<div class="ak-aktionen">' +
@@ -6525,11 +6688,12 @@ function renderAdminSchueler(){
                 (istSuperAdmin ? '<button class="btn-still druck-2 ak-loeschen" data-del="' + esc(s.id) + '">Endgültig löschen</button>' : "") +
               "</div>"
             : '<div class="ak-aktionen">' +
+                zugangKnopf +
                 (zeigeKlartext ? '<button class="btn-still druck-2" data-mail="' + esc(s.id) + '">Zugangsdaten senden</button>' : "") +
                 '<button class="btn-still druck-2" data-verl="' + esc(s.id) + '">Verlängern</button>' +
                 (s.vollzugang ? '<button class="btn-still druck-2" data-abrbtn="' + esc(s.id) + '">Abrechnung' + (abrOffen ? " ▾" : " ▸") + '</button>' : "") +
               "</div>" +
-              '<details class="ak-mehr"><summary>Mehr</summary><div class="ak-aktionen">' +
+              '<details class="ak-mehr"><summary>Weitere Aktionen</summary><div class="ak-aktionen">' +
                 '<button class="btn-still druck-2" data-toggle="' + esc(s.id) + '">' + (s.aktiv ? "Login sperren" : "Login entsperren") + "</button>" +
                 (s.vollzugang ? '<button class="btn-still druck-2 ak-loeschen" data-entziehen="' + esc(s.id) + '">Vollzugang entziehen</button>' : "") +
                 '<button class="btn-still druck-2 ak-loeschen" data-archiv="' + esc(s.id) + '">Archivieren</button>' +
@@ -6537,16 +6701,18 @@ function renderAdminSchueler(){
           (s.vollzugang && abrOffen ? schuelerAbrechnungHtml(s) : "") +
         "</div>"
       : "";
+    const letzterLogin = s.letzter_login_am ? "zuletzt " + fmtDate(s.letzter_login_am) : "nie angemeldet";
 
-    return '<div class="admin-card glass ' + (s.vollzugang ? "bezahlt" : "gratis") + '">' +
-      '<label class="bulk-pick"><input type="checkbox" class="bulk-cb" value="' + esc(s.id) + '"' +
-        (bulkAuswahl.has(s.id) ? " checked" : "") + "> auswählen</label>" +
-      '<button class="ak-kopf druck-3" data-karte="' + esc(s.id) + '">' +
+    return '<div class="admin-card glass sch-karte ' + (s.vollzugang ? "bezahlt" : "gratis") + (offen ? " ist-offen" : "") + '">' +
+      ((bulkModus || bulkAuswahl.size > 0)
+        ? '<label class="bulk-pick"><input type="checkbox" class="bulk-cb" value="' + esc(s.id) + '"' +
+            (bulkAuswahl.has(s.id) ? " checked" : "") + "> auswählen</label>" : "") +
+      '<button class="ak-kopf druck-3" data-karte="' + esc(s.id) + '" aria-expanded="' + (offen ? "true" : "false") + '">' +
         '<span class="ak-ampel ' + ampel + '"></span>' +
         '<span class="ak-kopf-text">' +
           '<span class="ak-name">' + esc(s.name) + "</span>" +
           // 26.09.2026: Telefonnummer erst in den aufgeklappten Details (Datenschutz am Bildschirm)
-          '<span class="ak-sub">Klasse ' + esc(s.klasse) + " · " + esc(fl ? fl.name : "—") + "</span>" +
+          '<span class="ak-sub">Klasse ' + esc(s.klasse) + " · " + esc(fl ? fl.name : "—") + " · " + letzterLogin + "</span>" +
         "</span>" +
         '<span class="ak-rechts">' +
           '<span class="ak-zugang ' + (s.vollzugang ? "voll" : "start") + '">' + (s.vollzugang ? "Voll" : "Start") + "</span>" +
@@ -6557,9 +6723,9 @@ function renderAdminSchueler(){
       "</button>" +
       aufgabeHtml +
       detailHtml +
-      zugangKnopf +
     "</div>";
-  }).join("") || '<div class="empty">' + (schuelerArchivAnsicht ? "Das Archiv ist leer." : "Noch keine Schüler angelegt.") + "</div>";
+  }).join("") || '<div class="empty">' + (schuelerArchivAnsicht ? "Das Archiv ist leer."
+    : (basisListe.length ? "Keine Schüler passen zu Suche oder Filter." : "Noch keine Schüler angelegt.")) + "</div>";
 
   const visibleFahrlehrer = myRole === "super_admin"
     ? allFahrlehrer
@@ -6567,43 +6733,64 @@ function renderAdminSchueler(){
   const flOptions = visibleFahrlehrer.map(function(f){ return '<option value="' + esc(f.id) + '">' + esc(f.name) + "</option>"; }).join("");
 
   // 26.09.2026: Suche und Liste zuerst; das Formular oeffnet sich nur auf Knopfdruck.
-  const kopfLeiste =
-    '<div class="sch-kopf">' +
-      (schuelerArchivAnsicht
-        ? '<button class="btn-still druck-2" id="sch-archiv-zu">← Zurück zur Liste</button>'
-        : '<button class="btn-primary sch-neu-btn" id="sch-neu-toggle">' + (neuSchuelerOffen ? "Formular schließen" : "+ Schüler anlegen") + "</button>" +
-          '<button class="btn-still druck-2" id="sch-archiv-auf">Archiv (' + imArchiv.length + ")</button>") +
+  // Admin-Struktur: eine Werkzeugleiste (Suche + Anlegen), darunter Filter-Chips mit
+  // Anzahl, rechts Sortierung, Auswählen und Archiv.
+  const filterChips = schuelerArchivAnsicht ? "" :
+    '<div class="sch-filter" role="group" aria-label="Filter">' +
+      SCHUELER_FILTER.map(function(f){
+        const n = nachSuche.filter(f[2]).length;
+        if(f[0] !== "alle" && f[0] !== schuelerFilter && n === 0) return "";
+        return '<button type="button" class="sch-chip' + (schuelerFilter === f[0] ? " aktiv" : "") + '" data-schfilter="' + f[0] + '" aria-pressed="' + (schuelerFilter === f[0]) + '">' +
+          esc(f[1]) + ' <span class="sch-chip-n">' + n + "</span></button>";
+      }).join("") +
     "</div>";
+  const kopfLeiste =
+    '<div class="sch-werkzeug">' +
+      '<div class="sch-zeile1">' +
+        '<input id="sch-suche" type="search" placeholder="Name, Telefon oder E-Mail suchen …" value="' + esc(schuelerSuche) + '" aria-label="Schüler suchen">' +
+        (schuelerArchivAnsicht
+          ? '<button class="btn-still druck-2" id="sch-archiv-zu">← Zurück zur Liste</button>'
+          : '<button class="btn-primary sch-neu-btn" id="sch-neu-toggle">' + (neuSchuelerOffen ? "Formular schließen" : "+ Schüler anlegen") + "</button>") +
+      "</div>" +
+      filterChips +
+      '<div class="sch-zeile3">' +
+        '<label class="sch-sort">Sortieren <select id="sch-sort">' +
+          [["name", "Name A–Z"], ["neu", "Neueste zuerst"], ["ablauf", "Läuft zuerst ab"], ["login", "Zuletzt angemeldet"]].map(function(o){
+            return '<option value="' + o[0] + '"' + (schuelerSortierung === o[0] ? " selected" : "") + ">" + o[1] + "</option>";
+          }).join("") +
+        "</select></label>" +
+        (schuelerArchivAnsicht ? "" :
+          '<button type="button" class="btn-still druck-2" id="sch-auswahl" aria-pressed="' + (bulkModus || bulkAuswahl.size > 0) + '">' + ((bulkModus || bulkAuswahl.size > 0) ? "Auswahl beenden" : "Mehrere auswählen") + "</button>" +
+          '<button class="btn-still druck-2" id="sch-archiv-auf">Archiv (' + imArchiv.length + ")</button>") +
+      "</div>" +
+    "</div>";
+  const feld = function(label, inner){ return '<div class="ns-feld"><label>' + label + "</label>" + inner + "</div>"; };
   const formularHtml = (!schuelerArchivAnsicht && neuSchuelerOffen) ?
-    '<div class="admin-form glass">' +
+    '<div class="admin-form glass ns-form">' +
       '<div class="admin-form-title">Neuen Schüler anlegen</div>' +
-      '<label>Name</label><input id="ns-name" placeholder="Vor- und Nachname">' +
-      '<label>Telefonnummer</label><input id="ns-tel" type="tel" placeholder="z. B. 01701234567">' +
-      '<label>E-Mail (für PIN-Versand)</label><input id="ns-email" type="email" placeholder="schueler@mail.de">' +
-      // Betrugsschutz Punkt 3 (09.09.2026): Pflichtangaben, wenn ein Partner-Fahrlehrer
-      // (Schul-Admin) selbst anlegt. Erschwert Fantasie-Schueler erheblich, weil sich
-      // die Angaben gegen die echte Fahrschul-Kartei stichprobenhaft pruefen lassen.
-      // Fuer den Super-Admin (Serband selbst) bleiben sie freiwillig.
-      '<label>Geburtsdatum' + (myRole === "super_admin" ? " (optional)" : "") + "</label>" +
-        '<input id="ns-geburtsdatum" type="date">' +
-      '<label>Schülernummer der Fahrschule' + (myRole === "super_admin" ? " (optional)" : "") + "</label>" +
-        '<input id="ns-schuelernummer" placeholder="Nummer aus eurer Schülerkartei">' +
-      '<label>Klasse</label><select id="ns-klasse"><option value="B">B</option><option value="BE">BE</option><option value="C">C</option><option value="CE">CE</option></select>' +
-      '<label>Zugangsdauer</label><select id="ns-dauer"><option value="1">1 Monat</option><option value="3">3 Monate</option><option value="6" selected>6 Monate (Standard)</option><option value="12">12 Monate</option><option value="24">24 Monate</option></select>' +
-      '<label>Zugang vergeben über</label><select id="ns-fl">' + flOptions + "</select>" +
-      '<label style="display:flex;align-items:center;gap:8px;margin-top:10px;">' +
-        '<input type="checkbox" id="ns-vollzugang" style="width:18px;height:18px;">' +
+      '<div class="ns-raster">' +
+        feld("Name", '<input id="ns-name" placeholder="Vor- und Nachname">') +
+        feld("Telefonnummer", '<input id="ns-tel" type="tel" placeholder="z. B. 01701234567">') +
+        feld("E-Mail (für PIN-Versand)", '<input id="ns-email" type="email" placeholder="schueler@mail.de">') +
+        // Betrugsschutz Punkt 3 (09.09.2026): Pflichtangaben, wenn ein Partner-Fahrlehrer
+        // (Schul-Admin) selbst anlegt. Fuer den Super-Admin bleiben sie freiwillig.
+        feld("Geburtsdatum" + (myRole === "super_admin" ? " (optional)" : ""), '<input id="ns-geburtsdatum" type="date">') +
+        feld("Schülernummer der Fahrschule" + (myRole === "super_admin" ? " (optional)" : ""), '<input id="ns-schuelernummer" placeholder="Nummer aus eurer Schülerkartei">') +
+        feld("Klasse", '<select id="ns-klasse"><option value="B">B</option><option value="BE">BE</option><option value="C">C</option><option value="CE">CE</option></select>') +
+        feld("Zugangsdauer", '<select id="ns-dauer"><option value="1">1 Monat</option><option value="3">3 Monate</option><option value="6" selected>6 Monate (Standard)</option><option value="12">12 Monate</option><option value="24">24 Monate</option></select>') +
+        feld("Zugang vergeben über", '<select id="ns-fl">' + flOptions + "</select>") +
+      "</div>" +
+      '<label class="ns-haken">' +
+        '<input type="checkbox" id="ns-vollzugang">' +
         '<span>Hat bereits bezahlt — Vollzugang sofort freischalten</span>' +
       "</label>" +
-      '<div class="admin-sub" style="margin-top:2px;">Ohne Haken startet der Schüler im Startzugang (Fahrzeug &amp; Technik). Den Rest schaltest du später mit dem Knopf unten an seiner Karte frei.</div>' +
+      '<div class="admin-sub" style="margin-top:-4px;">Ohne Haken startet der Schüler im Startzugang (Fahrzeug &amp; Technik). Den Rest schaltest du später in seinen Details frei.</div>' +
       '<button class="btn-primary" id="ns-btn" style="margin-top:6px;">Zugang anlegen &amp; PIN senden</button>' +
     "</div>" : "";
 
+  const filterName = filterDef[0] === "alle" ? (schuelerArchivAnsicht ? "Archiv" : "Alle Schüler") : filterDef[1];
   el.innerHTML =
     kopfLeiste + formularHtml +
-    '<div class="admin-card glass" style="margin-bottom:10px;">' +
-      '<input id="sch-suche" type="text" placeholder="Name, Telefon oder E-Mail suchen …" value="' + esc(schuelerSuche) + '">' +
-    "</div>" +
     // Bereich 8.2: Sammelaktionen, nur sichtbar wenn wirklich etwas ausgewählt ist
     (bulkAuswahl.size > 0
       ? '<div class="admin-card glass bulk-leiste">' +
@@ -6615,11 +6802,24 @@ function renderAdminSchueler(){
             '<button class="btn-klein" id="bulk-leer">Auswahl aufheben</button>' +
           "</div>" +
         "</div>"
-      : "") +
-    '<div class="section-label">' + (schuelerArchivAnsicht ? "Archiv" : "Alle Schüler") + " (" + gefiltert.length +
+      : (bulkModus ? '<div class="admin-sub" style="margin:0 2px 8px;">Tippe die Kästchen an. Danach erscheinen die Sammelaktionen. ' +
+          '<button type="button" class="btn-link" id="bulk-alle">Alle ' + gefiltert.length + " sichtbaren auswählen</button></div>" : "")) +
+    '<div class="section-label" id="sch-liste-anfang">' + esc(filterName) + " (" + gefiltert.length +
       (gefiltert.length !== basisListe.length ? " von " + basisListe.length : "") + ")</div>" +
-    rows;
+    '<div class="sch-liste">' + rows + "</div>";
 
+  el.querySelectorAll("[data-schfilter]").forEach(function(b){
+    b.addEventListener("click", function(){ schuelerFilter = b.dataset.schfilter; renderAdminSchueler(); });
+  });
+  const sortEl = el.querySelector("#sch-sort");
+  if(sortEl) sortEl.addEventListener("change", function(){ schuelerSortierung = sortEl.value; renderAdminSchueler(); });
+  const auswahlEl = el.querySelector("#sch-auswahl");
+  if(auswahlEl) auswahlEl.addEventListener("click", function(){
+    if(bulkModus || bulkAuswahl.size > 0){ bulkModus = false; bulkAuswahl.clear(); } else bulkModus = true;
+    renderAdminSchueler();
+  });
+  const alleEl = el.querySelector("#bulk-alle");
+  if(alleEl) alleEl.addEventListener("click", function(){ gefiltert.forEach(function(s){ bulkAuswahl.add(s.id); }); renderAdminSchueler(); });
   const suchEl = el.querySelector("#sch-suche");
   suchEl.addEventListener("input", function(){
     schuelerSuche = suchEl.value;
@@ -7257,7 +7457,13 @@ function renderAdminVideos(){
       .map(function(vt){ const t = allTags.find(function(x){ return x.id === vt.tag_id; }); return t ? t.stufe : null; })
       .filter(Boolean);
   };
+  const vSuche = videoSuche.trim().toLowerCase();
+  const inArbeit = function(v){ return v.status === "entwurf" || v.status === "verarbeitung" || v.status === "bereit"; };
   const gefilterteVideos = allVideos.filter(function(v){
+    if(vSuche && (v.titel || "").toLowerCase().indexOf(vSuche) === -1) return false;
+    if(videoFilterStatus === "live" && (v.ausgeblendet || inArbeit(v))) return false;
+    if(videoFilterStatus === "arbeit" && !inArbeit(v)) return false;
+    if(videoFilterStatus === "aus" && !v.ausgeblendet) return false;
     if(videoFilterStufe === "__ohne_bunny__" && v.bunny_video_id) return false;
     if(videoFilterStufe && videoFilterStufe !== "__ohne_bunny__" && stufenVonVideo(v).indexOf(videoFilterStufe) === -1) return false;
     if(videoFilterFahrzeug === "__ohne_fahrzeug__" && v.fahrzeug) return false;
@@ -7265,83 +7471,73 @@ function renderAdminVideos(){
     return true;
   });
 
-  const rows = gefilterteVideos.map(function(v){
-    const tagsForVideo = videoTags.filter(function(vt){ return vt.video_id === v.id; })
-      .map(function(vt){ const t = allTags.find(function(x){ return x.id === vt.tag_id; }); return t ? t.label : null; })
-      .filter(Boolean).join(", ");
+  // 26.09.2026 (Admin-Struktur): Videos, an denen noch etwas zu tun ist, stehen oben.
+  const sortiert = gefilterteVideos.slice().sort(function(a, b){ return (inArbeit(b) ? 1 : 0) - (inArbeit(a) ? 1 : 0); });
+  const videoZeile = function(v){
+    const tagObjs = videoTags.filter(function(vt){ return vt.video_id === v.id; })
+      .map(function(vt){ return allTags.find(function(x){ return x.id === vt.tag_id; }); })
+      .filter(Boolean);
+    const bereiche = Array.from(new Set(tagObjs.map(function(t){ return t.stufe; })));
     const prueferForVideo = videoPruefer.filter(function(vp){ return vp.video_id === v.id; })
       .map(function(vp){ return allPruefer.find(function(p){ return p.id === vp.pruefer_id; }); })
       .filter(Boolean);
-    const verknuepft = !!v.bunny_video_id;
-
-    // Gebiets-Auswahl direkt in der Videozeile (15.09.2026).
-    const gebietName = (allGebiete.find(function(g){ return g.id === v.gebiet_id; }) || {}).name;
-    const gebietFeld = nurLesen
-      ? (v.gebiet_id
-          ? '<span class="admin-badge badge-gesperrt">' + esc(gebietName || v.gebiet_id) + "</span>"
-          : '<span class="admin-sub">Alle Gebiete</span>')
-      : '<select data-gebiet-select="' + esc(v.id) + '" style="margin-top:6px;width:auto;display:inline-block;padding:6px 10px;font-size:12.5px;">' +
-          '<option value=""' + (v.gebiet_id ? "" : " selected") + ">Kein Gebiet — alle</option>" +
-          allGebiete.map(function(g){
-            return '<option value="' + esc(g.id) + '"' + (v.gebiet_id === g.id ? " selected" : "") + ">" + esc(g.name) + "</option>";
-          }).join("") +
-        "</select>";
-
-    const prueferChips = prueferForVideo.map(function(p){
-      return '<span class="admin-badge badge-gesperrt" style="margin-right:4px;">' + esc(p.name) +
-        (nurLesen ? "" : ' <span data-rmpr="' + esc(v.id) + '|' + esc(p.id) + '" style="cursor:pointer;font-weight:900;">×</span>') +
-      "</span>";
-    }).join("");
-
-    const restlichePruefer = allPruefer.filter(function(p){
-      return !prueferForVideo.some(function(pf){ return pf.id === p.id; });
-    });
-    const addPrueferSelect = (nurLesen || !restlichePruefer.length)
-      ? ""
-      : '<select data-addpr-select="' + esc(v.id) + '" style="margin-top:6px;width:auto;display:inline-block;padding:6px 10px;font-size:12.5px;">' +
-          restlichePruefer.map(function(p){ return '<option value="' + esc(p.id) + '">' + esc(p.name) + "</option>"; }).join("") +
-        "</select> " +
-        '<button data-addpr-btn="' + esc(v.id) + '" class="icon-btn" style="font-size:12px;">+ Prüfer</button>';
-
-    return '<div class="admin-card glass' + (v.ausgeblendet ? " video-ausgeblendet" : "") + '">' +
-      '<div class="admin-row">' +
-        '<div>' +
-          '<div class="admin-name">' + esc(v.titel) + (v.ausgeblendet ? ' <span class="admin-badge badge-gesperrt">ausgeblendet</span>' : "") +
-            (v.status && v.status !== "live" ? ' <span class="admin-badge status-' + esc(v.status) + '">' + ({ entwurf:"Entwurf", verarbeitung:"Wird verarbeitet", bereit:"Bereit" }[v.status] || esc(v.status)) + "</span>" : "") + "</div>" +
-          (!nurLesen && v.status === "entwurf"
-            ? '<div class="video-status-aktion"><div class="admin-sub">Noch keine fertige Videodatei.</div>' +
-                '<div class="upload-balken" id="up-balken-' + esc(v.id) + '" hidden><div class="upload-fuellung"></div><span>0 %</span></div>' +
-                '<button class="btn-still druck-2" data-hochladen="' + esc(v.id) + '">' + (v.bunny_video_id ? "Upload fortsetzen / neu hochladen" : "Datei hochladen") + "</button></div>" : "") +
-          (!nurLesen && v.status === "verarbeitung"
-            ? '<div class="video-status-aktion"><div class="admin-sub">Bunny verarbeitet das Video. Das dauert meist einige Minuten.</div>' +
-                '<button class="btn-still druck-2" data-statuscheck="' + esc(v.id) + '">Status prüfen</button></div>' : "") +
-          (!nurLesen && v.status === "bereit"
-            ? '<div class="video-status-aktion"><button class="btn-primary" data-veroeff="' + esc(v.id) + '">Veröffentlichen</button></div>' : "") +
-          (v.beschreibung ? '<div class="admin-sub">' + esc(v.beschreibung) + "</div>" : "") +
-          (tagsForVideo ? '<div class="admin-sub">Tags: ' + esc(tagsForVideo) + "</div>" : "") +
-          '<div class="admin-sub" style="margin-top:4px;">🚗 ' + (v.fahrzeug ? esc(v.fahrzeug) : '<span style="opacity:.6;">kein Fahrzeug hinterlegt</span>') + "</div>" +
-          (nurLesen ? "" :
-            '<div class="admin-badge ' + (verknuepft ? "badge-aktiv" : "badge-abgelaufen") + '" style="margin-top:6px;display:inline-block;">' +
-              (verknuepft ? "🎬 Mit Bunny verknüpft" : "⚠️ Kein Video verknüpft") +
-            "</div>") +
-          '<div class="admin-sub" style="margin-top:8px;">Prüfer: ' + (prueferChips || "keiner") + "</div>" +
-          '<div style="margin-top:4px;">' + addPrueferSelect + "</div>" +
-          '<div class="admin-sub" style="margin-top:8px;">📍 Gebiet: ' + gebietFeld + "</div>" +
-        "</div>" +
-        (nurLesen ? "" :
-        '<div style="text-align:right;">' +
-          '<button class="btn-still druck-2 vid-bearb" data-bearbv="' + esc(v.id) + '">Bearbeiten</button>' +
-          '<button class="icon-btn" data-editfz="' + esc(v.id) + '" title="Fahrzeug eintragen/ändern">🚗</button>' +
-          '<button class="icon-btn" data-editv="' + esc(v.id) + '" title="Bunny-Video-ID eintragen/ändern">' + icon("stift") + '</button>' +
-          (v.ausgeblendet ? "" : '<button class="icon-btn" data-notifyv="' + esc(v.id) + '" title="Push-Benachrichtigung an alle aktiven Schüler senden">' + icon("glocke") + '</button>') +
-          (v.ausgeblendet
-            ? '<button class="btn-still druck-2" data-einbl="' + esc(v.id) + '">Einblenden</button>' +
-              '<button class="icon-btn danger" data-delv="' + esc(v.id) + '" title="Endgültig löschen">' + icon("papierkorb") + '</button>'
-            : '<button class="btn-still druck-2 ak-loeschen" data-ausbl="' + esc(v.id) + '">Ausblenden</button>') +
-        "</div>") +
+    const gebietName = v.gebiet_id ? ((allGebiete.find(function(g){ return g.id === v.gebiet_id; }) || {}).name || v.gebiet_id) : "";
+    const statusText = v.ausgeblendet ? "Ausgeblendet"
+      : ({ entwurf: "Entwurf", verarbeitung: "Wird verarbeitet", bereit: "Bereit" }[v.status] || (v.bunny_video_id ? "Live" : "Ohne Video"));
+    const statusKlasse = v.ausgeblendet ? "st-aus" : inArbeit(v) ? "st-arbeit st-" + v.status : (v.bunny_video_id ? "st-live" : "st-fehlt");
+    const meta = [
+      bereiche.length ? bereiche.join(", ") : "kein Bereich",
+      v.fahrzeug ? v.fahrzeug : null,
+      gebietName ? "Gebiet " + gebietName : null,
+      prueferForVideo.length ? "Prüfer: " + prueferForVideo.map(function(p){ return p.name; }).join(", ") : null,
+      v.dauer_sekunden ? zeitFormat(v.dauer_sekunden) : null,
+      v.gratis ? "Kostprobe" : null
+    ].filter(Boolean);
+    const chips = tagObjs.slice(0, 4).map(function(t){ return '<span class="vz-chip">' + esc(t.label) + "</span>"; }).join("") +
+      (tagObjs.length > 4 ? '<span class="vz-chip vz-chip-mehr">+' + (tagObjs.length - 4) + "</span>" : "");
+    const bild = v.bunny_video_id
+      ? '<img class="vz-bild" loading="lazy" alt="" src="' + esc(SUPABASE_URL + "/functions/v1/academy-vorschaubild?k=1&v=" + encodeURIComponent(v.id)) + '">'
+      : '<span class="vz-bild leer" aria-hidden="true">' + icon("play") + "</span>";
+    const arbeit =
+      (!nurLesen && v.status === "entwurf"
+        ? '<div class="video-status-aktion"><div class="admin-sub">Noch keine fertige Videodatei.</div>' +
+            '<div class="upload-balken" id="up-balken-' + esc(v.id) + '" hidden><div class="upload-fuellung"></div><span>0 %</span></div>' +
+            '<button class="btn-still druck-2" data-hochladen="' + esc(v.id) + '">' + (v.bunny_video_id ? "Upload fortsetzen / neu hochladen" : "Datei hochladen") + "</button></div>" : "") +
+      (!nurLesen && v.status === "verarbeitung"
+        ? '<div class="video-status-aktion"><div class="admin-sub">Bunny verarbeitet das Video. Das dauert meist einige Minuten.</div>' +
+            '<button class="btn-still druck-2" data-statuscheck="' + esc(v.id) + '">Status prüfen</button></div>' : "") +
+      (!nurLesen && v.status === "bereit"
+        ? '<div class="video-status-aktion"><button class="btn-primary" data-veroeff="' + esc(v.id) + '">Veröffentlichen</button></div>' : "");
+    const menue = nurLesen ? "" :
+      '<div class="vz-aktionen">' +
+        '<button class="btn-still druck-2 vid-bearb" data-bearbv="' + esc(v.id) + '">Bearbeiten</button>' +
+        '<details class="vz-mehr"><summary aria-label="Weitere Aktionen für ' + esc(v.titel) + '">' + icon("punkte") + "</summary>" +
+          '<div class="vz-menue">' +
+            '<button type="button" data-editv="' + esc(v.id) + '">' + icon("stift", "ic-s") + " Bunny-Video-ID ändern</button>" +
+            (v.ausgeblendet ? "" : '<button type="button" data-notifyv="' + esc(v.id) + '">' + icon("glocke", "ic-s") + " Push an alle Schüler senden</button>") +
+            (v.ausgeblendet
+              ? '<button type="button" data-einbl="' + esc(v.id) + '">Wieder einblenden</button>' +
+                '<button type="button" class="vz-gefahr" data-delv="' + esc(v.id) + '">' + icon("papierkorb", "ic-s") + " Endgültig löschen</button>"
+              : '<button type="button" class="vz-gefahr" data-ausbl="' + esc(v.id) + '">Für Schüler ausblenden</button>') +
+          "</div></details>" +
+      "</div>";
+    return '<div class="admin-card glass vz-zeile' + (v.ausgeblendet ? " video-ausgeblendet" : "") + '">' +
+      bild +
+      '<div class="vz-text">' +
+        '<div class="vz-titel"><span class="vz-name">' + esc(v.titel) + '</span><span class="vz-status ' + statusKlasse + '">' + statusText + "</span></div>" +
+        '<div class="vz-meta">' + meta.map(esc).join(" · ") + "</div>" +
+        (chips ? '<div class="vz-chips">' + chips + "</div>" : "") +
+        arbeit +
       "</div>" +
+      menue +
     "</div>";
-  }).join("") || '<div class="empty">Noch keine Videos angelegt.</div>';
+  };
+  const nArbeit = sortiert.filter(inArbeit).length;
+  const rows = sortiert.length
+    ? (nArbeit && !videoFilterStatus ? '<div class="section-label">Warten auf dich (' + nArbeit + ")</div>" + sortiert.filter(inArbeit).map(videoZeile).join("") +
+        '<div class="section-label">Veröffentlicht und ausgeblendet (' + (sortiert.length - nArbeit) + ")</div>" + sortiert.filter(function(v){ return !inArbeit(v); }).map(videoZeile).join("")
+      : sortiert.map(videoZeile).join(""))
+    : '<div class="empty">' + (allVideos.length ? "Kein Video passt zu Suche oder Filter." : "Noch keine Videos angelegt.") + "</div>";
 
   // Themen als flache, durchsuchbare Liste (statt gruppierter Checkbox-Wand):
   // Bereich steht rechts als kleiner Hinweis, gesucht wird über Thema UND Bereich.
@@ -7363,9 +7559,10 @@ function renderAdminVideos(){
     "</label>";
   }).join("");
 
-  const anlegeForm = nurLesen ? "" :
-    '<div class="admin-form glass">' +
-      '<div class="admin-form-title" style="font-size:17px;">Neues Video anlegen</div>' +
+  const anlegeForm = (nurLesen || !nvOffen) ? "" :
+    '<div class="admin-form glass nv-form">' +
+      '<div class="nv-form-kopf"><div class="admin-form-title" style="font-size:17px;">Neues Video anlegen</div>' +
+        '<button type="button" class="btn-still druck-2" id="nv-zu">Abbrechen</button></div>' +
       '<div class="admin-sub" style="margin-bottom:14px;">So kommt ein Video von deinem Handy zu den Schülern — 4 Schritte. Erst nach „Veröffentlichen“ sehen es die Schüler.</div>' +
 
       // Schritt 1 -- 26.09.2026 (P1): Datei direkt hier waehlen statt Bunny-Dashboard
@@ -7432,30 +7629,72 @@ function renderAdminVideos(){
     "</div>";
 
   const ohneDauer = allVideos.filter(function(v){ return v.bunny_video_id && !v.dauer_sekunden; }).length;
-  const dauerKarte = nurLesen ? "" :
-    '<div class="admin-card glass" style="margin-bottom:10px;">' +
-      '<div class="admin-name">Videolängen</div>' +
-      '<div class="admin-sub">' +
-        (ohneDauer === 0
-          ? "Alle Videos haben eine Länge hinterlegt."
-          : ohneDauer + " Video" + (ohneDauer === 1 ? "" : "s") + " noch ohne Längenangabe. Der Schüler sieht dort keine Dauer.") +
-      "</div>" +
-      '<button class="btn-primary" id="dauer-btn" style="margin-top:8px;">Längen von Bunny holen</button>' +
-    "</div>";
-
   if(videoReihenfolgeModus && !nurLesen){ renderVideoReihenfolge(); return; }
-  const werkzeugKarte = (nurLesen ? "" :
-    '<div class="admin-card glass vid-werkzeug" style="margin-bottom:10px;">' +
+  // 26.09.2026 (Admin-Struktur): oben nur drei Knöpfe; selten gebrauchte Einstellungen
+  // und der Dreh-Leitfaden liegen eingeklappt in "Einstellungen und Hilfen".
+  const kopf = nurLesen ? "" :
+    '<div class="vid-kopf">' +
+      '<button class="btn-primary" id="nv-toggle"' + (nvOffen ? " hidden" : "") + '>+ Neues Video hochladen</button>' +
       '<button class="btn-still druck-2" id="vid-reihenfolge">Reihenfolge ändern</button>' +
       '<button class="btn-still druck-2" id="vid-vorschau">Als Schüler ansehen</button>' +
-      '<label class="vs-einstellung">Vorschau gesperrter Videos: <select id="vorschau-sek">' +
-        [5,10,15,20,30].map(function(n){ return '<option value="' + n + '"' + (n === vorschauSekundenAdmin ? " selected" : "") + ">" + n + " Sekunden</option>"; }).join("") +
-      "</select></label>" +
-    "</div>") + drehLeitfadenHtml();
+    "</div>";
+  const werkzeuge = nurLesen ? "" :
+    '<details class="admin-card glass vid-werkzeuge"><summary class="hb-kopf"><span class="admin-form-title">Einstellungen und Hilfen</span>' +
+      (ohneDauer ? '<span class="hb-zahl" title="Videos ohne Länge">' + ohneDauer + "</span>" : "") + "</summary>" +
+      '<div class="vw-raster">' +
+        '<div class="vw-teil"><div class="admin-name">Vorschau gesperrter Videos</div>' +
+          '<div class="admin-sub">So viele Sekunden sehen Schüler ohne Vollzugang, dann stoppt das Video.</div>' +
+          '<select id="vorschau-sek">' +
+            [5,10,15,20,30].map(function(n){ return '<option value="' + n + '"' + (n === vorschauSekundenAdmin ? " selected" : "") + ">" + n + " Sekunden</option>"; }).join("") +
+          "</select></div>" +
+        '<div class="vw-teil"><div class="admin-name">Videolängen</div>' +
+          '<div class="admin-sub">' + (ohneDauer === 0 ? "Alle Videos haben eine Länge hinterlegt."
+            : ohneDauer + " Video" + (ohneDauer === 1 ? "" : "s") + " noch ohne Längenangabe. Der Schüler sieht dort keine Dauer.") + "</div>" +
+          '<button class="btn-still druck-2" id="dauer-btn">Längen von Bunny holen</button></div>' +
+      "</div>" +
+      drehLeitfadenHtml() +
+    "</details>";
+  const fahrzeuge = Array.from(new Set(allVideos.map(function(v){ return v.fahrzeug; }).filter(Boolean))).sort();
+  const nStatus = { "": allVideos.length,
+    live: allVideos.filter(function(v){ return !v.ausgeblendet && !inArbeit(v); }).length,
+    arbeit: allVideos.filter(inArbeit).length,
+    aus: allVideos.filter(function(v){ return v.ausgeblendet; }).length };
+  const filterLeiste =
+    '<div class="vid-filter-leiste">' +
+      '<input id="vid-suche" type="search" placeholder="Titel suchen …" aria-label="Videos suchen" value="' + esc(videoSuche) + '">' +
+      '<select id="vid-filter" aria-label="Bereich">' +
+        '<option value="">Alle Bereiche</option>' +
+        (nurLesen ? "" : '<option value="__ohne_bunny__"' + (videoFilterStufe === "__ohne_bunny__" ? " selected" : "") + ">Nur ohne Bunny-ID (" +
+          allVideos.filter(function(v){ return !v.bunny_video_id; }).length + ")</option>") +
+        STUFEN_ORDER.map(function(st){
+          const n = allVideos.filter(function(v){ return stufenVonVideo(v).indexOf(st) !== -1; }).length;
+          if(n === 0) return "";
+          return '<option value="' + esc(st) + '"' + (videoFilterStufe === st ? " selected" : "") + ">" + esc(st) + " (" + n + ")</option>";
+        }).join("") +
+      "</select>" +
+      '<select id="vid-filter-fahrzeug" aria-label="Fahrzeug">' +
+        '<option value="">Alle Fahrzeuge</option>' +
+        '<option value="__ohne_fahrzeug__"' + (videoFilterFahrzeug === "__ohne_fahrzeug__" ? " selected" : "") + ">Kein Fahrzeug hinterlegt (" +
+          allVideos.filter(function(v){ return !v.fahrzeug; }).length + ")</option>" +
+        fahrzeuge.map(function(fz){
+          const n = allVideos.filter(function(v){ return v.fahrzeug === fz; }).length;
+          return '<option value="' + esc(fz) + '"' + (videoFilterFahrzeug === fz ? " selected" : "") + ">" + esc(fz) + " (" + n + ")</option>";
+        }).join("") +
+      "</select>" +
+    "</div>" +
+    (nurLesen ? "" :
+      '<div class="sch-filter" role="group" aria-label="Status">' +
+        [["", "Alle"], ["live", "Live"], ["arbeit", "In Arbeit"], ["aus", "Ausgeblendet"]].map(function(f){
+          if(f[0] && f[0] !== videoFilterStatus && nStatus[f[0]] === 0) return "";
+          return '<button type="button" class="sch-chip' + (videoFilterStatus === f[0] ? " aktiv" : "") + '" data-vstatus="' + f[0] + '" aria-pressed="' + (videoFilterStatus === f[0]) + '">' +
+            f[1] + ' <span class="sch-chip-n">' + nStatus[f[0]] + "</span></button>";
+        }).join("") +
+      "</div>");
+  const gefiltertAktiv = videoFilterStufe || videoFilterFahrzeug || vSuche || videoFilterStatus;
   document.getElementById("admin-content").innerHTML =
-    werkzeugKarte +
+    kopf +
     anlegeForm +
-    dauerKarte +
+    werkzeuge +
     // Partner sieht statt des Anlege-Formulars einen kurzen Hinweis, wozu die Liste da ist.
     (nurLesen
       ? '<div class="admin-card glass" style="margin-bottom:10px;">' +
@@ -7464,35 +7703,37 @@ function renderAdminVideos(){
           'So weißt du genau, was du verkaufst. Die Inhalte pflegt Serband.</div>' +
         "</div>"
       : "") +
-    '<div class="admin-card glass" style="margin-bottom:10px;">' +
-      '<label>Filtern</label>' +
-      '<select id="vid-filter">' +
-        '<option value="">Alle Stufen (' + allVideos.length + ")</option>" +
-        '<option value="__ohne_bunny__"' + (videoFilterStufe === "__ohne_bunny__" ? " selected" : "") + ">Nur ohne Bunny-ID (" +
-          allVideos.filter(function(v){ return !v.bunny_video_id; }).length + ")</option>" +
-        STUFEN_ORDER.map(function(st){
-          const n = allVideos.filter(function(v){ return stufenVonVideo(v).indexOf(st) !== -1; }).length;
-          if(n === 0) return "";
-          return '<option value="' + esc(st) + '"' + (videoFilterStufe === st ? " selected" : "") + ">" + esc(st) + " (" + n + ")</option>";
-        }).join("") +
-      "</select>" +
-      // 09.09.2026: zweiter Filter nach Fahrzeug, unabhaengig vom Stufen-Filter
-      // kombinierbar (z.B. "Technik" + "Audi A1" gleichzeitig).
-      '<label style="margin-top:10px;">Fahrzeug</label>' +
-      '<select id="vid-filter-fahrzeug">' +
-        '<option value="">Alle Fahrzeuge (' + allVideos.length + ")</option>" +
-        '<option value="__ohne_fahrzeug__"' + (videoFilterFahrzeug === "__ohne_fahrzeug__" ? " selected" : "") + ">Kein Fahrzeug hinterlegt (" +
-          allVideos.filter(function(v){ return !v.fahrzeug; }).length + ")</option>" +
-        Array.from(new Set(allVideos.map(function(v){ return v.fahrzeug; }).filter(Boolean))).sort().map(function(fz){
-          const n = allVideos.filter(function(v){ return v.fahrzeug === fz; }).length;
-          return '<option value="' + esc(fz) + '"' + (videoFilterFahrzeug === fz ? " selected" : "") + ">" + esc(fz) + " (" + n + ")</option>";
-        }).join("") +
-      "</select>" +
-    "</div>" +
-    '<div class="section-label">' +
-      ((videoFilterStufe || videoFilterFahrzeug) ? "Gefiltert: " + gefilterteVideos.length + " von " + allVideos.length : "Alle Videos (" + allVideos.length + ")") +
-    "</div>" +
-    rows;
+    filterLeiste +
+    (gefiltertAktiv ? '<div class="section-label">Gefiltert: ' + gefilterteVideos.length + " von " + allVideos.length +
+      ' <button type="button" class="btn-link" id="vid-filter-weg">Filter zurücksetzen</button></div>' : "") +
+    '<div class="vz-liste">' + rows + "</div>";
+
+  const vsuch = document.getElementById("vid-suche");
+  if(vsuch) vsuch.addEventListener("input", function(){
+    videoSuche = vsuch.value;
+    const pos = vsuch.selectionStart;
+    renderAdminVideos();
+    const n = document.getElementById("vid-suche"); if(n){ n.focus(); try{ n.setSelectionRange(pos, pos); }catch(e){} }
+  });
+  document.querySelectorAll("[data-vstatus]").forEach(function(b){
+    b.addEventListener("click", function(){ videoFilterStatus = b.dataset.vstatus; renderAdminVideos(); });
+  });
+  const fWeg = document.getElementById("vid-filter-weg");
+  if(fWeg) fWeg.addEventListener("click", function(){ videoFilterStufe = ""; videoFilterFahrzeug = ""; videoSuche = ""; videoFilterStatus = ""; renderAdminVideos(); });
+  const nvT = document.getElementById("nv-toggle");
+  if(nvT) nvT.addEventListener("click", function(){ nvOffen = true; renderAdminVideos(); const t = document.getElementById("nv-datei"); if(t && t.scrollIntoView) t.scrollIntoView({ block: "center" }); });
+  const nvZu = document.getElementById("nv-zu");
+  if(nvZu) nvZu.addEventListener("click", function(){ if(uploadLaeuft){ showToast("Bitte warten, bis das Hochladen fertig ist"); return; } nvOffen = false; renderAdminVideos(); });
+  // Fehlt ein Vorschaubild (z. B. ausgeblendetes Video), steht dort ein ruhiger Platzhalter
+  // statt des Symbols fuer ein kaputtes Bild. Auch fuer Bilder, die schon vor dem Binden scheiterten.
+  const bildErsetzen = function(img){
+    const p = document.createElement("span"); p.className = "vz-bild leer"; p.setAttribute("aria-hidden", "true");
+    p.innerHTML = icon("play"); img.replaceWith(p);
+  };
+  document.querySelectorAll("img.vz-bild").forEach(function(img){
+    if(img.complete && img.naturalWidth === 0) bildErsetzen(img);
+    else img.addEventListener("error", function(){ bildErsetzen(img); });
+  });
 
   // Themen-Suche: filtert die Liste live, damit man bei 60+ Themen nicht scrollen muss
   const tagSuche = document.getElementById("nv-tag-suche");
@@ -7532,9 +7773,6 @@ function renderAdminVideos(){
   if(vidFilterFahrzeug) vidFilterFahrzeug.addEventListener("change", function(e){
     videoFilterFahrzeug = e.target.value;
     renderAdminVideos();
-  });
-  document.querySelectorAll("[data-editfz]").forEach(function(b){
-    b.addEventListener("click", function(){ editVideoFahrzeug(b.dataset.editfz); });
   });
   // Die folgenden Bedienelemente existieren in der Partner-Ansicht gar nicht --
   // ohne diese Pruefung wuerde renderAdminVideos() dort mit einem Fehler abbrechen
@@ -7577,24 +7815,6 @@ function renderAdminVideos(){
   });
   document.querySelectorAll("[data-notifyv]").forEach(function(b){
     b.addEventListener("click", function(){ notifyNeuesVideo(b.dataset.notifyv); });
-  });
-  document.querySelectorAll("[data-rmpr]").forEach(function(b){
-    b.addEventListener("click", function(){
-      const parts = b.dataset.rmpr.split("|");
-      removeVideoPruefer(parts[0], parts[1]);
-    });
-  });
-  document.querySelectorAll("[data-addpr-btn]").forEach(function(b){
-    b.addEventListener("click", function(){
-      const vid = b.dataset.addprBtn;
-      const sel = document.querySelector('[data-addpr-select="' + vid + '"]');
-      if(sel && sel.value) addVideoPruefer(vid, sel.value);
-    });
-  });
-  document.querySelectorAll("[data-gebiet-select]").forEach(function(sel){
-    sel.addEventListener("change", function(){
-      setzeVideoGebiet(sel.dataset.gebietSelect, sel.value || null);
-    });
   });
 }
 
@@ -7765,7 +7985,7 @@ async function createVideo(){
     neuVts.forEach(function(vt){ DEMO_VIDEO_TAGS.push(vt); });
     gewaehltePruefer.forEach(function(pid){ videoPruefer.push({ video_id:neu.id, pruefer_id:pid }); });
     allVideos = DEMO_VIDEOS; videoTags = DEMO_VIDEO_TAGS;
-    renderAdminVideos();
+    nvOffen = false; renderAdminVideos();
     showToast("Video angelegt");
     return;
   }
@@ -7779,13 +7999,13 @@ async function createVideo(){
   if(datei){
     const hochgeladen = await videoDateiHochladen(neu.id, titel, datei, null);
     await loadAdminData();
-    renderAdminVideos();
+    nvOffen = false; renderAdminVideos();
     showToast(hochgeladen ? "Hochgeladen — Bunny verarbeitet das Video jetzt" : "Entwurf angelegt, Upload nicht fertig — du kannst ihn beim Video fortsetzen");
     if(hochgeladen) statusAbfrageStarten();
     return;
   }
   await loadAdminData();
-  renderAdminVideos();
+  nvOffen = false; renderAdminVideos();
   showToast(bunnyId ? "Angelegt — jetzt beim Video auf „Veröffentlichen“ tippen" : "Als Entwurf angelegt");
 }
 
