@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Verkehr verstehen · Vorschau</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Farben und Schriften wie in der Akademie */
+  :root{
+    --bg:#FAF6EC; --surface:#EEE6D3; --surface-strong:#EAE3D2; --surface-tint:#E3EADD;
+    --border:rgba(43,40,30,.16); --hairline:rgba(43,40,30,.24);
+    --text:#2B2A22; --muted:#6F6857; --faint:#736B58;
+    --gruen:#2F4A34; --gruen-text:#2F5A3C; --gruen-hell:#5E8A68; --auf-tief:#fff;
+    --gold:#D9954C; --gold-text:#8F5A14; --gold-schwach:rgba(217,149,76,.13); --gold-rand:rgba(217,149,76,.35); --auf-gold:#2B2A22;
+    --warn:#A8442B;
+    --r-m:12px; --r-l:16px; --r-pill:999px;
+    --ff-titel:'Playfair Display', Georgia, serif; --ff-body:'Barlow', -apple-system, sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#191D1A; --surface:#212722; --surface-strong:#2A312B; --surface-tint:#28312A; --border:rgba(245,240,227,.12); --hairline:rgba(245,240,227,.18);
+      --text:#EDE7D9; --muted:#A79E8A; --faint:#A09883; --gruen:#3F6B4B; --gruen-text:#9CCAA6; --gruen-hell:#7FA98A;
+      --gold:#E0A868; --gold-text:#E9B87E; --gold-schwach:rgba(224,168,104,.16); --gold-rand:rgba(224,168,104,.4); --auf-gold:#191D1A; --warn:#E08A70; }
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--ff-body);font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%;}
+  button{font:inherit;color:inherit;}
+  .seite{max-width:760px;margin:0 auto;padding:16px 16px 60px;}
+  .marke{font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);}
+  h1{font-family:var(--ff-titel);font-weight:700;font-size:28px;line-height:1.15;margin:6px 0 4px;}
+  .kurz{color:var(--muted);margin:0 0 14px;}
+  .karte{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-l);padding:14px 16px;margin:12px 0;}
+  .karte h2{font-family:var(--ff-titel);font-weight:600;font-size:19px;margin:0 0 6px;}
+  .nr{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--surface-tint);color:var(--gruen-text);font-size:13.5px;font-weight:700;margin-inline-end:8px;vertical-align:2px;font-family:var(--ff-body);}
+  .regel{display:inline-block;margin-top:8px;padding:3px 10px;border-radius:var(--r-pill);background:var(--gold-schwach);border:1px solid var(--gold-rand);color:var(--gold-text);font-size:13.5px;font-weight:700;}
+
+  /* Bühne */
+  .buehne{position:relative;margin:14px -16px 0;background:#9fb4c4;overflow:hidden;aspect-ratio:4/3;max-height:68vh;touch-action:manipulation;user-select:none;-webkit-user-select:none;}
+  @media (min-width:700px){ .buehne{margin:14px 0 0;border-radius:var(--r-l);aspect-ratio:16/10;} }
+  .buehne canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
+  .schicht{position:absolute;inset:0;pointer-events:none;}
+  .schild-text{position:absolute;transform:translate(-50%,-120%);padding:3px 9px;border-radius:var(--r-pill);font-size:13px;font-weight:700;color:#fff;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.25);}
+  .oben-links{position:absolute;left:10px;top:10px;display:flex;gap:6px;flex-wrap:wrap;pointer-events:auto;}
+  .oben-rechts{position:absolute;right:10px;top:10px;display:flex;gap:6px;pointer-events:auto;}
+  .pille{min-height:40px;min-width:40px;padding:0 12px;border-radius:var(--r-pill);border:none;background:rgba(20,24,22,.62);color:#fff;font-size:13.5px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+  .pille[aria-pressed="true"]{background:rgba(255,255,255,.92);color:#1d261f;}
+  .pille svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .kap-anzeige{position:absolute;left:10px;bottom:10px;padding:6px 12px;border-radius:var(--r-pill);background:rgba(20,24,22,.62);color:#fff;font-size:13.5px;font-weight:700;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);max-width:calc(100% - 20px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .tempo-anzeige{position:absolute;right:10px;bottom:10px;padding:6px 12px;border-radius:var(--r-m);background:rgba(20,24,22,.62);color:#fff;font-variant-numeric:tabular-nums;font-weight:700;font-size:15px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+  .tempo-anzeige small{font-size:12.5px;opacity:.8;font-weight:600;}
+  .fehler-3d{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;padding:24px;background:var(--surface);color:var(--text);}
+
+  /* Steuerung */
+  .steuer{display:flex;align-items:center;gap:8px;margin:10px 0 0;}
+  .knopf{min-height:44px;min-width:44px;padding:0 14px;border-radius:var(--r-pill);border:1px solid var(--hairline);background:var(--surface);color:var(--text);font-weight:700;font-size:14.5px;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;}
+  .knopf.haupt{background:var(--gruen);color:var(--auf-tief);border-color:transparent;min-width:52px;}
+  .knopf[aria-pressed="true"]{background:var(--surface-tint);color:var(--gruen-text);border-color:var(--gruen-hell);}
+  .knopf svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+  .knopf.haupt svg{fill:currentColor;stroke:none;}
+  .zeitleiste{position:relative;flex:1;height:44px;cursor:pointer;touch-action:none;}
+  .zl-bahn{position:absolute;left:0;right:0;top:19px;height:6px;border-radius:3px;background:var(--surface-strong);border:1px solid var(--border);}
+  .zl-fuell{position:absolute;left:0;top:19px;height:6px;border-radius:3px;background:var(--gold);width:0;}
+  .zl-strich{position:absolute;top:14px;width:3px;height:16px;margin-left:-1.5px;border-radius:2px;background:var(--gruen-hell);pointer-events:none;}
+  .zl-strich.aktiv{background:var(--gold-text);}
+  .kap-chips{display:flex;gap:8px;overflow-x:auto;padding:8px 2px 4px;margin:0 -16px;padding-inline:16px;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+  .kap-chips::-webkit-scrollbar{display:none;}
+  .kap-chip{flex:none;min-height:44px;padding:6px 14px 6px 6px;border-radius:var(--r-pill);border:1px solid var(--hairline);background:var(--surface);font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:8px;cursor:pointer;color:var(--text);}
+  .kap-chip b{width:28px;height:28px;border-radius:50%;background:var(--surface-tint);color:var(--gruen-text);display:inline-flex;align-items:center;justify-content:center;font-size:13.5px;}
+  .kap-chip.aktiv{border-color:var(--gold-rand);background:var(--gold-schwach);}
+  .kap-chip.aktiv b{background:var(--gold);color:var(--auf-gold);}
+  .kap-chip .fz{color:var(--gold-text);font-weight:800;}
+  .abschnitt{font-family:var(--ff-titel);font-weight:600;font-size:19px;margin:22px 0 0;}
+  .reihe{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+  .segment{display:flex;padding:4px;border-radius:var(--r-pill);background:var(--surface-strong);border:1px solid var(--border);margin-top:14px;}
+  .segment button{flex:1;min-height:44px;border:none;border-radius:var(--r-pill);background:none;font-weight:700;font-size:15px;color:var(--muted);cursor:pointer;}
+  .segment button[aria-pressed="true"]{background:var(--bg);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.12);}
+  .segment button.falsch[aria-pressed="true"]{color:var(--warn);}
+  .schalter{display:flex;align-items:center;gap:10px;min-height:44px;margin-top:6px;cursor:pointer;font-weight:600;}
+  .schalter input{width:22px;height:22px;accent-color:var(--gruen);}
+
+  /* Kapitel-Karte und Mitdenken */
+  .kapitel-karte{border-left:4px solid var(--gruen-hell);}
+  .kapitel-karte.falsch{border-left-color:var(--warn);}
+  .kk-kopf{display:flex;align-items:baseline;gap:8px;}
+  .kk-nr{font-size:13.5px;font-weight:700;color:var(--faint);}
+  .kk-titel{font-family:var(--ff-titel);font-size:20px;font-weight:600;margin:0;}
+  .kk-text{margin:6px 0 0;}
+  .mitdenken{margin-top:12px;padding:12px 14px;border-radius:var(--r-m);background:var(--bg);border:1px solid var(--hairline);}
+  .md-frage{font-weight:700;margin:0 0 8px;}
+  .md-optionen{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;}
+  .md-optionen li{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:var(--r-m);border:1px solid var(--border);}
+  .md-optionen li b{flex:none;width:24px;height:24px;border-radius:50%;background:var(--surface-strong);display:flex;align-items:center;justify-content:center;font-size:13px;}
+  .md-optionen li.loesung{border-color:var(--gruen-hell);background:var(--surface-tint);font-weight:600;}
+  .md-optionen li.loesung b{background:var(--gruen);color:#fff;}
+  .md-erkl{margin:10px 0 0;}
+  .md-knoepfe{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+  .merken ol{margin:0;padding-inline-start:0;list-style:none;display:flex;flex-direction:column;gap:10px;counter-reset:m;}
+  .merken li{counter-increment:m;display:grid;grid-template-columns:28px 1fr;gap:8px;}
+  .merken li::before{content:counter(m);width:26px;height:26px;border-radius:50%;background:var(--surface-tint);color:var(--gruen-text);font-weight:700;font-size:13.5px;display:flex;align-items:center;justify-content:center;}
+  .merken .par{display:block;color:var(--gold-text);font-size:13.5px;font-weight:700;margin-top:2px;}
+  .hinweis{font-size:13.5px;color:var(--muted);}
+  :focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+  @media (prefers-reduced-motion: reduce){ *{transition:none!important;animation:none!important;} }
+</style>
+</head>
+<body>
+<main class="seite">
+  <div class="marke">Verkehr verstehen · Musterszene</div>
+  <h1 id="titel">Überholen auf der Landstraße</h1>
+  <p class="kurz" id="kurz"></p>
+
+  <section class="karte" aria-labelledby="h-worum">
+    <h2 id="h-worum"><span class="nr">1</span>Worum geht's?</h2>
+    <p id="worum" style="margin:0;"></p>
+    <span class="regel" id="worum-regel"></span>
+  </section>
+
+  <h2 class="abschnitt"><span class="nr">2</span>Anschauen</h2>
+  <div class="segment" role="group" aria-label="Fassung">
+    <button type="button" id="v-richtig" aria-pressed="true">So ist es richtig</button>
+    <button type="button" id="v-falsch" class="falsch" aria-pressed="false">Typischer Fehler</button>
+  </div>
+
+  <div class="buehne" id="buehne">
+    <canvas id="leinwand" aria-label="Animierte 3D-Szene"></canvas>
+    <div class="schicht" id="schicht"></div>
+    <div class="oben-links" role="group" aria-label="Blickwinkel">
+      <button type="button" class="pille" data-kam="oben" aria-pressed="false" title="Draufsicht"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 8v8M9 11l3-3 3 3"/></svg>Oben</button>
+      <button type="button" class="pille" data-kam="schraeg" aria-pressed="true" title="Schrägsicht"><svg viewBox="0 0 24 24"><path d="M3 18l6-12h6l6 12z"/></svg>Schräg</button>
+      <button type="button" class="pille" data-kam="fahrer" aria-pressed="false" title="Fahrersicht"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2"/><path d="M4 12h6M14 12h6M12 14v6"/></svg>Fahrer</button>
+    </div>
+    <div class="oben-rechts">
+      <button type="button" class="pille" id="tageszeit" title="Tageszeit" aria-label="Tageszeit wechseln"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span id="tz-text">Tag</span></button>
+    </div>
+    <div class="kap-anzeige" id="kap-anzeige" aria-live="polite"></div>
+    <div class="tempo-anzeige" id="tempo" aria-hidden="true">60 <small>km/h</small></div>
+    <div class="fehler-3d" id="fehler-3d"><p>Dein Gerät kann die 3D-Darstellung leider nicht anzeigen.<br>In der App läuft dann die bisherige Darstellung.</p></div>
+  </div>
+
+  <div class="steuer">
+    <button type="button" class="knopf haupt" id="spielen" aria-label="Abspielen"><svg viewBox="0 0 24 24" id="spielen-ic"><path d="M8 5v14l11-7z"/></svg></button>
+    <div class="zeitleiste" id="zeitleiste" role="slider" aria-label="Zeitleiste" aria-valuemin="0" tabindex="0">
+      <div class="zl-bahn"></div><div class="zl-fuell" id="zl-fuell"></div>
+    </div>
+  </div>
+  <div class="kap-chips" id="kap-chips" role="group" aria-label="Kapitel"></div>
+  <div class="reihe">
+    <button type="button" class="knopf" id="halb" aria-pressed="false">½ Tempo</button>
+    <button type="button" class="knopf" id="nochmal"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Von vorn</button>
+    <button type="button" class="knopf" id="auto-kam" aria-pressed="true">Kamera folgt der Erklärung</button>
+  </div>
+  <label class="schalter"><input type="checkbox" id="mitdenken"> Mitdenken: Szene hält bei Fragen an</label>
+
+  <section class="karte kapitel-karte" id="kapitel-karte" aria-live="polite">
+    <div class="kk-kopf"><span class="kk-nr" id="kk-nr"></span><h2 class="kk-titel" id="kk-titel"></h2></div>
+    <p class="kk-text" id="kk-text"></p>
+    <span class="regel" id="kk-regel"></span>
+    <div id="kk-frage"></div>
+  </section>
+
+  <section class="karte" aria-labelledby="h-rf">
+    <h2 id="h-rf"><span class="nr">3</span>Richtig und falsch</h2>
+    <p style="margin:0;" id="rf-text"></p>
+    <div class="md-knoepfe"><button type="button" class="knopf" id="rf-wechsel"></button></div>
+  </section>
+
+  <section class="karte merken" aria-labelledby="h-merken">
+    <h2 id="h-merken"><span class="nr">4</span>Die Regel zum Merken</h2>
+    <ol id="merken"></ol>
+  </section>
+
+  <section class="karte" aria-labelledby="h-echt">
+    <h2 id="h-echt"><span class="nr">5</span>So sieht's in echt aus</h2>
+    <p class="hinweis" style="margin:0;">In der App stehen hier die passenden Akademie-Videos, zum Beispiel Überholvorgänge aus den Prüfungsfahrten. Diese Vorschau-Seite ist noch nicht mit dem Katalog verbunden.</p>
+  </section>
+
+  <p class="hinweis">Vorschau zur Abstimmung, noch nicht in der App. Alle Fahrzeuge, Menschen und Gebäude sind selbst gebaut, ohne echte Automarken.</p>
+</main>
+
+<script type="module">
+import { erstelleWelt, bauePkw, baueLkw, baueTraktor, baueLandstrasse } from "./motor.js";
+import { szene as ladeSzene } from "./szenen/ueberholen.js";
+
+const sprache = "de";
+const SZ = ladeSzene();
+const T = SZ.texte[sprache] || SZ.texte.de;
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+const ruhig = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+$("titel").textContent = T.titel; $("kurz").textContent = T.kurz;
+$("worum").textContent = T.worum; $("worum-regel").textContent = T.worumRegel;
+$("merken").innerHTML = T.merken.map((m) => "<li><span>" + esc(m[0]) + '<span class="par">' + esc(m[1]) + "</span></span></li>").join("");
+
+let welt = null;
+try{ welt = erstelleWelt($("leinwand"), { qualitaet: "hoch" }); }
+catch(e){ $("fehler-3d").style.display = "flex"; }
+
+const st = { variante: "richtig", t: 0, laeuft: false, tempo: 1, mitdenken: false, autoKam: true, kapitel: -1, wartetFrage: false, aufgeloest: false, tz: "tag" };
+let V = null, strasseGebaut = null;
+
+function variante(name){
+  st.variante = name; V = SZ.varianten[name];
+  $("v-richtig").setAttribute("aria-pressed", String(name === "richtig"));
+  $("v-falsch").setAttribute("aria-pressed", String(name === "falsch"));
+  $("kapitel-karte").classList.toggle("falsch", name === "falsch");
+  if(welt){
+    // Straße neu, wenn sich der Verbotsbereich verschiebt
+    const schluessel = JSON.stringify(V.strasse.mitte);
+    if(strasseGebaut !== schluessel){
+      if(welt.strasse){ welt.szene.remove(welt.strasse); welt.freigeben(welt.strasse); welt.dreher = []; }
+      welt.strasse = baueLandstrasse(welt, V.strasse); strasseGebaut = schluessel;
+    }
+    welt.leereFahrzeuge();
+    V.fahrzeuge.forEach((f, i) => {
+      const bau = f.bau === "lkw" ? baueLkw(welt.M, { farbe: f.farbe, aufbau: f.aufbau, seed: 10 + i })
+        : f.bau === "traktor" ? baueTraktor(welt.M, { farbe: f.farbe })
+        : bauePkw(welt.M, { art: f.art, farbe: f.farbe, fahrschule: f.fahrschule, kennzeichen: f.kennzeichen, seed: 20 + i });
+      welt.fahrzeug(f.id, bau, f.pose, f.sig);
+    });
+  }
+  // Kapitel und Texte gibt es auch ohne 3D (Rückfall)
+  zeitleisteBauen();
+  springe(0, true);
+}
+
+// Zeitleiste mit Strichen je Kapitel, darunter die Kapitel als Knöpfe (tippen springt hin)
+function zeitleisteBauen(){
+  const zl = $("zeitleiste"), chips = $("kap-chips");
+  zl.querySelectorAll(".zl-strich").forEach((m) => m.remove());
+  zl.setAttribute("aria-valuemax", String(V.dauer));
+  chips.innerHTML = "";
+  V.kapitel.forEach((k, i) => {
+    const s = document.createElement("div"); s.className = "zl-strich"; s.style.left = (k.t / V.dauer * 100) + "%"; zl.appendChild(s);
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "kap-chip";
+    b.innerHTML = "<b>" + (i + 1) + "</b><span>" + esc(T.kapitel[k.id].titel) + "</span>" + (T.kapitel[k.id].frage ? '<span class="fz" title="Mit Frage">?</span>' : "");
+    b.addEventListener("click", () => springe(k.t + 0.01, true));
+    chips.appendChild(b);
+  });
+  const andere = st.variante === "richtig" ? "falsch" : "richtig";
+  $("rf-text").textContent = T.rf[st.variante];
+  $("rf-wechsel").textContent = T.rfKnopf[andere];
+}
+
+function aktKapitel(t){ let n = -1; V.kapitel.forEach((k, i) => { if(t >= k.t) n = i; }); return n; }
+
+function kapitelZeigen(n){
+  st.kapitel = n; st.aufgeloest = false;
+  const k = V.kapitel[Math.max(0, n)], tx = T.kapitel[k.id];
+  $("kk-nr").textContent = (Math.max(0, n) + 1) + " / " + V.kapitel.length;
+  $("kk-titel").textContent = tx.titel; $("kk-text").textContent = tx.text; $("kk-regel").textContent = tx.regel;
+  $("kap-anzeige").textContent = (Math.max(0, n) + 1) + " · " + tx.titel;
+  document.querySelectorAll(".zl-strich").forEach((m, i) => m.classList.toggle("aktiv", i === n));
+  document.querySelectorAll(".kap-chip").forEach((m, i) => {
+    m.classList.toggle("aktiv", i === n);
+    if(i === n && m.scrollIntoView) try{ m.scrollIntoView({ block: "nearest", inline: "center", behavior: ruhig ? "auto" : "smooth" }); }catch(e){}
+  });
+  frageZeigen(tx.frage, false);
+  if(st.autoKam && welt && k.kamera) kameraSetzen(k.kamera, false);
+}
+
+// Mitdenken ohne Bewertung (Entscheidung E6 = a): keine Antwortknöpfe, kein Rot/Grün,
+// nichts wird gespeichert. "Auflösung zeigen" hebt die richtige Antwort hervor und erklärt sie.
+function frageZeigen(fr, aufgeloest){
+  const box = $("kk-frage");
+  if(!fr){ box.innerHTML = ""; return; }
+  const buchst = ["A", "B", "C", "D"];
+  box.innerHTML = '<div class="mitdenken"><p class="md-frage">Mitdenken: ' + esc(fr.text) + "</p>" +
+    '<ul class="md-optionen">' + fr.optionen.map((o, i) => '<li class="' + (aufgeloest && i === fr.richtig ? "loesung" : "") + '"><b>' + buchst[i] + "</b><span>" + esc(o) + "</span></li>").join("") + "</ul>" +
+    (aufgeloest ? '<p class="md-erkl"><strong>Richtig ist ' + buchst[fr.richtig] + ".</strong> " + esc(fr.erklaerung) + "</p>" : "") +
+    '<div class="md-knoepfe">' + (aufgeloest ? "" : '<button type="button" class="knopf" id="md-aufl">Auflösung zeigen</button>') +
+    (st.wartetFrage ? '<button type="button" class="knopf haupt" id="md-weiter" style="padding:0 18px;">Weiter</button>' : "") + "</div></div>";
+  const a = $("md-aufl"); if(a) a.addEventListener("click", () => { st.aufgeloest = true; frageZeigen(fr, true); });
+  const w = $("md-weiter"); if(w) w.addEventListener("click", () => { st.wartetFrage = false; frageZeigen(fr, st.aufgeloest); spielen(true); });
+}
+
+function kameraSetzen(art, vonHand){
+  if(vonHand){ st.autoKam = false; $("auto-kam").setAttribute("aria-pressed", "false"); }
+  if(!welt) return;
+  welt.setzeKamera(art, ruhig);
+  document.querySelectorAll("[data-kam]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.kam === art)));
+}
+
+function springe(t, sofort){
+  st.t = Math.max(0, Math.min(V.dauer, t));
+  st.wartetFrage = false;
+  const n = aktKapitel(st.t);
+  if(n !== st.kapitel || sofort) kapitelZeigen(n);
+  if(sofort && welt) welt.setzeKamera(welt.kameraArt(), true);
+  zeichnen(0);
+}
+
+function spielen(an){
+  st.laeuft = an;
+  if(an && st.t >= V.dauer - 0.05){ springe(0, true); }
+  $("spielen").setAttribute("aria-label", an ? "Anhalten" : "Abspielen");
+  $("spielen-ic").innerHTML = an ? '<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>' : '<path d="M8 5v14l11-7z"/>';
+}
+
+const schicht = $("schicht"), marken = {};
+function zeichnen(dt){
+  $("zl-fuell").style.width = (st.t / V.dauer * 100) + "%";
+  $("zeitleiste").setAttribute("aria-valuenow", st.t.toFixed(1));
+  if(!welt) return;
+  welt.stellen(st.t);
+  const stand = {}; welt.fahrzeuge.forEach((f) => { stand[f.id] = f.stand; });
+  $("tempo").innerHTML = Math.round((stand.fs ? stand.fs.v : 0) * 3.6) + " <small>km/h</small>";
+  const hil = V.hilfen(st.t, stand), sichtbar = {};
+  hil.forEach((h) => { welt.hilfe(h.id, true, h.x0, h.x1, h.z0, h.z1, h.farbe); sichtbar[h.id] = h; });
+  ["abstand", "sicht", "einscheren"].forEach((id) => { if(!sichtbar[id]) welt.hilfe(id, false); });
+  welt.render(V.fokus, dt);
+  // Beschriftungen über dem Bild
+  Object.keys(marken).forEach((id) => { if(!sichtbar[id]) marken[id].style.display = "none"; });
+  hil.forEach((h) => {
+    let el = marken[h.id];
+    if(!el){ el = document.createElement("div"); el.className = "schild-text"; schicht.appendChild(el); marken[h.id] = el; }
+    const p = welt.aufsBild(h.bei[0], h.bei[1], h.bei[2]);
+    el.style.display = p.sichtbar ? "block" : "none";
+    el.style.left = p.x + "px"; el.style.top = p.y + "px"; el.style.background = h.farbe;
+    el.textContent = h.text[sprache] || h.text.de;
+  });
+}
+
+// Schleife mit automatischer Qualitätsanpassung
+let letzte = performance.now(), messung = [], stufe = "hoch";
+function schleife(jetzt){
+  const dt = Math.min(0.1, (jetzt - letzte) / 1000); letzte = jetzt;
+  if(st.laeuft){
+    const tNeu = st.t + dt * st.tempo;
+    // Mitdenken: bei einem Kapitel mit Frage anhalten
+    const nNeu = aktKapitel(tNeu);
+    if(nNeu !== st.kapitel){
+      st.t = V.kapitel[nNeu].t; kapitelZeigen(nNeu);
+      if(st.mitdenken && T.kapitel[V.kapitel[nNeu].id].frage){ st.wartetFrage = true; spielen(false); frageZeigen(T.kapitel[V.kapitel[nNeu].id].frage, false); }
+      else st.t = tNeu;
+    } else st.t = tNeu;
+    if(st.t >= V.dauer){ st.t = V.dauer; spielen(false); }
+  }
+  zeichnen(dt);
+  if(welt && messung.length < 90 && st.laeuft){
+    messung.push(dt);
+    if(messung.length === 90){
+      const mittel = messung.reduce((a, b) => a + b, 0) / messung.length;
+      if(mittel > 0.045 && stufe !== "niedrig"){ stufe = "niedrig"; welt.setzeQualitaet(stufe); }
+      else if(mittel > 0.028 && stufe === "hoch"){ stufe = "mittel"; welt.setzeQualitaet(stufe); messung = []; }
+    }
+  }
+  requestAnimationFrame(schleife);
+}
+
+// Bedienung
+$("spielen").addEventListener("click", () => { if(st.wartetFrage){ st.wartetFrage = false; } spielen(!st.laeuft); });
+$("halb").addEventListener("click", () => { st.tempo = st.tempo === 1 ? 0.5 : 1; $("halb").setAttribute("aria-pressed", String(st.tempo === 0.5)); });
+$("nochmal").addEventListener("click", () => { springe(0, true); spielen(true); });
+$("auto-kam").addEventListener("click", () => { st.autoKam = !st.autoKam; $("auto-kam").setAttribute("aria-pressed", String(st.autoKam)); if(st.autoKam) kapitelZeigen(st.kapitel); });
+$("mitdenken").addEventListener("change", (e) => { st.mitdenken = e.target.checked; });
+$("v-richtig").addEventListener("click", () => { spielen(false); variante("richtig"); });
+$("v-falsch").addEventListener("click", () => { spielen(false); variante("falsch"); });
+$("rf-wechsel").addEventListener("click", () => {
+  spielen(false); variante(st.variante === "richtig" ? "falsch" : "richtig");
+  $("buehne").scrollIntoView({ block: "center", behavior: ruhig ? "auto" : "smooth" });
+  spielen(true);
+});
+document.querySelectorAll("[data-kam]").forEach((b) => b.addEventListener("click", () => kameraSetzen(b.dataset.kam, true)));
+const TZ = [["tag", "Tag"], ["daemmerung", "Dämmerung"], ["nacht", "Nacht"]];
+$("tageszeit").addEventListener("click", () => {
+  const i = (TZ.findIndex((x) => x[0] === st.tz) + 1) % TZ.length; st.tz = TZ[i][0]; $("tz-text").textContent = TZ[i][1];
+  if(welt) welt.setzeTageszeit(st.tz);
+});
+// Zeitleiste: tippen oder ziehen
+const zl = $("zeitleiste");
+function zlZeit(e){ const r = zl.getBoundingClientRect(); return Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * V.dauer; }
+let ziehen = false;
+zl.addEventListener("pointerdown", (e) => { ziehen = true; zl.setPointerCapture(e.pointerId); springe(zlZeit(e), false); });
+zl.addEventListener("pointermove", (e) => { if(ziehen) springe(zlZeit(e), false); });
+zl.addEventListener("pointerup", () => { ziehen = false; });
+zl.addEventListener("keydown", (e) => {
+  if(e.key === "ArrowRight"){ springe(st.t + 2, false); e.preventDefault(); }
+  if(e.key === "ArrowLeft"){ springe(st.t - 2, false); e.preventDefault(); }
+});
+if(welt){
+  new ResizeObserver(() => { welt.groesse(); zeichnen(0); }).observe($("buehne"));
+  welt.groesse();
+}
+variante("richtig");
+window.__vv = { st, springe, spielen, variante, welt: () => welt, kameraSetzen, V: () => V };
+requestAnimationFrame(schleife);
+</script>
+</body>
+</html>

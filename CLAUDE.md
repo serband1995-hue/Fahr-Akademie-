@@ -86,6 +86,12 @@ minderjährig — entsprechend vorsichtig mit Daten umgehen.
 - **Anklickbare `<div>`s** bekommen automatisch `role="button"`/`tabindex`
   (`KLICK_FLAECHEN` + `tastaturSystemStarten`). Neue Klickflächen mit
   `data-…`-Attribut dort eintragen — oder gleich `<button>` verwenden.
+- **Verkehr verstehen** (`verkehr/`, Stufe 6): eigener 3D-Motor `motor.js` auf
+  three.js (`vendor/three-0.186.1.min.js`, fest), Szenen in `verkehr/szenen/`.
+  Eine Szene ist eine reine Funktion der Zeit (pose(t), sig(t)) – Springen,
+  Anhalten, halbes Tempo ohne Nebenwirkungen. Mitdenken OHNE Bewertung
+  (E6 = a): keine Antwortknöpfe, kein Rot/Grün, nichts gespeichert.
+  `vorschau.html` ist nur die Musterszene zur Abstimmung (W2), nicht verlinkt.
 - **Zweites Supabase-Projekt `oectrvkjunntzsggyhxv`** (Fahrlehrer-Kompass) ist
   ein separates Projekt mit eigenem Chat. Hier nur als Bridge-Partner
   relevant — nicht versehentlich hineinschreiben.
