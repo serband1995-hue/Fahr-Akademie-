@@ -715,11 +715,14 @@
 
   /* --- Skeleton beim Laden (Punkt 2.6) --- */
   @keyframes skel{0%{opacity:.55;}50%{opacity:1;}100%{opacity:.55;}}
+  .skel-reihe{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--sp-s);margin:var(--sp-m) 0;}
+  @media (min-width:760px){ .skel-reihe{grid-template-columns:repeat(4,1fr);} }
+  .skel-reihe .skel-karte{margin:0;height:72px;}
   .skel-karte{height:62px;border-radius:var(--r-l);background:var(--surface-strong);
     margin-bottom:var(--sp-m);animation:skel 1.4s ease-in-out infinite;}
 
   /* --- Admin-Kennzeichnung (Punkt 1.10) --- */
-  .admin-balken{height:3px;background:var(--gold);width:100%;}
+  .admin-balken{height:3px;background:var(--gold);}
   .admin-badge-top{display:inline-flex;align-items:center;gap:5px;background:var(--gold-schwach);
     color:var(--gold-text);border:1px solid var(--gold-rand);border-radius:var(--r-pill);
     padding:2px 9px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
@@ -3174,6 +3177,7 @@ async function doLogin(){
     abmeldeHinweis = null;
     session = data;
     speichereSession();
+    frischAngemeldetAm = Date.now();
     showApp();
   } catch(e){
     errEl.textContent = t("keineVerbindung");
@@ -3248,8 +3252,14 @@ async function maybeShowPushBanner(){
   document.getElementById("pushBannerNo").addEventListener("click", dismissPushBanner);
 }
 
+let frischAngemeldetAm = 0;
 async function showApp(){
   document.getElementById("app").innerHTML = '<div class="skel-karte"></div><div class="skel-karte"></div><div class="skel-karte"></div>';
+  // 26.09.2026: Direkt nach dem Anmelden ist der Stand frisch -- academy-login liefert
+  // dieselben Angaben wie academy-session-refresh (und mehr). Die zweite Abfrage kostete
+  // nur Wartezeit. Beim App-Start mit gespeicherter Sitzung wird weiter abgeglichen.
+  const geradeAngemeldet = Date.now() - frischAngemeldetAm < 60000;
+  frischAngemeldetAm = 0;
 
   // Bug-Fix (07.09.2026): Bisher wusste ein bereits eingeloggter Schüler NICHTS von
   // nachträglichen Änderungen (Vollzugang freigeschaltet, Zustimmung, Sperre, Ablauf) --
@@ -3257,7 +3267,7 @@ async function showApp(){
   // manuell neu einloggte. Deshalb bei JEDEM App-Start still im Hintergrund abgleichen.
   // Ein Netzwerkfehler hier darf die Nutzung nie blockieren (z.B. offline) -- dann
   // wird einfach mit dem zuletzt bekannten Stand weitergemacht.
-  if(session && !session.demo && session.session_token){
+  if(session && !session.demo && session.session_token && !geradeAngemeldet){
     try{
       const res = await fetch(SUPABASE_URL + "/functions/v1/academy-session-refresh", {
         method: "POST",
@@ -3294,8 +3304,8 @@ async function showApp(){
   }
 
   try{
-    await loadCatalog();
-    await loadVerlauf();
+    // Katalog und "Bereits gesehen" gleichzeitig laden (vorher nacheinander)
+    await Promise.all([loadCatalog(), loadVerlauf()]);
     const deepLinkTag = parseDeepLinkTag();
     const deepLinkStufe = parseDeepLinkStufe();
     if(deepLinkTag){
@@ -5644,7 +5654,9 @@ async function blattHinweis(opts){
 }
 
 function showAdminLogin(){
+  // admin-balken schon hier: gleiche Breite wie der Admin-Bereich danach, kein Sprung
   document.getElementById("app").innerHTML =
+    '<div class="admin-balken"></div>' +
     '<div class="login-screen">' +
       '<img class="logo-img" src="' + LOGO + '" alt="Logo">' +
       "<h1>Fahr-Akademie</h1>" +
@@ -5681,6 +5693,10 @@ async function doAdminLogin(){
   const errEl = document.getElementById("ao-err");
   errEl.textContent = "";
   if(!email || !pass){ errEl.textContent = "Bitte E-Mail und Passwort eingeben"; return; }
+  const knopf = document.getElementById("ao-btn");
+  if(knopf && knopf.disabled) return; // Doppeltipp: läuft schon
+  const knopfFrei = function(){ if(knopf){ knopf.disabled = false; knopf.textContent = "Anmelden"; } };
+  if(knopf){ knopf.disabled = true; knopf.textContent = "Anmelden …"; }
 
   if(DEMO_MODE){
     adminSession = { demo:true, email:email };
@@ -5692,7 +5708,7 @@ async function doAdminLogin(){
   }
   try{
     const { data, error } = await supa.auth.signInWithPassword({ email:email, password:pass });
-    if(error){ errEl.textContent = "Login fehlgeschlagen: " + error.message; return; }
+    if(error){ errEl.textContent = "Login fehlgeschlagen: " + error.message; knopfFrei(); return; }
     adminSession = { email:email };
     try{ localStorage.setItem("academy_admin_session", JSON.stringify(adminSession)); }catch(e){}
 
@@ -5701,6 +5717,7 @@ async function doAdminLogin(){
     if(roleError || !roleRow){
       errEl.textContent = "Kein Admin-Zugang für dieses Konto hinterlegt";
       await supa.auth.signOut();
+      knopfFrei();
       return;
     }
     if(roleRow.rolle === "schule"){
@@ -5708,6 +5725,7 @@ async function doAdminLogin(){
       if(schuleRow && !schuleRow.aktiv){
         errEl.textContent = "Dieser Schul-Zugang ist derzeit pausiert.";
         await supa.auth.signOut();
+        knopfFrei();
         return;
       }
     }
@@ -5716,6 +5734,7 @@ async function doAdminLogin(){
     showAdminApp();
   } catch(e){
     errEl.textContent = "Verbindungsfehler — bitte Internet prüfen";
+    knopfFrei();
   }
 }
 
@@ -5727,7 +5746,14 @@ function doAdminLogout(){
 }
 
 async function showAdminApp(){
-  document.getElementById("app").innerHTML = '<div class="skel-karte"></div><div class="skel-karte"></div><div class="skel-karte"></div>';
+  // Platzhalter mit derselben Breite und Grundform wie der fertige Admin-Bereich
+  // (admin-balken schaltet am Tablet schon die breite Ansicht ein) -- sonst springt die
+  // Seite beim Anmelden erst von schmal auf breit und dann noch einmal (26.09.2026).
+  document.getElementById("app").innerHTML =
+    '<div class="admin-balken"></div>' +
+    '<div class="header"><img class="logo-img" src="' + LOGO + '" alt="Logo"><div class="header-txt"><h1>Fahr-Akademie</h1></div></div>' +
+    '<div class="skel-reihe"><div class="skel-karte"></div><div class="skel-karte"></div><div class="skel-karte"></div><div class="skel-karte"></div></div>' +
+    '<div class="skel-karte"></div><div class="skel-karte"></div><div class="skel-karte"></div>';
   try{
     await loadAdminData();
     renderAdmin();
@@ -5861,8 +5887,12 @@ async function loadAdminData(){
   // - academy_kandidaten: Bereich 8.4
   // - academy_sperre_klicks: Freemium (28.08.2026), welche Bereiche wecken Interesse
   // - Meistgesehene Videos + Kaufinteresse ueber anonyme DB-Funktionen (15.09.2026)
+  // 26.09.2026 (Ruckler beim Anmelden): Verkäufe, Schulen und die Vorschau-Einstellung
+  // kommen jetzt in DERSELBEN Runde. Vorher folgten drei weitere Abfragen nacheinander,
+  // und die Seite stand kurz leer da, bevor die Schülerliste hereinsprang.
+  const istSuper = myRole === "super_admin";
   const [flRes, prRes, scRes, tgRes, vdRes, vtRes, vprRes, pkRes, gbRes, sgRes,
-         fsRes, kdRes, skRes, topVidRes, topSperrRes] = await Promise.all([
+         fsRes, kdRes, skRes, topVidRes, topSperrRes, vkRes, schAlleRes, vsAlleRes, anfRes] = await Promise.all([
     supa.from("academy_fahrlehrer").select("*"),
     supa.from("academy_pruefer").select("*"),
     supa.from("academy_schueler").select(myRole === "super_admin" ? "*" : SCHUELER_SPALTEN_OHNE_PIN).order("erstellt_am",{ascending:false}),
@@ -5877,8 +5907,15 @@ async function loadAdminData(){
     supa.from("academy_kandidaten").select("*"),
     supa.from("academy_sperre_klicks").select("stufe"),
     supa.rpc("academy_dash_top_videos"),
-    supa.rpc("academy_dash_sperr_stufen")
+    supa.rpc("academy_dash_sperr_stufen"),
+    supa.from("academy_verkaeufe").select("*").order("verkauft_am",{ascending:false}),
+    istSuper ? supa.from("academy_schulen").select("*").order("name") : Promise.resolve(null),
+    istSuper ? supa.from("academy_einstellungen").select("wert").eq("schluessel", "vorschau_sekunden").maybeSingle() : Promise.resolve(null),
+    anfragenAbfrage()
   ]);
+  adminAnfragen = (anfRes && !anfRes.error && anfRes.data) || [];
+  anfragenGeprueftAm = Date.now();
+  if(vkRes && !vkRes.error){ allVerkaeufe = vkRes.data || []; verkaeufeGeladenAm = Date.now(); }
   allPakete = pkRes.data || [];
   allGebiete = gbRes.data || [];
   alleSchuleGebiete = sgRes.data || [];
@@ -5896,12 +5933,10 @@ async function loadAdminData(){
   adminSperrKlicks = skRes.data || [];
   adminTopVideos = topVidRes.data || [];
   adminTopSperr = topSperrRes.data || [];
-  if(myRole === "super_admin"){
-    const schRes = await supa.from("academy_schulen").select("*").order("name");
-    allSchulen = schRes.data || [];
+  if(istSuper){
+    allSchulen = (schAlleRes && schAlleRes.data) || [];
     // 26.09.2026 (W9): Laenge der Vorschau gesperrter Videos
-    const vsRes = await supa.from("academy_einstellungen").select("wert").eq("schluessel", "vorschau_sekunden").maybeSingle();
-    if(vsRes && vsRes.data) vorschauSekundenAdmin = parseInt(vsRes.data.wert, 10) || 10;
+    if(vsAlleRes && vsAlleRes.data) vorschauSekundenAdmin = parseInt(vsAlleRes.data.wert, 10) || 10;
   } else if(mySchule){
     // Partner-Modell (07.09.2026): Schul-Admin muss wissen, ob SEINE eigene Schule
     // selbst verschicken darf (Boost: ja) oder nicht (z.B. Bilal: nein, Serband
@@ -6087,20 +6122,26 @@ async function renderAdminSchuelerTab(){
     '<div id="admin-pillen"></div>' +
     '<div id="admin-unter-inner"></div>';
 
-  renderAdminDashboard(); // eigener Container, laeuft unabhaengig (eigene Async-Abfrage)
+  renderAdminDashboard(); // eigener Container, zeichnet sofort aus den geladenen Daten
+  anfragenAuffrischen();
 
   // Kandidaten sind Serbands Vertriebswerkzeug -- ein Partner sieht sie nicht.
   // Stehengebliebener Zustand (z.B. Rollenwechsel im selben Tab) wird hier
   // zurueckgesetzt, dieselbe Absicherung wie vorher die nurSuper-Liste.
   if(myRole !== "super_admin" && schuelerAnsicht === "kandidaten") schuelerAnsicht = "schueler";
 
-  // Fuer den Abrechnung-Knopf in der Karte gebraucht. Immer frisch laden (nicht nur
-  // wenn leer), sonst zeigt die Karte nach einer Aenderung im Abrechnung-Tab einen
-  // veralteten Bezahlt-Status.
-  await ladeVerkaeufe();
-
+  // Fuer den Abrechnung-Knopf in der Karte gebraucht. Frisch halten, sonst zeigt die
+  // Karte nach einer Aenderung im Abrechnung-Tab einen veralteten Bezahlt-Status.
+  // 26.09.2026: Liste SOFORT zeigen und die Verkäufe still im Hintergrund nachladen --
+  // vorher stand die Seite bei jedem Öffnen kurz leer und sprang dann (Ruckler).
   renderAdminSchuelerPillen();
   renderAdminSchuelerUnter();
+  if(Date.now() - verkaeufeGeladenAm > 5000){
+    const vorher = JSON.stringify(allVerkaeufe.map(function(v){ return [v.id, v.bezahlt_am, v.geschenkt]; }));
+    await ladeVerkaeufe();
+    const nachher = JSON.stringify(allVerkaeufe.map(function(v){ return [v.id, v.bezahlt_am, v.geschenkt]; }));
+    if(vorher !== nachher && adminTab === "schueler" && document.getElementById("admin-unter-inner")) renderAdminSchuelerUnter();
+  }
 }
 
 function renderAdminSchuelerPillen(){
@@ -6612,6 +6653,26 @@ async function setzeGebietsFreigabe(schuleId, gebietId, frei, cb){
 // sondern die Kopfleiste des Schueler-Tabs -- schreibt deshalb NICHT mehr in
 // admin-content direkt, sondern in den eigenen Unter-Container, der neben dem
 // Schueler/Kandidaten-Umschalter gleichzeitig im DOM steht.
+let adminAnfragen = [];
+function anfragenAbfrage(){
+  return supa.from("academy_zugang_anfragen").select("id, schueler_id, erstellt_am, quelle")
+    .is("erledigt_am", null).order("erstellt_am", { ascending: true });
+}
+// Beim erneuten Öffnen des Schüler-Tabs still nachsehen, ob neue Anfragen da sind
+let anfragenGeprueftAm = 0;
+async function anfragenAuffrischen(){
+  if(DEMO_MODE || Date.now() - anfragenGeprueftAm < 5000) return;
+  anfragenGeprueftAm = Date.now();
+  try{
+    const res = await anfragenAbfrage();
+    if(res.error) return;
+    const neu = res.data || [];
+    const alt = adminAnfragen.map(function(a){ return a.id; }).join(","), jetzt = neu.map(function(a){ return a.id; }).join(",");
+    adminAnfragen = neu;
+    if(alt !== jetzt && adminTab === "schueler" && document.getElementById("admin-uebersicht-inner")) renderAdminDashboard();
+  }catch(e){}
+}
+
 async function renderAdminDashboard(){
   const zielEl = document.getElementById("admin-uebersicht-inner");
   if(!zielEl) return; // Tab wurde in der Zwischenzeit verlassen
@@ -6745,13 +6806,12 @@ async function renderAdminDashboard(){
   // Offene Zugangsanfragen (12.09.2026). Bewusst GANZ OBEN und in Gold: hier wartet
   // jemand mit Geld in der Hand. Jede Stunde, die eine Anfrage liegen bleibt, ist eine
   // Stunde, in der der Schüler es sich anders überlegen kann.
+  // 26.09.2026: kommt jetzt mit loadAdminData (gleiche Runde) -- vorher eine eigene
+  // Abfrage, auf die die Kacheln warteten; sie sprangen dann über die schon sichtbare
+  // Schülerliste und schoben sie nach unten (Ruckler beim Anmelden).
   let anfrageHtml = "";
   try {
-    const { data: anfragen } = await supa
-      .from("academy_zugang_anfragen")
-      .select("id, schueler_id, erstellt_am, quelle")
-      .is("erledigt_am", null)
-      .order("erstellt_am", { ascending: true });
+    const anfragen = adminAnfragen;
     if(anfragen && anfragen.length){
       anfrageHtml = '<div class="admin-card glass" style="border-left:4px solid var(--gold);margin-bottom:10px;">' +
         '<div class="admin-form-title" style="margin-bottom:6px;">' + anfragen.length +
@@ -7628,6 +7688,9 @@ async function toggleVollzugang(id){
       await supa.from("academy_zugang_anfragen")
         .update({ erledigt_am: new Date().toISOString(), notiz: "Durch Freischaltung erledigt" })
         .eq("schueler_id", id).is("erledigt_am", null);
+      // auch in der Übersicht sofort als erledigt zeigen
+      adminAnfragen = adminAnfragen.filter(function(a){ return a.schueler_id !== id; });
+      if(document.getElementById("admin-uebersicht-inner")) renderAdminDashboard();
     } catch(e){ /* Nebensache -- der Vollzugang ist längst gesetzt */ }
   }
   protokolliere(wirdFreigeschaltet ? "vollzugang_freigeschaltet" : "vollzugang_entzogen", "schueler", id, aktuell.name,
@@ -9085,11 +9148,13 @@ async function belegBezahltUmschalten(v){
   return true;
 }
 
+let verkaeufeGeladenAm = 0;
 async function ladeVerkaeufe(){
   if(DEMO_MODE){ allVerkaeufe = []; return true; }
   const res = await supa.from("academy_verkaeufe").select("*").order("verkauft_am",{ascending:false});
   if(res.error){ allVerkaeufe = []; return false; }
   allVerkaeufe = res.data || [];
+  verkaeufeGeladenAm = Date.now();
   return true;
 }
 
