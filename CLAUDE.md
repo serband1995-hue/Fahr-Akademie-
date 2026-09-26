@@ -53,6 +53,14 @@ minderjährig — entsprechend vorsichtig mit Daten umgehen.
   `zugang_abgelaufen` oder `schule_pausiert` ab (Feld `code` in der Antwort
   der Edge Functions). Neue Ablehnungsgründe brauchen einen eigenen Code,
   sonst bleibt der Schüler angemeldet — das ist Absicht.
+- **Archivieren statt Löschen** (26.09.2026): Schüler bekommen `archiviert_am`
+  (Zugang ruht, `aktiv=false`, vorheriger Stand in `archiv_vorher_aktiv`),
+  Videos `ausgeblendet=true` (auch `academy-video-token` lehnt sie ab).
+  Endgültig löschen: nur Super-Admin, nur mit Eingabe von Name/Titel; die
+  Löschrichtlinie für Partner auf `academy_schueler` ist entfernt. Das
+  Protokoll-Feld `akteur` setzt ein Trigger aus `auth.uid()`.
+- **Kein Lernverlauf in der Verwaltung** (26.09.2026): `academy_fortschritt`
+  wird im Admin nicht mehr geladen; "Inaktiv" = keine Anmeldung seit 14 Tagen.
 - **supabase-js liegt im Repo** (`vendor/`, feste Version). Bei einem Update
   neue Datei mit neuer Versionsnummer anlegen, Script-Tag und `sw.js`
   (STATIC_ASSETS + CACHE_NAME) anpassen.

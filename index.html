@@ -1192,6 +1192,38 @@
   .offline-karte h2{font-family:var(--ff-titel);font-size:var(--fs-titel);margin:0 0 8px;}
   .offline-karte p,.video-fehler p{margin:0 0 16px;color:var(--text);font-size:15px;line-height:1.5;}
   .offline-karte .btn-primary,.video-fehler .btn-primary{width:100%;}
+
+  /* ================= STUFE 2 (26.09.2026) =================
+     Verwaltung: Kopfleiste, Mehr-Menue, Rueckgaengig-Leiste, Bearbeiten-Blatt,
+     Reihenfolge per Ziehen, Schueler-Vorschau. */
+  .sch-kopf,.vid-werkzeug{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px;}
+  .sch-kopf .sch-neu-btn{flex:1 1 200px;padding:12px 16px;font-size:15px;}
+  .ak-mehr{margin-top:8px;}
+  .ak-mehr summary{cursor:pointer;min-height:44px;display:flex;align-items:center;color:var(--muted);font-weight:600;font-size:14px;list-style:none;}
+  .ak-mehr summary::-webkit-details-marker{display:none;}
+  .ak-mehr summary::after{content:"▸";margin-left:6px;}
+  .ak-mehr[open] summary::after{content:"▾";}
+  .zugang-status{cursor:default;}
+  .rueckgaengig-leiste{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom));
+    z-index:300;display:flex;align-items:center;gap:12px;max-width:calc(100vw - 32px);
+    padding:10px 12px 10px 16px;border-radius:var(--r-l);background:var(--text);color:var(--bg);box-shadow:var(--schatten-3);font-size:14.5px;}
+  .rueckgaengig-leiste .btn-still{background:var(--bg);color:var(--text);}
+  .blatt-gross{max-height:92vh;display:flex;flex-direction:column;}
+  .blatt-inhalt{overflow-y:auto;margin-top:8px;padding-right:2px;-webkit-overflow-scrolling:touch;}
+  .blatt-inhalt label{display:block;margin-top:12px;font-size:13px;font-weight:600;color:var(--muted);}
+  .blatt-inhalt .blatt-haken{display:flex;}
+  .blatt-inhalt .themen-box{max-height:40vh;}
+  .vb-pruefer-liste{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:4px 10px;}
+  .vb-pr{display:flex !important;align-items:center;gap:8px;min-height:40px;margin:0 !important;font-weight:400 !important;color:var(--text) !important;font-size:14.5px !important;}
+  .video-ausgeblendet{opacity:.72;border-style:dashed;}
+  .rf-liste{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;}
+  .rf-zeile{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r-m);background:var(--surface);border:1px solid var(--hairline);}
+  .rf-griff{cursor:grab;touch-action:none;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;font-size:20px;color:var(--muted);}
+  .rf-titel{flex:1;font-size:14.5px;}
+  .sortable-ghost{opacity:.4;}
+  .vorschau-leiste{position:fixed;top:0;left:0;right:0;z-index:250;display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:8px 16px calc(8px);padding-top:calc(8px + env(safe-area-inset-top));background:var(--gold);color:var(--auf-gold);font-weight:700;font-size:14px;}
+  .vorschau-leiste .btn-still{min-height:40px;}
 </style>
 </head>
 <body>
@@ -1622,6 +1654,9 @@ let kandidatenNurOffen = true;     // 8.4 Standard: nur die ohne Zugang
 let schuelerSuche = "";            // 8.4 Schnellsuche in der Schülerliste
 let bulkAuswahl = new Set();       // 8.2 Mehrfachauswahl für Sammelaktionen
 let offeneSchuelerKarten = new Set(); // 13.09.2026: welche Schülerkarten ihre Details zeigen
+let neuSchuelerOffen = false;      // 26.09.2026: Formular "Neuer Schüler" nur auf Knopfdruck
+let schuelerArchivAnsicht = false; // 26.09.2026: Archiv statt aktiver Liste anzeigen
+let vollzugangEntzugLaeuft = {};   // 26.09.2026: id -> Timer der 10-Sekunden-Rückgängig-Frist
 let protokollEintraege = [];       // 8.7 Änderungsprotokoll (Admin-Handlungen, nicht Lernfortschritt)
 let videoFilterStufe = "";         // 8.3 Video-Liste nach Stufe filtern
 let videoFilterFahrzeug = "";      // 09.09.2026: Video-Liste nach Fahrzeug filtern (Audi A1, Audi Q5, Cupra, ...)
@@ -2725,6 +2760,7 @@ async function doLogin(){
 }
 
 function doLogout(){
+  if(vorschauAktiv){ vorschauBeenden(); return; }
   stopWatermark();
   try{ localStorage.removeItem("academy_session"); }catch(e){}
   session = null;
@@ -3010,7 +3046,7 @@ async function loadCatalog(){
   });
   // Schüler sehen nur Videos, die tatsächlich mit Bunny verknüpft sind — sonst
   // klickt jemand auf ein "leeres" Video, das noch gar nicht abspielbar ist.
-  allVideos = (videosRes.data || []).filter(function(v){ return !!v.bunny_video_id; });
+  allVideos = (videosRes.data || []).filter(function(v){ return !!v.bunny_video_id && !v.ausgeblendet; });
 
   /* --- Gebietsfilter (15.09.2026) ---
      Die Liste der freigegebenen Gebiete kommt beim Login mit (session.gebiete).
@@ -4140,6 +4176,7 @@ function renderCatalog(){
 // Zustand, statt zu verschwinden -- ein verschwundener Knopf lässt den Schüler rätseln,
 // ob überhaupt etwas passiert ist.
 async function zugangAnfragen(btn, bereich){
+  if(session && session.vorschau){ showToast("In der Vorschau wird keine Anfrage gesendet"); return; }
   if(!session || !session.session_token){ showToast("Bitte neu anmelden"); return; }
   // Ohne echten Knopf (z.B. aus dem Blatt einer versiegelten Zeile): Platzhalter,
   // damit die Anzeige-Logik unten unveraendert bleiben kann.
@@ -4444,6 +4481,7 @@ function stopWatermark(){
 
 async function openVideo(videoId){
   stopWatermark(); // vorheriges Wasserzeichen (falls von Video zu Video gesprungen wird) sauber entfernen
+  if(session && session.vorschau){ showToast("In der Vorschau werden keine Videos abgespielt"); return; }
   if(DEMO_MODE){
     markSeen(videoId);
     const v = allVideos.find(function(x){ return x.id === videoId; });
@@ -4713,6 +4751,45 @@ function blattZeigen(opts){
   });
 }
 
+// 26.09.2026: Blatt mit eigenem Formular-Inhalt (z. B. Video bearbeiten). lesen(overlay)
+// sammelt beim Speichern die Werte ein; Ergebnis ist dieses Objekt oder null bei Abbruch.
+function blattFormular(opts){
+  return new Promise(function(aufloesen){
+    if(blattSchliessen) blattSchliessen(null);
+    const overlay = document.createElement("div");
+    overlay.className = "blatt-overlay";
+    overlay.innerHTML =
+      '<div class="blatt blatt-gross" role="dialog" aria-modal="true">' +
+        '<div class="blatt-griff"></div>' +
+        '<div class="blatt-kopf"><div class="blatt-titel">' + esc(opts.titel || "") + "</div>" +
+          '<button class="blatt-zu druck-2" aria-label="Schließen">' + icon("x") + "</button></div>" +
+        '<div class="blatt-inhalt">' + opts.html + "</div>" +
+        '<div class="blatt-knoepfe">' +
+          '<button class="btn-still druck-2" id="blatt-abbruch">Abbrechen</button>' +
+          '<button class="btn-gold druck-1" data-haptik id="blatt-ok">' + esc(opts.okText || "Speichern") + "</button>" +
+        "</div>" +
+      "</div>";
+    document.body.appendChild(overlay);
+    requestAnimationFrame(function(){ overlay.classList.add("offen"); });
+    let fertig = false;
+    function beenden(wert){
+      if(fertig) return; fertig = true; blattSchliessen = null;
+      overlay.classList.remove("offen");
+      setTimeout(function(){ overlay.remove(); }, 320);
+      document.removeEventListener("keydown", beiTaste);
+      aufloesen(wert);
+    }
+    function beiTaste(ev){ if(ev.key === "Escape") beenden(null); }
+    blattSchliessen = beenden;
+    if(opts.binden) opts.binden(overlay);
+    overlay.querySelector("#blatt-ok").addEventListener("click", function(){ beenden(opts.lesen ? opts.lesen(overlay) : true); });
+    overlay.querySelector("#blatt-abbruch").addEventListener("click", function(){ beenden(null); });
+    overlay.querySelector(".blatt-zu").addEventListener("click", function(){ beenden(null); });
+    overlay.addEventListener("click", function(ev){ if(ev.target === overlay) beenden(null); });
+    document.addEventListener("keydown", beiTaste);
+  });
+}
+
 // Ersetzt confirm(): liefert true oder false.
 async function blattBestaetigen(opts){
   const a = await blattZeigen({
@@ -4952,9 +5029,10 @@ async function loadAdminData(){
   // hintereinander -- unterwegs mehrere Sekunden Wartezeit bei jedem Neuladen).
   // Kommentare zu den einzelnen Abfragen:
   // - Gebiete + Freigaben (15.09.2026)
-  // - academy_fortschritt: Rohdaten fuer Betrugserkennung/Inaktiv-Kachel. Kommen wegen
-  //   fehlender RLS-Policy IMMER leer zurueck (bekannt, Übergabe 5.2/5.4) -- braucht erst
-  //   die rechtliche Freigabe fuer Einzelauswertung. NICHT anfassen.
+  // - academy_fortschritt wird seit 26.09.2026 NICHT mehr geladen (V3): die Verwaltung
+  //   bekam ihn wegen RLS ohnehin nie, und je Schueler soll er dort auch nicht auftauchen.
+  // - academy_schueler: Partner ohne eigenen PIN-Versand bekommen die Spalte pin gar nicht
+  //   erst geladen (V4) -- sie wird ihnen ohnehin nie angezeigt.
   // - academy_kandidaten: Bereich 8.4
   // - academy_sperre_klicks: Freemium (28.08.2026), welche Bereiche wecken Interesse
   // - Meistgesehene Videos + Kaufinteresse ueber anonyme DB-Funktionen (15.09.2026)
@@ -4962,7 +5040,7 @@ async function loadAdminData(){
          fsRes, kdRes, skRes, topVidRes, topSperrRes] = await Promise.all([
     supa.from("academy_fahrlehrer").select("*"),
     supa.from("academy_pruefer").select("*"),
-    supa.from("academy_schueler").select("*").order("erstellt_am",{ascending:false}),
+    supa.from("academy_schueler").select(myRole === "super_admin" ? "*" : SCHUELER_SPALTEN_OHNE_PIN).order("erstellt_am",{ascending:false}),
     supa.from("academy_tags").select("*").order("reihenfolge"),
     supa.from("academy_videos").select("*").order("reihenfolge"),
     supa.from("academy_video_tags").select("*"),
@@ -4970,7 +5048,7 @@ async function loadAdminData(){
     supa.from("academy_pakete").select("*").order("reihenfolge"),
     supa.from("academy_gebiete").select("*").order("name"),
     supa.from("academy_schule_gebiete").select("*"),
-    supa.from("academy_fortschritt").select("*").order("gesehen_am", {ascending:false}),
+    Promise.resolve({ data: [] }),
     supa.from("academy_kandidaten").select("*"),
     supa.from("academy_sperre_klicks").select("stufe"),
     supa.rpc("academy_dash_top_videos"),
@@ -5002,8 +5080,23 @@ async function loadAdminData(){
     // behält die Kontrolle) -- RLS erlaubt einer Schule, sich selbst zu sehen.
     const eigeneSchule = await supa.from("academy_schulen").select("*").eq("id", mySchule).maybeSingle();
     allSchulen = eigeneSchule.data ? [eigeneSchule.data] : [];
+    // Partner, die selbst verschicken duerfen, sehen die PIN weiterhin (wie bisher).
+    if(darfSelbstVersenden()){
+      const pins = await supa.from("academy_schueler").select("id, pin");
+      if(!pins.error){
+        const nachId = {};
+        (pins.data || []).forEach(function(r){ nachId[r.id] = r.pin; });
+        allSchueler.forEach(function(s){ if(nachId[s.id] !== undefined) s.pin = nachId[s.id]; });
+      }
+    }
   }
 }
+
+// 26.09.2026 (V4): alle Spalten ausser pin -- fuer Partner ohne eigenen PIN-Versand.
+const SCHUELER_SPALTEN_OHNE_PIN = "id, name, telefon, email, klasse, fahrlehrer_id, vergeben_von, empfohlen_von, " +
+  "erstellt_am, ablauf_am, aktiv, schule_id, agb_akzeptiert_am, sperrgrund, pruefungstermin, erinnerung_gesendet_am, " +
+  "vollzugang, pin_versendet_am, login_anzahl, letzter_login_am, letzte_geraete_id, letzter_geraetewechsel_am, " +
+  "geraetewechsel_anzahl, geburtsdatum, schuelernummer, verkaufspreis, archiviert_am, archiv_vorher_aktiv";
 
 // Partner-Modell: darf die EIGENE Schule des aktuell eingeloggten Admins selbst
 // verschicken? Super-Admin darf das immer; für Schul-Admins hängt es vom Flag ab
@@ -5631,8 +5724,9 @@ async function renderAdminDashboard(){
   const zielEl = document.getElementById("admin-uebersicht-inner");
   if(!zielEl) return; // Tab wurde in der Zwischenzeit verlassen
   const jetzt = new Date();
-  const sichtbareSchueler = myRole === "super_admin"
-    ? allSchueler : allSchueler.filter(function(s){ return s.schule_id === mySchule; });
+  const sichtbareSchueler = (myRole === "super_admin"
+    ? allSchueler : allSchueler.filter(function(s){ return s.schule_id === mySchule; }))
+    .filter(function(s){ return !s.archiviert_am; }); // 26.09.2026: Archiv zaehlt nicht mit
 
   const aktiv = sichtbareSchueler.filter(function(s){ return s.aktiv && new Date(s.ablauf_am) > jetzt; });
   const ohneZustimmung = sichtbareSchueler.filter(function(s){ return !s.agb_akzeptiert_am; });
@@ -5643,17 +5737,13 @@ async function renderAdminDashboard(){
   const videosOhneId = allVideos.filter(function(v){ return !v.bunny_video_id; });
   const ungesendeteVideos = allVideos.filter(function(v){ return v.push_gesendet === false; });
 
-  // Letzte Aktivität je Schüler ermitteln
-  const letzteAktivitaet = {};
-  adminFortschritt.forEach(function(f){
-    if(!letzteAktivitaet[f.schueler_id] || f.gesehen_am > letzteAktivitaet[f.schueler_id]){
-      letzteAktivitaet[f.schueler_id] = f.gesehen_am;
-    }
-  });
+  // 26.09.2026 (V3): "Inaktiv" misst jetzt die letzte ANMELDUNG statt geschauter Videos.
+  // Der Videoverlauf je Schueler war fuer die Verwaltung nie lesbar (Zahl stimmte daher
+  // nie) und soll es wegen FernUSG auch nicht sein. Eine Anmeldung sagt nichts ueber
+  // den Lernerfolg aus.
   const inaktiv = aktiv.filter(function(s){
-    const letzte = letzteAktivitaet[s.id];
-    if(!letzte) return true;
-    return (jetzt - new Date(letzte)) / 86400000 > 14;
+    if(!s.letzter_login_am) return true;
+    return (jetzt - new Date(s.letzter_login_am)) / 86400000 > 14;
   });
 
   const kpis =
@@ -5661,14 +5751,14 @@ async function renderAdminDashboard(){
       '<div class="kpi"><div class="kpi-zahl">' + aktiv.length + '</div><div class="kpi-label">Aktive Schüler</div></div>' +
       '<div class="kpi"><div class="kpi-zahl">' + allVideos.length + '</div><div class="kpi-label">Videos</div></div>' +
       '<div class="kpi' + (laeuftAb.length ? " warn" : "") + '"><div class="kpi-zahl">' + laeuftAb.length + '</div><div class="kpi-label">Läuft in 14 Tagen ab</div></div>' +
-      '<div class="kpi' + (inaktiv.length ? " warn" : "") + '"><div class="kpi-zahl">' + inaktiv.length + '</div><div class="kpi-label">Inaktiv &gt; 14 Tage</div></div>' +
+      '<div class="kpi' + (inaktiv.length ? " warn" : "") + '"><div class="kpi-zahl">' + inaktiv.length + '</div><div class="kpi-label">Nicht angemeldet &gt; 14 Tage</div></div>' +
     "</div>";
 
   const todos = [];
   // Partner-Modell (07.09.2026): wichtigster Hinweis, ganz oben -- jeder wartende
   // Zugang bedeutet echtes Geld auf dem Konto eines Partners, das erst zählt, wenn
   // der Zugang wirklich beim Schüler ankommt.
-  const wartendeZugaenge = allSchueler.filter(function(s){ return s.schule_id && !s.pin_versendet_am; });
+  const wartendeZugaenge = allSchueler.filter(function(s){ return s.schule_id && !s.pin_versendet_am && !s.archiviert_am; });
   if(wartendeZugaenge.length){
     const istSuperAdminDash = myRole === "super_admin";
     todos.push(["gelb",
@@ -5718,8 +5808,7 @@ async function renderAdminDashboard(){
     todos.push(["gelb", esc(s.name) + ": Zugang läuft in " + tage + " Tag(en) ab"]);
   });
   inaktiv.slice(0,5).forEach(function(s){
-    const letzte = letzteAktivitaet[s.id];
-    todos.push(["gelb", esc(s.name) + ": " + (letzte ? "zuletzt aktiv " + fmtDate(letzte) : "noch nie ein Video geschaut")]);
+    todos.push(["gelb", esc(s.name) + ": " + (s.letzter_login_am ? "zuletzt angemeldet " + fmtDate(s.letzter_login_am) : "noch nie angemeldet")]);
   });
   if(todos.length === 0) todos.push(["gruen", "Alles im grünen Bereich — nichts zu tun."]);
 
@@ -5823,52 +5912,19 @@ async function renderAdminDashboard(){
 function renderAdminSchueler(){
   const el = document.getElementById("admin-unter-inner");
   if(!el) return; // Tab wurde in der Zwischenzeit verlassen
-  // --- Betrugsschutz Punkt 4 (09.09.2026): Fortschritts-Plausibilität ---
-  // Idee: Eine Person kann nicht zwei verschiedene Videos gleichzeitig schauen.
-  // Zwei Aufrufe VERSCHIEDENER Videos innerhalb von 30 Sekunden sind daher ein
-  // Hinweis auf mehrere Nutzer hinter einem Zugang.
-  //
-  // WICHTIG (an echten Daten geprüft, nicht geschätzt): academy_videos hat KEIN
-  // Dauer-Feld, echte Überlappung ist also nicht exakt berechenbar. Und normales
-  // Herumklicken erzeugt genau dasselbe Muster -- bei den aktuellen Schülern kommen
-  // 1-7 solche Schnellwechsel ganz harmlos vor. Eine niedrige Schwelle würde also
-  // fast jeden ehrlichen Schüler anschwärzen. Deshalb bewusst streng: es zählt nur,
-  // wenn Schnellwechsel sowohl HÄUFIG sind als auch einen großen ANTEIL aller
-  // Übergänge ausmachen. Mit den aktuellen Echtdaten schlägt das bei niemandem an.
-  const MIN_SCHNELLWECHSEL = 8;
-  const MIN_ANTEIL = 0.30;
+  // Betrugsschutz Punkt 4 (Schnellwechsel zwischen Videos) wurde am 26.09.2026 entfernt:
+  // Er beruhte auf academy_fortschritt, den die Verwaltung weder lesen kann noch soll
+  // (FernUSG: kein Lernverlauf je Schueler beim Fahrlehrer). Weitergabe erkennt weiterhin
+  // der Geraetewechsel-Zaehler.
   const ueberlappung = {};
-  (function(){
-    const proSchueler = {};
-    // adminFortschritt kommt absteigend sortiert -- für Zeitabstände brauchen wir
-    // aufsteigend, sonst wären alle Differenzen negativ.
-    const sortiert = adminFortschritt.slice().sort(function(a, b){
-      return new Date(a.gesehen_am) - new Date(b.gesehen_am);
-    });
-    sortiert.forEach(function(f){
-      if(!proSchueler[f.schueler_id]) proSchueler[f.schueler_id] = [];
-      proSchueler[f.schueler_id].push(f);
-    });
-    Object.keys(proSchueler).forEach(function(sid){
-      const liste = proSchueler[sid];
-      let schnell = 0, uebergaenge = 0;
-      for(let i = 1; i < liste.length; i++){
-        uebergaenge++;
-        const abstand = (new Date(liste[i].gesehen_am) - new Date(liste[i-1].gesehen_am)) / 1000;
-        if(abstand < 30 && liste[i].video_id !== liste[i-1].video_id) schnell++;
-      }
-      const anteil = uebergaenge > 0 ? schnell / uebergaenge : 0;
-      ueberlappung[sid] = {
-        schnell: schnell,
-        auffaellig: schnell >= MIN_SCHNELLWECHSEL && anteil >= MIN_ANTEIL
-      };
-    });
-  })();
 
   // --- Bereich 8.4 (27.08.2026): Schnellsuche über Name, Telefon, E-Mail ---
   const suche = schuelerSuche.trim().toLowerCase();
   const sucheNorm = suche.replace(/[\s\-\/]/g, "");
-  const gefiltert = allSchueler.filter(function(s){
+  // 26.09.2026: Archivierte Schueler stehen in einer eigenen Ansicht.
+  const imArchiv = allSchueler.filter(function(s){ return !!s.archiviert_am; });
+  const basisListe = schuelerArchivAnsicht ? imArchiv : allSchueler.filter(function(s){ return !s.archiviert_am; });
+  const gefiltert = basisListe.filter(function(s){
     if(!suche) return true;
     const telNorm = (s.telefon || "").replace(/[\s\-\/]/g, "");
     return (s.name || "").toLowerCase().includes(suche)
@@ -5955,11 +6011,12 @@ function renderAdminSchueler(){
       "</div>";
     }
     // Ein Knopf, der sagt was er tut -- statt eines Kronen-Symbols neben dem Schloss.
-    const zugangKnopf =
-      '<button class="zugang-btn' + (s.vollzugang ? " ist-bezahlt" : "") + '" data-vollzugang="' + esc(s.id) + '">' +
-        icon(s.vollzugang ? "krone" : "schlossOffen") +
-        "<span>" + (s.vollzugang ? "Vollzugang aktiv · antippen zum Entziehen" : "Nur Startzugang · Vollzugang freischalten") + "</span>" +
-      "</button>";
+    // 26.09.2026: Entziehen ist kein Ein-Tipp-Knopf mehr (liegt jetzt unter "Mehr" in den
+    // Details, mit Rueckfrage und 10 s Rueckgaengig). Hier steht bei Vollzugang nur der Status.
+    const zugangKnopf = s.archiviert_am ? "" : (s.vollzugang
+      ? '<div class="zugang-btn ist-bezahlt zugang-status">' + icon("krone") + "<span>Vollzugang aktiv</span></div>"
+      : '<button class="zugang-btn" data-vollzugang="' + esc(s.id) + '">' + icon("schlossOffen") +
+          "<span>Nur Startzugang · Vollzugang freischalten</span></button>");
 
     // ---- Dreistufige Karte (13.09.2026) ----
     // Vorher standen hier zehn Textzeilen untereinander. Bei 70+ Schuelern ist das
@@ -5968,8 +6025,7 @@ function renderAdminSchueler(){
 
     // Ampelpunkt: rot schlaegt gelb, gelb schlaegt gruen.
     const verdacht = (ul && ul.auffaellig) || s.geraetewechsel_anzahl >= 2;
-    const ampel = (status !== "aktiv" || verdacht) ? "rot"
-      : ((tageBisAblauf <= 30 || (istSuperAdmin && !s.pin_versendet_am)) ? "gelb" : "gruen");
+    const ampel = schuelerAmpel(s); // 26.09.2026: eine Regel fuer Karte und Uebersicht
 
     // Genau EINE Aufgabe, nach Dringlichkeit. Gibt es nichts zu tun, fehlt der Kasten.
     let aufgabe = null;
@@ -6003,17 +6059,28 @@ function renderAdminSchueler(){
     // existieren KANN -- ein Start-Schueler ohne Vollzugang hat nie einen Verkauf,
     // der Knopf waere fuer ihn nur eine leere Weiterleitung ins Nichts.
     const abrOffen = offeneAbrechnungKarten.has(s.id);
+    const kontaktZeile = '<div class="admin-sub">Tel. ' + esc(s.telefon) + (s.email ? " · " + esc(s.email) : "") + "</div>";
     const detailHtml = offen
       ? '<div class="ak-details">' +
-          pinStatusZeile + pinWartetHinweis +
+          kontaktZeile + pinStatusZeile + pinWartetHinweis +
           ablaufWarnung + terminZeile + agbZeile + loginZeile + wechselZeile +
           ueberlappZeile + stammZeile + sperrgrundZeile +
-          '<div class="ak-aktionen">' +
-            (zeigeKlartext ? '<button class="btn-still druck-2" data-mail="' + esc(s.id) + '">Zugangsdaten senden</button>' : "") +
-            '<button class="btn-still druck-2" data-toggle="' + esc(s.id) + '">' + (s.aktiv ? "Login sperren" : "Login entsperren") + "</button>" +
-            (s.vollzugang ? '<button class="btn-still druck-2" data-abrbtn="' + esc(s.id) + '">Abrechnung' + (abrOffen ? " ▾" : " ▸") + '</button>' : "") +
-            '<button class="btn-still druck-2 ak-loeschen" data-del="' + esc(s.id) + '">Löschen</button>' +
-          "</div>" +
+          (s.archiviert_am
+            ? '<div class="admin-sub" style="color:var(--gold-text);font-weight:600;">Archiviert am ' + fmtDate(s.archiviert_am) + "</div>" +
+              '<div class="ak-aktionen">' +
+                '<button class="btn-still druck-2" data-restore="' + esc(s.id) + '">Wiederherstellen</button>' +
+                (istSuperAdmin ? '<button class="btn-still druck-2 ak-loeschen" data-del="' + esc(s.id) + '">Endgültig löschen</button>' : "") +
+              "</div>"
+            : '<div class="ak-aktionen">' +
+                (zeigeKlartext ? '<button class="btn-still druck-2" data-mail="' + esc(s.id) + '">Zugangsdaten senden</button>' : "") +
+                '<button class="btn-still druck-2" data-verl="' + esc(s.id) + '">Verlängern</button>' +
+                (s.vollzugang ? '<button class="btn-still druck-2" data-abrbtn="' + esc(s.id) + '">Abrechnung' + (abrOffen ? " ▾" : " ▸") + '</button>' : "") +
+              "</div>" +
+              '<details class="ak-mehr"><summary>Mehr</summary><div class="ak-aktionen">' +
+                '<button class="btn-still druck-2" data-toggle="' + esc(s.id) + '">' + (s.aktiv ? "Login sperren" : "Login entsperren") + "</button>" +
+                (s.vollzugang ? '<button class="btn-still druck-2 ak-loeschen" data-entziehen="' + esc(s.id) + '">Vollzugang entziehen</button>' : "") +
+                '<button class="btn-still druck-2 ak-loeschen" data-archiv="' + esc(s.id) + '">Archivieren</button>' +
+              "</div></details>") +
           (s.vollzugang && abrOffen ? schuelerAbrechnungHtml(s) : "") +
         "</div>"
       : "";
@@ -6025,7 +6092,8 @@ function renderAdminSchueler(){
         '<span class="ak-ampel ' + ampel + '"></span>' +
         '<span class="ak-kopf-text">' +
           '<span class="ak-name">' + esc(s.name) + "</span>" +
-          '<span class="ak-sub">' + esc(s.telefon) + " · Klasse " + esc(s.klasse) + " · " + esc(fl ? fl.name : "—") + "</span>" +
+          // 26.09.2026: Telefonnummer erst in den aufgeklappten Details (Datenschutz am Bildschirm)
+          '<span class="ak-sub">Klasse ' + esc(s.klasse) + " · " + esc(fl ? fl.name : "—") + "</span>" +
         "</span>" +
         '<span class="ak-rechts">' +
           '<span class="ak-zugang ' + (s.vollzugang ? "voll" : "start") + '">' + (s.vollzugang ? "Voll" : "Start") + "</span>" +
@@ -6038,14 +6106,22 @@ function renderAdminSchueler(){
       detailHtml +
       zugangKnopf +
     "</div>";
-  }).join("") || '<div class="empty">Noch keine Schüler angelegt.</div>';
+  }).join("") || '<div class="empty">' + (schuelerArchivAnsicht ? "Das Archiv ist leer." : "Noch keine Schüler angelegt.") + "</div>";
 
   const visibleFahrlehrer = myRole === "super_admin"
     ? allFahrlehrer
     : allFahrlehrer.filter(function(f){ return f.schule_id === mySchule; });
   const flOptions = visibleFahrlehrer.map(function(f){ return '<option value="' + esc(f.id) + '">' + esc(f.name) + "</option>"; }).join("");
 
-  el.innerHTML =
+  // 26.09.2026: Suche und Liste zuerst; das Formular oeffnet sich nur auf Knopfdruck.
+  const kopfLeiste =
+    '<div class="sch-kopf">' +
+      (schuelerArchivAnsicht
+        ? '<button class="btn-still druck-2" id="sch-archiv-zu">← Zurück zur Liste</button>'
+        : '<button class="btn-primary sch-neu-btn" id="sch-neu-toggle">' + (neuSchuelerOffen ? "Formular schließen" : "+ Schüler anlegen") + "</button>" +
+          '<button class="btn-still druck-2" id="sch-archiv-auf">Archiv (' + imArchiv.length + ")</button>") +
+    "</div>";
+  const formularHtml = (!schuelerArchivAnsicht && neuSchuelerOffen) ?
     '<div class="admin-form glass">' +
       '<div class="admin-form-title">Neuen Schüler anlegen</div>' +
       '<label>Name</label><input id="ns-name" placeholder="Vor- und Nachname">' +
@@ -6068,7 +6144,10 @@ function renderAdminSchueler(){
       "</label>" +
       '<div class="admin-sub" style="margin-top:2px;">Ohne Haken startet der Schüler im Startzugang (Fahrzeug &amp; Technik). Den Rest schaltest du später mit dem Knopf unten an seiner Karte frei.</div>' +
       '<button class="btn-primary" id="ns-btn" style="margin-top:6px;">Zugang anlegen &amp; PIN senden</button>' +
-    "</div>" +
+    "</div>" : "";
+
+  el.innerHTML =
+    kopfLeiste + formularHtml +
     '<div class="admin-card glass" style="margin-bottom:10px;">' +
       '<input id="sch-suche" type="text" placeholder="Name, Telefon oder E-Mail suchen …" value="' + esc(schuelerSuche) + '">' +
     "</div>" +
@@ -6084,8 +6163,8 @@ function renderAdminSchueler(){
           "</div>" +
         "</div>"
       : "") +
-    '<div class="section-label">Alle Schüler (' + gefiltert.length +
-      (gefiltert.length !== allSchueler.length ? " von " + allSchueler.length : "") + ")</div>" +
+    '<div class="section-label">' + (schuelerArchivAnsicht ? "Archiv" : "Alle Schüler") + " (" + gefiltert.length +
+      (gefiltert.length !== basisListe.length ? " von " + basisListe.length : "") + ")</div>" +
     rows;
 
   const suchEl = el.querySelector("#sch-suche");
@@ -6111,7 +6190,26 @@ function renderAdminSchueler(){
   const bEnt = el.querySelector("#bulk-entsperr");
   if(bEnt) bEnt.addEventListener("click", function(){ bulkSperrenSetzen(true); });
 
-  el.querySelector("#ns-btn").addEventListener("click", createSchueler);
+  const nsBtn = el.querySelector("#ns-btn");
+  if(nsBtn) nsBtn.addEventListener("click", createSchueler);
+  const neuToggle = el.querySelector("#sch-neu-toggle");
+  if(neuToggle) neuToggle.addEventListener("click", function(){ neuSchuelerOffen = !neuSchuelerOffen; renderAdminSchueler(); });
+  const archAuf = el.querySelector("#sch-archiv-auf");
+  if(archAuf) archAuf.addEventListener("click", function(){ schuelerArchivAnsicht = true; bulkAuswahl.clear(); renderAdminSchueler(); });
+  const archZu = el.querySelector("#sch-archiv-zu");
+  if(archZu) archZu.addEventListener("click", function(){ schuelerArchivAnsicht = false; bulkAuswahl.clear(); renderAdminSchueler(); });
+  el.querySelectorAll("[data-verl]").forEach(function(b){
+    b.addEventListener("click", function(){ schuelerVerlaengern(b.dataset.verl); });
+  });
+  el.querySelectorAll("[data-entziehen]").forEach(function(b){
+    b.addEventListener("click", function(){ vollzugangEntziehen(b.dataset.entziehen); });
+  });
+  el.querySelectorAll("[data-archiv]").forEach(function(b){
+    b.addEventListener("click", function(){ schuelerArchivieren(b.dataset.archiv); });
+  });
+  el.querySelectorAll("[data-restore]").forEach(function(b){
+    b.addEventListener("click", function(){ schuelerWiederherstellen(b.dataset.restore); });
+  });
   // WICHTIG: auf el gescopt, nicht global -- die Uebersicht (Dashboard) steht als
   // GESCHWISTER-Container gleichzeitig im DOM und hat eigene data-mail-Knoepfe fuer
   // wartende Zugaenge. Ein globales querySelectorAll haette deren Knoepfe hier ein
@@ -6206,6 +6304,7 @@ async function createSchueler(){
 
   const { error } = await supa.from("academy_schueler").insert(neu);
   if(error){ showToast("Fehler: " + error.message); return; }
+  neuSchuelerOffen = false; // 26.09.2026: Formular nach erfolgreichem Anlegen wieder schliessen
 
   // Benachrichtigung an Serband (09.09.2026): Legt ein PARTNER einen Zugang an, muss
   // Serband das zuverlaessig mitbekommen -- sonst entstehen Zugaenge und Provisionen,
@@ -6550,13 +6649,132 @@ async function toggleVollzugang(id){
   showToast(wirdFreigeschaltet ? "Vollzugang freigeschaltet — Abrechnung erstellt" : "Vollzugang entzogen");
 }
 
+/* ---- Einheitliche Ampel (26.09.2026) ----
+   Vorher rechneten Schuelerkarte (30 Tage) und Uebersicht (14 Tage) verschieden.
+   rot  = kommt nicht rein (gesperrt/abgelaufen/archiviert) oder Verdacht auf Weitergabe
+   gelb = bald etwas zu tun (laeuft in 14 Tagen ab, Zugang nicht verschickt, Bedingungen offen)
+   gruen = nichts zu tun */
+function schuelerAmpel(s){
+  const status = schuelerStatus(s);
+  if(s.archiviert_am || status !== "aktiv" || (s.geraetewechsel_anzahl || 0) >= 2) return "rot";
+  const tage = Math.ceil((new Date(s.ablauf_am) - new Date()) / 86400000);
+  if(tage <= 14) return "gelb";
+  if(myRole === "super_admin" && !s.pin_versendet_am) return "gelb";
+  if(!s.agb_akzeptiert_am) return "gelb";
+  return "gruen";
+}
+
+// Einzelne Karte verlaengern (26.09.2026) -- vorher nur ueber die Mehrfachauswahl.
+async function schuelerVerlaengern(id){
+  const s = allSchueler.find(function(x){ return x.id === id; });
+  if(!s) return;
+  const wahl = await blattEingabe({
+    titel: "Zugang verlängern",
+    text: s.name + "\nGültig bis " + fmtDate(s.ablauf_am) + ".\nUm wie viele Monate verlängern? (1–24)",
+    wert: "6", eingabeTyp: "text", platzhalter: "6", okText: "Verlängern"
+  });
+  if(wahl === null) return;
+  const monate = parseInt(String(wahl).trim(), 10);
+  if(!(monate >= 1 && monate <= 24)){ showToast("Bitte 1 bis 24 Monate eingeben"); return; }
+  // Ab heute rechnen, wenn schon abgelaufen -- sonst ab bisherigem Ablaufdatum.
+  const basis = new Date(s.ablauf_am) > new Date() ? new Date(s.ablauf_am) : new Date();
+  basis.setMonth(basis.getMonth() + monate);
+  if(DEMO_MODE){ s.ablauf_am = basis.toISOString(); renderAdminSchueler(); return; }
+  const res = await supa.from("academy_schueler").update({ ablauf_am: basis.toISOString() }).eq("id", id).select("id");
+  if(!aenderungOk(res)){ showToast("Konnte nicht verlängert werden — keine Berechtigung oder keine Verbindung"); return; }
+  s.ablauf_am = basis.toISOString();
+  await protokolliere("zugang_verlaengert", "schueler", id, s.name, "+" + monate + " Monate, neu gültig bis " + basis.toISOString().slice(0,10));
+  renderAdminSchueler();
+  showToast("Verlängert bis " + fmtDate(basis.toISOString()));
+}
+
+// Vollzugang entziehen mit 10 Sekunden Rueckgaengig (26.09.2026). Gespeichert wird erst
+// NACH Ablauf der Frist -- wer die App vorher schliesst, hat nichts veraendert.
+async function vollzugangEntziehen(id){
+  const s = allSchueler.find(function(x){ return x.id === id; });
+  if(!s || !s.vollzugang || vollzugangEntzugLaeuft[id]) return;
+  if(!await blattBestaetigen({
+    titel: "Vollzugang von " + s.name + " entziehen?",
+    text: s.name + " sieht danach nur noch den Startzugang.\n\nEine bereits erstellte Abrechnung bleibt bestehen. Du hast danach 10 Sekunden zum Rückgängigmachen.",
+    okText: "Entziehen", gefaehrlich: true
+  })) return;
+  const leiste = document.createElement("div");
+  leiste.className = "rueckgaengig-leiste";
+  leiste.setAttribute("role", "status");
+  leiste.innerHTML = '<span>Vollzugang von ' + esc(s.name) + ' wird in <b id="rg-sek">10</b> s entzogen</span>' +
+    '<button type="button" class="btn-still" id="rg-knopf">Rückgängig</button>';
+  document.body.appendChild(leiste);
+  let sek = 10;
+  const tick = setInterval(function(){ sek--; const e = document.getElementById("rg-sek"); if(e) e.textContent = String(Math.max(sek, 0)); }, 1000);
+  function aufraeumen(){ clearInterval(tick); clearTimeout(vollzugangEntzugLaeuft[id]); delete vollzugangEntzugLaeuft[id]; leiste.remove(); }
+  leiste.querySelector("#rg-knopf").addEventListener("click", function(){ aufraeumen(); showToast("Nichts geändert — Vollzugang bleibt"); });
+  vollzugangEntzugLaeuft[id] = setTimeout(async function(){
+    aufraeumen();
+    const aktuell = allSchueler.find(function(x){ return x.id === id; });
+    if(!aktuell || !aktuell.vollzugang) return;
+    if(DEMO_MODE){ aktuell.vollzugang = false; renderAdminSchueler(); return; }
+    const res = await supa.from("academy_schueler").update({ vollzugang: false }).eq("id", id).select("id");
+    if(!aenderungOk(res)){ showToast("Konnte nicht entzogen werden — keine Berechtigung oder keine Verbindung"); return; }
+    aktuell.vollzugang = false;
+    protokolliere("vollzugang_entzogen", "schueler", id, aktuell.name, null);
+    renderAdminSchueler();
+    showToast("Vollzugang entzogen");
+  }, 10000);
+}
+
+// Archivieren statt Loeschen (26.09.2026): Zugang ruht, alle Daten bleiben erhalten.
+async function schuelerArchivieren(id){
+  const s = allSchueler.find(function(x){ return x.id === id; });
+  if(!s) return;
+  if(!await blattBestaetigen({
+    titel: s.name + " archivieren?",
+    text: "Der Zugang ruht, bis du ihn aus dem Archiv holst. PIN, Belege und alle Angaben bleiben erhalten.",
+    okText: "Archivieren", gefaehrlich: true
+  })) return;
+  const felder = { archiviert_am: new Date().toISOString(), archiv_vorher_aktiv: !!s.aktiv, aktiv: false };
+  if(DEMO_MODE){ Object.assign(s, felder); renderAdminSchueler(); return; }
+  const res = await supa.from("academy_schueler").update(felder).eq("id", id).select("id");
+  if(!aenderungOk(res)){ showToast("Konnte nicht archiviert werden — keine Berechtigung oder keine Verbindung"); return; }
+  Object.assign(s, felder);
+  offeneSchuelerKarten.delete(id);
+  await protokolliere("schueler_archiviert", "schueler", id, s.name, null);
+  renderAdminSchueler();
+  showToast(s.name + " archiviert");
+}
+async function schuelerWiederherstellen(id){
+  const s = allSchueler.find(function(x){ return x.id === id; });
+  if(!s) return;
+  // War der Zugang vor dem Archivieren gesperrt, bleibt er gesperrt.
+  const felder = { archiviert_am: null, aktiv: s.archiv_vorher_aktiv !== false, archiv_vorher_aktiv: null };
+  if(DEMO_MODE){ Object.assign(s, felder); renderAdminSchueler(); return; }
+  const res = await supa.from("academy_schueler").update(felder).eq("id", id).select("id");
+  if(!aenderungOk(res)){ showToast("Konnte nicht wiederhergestellt werden — keine Berechtigung oder keine Verbindung"); return; }
+  Object.assign(s, felder);
+  await protokolliere("schueler_wiederhergestellt", "schueler", id, s.name, null);
+  renderAdminSchueler();
+  showToast(s.name + " ist wieder aktiv" + (felder.aktiv ? "" : " (Login bleibt gesperrt wie vorher)"));
+}
+function namensKuerzel(name){
+  return String(name || "").trim().split(/\s+/).filter(Boolean).map(function(w){ return w.charAt(0) + "."; }).join(" ") || "gelöscht";
+}
+
+// Endgueltig loeschen: nur Super-Admin, nur aus dem Archiv, mit Eingabe des Namens
+// (z. B. fuer eine Loeschanfrage nach DSGVO Art. 17).
 async function deleteSchueler(id){
-  if(!await blattBestaetigen({ titel:"Diesen Schüler wirklich löschen?",
-    text:"Der Zugang wird vollständig entfernt. Das lässt sich nicht rückgängig machen.",
-    okText:"Endgültig löschen", gefaehrlich:true })) return;
-  // Namen VOR dem Löschen sichern -- danach ist er nicht mehr abrufbar
+  if(myRole !== "super_admin"){ showToast("Endgültig löschen darf nur die Fahr-Akademie"); return; }
   const weg = allSchueler.find(function(x){ return x.id === id; });
-  const wegName = weg ? weg.name : "(unbekannt)";
+  if(!weg) return;
+  const eingabe = await blattEingabe({
+    titel: "Endgültig löschen?",
+    text: "Das entfernt den Zugang mit PIN, Geräten, Verlauf und Freischaltungen. Belege bleiben für die Buchhaltung erhalten.\n\nZur Bestätigung den Namen eintippen:\n" + weg.name,
+    wert: "", platzhalter: weg.name, okText: "Endgültig löschen"
+  });
+  if(eingabe === null) return;
+  if(String(eingabe).trim().toLowerCase() !== String(weg.name || "").trim().toLowerCase()){
+    showToast("Name stimmt nicht überein — nichts gelöscht");
+    return;
+  }
+  const wegName = namensKuerzel(weg.name);
 
   if(DEMO_MODE){
     DEMO_SCHUELER = DEMO_SCHUELER.filter(function(x){ return x.id !== id; });
@@ -6564,8 +6782,9 @@ async function deleteSchueler(id){
     renderAdminSchueler();
     return;
   }
-  const { error } = await supa.from("academy_schueler").delete().eq("id", id);
-  if(error){ showToast("Fehler: " + error.message); return; }
+  const _del = await supa.from("academy_schueler").delete().eq("id", id).select("id");
+  if(!aenderungOk(_del)){ showToast("Konnte nicht gelöscht werden — keine Berechtigung oder keine Verbindung"); return; }
+  // Nur Initialen ins Protokoll; ein Datenbank-Trigger kuerzt auch aeltere Eintraege.
   await protokolliere("schueler_geloescht", "schueler", id, wegName, "Zugang vollständig entfernt (DSGVO Art. 17)");
   await loadAdminData();
   renderAdminSchueler();
@@ -6631,10 +6850,10 @@ function renderAdminVideos(){
         "</select> " +
         '<button data-addpr-btn="' + esc(v.id) + '" class="icon-btn" style="font-size:12px;">+ Prüfer</button>';
 
-    return '<div class="admin-card glass">' +
+    return '<div class="admin-card glass' + (v.ausgeblendet ? " video-ausgeblendet" : "") + '">' +
       '<div class="admin-row">' +
         '<div>' +
-          '<div class="admin-name">' + esc(v.titel) + "</div>" +
+          '<div class="admin-name">' + esc(v.titel) + (v.ausgeblendet ? ' <span class="admin-badge badge-gesperrt">ausgeblendet</span>' : "") + "</div>" +
           (v.beschreibung ? '<div class="admin-sub">' + esc(v.beschreibung) + "</div>" : "") +
           (tagsForVideo ? '<div class="admin-sub">Tags: ' + esc(tagsForVideo) + "</div>" : "") +
           '<div class="admin-sub" style="margin-top:4px;">🚗 ' + (v.fahrzeug ? esc(v.fahrzeug) : '<span style="opacity:.6;">kein Fahrzeug hinterlegt</span>') + "</div>" +
@@ -6648,10 +6867,14 @@ function renderAdminVideos(){
         "</div>" +
         (nurLesen ? "" :
         '<div style="text-align:right;">' +
+          '<button class="btn-still druck-2 vid-bearb" data-bearbv="' + esc(v.id) + '">Bearbeiten</button>' +
           '<button class="icon-btn" data-editfz="' + esc(v.id) + '" title="Fahrzeug eintragen/ändern">🚗</button>' +
           '<button class="icon-btn" data-editv="' + esc(v.id) + '" title="Bunny-Video-ID eintragen/ändern">' + icon("stift") + '</button>' +
-          '<button class="icon-btn" data-notifyv="' + esc(v.id) + '" title="Push-Benachrichtigung an alle aktiven Schüler senden">' + icon("glocke") + '</button>' +
-          '<button class="icon-btn danger" data-delv="' + esc(v.id) + '" title="Löschen">' + icon("papierkorb") + '</button>' +
+          (v.ausgeblendet ? "" : '<button class="icon-btn" data-notifyv="' + esc(v.id) + '" title="Push-Benachrichtigung an alle aktiven Schüler senden">' + icon("glocke") + '</button>') +
+          (v.ausgeblendet
+            ? '<button class="btn-still druck-2" data-einbl="' + esc(v.id) + '">Einblenden</button>' +
+              '<button class="icon-btn danger" data-delv="' + esc(v.id) + '" title="Endgültig löschen">' + icon("papierkorb") + '</button>'
+            : '<button class="btn-still druck-2 ak-loeschen" data-ausbl="' + esc(v.id) + '">Ausblenden</button>') +
         "</div>") +
       "</div>" +
     "</div>";
@@ -6755,7 +6978,14 @@ function renderAdminVideos(){
       '<button class="btn-primary" id="dauer-btn" style="margin-top:8px;">Längen von Bunny holen</button>' +
     "</div>";
 
+  if(videoReihenfolgeModus && !nurLesen){ renderVideoReihenfolge(); return; }
+  const werkzeugKarte = nurLesen ? "" :
+    '<div class="admin-card glass vid-werkzeug" style="margin-bottom:10px;">' +
+      '<button class="btn-still druck-2" id="vid-reihenfolge">Reihenfolge ändern</button>' +
+      '<button class="btn-still druck-2" id="vid-vorschau">Als Schüler ansehen</button>' +
+    "</div>";
   document.getElementById("admin-content").innerHTML =
+    werkzeugKarte +
     anlegeForm +
     dauerKarte +
     // Partner sieht statt des Anlege-Formulars einen kurzen Hinweis, wozu die Liste da ist.
@@ -6846,6 +7076,19 @@ function renderAdminVideos(){
   document.querySelectorAll("[data-delv]").forEach(function(b){
     b.addEventListener("click", function(){ deleteVideo(b.dataset.delv); });
   });
+  document.querySelectorAll("[data-ausbl]").forEach(function(b){
+    b.addEventListener("click", function(){ videoAusblenden(b.dataset.ausbl, true); });
+  });
+  document.querySelectorAll("[data-einbl]").forEach(function(b){
+    b.addEventListener("click", function(){ videoAusblenden(b.dataset.einbl, false); });
+  });
+  document.querySelectorAll("[data-bearbv]").forEach(function(b){
+    b.addEventListener("click", function(){ videoBearbeiten(b.dataset.bearbv); });
+  });
+  const rfBtn = document.getElementById("vid-reihenfolge");
+  if(rfBtn) rfBtn.addEventListener("click", function(){ videoReihenfolgeModus = true; renderAdminVideos(); });
+  const vsBtn = document.getElementById("vid-vorschau");
+  if(vsBtn) vsBtn.addEventListener("click", schuelerVorschauStarten);
   document.querySelectorAll("[data-editv]").forEach(function(b){
     b.addEventListener("click", function(){ editVideoBunnyId(b.dataset.editv); });
   });
@@ -7066,9 +7309,37 @@ async function notifyNeuesVideo(videoId){
   }
 }
 
+// 26.09.2026 (A6): Ausblenden ersetzt das Loeschen. Das Video verschwindet fuer Schueler,
+// geschenkte Freischaltungen, Themen, Pruefer und Verlauf bleiben erhalten.
+async function videoAusblenden(id, ausblenden){
+  const v = allVideos.find(function(x){ return x.id === id; });
+  if(!v) return;
+  if(ausblenden && !await blattBestaetigen({
+    titel: "„" + v.titel + "“ ausblenden?",
+    text: "Schüler sehen das Video danach nicht mehr. Nichts wird gelöscht — du kannst es jederzeit wieder einblenden.",
+    okText: "Ausblenden", gefaehrlich: true
+  })) return;
+  if(DEMO_MODE){ v.ausgeblendet = ausblenden; renderAdminVideos(); return; }
+  const res = await supa.from("academy_videos").update({ ausgeblendet: ausblenden }).eq("id", id).select("id");
+  if(!aenderungOk(res)){ showToast("Konnte nicht geändert werden — keine Berechtigung oder keine Verbindung"); return; }
+  v.ausgeblendet = ausblenden;
+  await protokolliere(ausblenden ? "video_ausgeblendet" : "video_eingeblendet", "video", id, v.titel, null);
+  renderAdminVideos();
+  showToast(ausblenden ? "Ausgeblendet" : "Wieder eingeblendet");
+}
+
+// Endgueltig loeschen nur fuer bereits ausgeblendete Videos und nur mit Eingabe des Titels.
 async function deleteVideo(id){
-  if(!await blattBestaetigen({ titel:"Dieses Video wirklich löschen?",
-    okText:"Endgültig löschen", gefaehrlich:true })) return;
+  const v = allVideos.find(function(x){ return x.id === id; });
+  if(!v) return;
+  if(!v.ausgeblendet){ showToast("Bitte das Video zuerst ausblenden"); return; }
+  const eingabe = await blattEingabe({
+    titel: "Endgültig löschen?",
+    text: "Löscht das Video mit Themen, Prüfer-Zuordnung, Verlauf und geschenkten Einzelfreischaltungen. Das lässt sich nicht rückgängig machen.\n\nZur Bestätigung den Titel eintippen:\n" + v.titel,
+    wert: "", platzhalter: v.titel, okText: "Endgültig löschen"
+  });
+  if(eingabe === null) return;
+  if(String(eingabe).trim().toLowerCase() !== String(v.titel || "").trim().toLowerCase()){ showToast("Titel stimmt nicht überein — nichts gelöscht"); return; }
   if(DEMO_MODE){
     DEMO_VIDEOS = DEMO_VIDEOS.filter(function(x){ return x.id !== id; });
     DEMO_VIDEO_TAGS = DEMO_VIDEO_TAGS.filter(function(x){ return x.video_id !== id; });
@@ -7077,12 +7348,191 @@ async function deleteVideo(id){
     renderAdminVideos();
     return;
   }
-  await supa.from("academy_video_tags").delete().eq("video_id", id);
-  await supa.from("academy_video_pruefer").delete().eq("video_id", id);
-  const { error } = await supa.from("academy_videos").delete().eq("id", id);
-  if(error){ showToast("Fehler: " + error.message); return; }
+  // Themen- und Pruefer-Zuordnungen haengen per ON DELETE CASCADE am Video -- EIN
+  // Loeschbefehl reicht und kann nicht halb haengen bleiben.
+  const res = await supa.from("academy_videos").delete().eq("id", id).select("id");
+  if(!aenderungOk(res)){ showToast("Konnte nicht gelöscht werden — keine Berechtigung oder keine Verbindung"); return; }
+  await protokolliere("video_geloescht", "video", id, v.titel, null);
   await loadAdminData();
   renderAdminVideos();
+  showToast("Gelöscht");
+}
+
+// ---------- 26.09.2026 (P5): Video nachtraeglich bearbeiten ----------
+async function videoBearbeiten(id){
+  const v = allVideos.find(function(x){ return x.id === id; });
+  if(!v) return;
+  const hatTag = new Set(videoTags.filter(function(vt){ return vt.video_id === id; }).map(function(vt){ return vt.tag_id; }));
+  const hatPr = new Set(videoPruefer.filter(function(vp){ return vp.video_id === id; }).map(function(vp){ return vp.pruefer_id; }));
+  const themen = allTags.slice().sort(function(a,b){ return (a.reihenfolge||0)-(b.reihenfolge||0); }).map(function(t){
+    return '<label class="thema-zeile" data-such="' + esc(((t.label||"") + " " + (t.stufe||"")).toLowerCase()) + '">' +
+      '<input type="checkbox" class="vb-tag" value="' + esc(t.id) + '"' + (hatTag.has(t.id) ? " checked" : "") + ">" +
+      "<span>" + esc(t.label) + '</span><span class="thema-bereich">' + esc(t.stufe) + "</span></label>";
+  }).join("");
+  const pruefer = allPruefer.map(function(p){
+    return '<label class="vb-pr"><input type="checkbox" class="vb-pruefer" value="' + esc(p.id) + '"' + (hatPr.has(p.id) ? " checked" : "") + "> " + esc(p.name) + "</label>";
+  }).join("");
+  const html =
+    '<label>Titel</label><input id="vb-titel" class="blatt-feld" value="' + esc(v.titel_de || v.titel) + '">' +
+    '<label>Beschreibung</label><textarea id="vb-desc" class="blatt-feld" rows="3">' + esc(v.beschreibung || "") + "</textarea>" +
+    '<label>Originalprüfung?</label><select id="vb-ergebnis" class="blatt-feld">' +
+      '<option value=""' + (!v.pruefung_ergebnis ? " selected" : "") + ">Nein, normales Lernvideo</option>" +
+      '<option value="bestanden"' + (v.pruefung_ergebnis === "bestanden" ? " selected" : "") + ">Ja — bestanden</option>" +
+      '<option value="nicht_bestanden"' + (v.pruefung_ergebnis === "nicht_bestanden" ? " selected" : "") + ">Ja — nicht bestanden</option></select>" +
+    '<label class="blatt-haken"><input type="checkbox" id="vb-gratis"' + (v.gratis ? " checked" : "") + "><span>Kostprobe: für alle Schüler frei, auch ohne Vollzugang</span></label>" +
+    '<label>Fahrzeug</label><input id="vb-fahrzeug" class="blatt-feld" value="' + esc(v.fahrzeug || "") + '" placeholder="z. B. Audi A1">' +
+    '<label>Prüfgebiet</label><select id="vb-gebiet" class="blatt-feld"><option value="">Kein Gebiet — für alle sichtbar</option>' +
+      allGebiete.map(function(g){ return '<option value="' + esc(g.id) + '"' + (v.gebiet_id === g.id ? " selected" : "") + ">" + esc(g.name) + "</option>"; }).join("") + "</select>" +
+    '<label>Prüfer</label><div class="vb-pruefer-liste">' + (pruefer || '<span class="admin-sub">Noch keine Prüfer angelegt</span>') + "</div>" +
+    '<label>Themen</label><input id="vb-tag-suche" class="blatt-feld" placeholder="Thema suchen, z. B. Zebra">' +
+    '<div class="themen-box">' + themen + "</div>";
+  const werte = await blattFormular({
+    titel: "Video bearbeiten", html: html, okText: "Speichern",
+    binden: function(o){
+      const s = o.querySelector("#vb-tag-suche");
+      s.addEventListener("input", function(){
+        const q = s.value.toLowerCase().trim();
+        o.querySelectorAll(".thema-zeile").forEach(function(z){ z.style.display = (!q || z.dataset.such.indexOf(q) !== -1) ? "" : "none"; });
+      });
+    },
+    lesen: function(o){
+      return {
+        titel: o.querySelector("#vb-titel").value.trim(),
+        beschreibung: o.querySelector("#vb-desc").value.trim(),
+        pruefung_ergebnis: o.querySelector("#vb-ergebnis").value || null,
+        gratis: o.querySelector("#vb-gratis").checked,
+        fahrzeug: o.querySelector("#vb-fahrzeug").value.trim() || null,
+        gebiet_id: o.querySelector("#vb-gebiet").value || null,
+        tags: Array.from(o.querySelectorAll(".vb-tag:checked")).map(function(c){ return c.value; }),
+        pruefer: Array.from(o.querySelectorAll(".vb-pruefer:checked")).map(function(c){ return c.value; })
+      };
+    }
+  });
+  if(!werte) return;
+  if(!werte.titel){ showToast("Der Titel darf nicht leer sein"); return; }
+  if(!werte.tags.length){ showToast("Bitte mindestens ein Thema wählen — sonst taucht das Video in keinem Bereich auf"); return; }
+  if(DEMO_MODE){ Object.assign(v, werte); renderAdminVideos(); return; }
+  const felder = { titel: werte.titel, beschreibung: werte.beschreibung || null, pruefung_ergebnis: werte.pruefung_ergebnis,
+    gratis: werte.gratis, fahrzeug: werte.fahrzeug, gebiet_id: werte.gebiet_id };
+  const res = await supa.from("academy_videos").update(felder).eq("id", id).select("id");
+  if(!aenderungOk(res)){ showToast("Konnte nicht gespeichert werden — keine Berechtigung oder keine Verbindung"); return; }
+  // Themen und Pruefer: nur die Unterschiede schreiben. Erst hinzufuegen, dann entfernen --
+  // bricht dazwischen die Verbindung ab, hat das Video nie null Themen.
+  const neueTags = werte.tags.filter(function(t){ return !hatTag.has(t); });
+  const alteTags = Array.from(hatTag).filter(function(t){ return werte.tags.indexOf(t) === -1; });
+  const neuePr = werte.pruefer.filter(function(p){ return !hatPr.has(p); });
+  const altePr = Array.from(hatPr).filter(function(p){ return werte.pruefer.indexOf(p) === -1; });
+  let teilFehler = false;
+  if(neueTags.length){ const r = await supa.from("academy_video_tags").insert(neueTags.map(function(t){ return { video_id:id, tag_id:t }; })); if(r.error) teilFehler = true; }
+  if(neuePr.length){ const r = await supa.from("academy_video_pruefer").insert(neuePr.map(function(p){ return { video_id:id, pruefer_id:p }; })); if(r.error) teilFehler = true; }
+  if(alteTags.length){ const r = await supa.from("academy_video_tags").delete().eq("video_id", id).in("tag_id", alteTags); if(r.error) teilFehler = true; }
+  if(altePr.length){ const r = await supa.from("academy_video_pruefer").delete().eq("video_id", id).in("pruefer_id", altePr); if(r.error) teilFehler = true; }
+  await protokolliere("video_bearbeitet", "video", id, werte.titel, null);
+  await loadAdminData();
+  renderAdminVideos();
+  showToast(teilFehler ? "Gespeichert, aber Themen/Prüfer nur teilweise — bitte prüfen" : "Gespeichert");
+}
+
+// ---------- 26.09.2026 (P5): Reihenfolge per Ziehen ----------
+let videoReihenfolgeModus = false;
+function sortableLaden(){
+  return new Promise(function(ok, fehler){
+    if(window.Sortable) return ok();
+    const s = document.createElement("script");
+    s.src = "vendor/sortable-1.15.7.min.js";
+    s.onload = function(){ ok(); };
+    s.onerror = function(){ fehler(new Error("Sortable fehlt")); };
+    document.head.appendChild(s);
+  });
+}
+async function renderVideoReihenfolge(){
+  const liste = allVideos.slice().sort(function(a,b){ return (a.reihenfolge||0)-(b.reihenfolge||0); });
+  document.getElementById("admin-content").innerHTML =
+    '<div class="admin-card glass">' +
+      '<div class="admin-form-title">Reihenfolge ändern</div>' +
+      '<div class="admin-sub" style="margin-bottom:10px;">Halte ☰ gedrückt und ziehe das Video an die richtige Stelle. So erscheinen die Videos bei den Schülern.</div>' +
+      '<ol class="rf-liste" id="rf-liste">' + liste.map(function(v){
+        return '<li class="rf-zeile" data-id="' + esc(v.id) + '"><span class="rf-griff" aria-hidden="true">☰</span><span class="rf-titel">' + esc(v.titel) + "</span>" +
+          (v.ausgeblendet ? '<span class="admin-badge badge-gesperrt">ausgeblendet</span>' : "") + "</li>";
+      }).join("") + "</ol>" +
+      '<div class="blatt-knoepfe"><button class="btn-still" id="rf-abbruch">Abbrechen</button><button class="btn-gold" id="rf-speichern">Reihenfolge speichern</button></div>' +
+    "</div>";
+  document.getElementById("rf-abbruch").addEventListener("click", function(){ videoReihenfolgeModus = false; renderAdminVideos(); });
+  document.getElementById("rf-speichern").addEventListener("click", function(){ einmal("rf-speichern", reihenfolgeSpeichern); });
+  try{
+    await sortableLaden();
+    // forceFallback: gleiches Zieh-Verhalten auf Handy und Rechner (kein natives Drag & Drop)
+    window.Sortable.create(document.getElementById("rf-liste"), { handle: ".rf-griff", animation: 160, forceFallback: true, fallbackTolerance: 3 });
+  } catch(e){ showToast("Ziehen ist gerade nicht verfügbar — bitte neu laden"); }
+}
+async function reihenfolgeSpeichern(){
+  const ids = Array.from(document.querySelectorAll("#rf-liste .rf-zeile")).map(function(li){ return li.dataset.id; });
+  // Nur Videos schreiben, deren Platz sich wirklich geaendert hat. Abstand 10, damit
+  // spaeter ein einzelnes Video dazwischen passt, ohne alle anderen zu verschieben.
+  const aenderungen = [];
+  ids.forEach(function(id, i){
+    const v = allVideos.find(function(x){ return x.id === id; });
+    const neu = (i + 1) * 10;
+    if(v && v.reihenfolge !== neu) aenderungen.push({ id: id, reihenfolge: neu });
+  });
+  if(!aenderungen.length){ videoReihenfolgeModus = false; renderAdminVideos(); return; }
+  let fehler = 0;
+  for(const a of aenderungen){
+    const r = await supa.from("academy_videos").update({ reihenfolge: a.reihenfolge }).eq("id", a.id).select("id");
+    if(!aenderungOk(r)) fehler++;
+  }
+  await protokolliere("video_reihenfolge", "video", null, aenderungen.length + " Videos verschoben", null);
+  videoReihenfolgeModus = false;
+  await loadAdminData();
+  renderAdminVideos();
+  showToast(fehler ? fehler + " Videos konnten nicht verschoben werden" : "Reihenfolge gespeichert");
+}
+
+// ---------- 26.09.2026 (P6): Als Schueler ansehen ----------
+// Zeigt die Schuelerseite mit einem gedachten Zugang (Fahrschule, Klasse, Vollzugang).
+// Es wird NICHTS gespeichert und kein Video abgespielt -- reine Ansicht.
+let vorschauAktiv = false;
+async function schuelerVorschauStarten(){
+  const schulen = [{ id:"", name:"Direktverkauf (ohne Fahrschule)" }].concat(allSchulen);
+  const werte = await blattFormular({
+    titel: "Als Schüler ansehen",
+    html:
+      '<div class="admin-sub" style="margin-bottom:8px;">So sieht die App für einen Schüler mit diesen Einstellungen aus. Nichts wird gespeichert, Videos werden nicht abgespielt.</div>' +
+      '<label>Fahrschule</label><select id="vs-schule" class="blatt-feld">' + schulen.map(function(s){ return '<option value="' + esc(s.id) + '">' + esc(s.name) + "</option>"; }).join("") + "</select>" +
+      '<label>Klasse</label><select id="vs-klasse" class="blatt-feld"><option>B</option><option>BE</option><option>C</option><option>CE</option></select>' +
+      '<label class="blatt-haken"><input type="checkbox" id="vs-voll"><span>Mit Vollzugang</span></label>',
+    okText: "Vorschau öffnen",
+    lesen: function(o){ return { schule: o.querySelector("#vs-schule").value, klasse: o.querySelector("#vs-klasse").value, voll: o.querySelector("#vs-voll").checked }; }
+  });
+  if(!werte) return;
+  const kf = await supa.from("academy_klassen_freigabe").select("klasse, freigegeben");
+  const klassenFreigabe = {};
+  (kf.data || []).forEach(function(r){ klassenFreigabe[r.klasse] = r.freigegeben; });
+  vorschauAktiv = { gespeicherteSession: session };
+  session = {
+    vorschau: true, name: "Vorschau", klasse: werte.klasse, vollzugang: werte.voll,
+    klassen_freigabe: klassenFreigabe, agb_akzeptiert_am: new Date().toISOString(),
+    schule_id: werte.schule || null,
+    gebiete: werte.schule ? alleSchuleGebiete.filter(function(sg){ return sg.schule_id === werte.schule; }).map(function(sg){ return sg.gebiet_id; }) : null,
+    freigabe_videos: [], freigabe_stufen: []
+  };
+  seenVideoIds = new Set(); verlaufData = [];
+  navAnwenden({ view:"start", bereich:null, hashtag:null, recht:null, drawer:null });
+  try{ await loadCatalog(); } catch(e){ showToast("Katalog konnte nicht geladen werden"); vorschauBeenden(); return; }
+  renderCatalog();
+  const leiste = document.createElement("div");
+  leiste.className = "vorschau-leiste"; leiste.id = "vorschau-leiste";
+  leiste.innerHTML = '<span>Vorschau · Klasse ' + esc(werte.klasse) + " · " + (werte.voll ? "Vollzugang" : "Startzugang") + '</span><button class="btn-still" id="vorschau-ende">Vorschau beenden</button>';
+  document.body.appendChild(leiste);
+  document.getElementById("vorschau-ende").addEventListener("click", vorschauBeenden);
+}
+function vorschauBeenden(){
+  const l = document.getElementById("vorschau-leiste"); if(l) l.remove();
+  session = vorschauAktiv ? vorschauAktiv.gespeicherteSession : lsLesen("academy_session", null);
+  vorschauAktiv = false;
+  seenVideoIds = new Set((function(){ const a = lsLesen("academy_demo_seen", []); return Array.isArray(a) ? a : []; })());
+  location.hash = "#admin";
+  init();
 }
 
 /* ---------- PRÜFER-TAB ---------- */
