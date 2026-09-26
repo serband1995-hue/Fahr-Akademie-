@@ -2303,7 +2303,7 @@ function setzeSprache(code){
   // lassen -- die Bedienoberflaeche waere tuerkisch, die Videotitel weiter deutsch.
   // Darum den Katalog neu laden. Die Uebersetzungen liegen bereits im Nachschlagewerk,
   // der Abruf ist klein und passiert nur beim bewussten Sprachwechsel.
-  loadCatalog().then(function(){ renderCatalog(); }).catch(function(){ renderCatalog(); });
+  loadCatalog().then(function(){ renderCatalog(); }).catch(function(e){ if(!(e && e.message === "abgemeldet")) renderCatalog(); });
 }
 
 // Sprachwahl VOR dem Login (15.09.2026). setzeSprache() oben laedt den Katalog neu --
@@ -2897,6 +2897,7 @@ async function showApp(){
       }, 150);
     }
   } catch(e){
+    if(e && e.message === "abgemeldet") return; // Login-Seite steht schon
     zeigeOfflineHinweis();
   }
 }
@@ -2996,6 +2997,35 @@ async function loadVerlauf(){
   }
 }
 
+// Holt den Katalog ueber academy-katalog. Liefert null, wenn das nicht geht (dann greift
+// der Rueckfall in loadCatalog). Meldet der Server einen eindeutigen Abmeldegrund, wird
+// abgemeldet -- genau wie beim App-Start.
+async function katalogVomServer(){
+  if(DEMO_MODE || !session) return null;
+  try{
+    const headers = { "Content-Type": "application/json", "Authorization": "Bearer " + SUPABASE_ANON_KEY };
+    let body = {};
+    if(session.vorschau){
+      const { data: sd } = await supa.auth.getSession();
+      if(!sd || !sd.session) return null;
+      headers.Authorization = "Bearer " + sd.session.access_token;
+    } else if(session.session_token){
+      body = { session_token: session.session_token };
+    } else {
+      return null;
+    }
+    const res = await fetch(SUPABASE_URL + "/functions/v1/academy-katalog", { method:"POST", headers: headers, body: JSON.stringify(body) });
+    const data = await res.json();
+    // Nur eine vollstaendige Antwort zaehlt -- sonst lieber der Rueckfall als leere Listen.
+    if(res.ok && data.ok && Array.isArray(data.tags) && Array.isArray(data.videos)) return data;
+    if(!session.vorschau && istAbmeldeGrund(data)){ abmeldenWegen(data.code); throw new Error("abgemeldet"); }
+    return null;
+  } catch(e){
+    if(e && e.message === "abgemeldet") throw e;
+    return null;
+  }
+}
+
 async function loadCatalog(){
   if(DEMO_MODE){
     allTags = DEMO_TAGS;
@@ -3005,11 +3035,17 @@ async function loadCatalog(){
     videoPruefer = [];
     return;
   }
-  const tagsRes = await supa.from("academy_tags").select("*").order("reihenfolge");
-  const videosRes = await supa.from("academy_videos").select("*").order("reihenfolge");
-  const vtagsRes = await supa.from("academy_video_tags").select("*");
-  const prRes = await supa.from("academy_pruefer").select("*");
-  const vprRes = await supa.from("academy_video_pruefer").select("*");
+  // 26.09.2026 (S1): Katalog kommt ueber die Server-Funktion academy-katalog, die nur
+  // angemeldeten Schuelern (bzw. der Verwaltung in der Vorschau) antwortet. Der direkte
+  // Weg mit dem oeffentlichen Schluessel bleibt nur als Rueckfall, bis er in der
+  // Datenbank geschlossen ist -- danach liefert er einen Fehler und die App zeigt
+  // "Keine Verbindung" statt leerer Listen.
+  const kat = await katalogVomServer();
+  const tagsRes = kat ? { data: kat.tags, error: null } : await supa.from("academy_tags").select("*").order("reihenfolge");
+  const videosRes = kat ? { data: kat.videos, error: null } : await supa.from("academy_videos").select("*").order("reihenfolge");
+  const vtagsRes = kat ? { data: kat.video_tags, error: null } : await supa.from("academy_video_tags").select("*");
+  const prRes = kat ? { data: kat.pruefer, error: null } : await supa.from("academy_pruefer").select("*");
+  const vprRes = kat ? { data: kat.video_pruefer, error: null } : await supa.from("academy_video_pruefer").select("*");
 
   // Schutz gegen einen leeren Katalog (10.09.2026): Seit dem Sprachwechsel laeuft
   // loadCatalog auch MITTEN in der Nutzung, nicht mehr nur einmal beim Login. Bricht
@@ -3028,7 +3064,7 @@ async function loadCatalog(){
   // bei rund 350 kurzen Zeilen ist das deutlich schneller als viele Einzelabfragen.
   // Schlaegt der Abruf fehl, bleibt das Nachschlagewerk leer und alles erscheint auf
   // Deutsch. Das ist der gewollte Notfall-Zustand: lieber deutsch als leer.
-  const ubRes = await supa.from("academy_uebersetzungen").select("*");
+  const ubRes = kat ? { data: kat.uebersetzungen, error: null } : await supa.from("academy_uebersetzungen").select("*");
   inhaltUebersetzungen = {};
   (ubRes.data || []).forEach(function(u){
     inhaltUebersetzungen[u.art + "|" + u.datensatz_id + "|" + u.feld + "|" + u.sprache] = u.text;
@@ -3054,7 +3090,7 @@ async function loadCatalog(){
      Zahlender darf durch eine fehlende Angabe nie Inhalte verlieren. Videos ohne
      Gebiet bleiben immer sichtbar. Die harte Sperre sitzt zusätzlich im Server
      (academy-video-token) -- der Filter hier ist nur die Anzeige. */
-  const gebRes = await supa.from("academy_gebiete").select("*").order("name");
+  const gebRes = (kat && kat.gebiete) ? { data: kat.gebiete, error: null } : await supa.from("academy_gebiete").select("*").order("name");
   if(!gebRes.error) allGebiete = gebRes.data || [];
   meineGebiete = (session && Array.isArray(session.gebiete)) ? session.gebiete : null;
   if(meineGebiete){
@@ -3469,13 +3505,10 @@ function renderBereichDetailHtml(){
       "</div>"
     : "";
 
-  // Idee 3: protokollieren, dass dieser gesperrte Bereich angetippt wurde -- Signal
-  // fürs Dashboard, wo echtes Kaufinteresse besteht. Einmal pro Seitenaufruf reicht,
-  // sonst würde jedes Neu-Rendern (z.B. Prüfungsfilter antippen) erneut zählen.
-  if(vollzugangGesperrteAnzahl > 0 && !bereitsProtokollierteSperrKlicks.has(selectedBereich)){
-    bereitsProtokollierteSperrKlicks.add(selectedBereich);
-    protokolliereSperrKlick(selectedBereich);
-  }
+  // 26.09.2026 (E3): Das blosse OEFFNEN einer Bereichsseite zaehlt nicht mehr als
+  // Interesse -- vorher stand dadurch jeder, der nur durchblaettert, mit "Klick" in der
+  // Liste. Gezaehlt wird nur noch das Antippen eines versiegelten Videos
+  // (gesperrtesVideoAngetippt) -- einmal pro Video und Sitzung.
 
   return (
     zurueckPille() +

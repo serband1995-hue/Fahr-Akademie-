@@ -61,6 +61,11 @@ minderjährig — entsprechend vorsichtig mit Daten umgehen.
   Protokoll-Feld `akteur` setzt ein Trigger aus `auth.uid()`.
 - **Kein Lernverlauf in der Verwaltung** (26.09.2026): `academy_fortschritt`
   wird im Admin nicht mehr geladen; "Inaktiv" = keine Anmeldung seit 14 Tagen.
+- **Katalog nur für Angemeldete** (26.09.2026): Schüler laden Themen/Videos/
+  Prüfer über die Edge Function `academy-katalog` (prüft die Schüler-Session;
+  Verwaltung per Admin-JWT für die Vorschau). Der direkte Lesezugriff mit dem
+  anon-Key wird mit `db/nach-livegang-stufe3.sql` geschlossen — ERST nachdem
+  diese App-Version live ist.
 - **supabase-js liegt im Repo** (`vendor/`, feste Version). Bei einem Update
   neue Datei mit neuer Versionsnummer anlegen, Script-Tag und `sw.js`
   (STATIC_ASSETS + CACHE_NAME) anpassen.
