@@ -1047,6 +1047,30 @@
 
   /* --- Nützliches: PDF-Karten --- */
   .pdf-karte{display:flex;align-items:center;gap:var(--sp-m);padding:var(--sp-m);margin-bottom:var(--sp-s);}
+  /* Verkehr verstehen (26.09.2026) */
+  .vv-kachel{display:flex;gap:var(--sp-m);align-items:flex-start;padding:var(--sp-m);margin:var(--sp-m) 0;}
+  .vv-kachel-ic{flex:none;width:44px;height:44px;border-radius:50%;background:var(--surface-tint,#E3EADD);color:var(--gruen-text,#2F5A3C);display:flex;align-items:center;justify-content:center;}
+  .vv-kachel-ic .ic{width:24px;height:24px;}
+  .vv-kachel-titel{font-family:var(--ff-titel);font-weight:600;font-size:18px;}
+  .vv-kachel-knopf{display:inline-flex;align-items:center;gap:6px;width:auto;}
+  .vv-gruppe{font-family:var(--ff-titel);font-weight:600;font-size:19px;margin:var(--sp-l) 0 var(--sp-s);display:flex;align-items:center;gap:8px;}
+  .vv-zahl{font-family:var(--ff-body);font-size:13px;font-weight:700;color:var(--muted);background:var(--surface-strong,#EAE3D2);border-radius:999px;padding:1px 9px;}
+  .vv-raster{display:grid;grid-template-columns:1fr;gap:var(--sp-s);}
+  @media (min-width:600px){ .vv-raster{grid-template-columns:1fr 1fr;} }
+  .vv-karte{display:flex;flex-direction:column;gap:4px;text-align:start;padding:var(--sp-m);width:100%;cursor:pointer;font:inherit;color:inherit;border:1px solid var(--border);min-height:44px;}
+  .vv-karte-titel{font-weight:700;font-size:16px;}
+  .vv-karte-kurz{color:var(--muted);font-size:14.5px;}
+  .vv-karte-fuss{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px;font-size:13px;color:var(--faint);font-weight:600;}
+  .vv-marke-frei{padding:2px 9px;border-radius:999px;background:var(--gold-schwach);border:1px solid var(--gold-rand);color:var(--gold-text);font-weight:700;}
+  .vv-marke-zu{display:inline-flex;align-items:center;gap:4px;color:var(--muted);}
+  .vv-marke-zu .ic{width:14px;height:14px;}
+  .sz-liste{display:flex;flex-direction:column;gap:var(--sp-s);}
+  .sz-zeile{display:flex;align-items:center;gap:var(--sp-m);flex-wrap:wrap;padding:var(--sp-m);}
+  .sz-text{flex:1 1 220px;min-width:0;}
+  .sz-titel{font-weight:700;}
+  .sz-schalter{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-weight:600;cursor:pointer;}
+  .sz-schalter input{width:20px;height:20px;accent-color:var(--gruen);}
+  .sz-knopf{width:auto;}
   .pdf-karte .pdf-ic{width:38px;height:38px;border-radius:var(--r-s);background:var(--gold-schwach);
     color:var(--gold-text);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
   .pdf-karte .pdf-titel{font-size:var(--fs-body);font-weight:var(--fw-karte);}
@@ -1483,6 +1507,7 @@ const ICONS = {
   logout:'<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>',
   download:'<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/>',
   hashtag:'<path d="M5 9h14M5 15h14M10 4L8 20M16 4l-2 16"/>',
+  verkehr:'<path d="M5 17h14v-4.5l-2-5H7l-2 5z"/><path d="M5 12.5h14"/><circle cx="8" cy="17" r="1.8"/><circle cx="16" cy="17" r="1.8"/>',
   home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
   liste:'<path d="M8 6h13M8 12h13M8 18h13"/><path d="M3.5 6h.01M3.5 12h.01M3.5 18h.01"/>',
   strecke:'<circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H16a3 3 0 0 0 0-6H8a3 3 0 0 1 0-6h7.5"/>',
@@ -2334,7 +2359,13 @@ Object.assign(I18N.de, {
   zahlungsinfo:"Du bekommst dann die Zahlungsinfos. Erst nach Zahlung wird freigeschaltet.",
   themenIntro:"Ein Video kann mehrere Themen haben — tippe eins an, um alle passenden Videos zu sehen.",
   keineThemen:"Noch keine Themen vergeben.", keineVideos:"Keine Videos gefunden.",
-  mDashboard:"Dashboard", mThemen:"# Themen", mNuetzliches:"Nützliches", mRechtliches:"Rechtliches",
+  mDashboard:"Dashboard", mThemen:"# Themen", mNuetzliches:"Nützliches", mRechtliches:"Rechtliches", mVerkehr:"Verkehr verstehen",
+  vvIntro:"Typische Situationen als 3D-Szene: anschauen, anhalten, aus jedem Blickwinkel. Jede Szene erklärt Schritt für Schritt, was gilt und warum.",
+  vvKachel:"Neu: {n} Verkehrssituationen in 3D – anschauen, anhalten, verstehen.", vvKachelKnopf:"Szenen ansehen",
+  vvKatInnerorts:"Innerorts", vvKatUeberland:"Landstraße", vvKatGrundfahr:"Grundfahraufgaben", vvKatAutobahn:"Autobahn",
+  vvKapitel:"{n} Kapitel", vvKostprobe:"Kostprobe", vvNurAnfang:"Erstes Kapitel frei", vvLaden:"Szene wird geladen …",
+  vvFehler:"Die Szene konnte gerade nicht geladen werden. Bitte gleich nochmal versuchen.", vvVideos:"So sieht's in echt aus",
+  vvVideosText:"Passende Videos aus der Akademie:", vvDemo:"Im Demo-Modus sind die 3D-Szenen nicht verfügbar.",
   mHilfe:"Hilfe & Kontakt", mUeber:"Über diese App"
 });
 Object.assign(I18N.tr, {
@@ -2352,7 +2383,13 @@ Object.assign(I18N.tr, {
   zahlungsinfo:"Ödeme bilgilerini sonra alırsın. Ödemeden sonra açılır.",
   themenIntro:"Bir videonun birden fazla konusu olabilir — uygun tüm videoları görmek için birine dokun.",
   keineThemen:"Henüz konu yok.", keineVideos:"Video bulunamadı.",
-  mDashboard:"Genel bakış", mThemen:"# Konular", mNuetzliches:"Faydalı bilgiler", mRechtliches:"Yasal bilgiler",
+  mDashboard:"Genel bakış", mThemen:"# Konular", mNuetzliches:"Faydalı bilgiler", mRechtliches:"Yasal bilgiler", mVerkehr:"Trafiği anlamak",
+  vvIntro:"Tipik durumlar 3D sahne olarak: izle, durdur, her açıdan bak. Her sahne neyin geçerli olduğunu ve nedenini adım adım anlatır.",
+  vvKachel:"Yeni: 3D olarak {n} trafik durumu – izle, durdur, anla.", vvKachelKnopf:"Sahneleri gör",
+  vvKatInnerorts:"Şehir içi", vvKatUeberland:"Şehirlerarası yol", vvKatGrundfahr:"Temel sürüş görevleri", vvKatAutobahn:"Otoyol",
+  vvKapitel:"{n} bölüm", vvKostprobe:"Tadımlık", vvNurAnfang:"İlk bölüm ücretsiz", vvLaden:"Sahne yükleniyor …",
+  vvFehler:"Sahne şu anda yüklenemedi. Lütfen birazdan tekrar dene.", vvVideos:"Gerçekte nasıl görünüyor",
+  vvVideosText:"Akademiden uygun videolar:", vvDemo:"Demo modunda 3D sahneler kullanılamaz.",
   mHilfe:"Yardım ve iletişim", mUeber:"Bu uygulama hakkında"
 });
 Object.assign(I18N.en, {
@@ -2370,7 +2407,13 @@ Object.assign(I18N.en, {
   zahlungsinfo:"You will then receive the payment details. Access is unlocked after payment.",
   themenIntro:"A video can have several topics — tap one to see all matching videos.",
   keineThemen:"No topics yet.", keineVideos:"No videos found.",
-  mDashboard:"Overview", mThemen:"# Topics", mNuetzliches:"Useful info", mRechtliches:"Legal",
+  mDashboard:"Overview", mThemen:"# Topics", mNuetzliches:"Useful info", mRechtliches:"Legal", mVerkehr:"Understanding traffic",
+  vvIntro:"Typical situations as 3D scenes: watch, pause, view from any angle. Each scene explains step by step what applies and why.",
+  vvKachel:"New: {n} traffic situations in 3D – watch, pause, understand.", vvKachelKnopf:"View scenes",
+  vvKatInnerorts:"In town", vvKatUeberland:"Country road", vvKatGrundfahr:"Basic manoeuvres", vvKatAutobahn:"Motorway",
+  vvKapitel:"{n} chapters", vvKostprobe:"Free preview", vvNurAnfang:"First chapter free", vvLaden:"Loading scene …",
+  vvFehler:"The scene could not be loaded right now. Please try again shortly.", vvVideos:"What it looks like for real",
+  vvVideosText:"Matching videos from the academy:", vvDemo:"3D scenes are not available in demo mode.",
   mHilfe:"Help & contact", mUeber:"About this app"
 });
 Object.assign(I18N.ar, {
@@ -2388,7 +2431,13 @@ Object.assign(I18N.ar, {
   zahlungsinfo:"ستحصل بعدها على معلومات الدفع. يتم الفتح بعد الدفع.",
   themenIntro:"قد يكون للفيديو عدة مواضيع — اضغط على موضوع لرؤية كل الفيديوهات المناسبة.",
   keineThemen:"لا توجد مواضيع بعد.", keineVideos:"لم يتم العثور على فيديوهات.",
-  mDashboard:"نظرة عامة", mThemen:"# المواضيع", mNuetzliches:"معلومات مفيدة", mRechtliches:"معلومات قانونية",
+  mDashboard:"نظرة عامة", mThemen:"# المواضيع", mNuetzliches:"معلومات مفيدة", mRechtliches:"معلومات قانونية", mVerkehr:"فهم حركة المرور",
+  vvIntro:"مواقف نموذجية كمشاهد ثلاثية الأبعاد: شاهد، أوقف، وانظر من أي زاوية. كل مشهد يشرح خطوة بخطوة ما هو المطلوب ولماذا.",
+  vvKachel:"جديد: {n} موقفًا مروريًا ثلاثي الأبعاد – شاهد، أوقف، افهم.", vvKachelKnopf:"شاهد المشاهد",
+  vvKatInnerorts:"داخل المدينة", vvKatUeberland:"طريق خارج المدينة", vvKatGrundfahr:"مهام القيادة الأساسية", vvKatAutobahn:"الطريق السريع",
+  vvKapitel:"{n} فصول", vvKostprobe:"عرض تجريبي", vvNurAnfang:"الفصل الأول مجاني", vvLaden:"جارٍ تحميل المشهد …",
+  vvFehler:"تعذّر تحميل المشهد الآن. حاول مرة أخرى بعد قليل.", vvVideos:"كيف يبدو ذلك في الواقع",
+  vvVideosText:"فيديوهات مناسبة من الأكاديمية:", vvDemo:"المشاهد ثلاثية الأبعاد غير متاحة في الوضع التجريبي.",
   mHilfe:"المساعدة والتواصل", mUeber:"حول هذا التطبيق"
 });
 
@@ -2725,6 +2774,7 @@ let drawerView = null;       // null | "dashboard" | "nuetzliches" | "hilfe" | "
 let rechtDoc = null;         // Unterseite in "Rechtliches": null (Übersicht) | "impressum" | "datenschutz" | "agb" | "widerruf" (10.09.2026)
 let selectedBereich = null;  // welcher Bereich gerade als eigene "Netflix-Seite" offen ist
 let selectedHashtag = null;  // welches # gerade angetippt wurde (bereichsübergreifende Themensuche)
+let vvSzene = null;          // Verkehr verstehen: geöffnete Szene (null = Übersicht), 26.09.2026
 
 /* ---- Stapel-Navigation (13.09.2026, Paket 4.6) ----------------------------
    Vorher fuehrte JEDER Zurueck-Knopf hart zu "Start" -- wer ueber die Themen-
@@ -2745,19 +2795,19 @@ let navStapel = [];
 // Momentaufnahme des aktuellen Bildschirms
 function navJetzt(){
   return { view: mainView, bereich: selectedBereich, hashtag: selectedHashtag,
-           recht: rechtDoc, drawer: drawerView };
+           recht: rechtDoc, drawer: drawerView, szene: vvSzene };
 }
 
 // Momentaufnahme wieder herstellen
 function navAnwenden(z){
   mainView = z.view; selectedBereich = z.bereich; selectedHashtag = z.hashtag;
-  rechtDoc = z.recht; drawerView = z.drawer;
+  rechtDoc = z.recht; drawerView = z.drawer; vvSzene = z.szene || null;
 }
 
 // Zwei Ansichten sind gleich, wenn ALLE fuenf Felder uebereinstimmen.
 function navGleich(a, b){
   return a.view === b.view && a.bereich === b.bereich && a.hashtag === b.hashtag
-    && a.recht === b.recht && a.drawer === b.drawer;
+    && a.recht === b.recht && a.drawer === b.drawer && (a.szene || null) === (b.szene || null);
 }
 
 // Ist die Ansicht eine Wurzel? Eine Drawer-Seite ist NIE eine Wurzel -- sie wird
@@ -2776,6 +2826,7 @@ function navName(z){
   if(z.drawer === "dashboard") return t("mDashboard");
   if(z.drawer === "themen") return t("mThemen");
   if(z.drawer === "nuetzliches") return t("mNuetzliches");
+  if(z.drawer === "verkehr"){ const sz = z.szene && vvListe && vvListe.find(function(s){ return s.id === z.szene; }); return sz ? sz.titel : t("mVerkehr"); }
   if(z.drawer === "rechtliches") return t("mRechtliches");
   if(z.drawer === "hilfe") return t("mHilfe");
   if(z.drawer === "ueber") return t("mUeber");
@@ -2799,7 +2850,8 @@ function go(aenderung){
     bereich: aenderung.bereich !== undefined ? aenderung.bereich : null,
     hashtag: aenderung.hashtag !== undefined ? aenderung.hashtag : null,
     recht: aenderung.recht !== undefined ? aenderung.recht : null,
-    drawer: aenderung.drawer !== undefined ? aenderung.drawer : null
+    drawer: aenderung.drawer !== undefined ? aenderung.drawer : null,
+    szene: aenderung.szene !== undefined ? aenderung.szene : null
   };
   // Ziel ist die Ansicht, auf der wir schon stehen (Doppeltipp aus Ungeduld auf dem
   // Handy): nur neu zeichnen, nichts ablegen. Sonst zeigte Zurueck auf dieselbe Seite
@@ -3824,6 +3876,7 @@ function renderStartHtml(){
     quittung +
     '<div class="strecke">' + strecke + "</div>" +
     siegelNotiz +
+    verkehrKachelHtml() +
     terminKarte
   );
 }
@@ -4107,6 +4160,141 @@ function renderNuetzlichesHtml(){
     '<div class="admin-sub" style="margin:var(--sp-l) 0 var(--sp-s);">Gesetzestexte zum Herunterladen</div>' +
     pdfKarten +
     '<div class="leer-hinweis" style="text-align:left;padding:var(--sp-m) 0;">Weitere Themen kommen laufend dazu.</div>';
+}
+
+/* ---------------------------------------------------------------------------
+   Verkehr verstehen (Stufe 6, 26.09.2026)
+   Szenen kommen über academy-szene: Liste mit "frei" je Szene, die Szene selbst ganz
+   (Vollzugang, Kostprobe, Gratis-Thema) oder nur mit dem ersten Kapitel. Der 3D-Spieler
+   (verkehr/spieler.js, three.js) wird erst beim Öffnen einer Szene geladen.
+   Mitdenken ohne Bewertung (E6 = a): nichts wird gespeichert.
+   --------------------------------------------------------------------------- */
+let vvListe = null, vvListeLaedt = false, vvListeFehler = false, vvSpieler = null, vvMontiert = null;
+const vvCache = {};
+const VV_KATEGORIEN = [["innerorts","vvKatInnerorts"],["ueberland","vvKatUeberland"],["grundfahr","vvKatGrundfahr"],["autobahn","vvKatAutobahn"]];
+
+async function verkehrAufruf(body){
+  const headers = { "Content-Type": "application/json", "Authorization": "Bearer " + SUPABASE_ANON_KEY };
+  const b = Object.assign({ sprache: sprache }, body);
+  if(session && session.vorschau){
+    const { data: sd } = await supa.auth.getSession();
+    if(!sd || !sd.session) throw new Error("keine_sitzung");
+    headers.Authorization = "Bearer " + sd.session.access_token;
+  } else if(session && session.session_token){
+    b.session_token = session.session_token;
+  } else throw new Error("keine_sitzung");
+  const res = await fetch(SUPABASE_URL + "/functions/v1/academy-szene", { method: "POST", headers: headers, body: JSON.stringify(b) });
+  const data = await res.json();
+  if(res.ok && data.ok) return data;
+  if(!(session && session.vorschau) && istAbmeldeGrund(data)){ abmeldenWegen(data.code); throw new Error("abgemeldet"); }
+  throw new Error(data.code || "fehler");
+}
+
+function verkehrListeLaden(){
+  // nach einem Fehler nicht bei jedem Zeichnen neu anfragen, nur auf Knopfdruck
+  if(vvListe || vvListeLaedt || vvListeFehler || DEMO_MODE || !session) return;
+  vvListeLaedt = true; vvListeFehler = false;
+  verkehrAufruf({ aktion: "liste" }).then(function(d){
+    if(!Array.isArray(d.szenen)) throw new Error("antwort_unvollstaendig");
+    vvListe = d.szenen;
+  }).catch(function(e){
+    vvListeFehler = true;
+  }).then(function(){
+    vvListeLaedt = false;
+    if(drawerView === "verkehr" || (!drawerView && mainView === "start")) renderCatalog();
+  });
+}
+
+function verkehrKachelHtml(){
+  if(DEMO_MODE) return "";
+  verkehrListeLaden();
+  if(!vvListe || !vvListe.length) return "";
+  return '<div class="karte vv-kachel">' +
+    '<div class="vv-kachel-ic">' + icon("verkehr") + "</div>" +
+    '<div style="min-width:0;flex:1;"><div class="vv-kachel-titel">' + esc(t("mVerkehr")) + "</div>" +
+      '<div class="admin-sub" style="margin:2px 0 10px;">' + esc(t("vvKachel", { n: vvListe.length })) + "</div>" +
+      '<button type="button" class="btn-sekundaer vv-kachel-knopf" data-vv-oeffnen>' + esc(t("vvKachelKnopf")) + icon("weiter") + "</button></div>" +
+  "</div>";
+}
+
+function renderVerkehrHtml(){
+  if(DEMO_MODE) return zurueckPille() + '<div class="leer-hinweis">' + esc(t("vvDemo")) + "</div>";
+  verkehrListeLaden();
+  if(vvSzene) return renderVerkehrSzeneHtml();
+  const kopf = zurueckPille() +
+    '<div class="tagline" style="font-size:20px;margin-bottom:4px;">' + esc(t("mVerkehr")) + "</div>" +
+    '<div class="admin-sub" style="margin-bottom:14px;">' + esc(t("vvIntro")) + "</div>";
+  if(!vvListe){
+    return kopf + '<div class="leer-hinweis">' + esc(vvListeFehler ? t("vvFehler") : t("vvLaden")) + "</div>" +
+      (vvListeFehler ? '<button type="button" class="btn-sekundaer" data-vv-oeffnen>' + esc(t("vvKachelKnopf")) + "</button>" : "");
+  }
+  const gruppen = VV_KATEGORIEN.map(function(k){
+    const liste = vvListe.filter(function(s){ return s.kategorie === k[0]; });
+    if(!liste.length) return "";
+    return '<h2 class="vv-gruppe">' + esc(t(k[1])) + '<span class="vv-zahl">' + liste.length + "</span></h2>" +
+      '<div class="vv-raster">' + liste.map(function(s){
+        const marke = s.frei ? (s.kostprobe && !(session && session.vollzugang) ? '<span class="vv-marke-frei">' + esc(t("vvKostprobe")) + "</span>" : "")
+          : '<span class="vv-marke-zu">' + icon("schloss") + esc(t("vvNurAnfang")) + "</span>";
+        return '<button type="button" class="karte vv-karte" data-vv-szene="' + esc(s.id) + '">' +
+          '<span class="vv-karte-titel">' + esc(s.titel) + "</span>" +
+          '<span class="vv-karte-kurz">' + esc(s.kurz || "") + "</span>" +
+          '<span class="vv-karte-fuss"><span>' + esc(t("vvKapitel", { n: s.kapitel })) + " · " + Math.round(s.dauer || 0) + " s</span>" + marke + "</span>" +
+        "</button>";
+      }).join("") + "</div>";
+  }).join("");
+  return kopf + gruppen;
+}
+
+function renderVerkehrSzeneHtml(){
+  const s = vvListe && vvListe.find(function(x){ return x.id === vvSzene; });
+  // Passende Akademie-Videos (über die Themen der Szene)
+  let videos = "";
+  if(s && s.themen && s.themen.length){
+    const gesehen = {};
+    const zeilen = [];
+    s.themen.forEach(function(tid){
+      const tag = allTags.find(function(x){ return x.id === tid; });
+      if(!tag) return;
+      videoTags.filter(function(vt){ return vt.tag_id === tid; }).forEach(function(vt){
+        if(gesehen[vt.video_id] || zeilen.length >= 6) return;
+        const v = allVideos.find(function(x){ return x.id === vt.video_id; });
+        if(!v) return;
+        gesehen[v.id] = true;
+        const grund = videoSperrgrund(tag, v);
+        zeilen.push(renderVideoZeile({ video: v, tag: tag, gesperrt: !!grund, sperrgrund: grund }));
+      });
+    });
+    if(zeilen.length) videos = '<h2 class="vv-gruppe" style="margin-top:var(--sp-l);">' + esc(t("vvVideos")) + "</h2>" +
+      '<div class="admin-sub" style="margin-bottom:10px;">' + esc(t("vvVideosText")) + "</div>" + zeilen.join("");
+  }
+  return zurueckPille() + '<div id="vv-platz" data-szene="' + esc(vvSzene) + '"><div class="leer-hinweis">' + esc(t("vvLaden")) + "</div></div>" + videos;
+}
+
+function verkehrAufraeumen(){
+  if(vvSpieler){ try{ vvSpieler.zerstoeren(); }catch(e){} vvSpieler = null; }
+  vvMontiert = null;
+}
+
+async function verkehrEinhaengen(){
+  const platz = document.getElementById("vv-platz");
+  if(!platz) return;
+  const id = platz.dataset.szene, schluessel = id + "|" + sprache;
+  vvMontiert = platz;
+  try{
+    const [mod, daten] = await Promise.all([
+      import("./verkehr/spieler.js"),
+      vvCache[schluessel] ? Promise.resolve(vvCache[schluessel]) : verkehrAufruf({ aktion: "szene", id: id }).then(function(d){ vvCache[schluessel] = d.szene; return d.szene; })
+    ]);
+    if(vvMontiert !== platz || !document.body.contains(platz)) return; // inzwischen weiternavigiert
+    platz.innerHTML = "";
+    vvSpieler = mod.starte(platz, daten, {
+      sprache: sprache,
+      onVollzugang: function(){ const sz = vvListe && vvListe.find(function(x){ return x.id === id; }); zugangAnfragen(null, "Verkehr verstehen: " + (sz ? sz.titel : id)); }
+    });
+  } catch(e){
+    if(e && e.message === "abgemeldet") return;
+    if(vvMontiert === platz) platz.innerHTML = '<div class="leer-hinweis">' + esc(t("vvFehler")) + "</div>";
+  }
 }
 
 function renderHilfeHtml(){
@@ -4422,11 +4610,13 @@ function druckSystemStarten(){
 
 function renderCatalog(){
   stopWatermark(); // Sicherheitsnetz: egal auf welchem Weg man die Videoseite verlaesst
+  verkehrAufraeumen(); // 3D-Szene freigeben, bevor die Seite neu gezeichnet wird
 
   let content;
   if(drawerView === "dashboard") content = renderDashboardHtml();
   else if(drawerView === "themen") content = renderThemenHtml();
   else if(drawerView === "nuetzliches") content = renderNuetzlichesHtml();
+  else if(drawerView === "verkehr") content = renderVerkehrHtml();
   else if(drawerView === "rechtliches") content = renderRechtlichesHtml();
   else if(drawerView === "hilfe") content = renderHilfeHtml();
   else if(drawerView === "ueber") content = renderUeberHtml();
@@ -4458,6 +4648,7 @@ function renderCatalog(){
   const drawerLinks = [
     ["dashboard","dashboard",t("mDashboard")],
     ["themen","hashtag",t("mThemen")],
+    ["verkehr","verkehr",t("mVerkehr")],
     ["nuetzliches","buch",t("mNuetzliches")],
     ["rechtliches","schild",t("mRechtliches")],
     ["pruefungstag","kalender",t("mPruefungstag")],
@@ -4555,6 +4746,14 @@ function renderCatalog(){
       nachObenScrollen();
     });
   });
+  // Verkehr verstehen (26.09.2026): Szene öffnen, Start-Kachel, Spieler einhängen
+  document.querySelectorAll("[data-vv-szene]").forEach(function(b){
+    b.addEventListener("click", function(){ go({ drawer: "verkehr", szene: b.dataset.vvSzene }); nachObenScrollen(); });
+  });
+  document.querySelectorAll("[data-vv-oeffnen]").forEach(function(b){
+    b.addEventListener("click", function(){ vvListeFehler = false; go({ drawer: "verkehr" }); nachObenScrollen(); });
+  });
+  verkehrEinhaengen();
   // Zugangsanfrage (12.09.2026)
   document.querySelectorAll("[data-zugang-anfragen]").forEach(function(b){
     b.addEventListener("click", function(){ zugangAnfragen(b, b.dataset.zugangAnfragen); });
@@ -5739,6 +5938,7 @@ function darfSelbstVersenden(){
 
 function renderAdmin(){
   const isSuperAdmin = myRole === "super_admin";
+  if(adminSzSpieler){ try{ adminSzSpieler.zerstoeren(); }catch(e){} adminSzSpieler = null; }
   // Partner-Ansicht (09.09.2026, erweitert 10.09.2026): bewusst schlank, aber nicht
   // blind. Ein Partner braucht keine Kandidatenliste (das ist Serbands Vertriebs-
   // Werkzeug) und sieht keine fremden Schulen. NEU: er sieht seine EIGENE Abrechnung
@@ -5750,7 +5950,7 @@ function renderAdmin(){
   // Pruefer/Fahrlehrer/Schulen als Umschalter im Partner-Tab. Dashboard wird zur
   // Kopfleiste des Schueler-Tabs (renderAdminDashboard) statt eigenem Tab.
   const tabs = isSuperAdmin
-    ? [["schueler","Schüler"],["videos","Videos"],["partner","Partner & Rollen"],["abrechnung","Abrechnung"],["protokoll","Protokoll"]]
+    ? [["schueler","Schüler"],["videos","Videos"],["szenen","3D-Szenen"],["partner","Partner & Rollen"],["abrechnung","Abrechnung"],["protokoll","Protokoll"]]
     : [["schueler","Schüler"],["videos","Videos"],["partner","Partner & Rollen"],["abrechnung","Abrechnung"]];
 
   // Schutz gegen einen stehengebliebenen Tab-Zustand: waere adminTab noch auf einem
@@ -5800,7 +6000,7 @@ function renderAdmin(){
   // beide Rollen sehen -- die Sichtbarkeitspruefung sitzt jetzt in genau diesen
   // Umschalter-Funktionen (renderAdminSchuelerPillen, renderAdminPartnerPillen),
   // nicht mehr hier auf Tab-Ebene.
-  const nurSuper = ["protokoll"];
+  const nurSuper = ["protokoll", "szenen"];
   if(myRole !== "super_admin" && nurSuper.indexOf(adminTab) !== -1) adminTab = "schueler";
 
   if(adminTab === "schueler") renderAdminSchuelerTab();
@@ -5808,6 +6008,69 @@ function renderAdmin(){
   if(adminTab === "partner") renderAdminPartnerTab();
   if(adminTab === "abrechnung") renderAdminAbrechnung();
   if(adminTab === "protokoll") renderAdminProtokoll();
+  if(adminTab === "szenen") renderAdminSzenen();
+}
+
+/* =========================================================
+   3D-SZENEN (26.09.2026, Stufe 6 / W8) -- nur Super-Admin
+   Kostprobe = für alle Schüler ganz frei; alle anderen sehen ohne Vollzugang nur
+   das erste Kapitel. Aktiv aus = Szene verschwindet aus der App. Die Szenendaten
+   selbst kommen aus dem Export-Werkzeug (werkzeuge/szenen-export.js).
+   ========================================================= */
+let adminSzSpieler = null;
+async function renderAdminSzenen(){
+  const el = document.getElementById("admin-content");
+  el.innerHTML = '<div class="leer-hinweis">Szenen werden geladen …</div>';
+  const { data, error } = await supa.from("academy_szenen").select("id, kategorie, reihenfolge, titel, kurz, kostprobe, aktiv").order("reihenfolge");
+  if(adminTab !== "szenen") return;
+  if(error){ el.innerHTML = '<div class="leer-hinweis">Szenen konnten nicht geladen werden.</div>'; return; }
+  const KAT = { innerorts: "Innerorts", ueberland: "Landstraße", grundfahr: "Grundfahraufgaben", autobahn: "Autobahn" };
+  const proben = (data || []).filter(function(s){ return s.kostprobe && s.aktiv; }).length;
+  el.innerHTML =
+    '<div class="admin-sub" style="margin:var(--sp-m) 0;">' + (data || []).length + " Szenen · " + proben + " als Kostprobe frei. " +
+      "Ohne Vollzugang sehen Schüler bei allen anderen nur das erste Kapitel und bekommen den Hinweis auf den Vollzugang.</div>" +
+    '<div class="sz-liste">' + (data || []).map(function(s){
+      return '<div class="karte sz-zeile">' +
+        '<div class="sz-text"><div class="sz-titel">' + esc(s.titel) + '</div><div class="admin-sub">' + esc(KAT[s.kategorie] || s.kategorie) + " · " + esc(s.kurz || "") + "</div></div>" +
+        '<label class="sz-schalter"><input type="checkbox" data-sz-feld="kostprobe" data-sz="' + esc(s.id) + '"' + (s.kostprobe ? " checked" : "") + "> Kostprobe</label>" +
+        '<label class="sz-schalter"><input type="checkbox" data-sz-feld="aktiv" data-sz="' + esc(s.id) + '"' + (s.aktiv ? " checked" : "") + "> In der App</label>" +
+        '<button type="button" class="btn-sekundaer sz-knopf" data-sz-ansehen="' + esc(s.id) + '">Ansehen</button>' +
+      "</div>";
+    }).join("") + "</div>" +
+    '<div id="sz-vorschau" style="margin-top:var(--sp-l);"></div>';
+  el.querySelectorAll("[data-sz-feld]").forEach(function(cb){
+    cb.addEventListener("change", async function(){
+      const feld = cb.dataset.szFeld, wert = cb.checked, aenderung = {};
+      aenderung[feld] = wert; aenderung.aktualisiert_am = new Date().toISOString();
+      cb.disabled = true;
+      const { error: e } = await supa.from("academy_szenen").update(aenderung).eq("id", cb.dataset.sz);
+      cb.disabled = false;
+      if(e){ cb.checked = !wert; showToast("Speichern hat nicht geklappt"); return; }
+      showToast(feld === "kostprobe" ? (wert ? "Als Kostprobe frei" : "Kostprobe aus") : (wert ? "In der App sichtbar" : "In der App ausgeblendet"));
+    });
+  });
+  el.querySelectorAll("[data-sz-ansehen]").forEach(function(b){
+    b.addEventListener("click", async function(){
+      const ziel = document.getElementById("sz-vorschau");
+      if(adminSzSpieler){ try{ adminSzSpieler.zerstoeren(); }catch(e){} adminSzSpieler = null; }
+      ziel.innerHTML = '<div class="leer-hinweis">Szene wird geladen …</div>';
+      try{
+        const { data: sd } = await supa.auth.getSession();
+        const res = await fetch(SUPABASE_URL + "/functions/v1/academy-szene", { method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + (sd && sd.session ? sd.session.access_token : SUPABASE_ANON_KEY) },
+          body: JSON.stringify({ aktion: "szene", id: b.dataset.szAnsehen }) });
+        const d = await res.json();
+        if(!res.ok || !d.ok) throw new Error(d.code || "fehler");
+        const mod = await import("./verkehr/spieler.js");
+        if(adminTab !== "szenen" || !document.body.contains(ziel)) return;
+        ziel.innerHTML = "";
+        adminSzSpieler = mod.starte(ziel, d.szene, { sprache: "de" });
+        ziel.scrollIntoView({ block: "start", behavior: "smooth" });
+      } catch(e){
+        ziel.innerHTML = '<div class="leer-hinweis">Die Szene konnte nicht geladen werden.</div>';
+      }
+    });
+  });
 }
 
 /* =========================================================

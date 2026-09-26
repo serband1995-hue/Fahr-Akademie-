@@ -1,0 +1,1368 @@
+{
+ "abfahren": {
+  "titel": "Otobandan çıkış",
+  "kurz": "Zamanında şerit değiştir, çıkış şeridine geç, frene ancak orada bas",
+  "kapitel": {
+   "k0": {
+    "titel": "Çıkış haber veriliyor",
+    "text": "Ön yön levhası çıkışı 1000 m önceden haber verir. Şimdi planla: erkenden sağ şeride geç – son saniyede soldan değil.",
+    "regel": "Trafik işareti 449 · § 7 Abs. 5 StVO",
+    "frage": {
+     "text": "Sağa ne zaman geçerim?",
+     "optionen": [
+      "Tam çıkışta",
+      "Erkenden, en geç geri sayım levhalarından (Baken) önce",
+      "Fark etmez, gerekirse taralı alanın üzerinden"
+     ],
+     "richtig": 1,
+     "erklaerung": "Zamanında şerit değiştir ki geçiş telaşsız ve kimseyi tehlikeye atmadan olsun."
+    }
+   },
+   "k1": {
+    "titel": "Sinyal, ayna, omuz üzerinden bakış",
+    "text": "Sağ sinyal, iç ve dış ayna, sağa omuz üzerinden bakış (Schulterblick) – sonra seri şekilde sağ şeride geç.",
+    "regel": "§ 7 Abs. 5 StVO",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Sağ şeride geç",
+    "text": "Sağ şeritte kal ve hızını koru. Sinyali tekrar kapat.",
+    "regel": "§ 2 Abs. 2 StVO (sağdan gitme kuralı)",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Ön yön levhası 500 m",
+    "text": "Çıkış 500 m önceden bir kez daha haber verilir. Bundan sonra mümkünse artık sollama yapma.",
+    "regel": "Trafik işareti 449",
+    "frage": null
+   },
+   "k4": {
+    "titel": "Geri sayım levhaları",
+    "text": "3, 2, 1 çizgili levhalar: çıkış şeridinin (Ausfädelungsstreifen) başlangıcına 300, 200, 100 m kaldı.",
+    "regel": "Trafik işareti 450",
+    "frage": {
+     "text": "İki çizgili levha ne anlama gelir?",
+     "optionen": [
+      "Çıkışa 200 m kaldı",
+      "Hız 200",
+      "İki şerit boş"
+     ],
+     "richtig": 0,
+     "erklaerung": "Trafik işareti 450: 3 çizgi = 300 m, 2 = 200 m, 1 = 100 m."
+    }
+   },
+   "k5": {
+    "titel": "Sağ sinyal",
+    "text": "Çıkış şeridinden zamanında önce sağ sinyal ver – arkandaki trafik bunu erkenden görmeli.",
+    "regel": "§ 7 Abs. 5 StVO",
+    "frage": null
+   },
+   "k6": {
+    "titel": "Ayna, omuz üzerinden bakış, geç",
+    "text": "Ayna ve sağa omuz üzerinden bakış, sonra kalın kesik çizginin üzerinden çıkış şeridine geç.",
+    "regel": "Trafik işareti 340 · § 7 Abs. 5 StVO",
+    "frage": null
+   },
+   "k7": {
+    "titel": "Frene ancak şimdi bas",
+    "text": "Hızını ancak çıkış şeridinde düşür, daha önce otobanda değil. Orada devam eden şeritlerdekinden daha hızlı gidilmez.",
+    "regel": "§ 7a Abs. 3 StVO",
+    "frage": {
+     "text": "Hızımı nerede düşürürüm?",
+     "optionen": [
+      "Daha sağ şeritteyken",
+      "Çıkış şeridinde",
+      "Ancak virajda"
+     ],
+     "richtig": 1,
+     "erklaerung": "Otobanda fren yapmak arkadan gelenleri tehlikeye atar – ancak çıkış şeridinde yavaşla, virajdan önce gösterilen hıza in."
+    }
+   },
+   "k8": {
+    "titel": "Viraj ve hız göstergesi",
+    "text": "Levhaya kadar gösterilen azami hıza (burada 60 km/h) in, viraj daralmadan önce. Uzun otoban sürüşünden sonra 60 km/h çok yavaş gelir – hız göstergesini kontrol et!",
+    "regel": "Trafik işareti 274 · § 3 Abs. 1 StVO",
+    "frage": {
+     "text": "Neden hız göstergesine bakmalıyım?",
+     "optionen": [
+      "Çünkü hızlı sürüşten sonra insan hızını yanlış tahmin eder",
+      "Yakıt göstergesi yüzünden",
+      "Gerek yok"
+     ],
+     "richtig": 0,
+     "erklaerung": "Otoban sürüşünden sonra kendi hızını olduğundan düşük tahmin edersin (alışkanlık)."
+    }
+   },
+   "k9": {
+    "titel": "Unutma",
+    "text": "Çıkışı mı kaçırdın? Bir sonrakine kadar devam et. Otobanda asla geri geri gitme veya geri dönme – emniyet şeridinde de hayır.",
+    "regel": "§ 18 Abs. 7 StVO",
+    "frage": null
+   }
+  }
+ },
+ "auffahren": {
+  "titel": "Otobana giriş",
+  "kurz": "Katılım şeridi, boşluk bul, trafiğe katıl",
+  "kapitel": {
+   "k0": {
+    "titel": "Otoban kavşağı",
+    "text": "Giriş yolu ayrı bir kavisle otobana gider. Daha burada otobandaki trafiği gözle: Ne kadar hızlı, boşluklar nerede?",
+    "regel": "Trafik işareti 330.1 · § 18 Abs. 2 StVO",
+    "frage": {
+     "text": "Birazdan trafiğe katılırken ilk geçiş hakkı kimde?",
+     "optionen": [
+      "Bende – ben hızlanma şeridindeyim",
+      "Devam eden yoldaki trafikte",
+      "Kim daha hızlıysa"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 18 Abs. 3 StVO: Devam eden yoldaki trafiğin ilk geçiş hakkı vardır."
+    }
+   },
+   "k1": {
+    "titel": "Katılım şeridi: hızlan",
+    "text": "Katılım şeridinde (Einfädelungsstreifen) seri şekilde trafiğin hızına ulaş. Burada devam eden şeritlerdekinden daha hızlı gidebilirsin – bu bilerek böyle.",
+    "regel": "§ 7a Abs. 2 StVO",
+    "frage": {
+     "text": "Şimdi en önemli görev ne?",
+     "optionen": [
+      "Yavaş gitmek ve beklemek",
+      "Seri şekilde trafiğin hızına kadar hızlanmak",
+      "Hemen sola geçmek"
+     ],
+     "richtig": 1,
+     "erklaerung": "Trafiğe benzer bir hızla güvenle katılırsın. Çok yavaş katılmak başkalarını fren yapmaya zorlar."
+    }
+   },
+   "k2": {
+    "titel": "Sol sinyal",
+    "text": "Şerit değiştireceğini zamanında ve açıkça belli et – sol sinyali ver.",
+    "regel": "§ 7 Abs. 5 StVO",
+    "frage": {
+     "text": "Ne zaman sinyal veririm?",
+     "optionen": [
+      "Ancak şerit değiştirirken",
+      "Zamanında, önceden",
+      "Hiç, zaten belli"
+     ],
+     "richtig": 1,
+     "erklaerung": "Her şerit değişikliği zamanında ve açıkça belli edilmelidir (§ 7 Abs. 5 StVO)."
+    }
+   },
+   "k3": {
+    "titel": "Boşluk seç",
+    "text": "Kamyon sağ önde gidiyor, kırmızı otomobilin mesafesi büyük. Arkadaki boşluk uygun: hızını ayarla ve yeterli mesafe bırak (pratik kural: hız göstergesinin yarısı kadar metre).",
+    "regel": "§ 18 Abs. 3 · § 4 Abs. 1 StVO",
+    "frage": {
+     "text": "Nereden trafiğe katılırım?",
+     "optionen": [
+      "Kamyonun yanından",
+      "Kamyonun arkasındaki boşluğa",
+      "Kamyonun önüne, gaza basarım"
+     ],
+     "richtig": 1,
+     "erklaerung": "Kamyonun arkasındaki boşluk yeterince büyük. Önünde yer dar olurdu ve ilk geçiş hakkı ondadır."
+    }
+   },
+   "k4": {
+    "titel": "Ayna ve omuz üzerinden bakış",
+    "text": "Şerit değiştirmeden hemen önce: iç ve dış ayna, sonra sola omuz üzerinden bakış (Schulterblick) – yoksa kör nokta görünmez.",
+    "regel": "§ 7 Abs. 5 StVO: tehlikeyi önlemek",
+    "frage": {
+     "text": "Şerit değiştirmeden hemen önce ne gelir?",
+     "optionen": [
+      "Radyonun sesini kısmak",
+      "Ayna ve sola omuz üzerinden bakış",
+      "Korna çalmak"
+     ],
+     "richtig": 1,
+     "erklaerung": "Kör noktadaki bir aracı ancak omuz üzerinden bakarak görürsün."
+    }
+   },
+   "k5": {
+    "titel": "Trafiğe katıl",
+    "text": "Kalın kesik çizginin üzerinden geç – düz çizginin veya taralı alanın üzerinden değil. Seri ve düzgün şekilde geç, şeridin sonuna kadar bekleme.",
+    "regel": "Trafik işareti 340 · Trafik işareti 295 · Trafik işareti 298 · § 7 Abs. 5 StVO",
+    "frage": null
+   },
+   "k6": {
+    "titel": "Sinyali kapat, mesafeni koru",
+    "text": "Şerit değiştirdikten sonra sinyali kapat ve sağdan devam et. Öndeki kamyona mesafe: en az hız göstergesinin yarısı kadar metre.",
+    "regel": "§ 2 Abs. 2 · § 4 Abs. 1 StVO",
+    "frage": {
+     "text": "Peki şimdi?",
+     "optionen": [
+      "Hemen soldan sollamak",
+      "Sinyali kapatmak, sağdan gitmek, mesafeyi korumak",
+      "Emniyet şeridinden devam etmek"
+     ],
+     "richtig": 1,
+     "erklaerung": "Sağdan gitme kuralı (§ 2 Abs. 2 StVO) ve yeterli takip mesafesi (§ 4 Abs. 1 StVO)."
+    }
+   },
+   "k7": {
+    "titel": "Unutma",
+    "text": "Otobana girerken fermuar sistemi (Reißverschluss) geçerli değildir: Otobana giren, ilk geçiş hakkına uymak zorundadır. Boşluk bulunmazsa gerekirse şeridin sonunda dur – asla emniyet şeridine kaçma.",
+    "regel": "§ 18 Abs. 3 StVO · § 7 Abs. 4 burada geçerli değil",
+    "frage": null
+   }
+  }
+ },
+ "doppel": {
+  "titel": "Çift şeritten sola dönüş",
+  "kurz": "İki sola dönüş şeridi – herkes kendi şeridinde kalır",
+  "kapitel": {
+   "k0": {
+    "titel": "İki sola dönüş şeridi",
+    "text": "İki şerit de sola gidiyor (oklar, Trafik işareti 297), trafik ışığı yeşil. Zamanında şeridini seç, sinyal ver – ve seçtiğin şeritte kal.",
+    "regel": "Trafik işareti 297 · § 9 Abs. 1 StVO",
+    "frage": {
+     "text": "Sürücü kursu aracı iki sola dönüş şeridinden sağdakinde. Hangi şeride döner?",
+     "optionen": [
+      "Girilen yolun sağ şeridine",
+      "Sol şeride",
+      "Fark etmez"
+     ],
+     "richtig": 0,
+     "erklaerung": "Soldaki solda, sağdaki sağda kalır – böylece yandaki araçla çakışma olmaz."
+    }
+   },
+   "k1": {
+    "titel": "Dönüşte şeridini koru",
+    "text": "Yan yana, düzgün şekilde dön. Kavşaktaki kesik yönlendirme çizgileri yolu gösterir. Kavşağın içinde şerit değiştirmek yok!",
+    "regel": "§ 7 Abs. 5 · § 9 Abs. 1 StVO",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Dönüşten sonra",
+    "text": "Ancak kavşağı geçtikten sonra – sinyal, ayna ve omuz üzerinden bakışla – gerekirse şerit değiştir.",
+    "regel": "§ 7 Abs. 5 StVO",
+    "frage": null
+   }
+  }
+ },
+ "ecke": {
+  "titel": "Geri geri sağa köşe dönme",
+  "kurz": "Geri geri yan sokağa – kaldırıma eşit ve yakın mesafede",
+  "kapitel": {
+   "k0": {
+    "titel": "Kavşağı geçip dur",
+    "text": "Sağda yol kenarında, yan yolun ağzını yaklaşık iki üç araç boyu geçerek dur. Her yöne bak – trafiğin önceliği var.",
+    "regel": "§ 9 Abs. 5 StVO",
+    "frage": {
+     "text": "Geri geri giderken en önemli şey ne?",
+     "optionen": [
+      "Mümkün olduğunca hızlı olmak",
+      "Yavaş gitmek ve her yönü gözlemek",
+      "Sadece iç aynaya bakmak"
+     ],
+     "richtig": 1,
+     "erklaerung": "Geri geri giderken kimse tehlikeye atılmamalı – yavaş, arkaya ve her yöne bakarak."
+    }
+   },
+   "k1": {
+    "titel": "Düz geri",
+    "text": "Vücudunu çevir, arka camdan bak ve düz geri git – kaldırımdan yaklaşık 50 cm uzakta.",
+    "regel": "Temel sürüş görevi: geri geri sürüş",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Köşeden direksiyon kır",
+    "text": "Arka tekerlek köşeye gelince: sağa kır, araç kaldırımın kavisini eşit mesafede takip etsin. Bu sırada ön taraf sola, yola doğru savrulur – öncesinde tekrar her yöne bak!",
+    "regel": "§ 9 Abs. 5 StVO",
+    "frage": {
+     "text": "Arka tarafın sağa gitmesi için direksiyonu hangi yöne çeviririm?",
+     "optionen": [
+      "Sağa",
+      "Sola"
+     ],
+     "richtig": 0,
+     "erklaerung": "Geri giderken kural: direksiyonu, arka tarafın gitmesini istediğin yöne çevir."
+    }
+   },
+   "k3": {
+    "titel": "Düz devam",
+    "text": "Araç yan sokağın kaldırımına paralel olunca: direksiyonu düzelt ve yaklaşık bir araç boyu daha geri git.",
+    "regel": "Sınav yönergesi · Temel sürüş görevleri",
+    "frage": null
+   }
+  }
+ },
+ "eng": {
+  "titel": "Dar geçit: engel benim tarafımda",
+  "kurz": "Engelin yanından geçmesi gereken, karşıdan gelen trafiğe yol verir",
+  "kapitel": {
+   "k0": {
+    "titel": "Önde engel",
+    "text": "Benim tarafımda dörtlüleri yanan bir kamyon duruyor. Yol, iki aracın yan yana geçmesi için çok dar.",
+    "regel": "§ 6 StVO",
+    "frage": {
+     "text": "Dar geçitten önce kim geçebilir?",
+     "optionen": [
+      "Ben – önce ben geldim",
+      "Karşıdan gelen trafik – engel benim tarafımda",
+      "Kim daha hızlıysa"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 6 StVO: Bir engelin solundan geçmek isteyen, karşıdan gelen araçlara yol vermek zorundadır."
+    }
+   },
+   "k1": {
+    "titel": "Mesafe bırakarak bekle",
+    "text": "Zamanında ve engele mesafe bırakarak dur – böylece yanından geçmek için yer kalır ve karşıdan gelen trafiği daha iyi görürsün.",
+    "regel": "§ 6 StVO",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Şeritten çıkışı belli et",
+    "text": "Yol boşsa: ayna, sola omuz üzerinden bakış, sol sinyal ve yeterli yan mesafeyle kamyonun yanından geç – araçtan inen kişilere dikkat et.",
+    "regel": "§ 6 · § 7 Abs. 5 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Tekrar şeride dön",
+    "text": "Engeli geçince sağ sinyal ver ve tekrar sağ şeride geç.",
+    "regel": "§ 6 · § 2 Abs. 2 StVO",
+    "frage": null
+   }
+  }
+ },
+ "gefahr": {
+  "titel": "Acil fren: 30 mu 50 mi?",
+  "kurz": "Reaksiyon mesafesi + fren mesafesi = durma mesafesi – reaksiyon testiyle",
+  "kapitel": {
+   "k0": {
+    "titel": "İki araç, aynı reaksiyon",
+    "text": "Aynı şeritte iki sürüşün karşılaştırması: 50 km/h ile giden sürücü kursu aracı ve – yarı saydam – 30 km/h ile giden aynı araç. Birazdan park etmiş arabaların arasından yola bir top yuvarlanacak, peşinden bir çocuk koşacak.",
+    "regel": "§ 3 Abs. 1 · § 3 Abs. 2a StVO",
+    "frage": null
+   },
+   "k1": {
+    "titel": "Tehlike! Reaksiyon süresi",
+    "text": "Ayak frene gidene kadar yaklaşık 1 saniye geçer. Bu sürede araç frensiz devam eder: 50 km/h'de yaklaşık 14 m, 30 km/h'de 8 m'den biraz fazla.",
+    "regel": "Pratik formül reaksiyon mesafesi: (km/h ÷ 10) · 3",
+    "frage": {
+     "text": "50 km/h'de reaksiyon mesafesi ne kadardır (pratik formül)?",
+     "optionen": [
+      "5 m",
+      "15 m",
+      "25 m"
+     ],
+     "richtig": 1,
+     "erklaerung": "(50 ÷ 10) · 3 = 15 m. Tam hesap saniyede yaklaşık 14 m verir."
+    }
+   },
+   "k2": {
+    "titel": "Tam fren",
+    "text": "Fren ve debriyaja aynı anda sonuna kadar bas, baskıyı koru. ABS takırdar – bu normal. Kaçınabilmek için direksiyonu gevşek tut.",
+    "regel": "Pratik formül acil fren: (km/h ÷ 10)² ÷ 2",
+    "frage": {
+     "text": "50 km/h'den acil frende fren mesafesi ne kadardır (pratik formül)?",
+     "optionen": [
+      "12,5 m",
+      "25 m",
+      "50 m"
+     ],
+     "richtig": 0,
+     "erklaerung": "(50 ÷ 10)² ÷ 2 = 12,5 m. Normal fren mesafesi (tehlike olmadan): (50 ÷ 10)² = 25 m."
+    }
+   },
+   "k3": {
+    "titel": "Sonuç",
+    "text": "30 ile giden araç zamanında durur. 50 km/h ile mesafe yetmez – topun olduğu yerde araç hâlâ yaklaşık 35 km/h hızla gider. 30 km/h hız hayat kurtarır.",
+    "regel": "§ 3 Abs. 1 · § 3 Abs. 2a StVO",
+    "frage": {
+     "text": "Okulların önünde 30 km/h hız neden bu kadar önemli?",
+     "optionen": [
+      "Gürültü yüzünden",
+      "Durma mesafesi çok daha kısa – 30 ile çoktan durduğum yerde, 50 ile hâlâ neredeyse başladığım kadar hızlıyım",
+      "Bu sadece bir tavsiye"
+     ],
+     "richtig": 1,
+     "erklaerung": "Fren mesafesi hızın karesiyle artar."
+    }
+   }
+  }
+ },
+ "gruenpfeil": {
+  "titel": "Kırmızıda yeşil ok",
+  "kurz": "Önce dur, sonra dikkatlice sağa – yeşili yanan trafiğin önceliği var",
+  "kapitel": {
+   "k0": {
+    "titel": "Kırmızı – yeşil ok levhasıyla",
+    "text": "Trafik ışığı kırmızı. Sağ yanında siyah metal levha üzerinde yeşil bir ok var (Trafik işareti 720) – ışıklı ok değil!",
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO · Trafik işareti 720",
+    "frage": {
+     "text": "Yeşil ok önce ne ister?",
+     "optionen": [
+      "Yavaşça geçip gitmek",
+      "Durma çizgisinde tamamen durmak",
+      "Hiçbir şey, yeşil gösteriyor"
+     ],
+     "richtig": 1,
+     "erklaerung": "Durduktan sonra kırmızıda sağa dönmek serbesttir – durmak zorunludur."
+    }
+   },
+   "k1": {
+    "titel": "Durma çizgisinde dur",
+    "text": "Tamamen dur. Önümde bir yaya kadın yeşilde yolu geçiyor.",
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "frage": {
+     "text": "Önce kim geçebilir?",
+     "optionen": [
+      "Ben, bende ok var",
+      "Yeşili yanan yayalar ve çapraz trafik",
+      "Önce kim geldiyse"
+     ],
+     "richtig": 1,
+     "erklaerung": "Özellikle yeşili yanan yöndeki yayaların ve araçların engellenmesi veya tehlikeye atılması kesinlikle önlenmelidir."
+    }
+   },
+   "k2": {
+    "titel": "Görüş çizgisine kadar yavaşça ilerle",
+    "text": "Yaya geçidi boş. Görüş çizgisine kadar yavaşça ilerle ve tekrar dur.",
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Çapraz trafiğin ışığı yeşil",
+    "text": "Soldan yeşil ışıkla bir araba geliyor – ne engellenmeli ne de tehlikeye atılmalı. Bekle.",
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "frage": null
+   },
+   "k4": {
+    "titel": "Dönüş",
+    "text": "Mavi araba geçti. Sağa omuz üzerinden bak ve yavaşça dön – sadece sağ şeritten!",
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "frage": null
+   },
+   "k5": {
+    "titel": "Unutma",
+    "text": "Trafik ışığında yanan yeşil ok = dönüş için ayrı yeşil faz. Yeşil metal levha = ancak durduktan sonra, en büyük dikkatle dönülür.",
+    "regel": "§ 37 Abs. 2 StVO",
+    "frage": null
+   }
+  }
+ },
+ "kreisel": {
+  "titel": "Döner kavşak",
+  "kurz": "Girerken sinyal yok, kavşağın içindekinin önceliği var, çıkarken sinyal ver",
+  "kapitel": {
+   "k0": {
+    "titel": "Trafik işareti 205'in altında Trafik işareti 215",
+    "text": "“Yol ver” levhalı döner kavşak: Kavşağın içindeki trafiğin ilk geçiş hakkı vardır. Yavaşça yaklaş ve sola bak.",
+    "regel": "Trafik işareti 215 · Trafik işareti 205 · § 9a Abs. 1 StVO",
+    "frage": {
+     "text": "Döner kavşağa girerken sinyal verir miyim?",
+     "optionen": [
+      "Evet, sağa",
+      "Evet, sola",
+      "Hayır – girerken sinyal vermek yasaktır"
+     ],
+     "richtig": 2,
+     "erklaerung": "§ 9a Abs. 1 StVO: Girişte sinyal kullanmak yasaktır."
+    }
+   },
+   "k1": {
+    "titel": "Yol ver",
+    "text": "Mavi araba zaten kavşağın içinde ve ilk geçiş hakkı onda. Bekleme çizgisinde dur ve onu geçir.",
+    "regel": "§ 9a Abs. 1 StVO · Trafik işareti 341",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Kavşağa gir",
+    "text": "Yol boş – sinyal vermeden gir. Kavşağın içinde saat yönünün tersine gidilir; kavşak yolunda durmak yasaktır.",
+    "regel": "§ 9a Abs. 1 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Çıkış için sağ sinyal",
+    "text": "Senin çıkışından bir önceki çıkışı geçince sağ sinyal ver, ayna ve sağa omuz üzerinden bak – bisikletliler ve yayalar!",
+    "regel": "§ 9 Abs. 1 StVO",
+    "frage": {
+     "text": "Çıkmak için ne zaman sinyal veririm?",
+     "optionen": [
+      "Hiç",
+      "Benimkinden önceki çıkışı geçince – çıkmadan zamanında önce",
+      "Daha girerken"
+     ],
+     "richtig": 1,
+     "erklaerung": "Çıkış belli edilir: kendi çıkışından önceki çıkışı geçer geçmez sağ sinyal ver."
+    }
+   },
+   "k4": {
+    "titel": "Yaya geçidinde yaya",
+    "text": "Çıkıştan sonra bir yaya geçidi (Zebrastreifen) var. Onu kullanmak isteyenin önceliği vardır – yavaşça yaklaş ve bekle.",
+    "regel": "§ 26 Abs. 1 StVO",
+    "frage": {
+     "text": "Yaya kadın yaya geçidinden karşıya geçmek istiyor. Öncelik kimde?",
+     "optionen": [
+      "Bende – döner kavşaktan geliyorum",
+      "Yaya kadında",
+      "Kim daha hızlıysa"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 26 Abs. 1 StVO: Yaya geçidini kullanmak istediği belli olan yayaların karşıya geçmesine izin verilmelidir."
+    }
+   }
+  }
+ },
+ "laengs": {
+  "titel": "Geri geri park (paralel)",
+  "kurz": "Yol kenarındaki park yerine yandan girme",
+  "kapitel": {
+   "k0": {
+    "titel": "Park yerini kontrol et",
+    "text": "Park yeri yeterli mi? Pratik kural: en az bir araç boyu artı yaklaşık 1,5 m. Erkenden sağ sinyal ver ki arkandaki trafik ne yapacağını bilsin.",
+    "regel": "§ 1 Abs. 2 · § 12 StVO",
+    "frage": {
+     "text": "Sinyali ne zaman veririm?",
+     "optionen": [
+      "Ancak geri giderken",
+      "Daha park yerine yaklaşırken",
+      "Hiç, sadece park ediyorum"
+     ],
+     "richtig": 1,
+     "erklaerung": "Erkenden sağ sinyal ver – böylece arkandaki trafik neden durduğunu anlar."
+    }
+   },
+   "k1": {
+    "titel": "Öndeki aracın yanında dur",
+    "text": "Öndeki arabanın yanında ona paralel dur, yaklaşık 50 cm ile 1 m yan mesafeyle. Aracının arkası yaklaşık onun arkası hizasında olsun.",
+    "regel": "Temel sürüş görevi: paralel park",
+    "frage": {
+     "text": "Geri gitmeden önce ne gelir?",
+     "optionen": [
+      "Hemen geri gitmek",
+      "Her yöne bakmak – özellikle arkaya",
+      "Korna çalmak"
+     ],
+     "richtig": 1,
+     "erklaerung": "Her hareketten önce her yöne bak, geri giderken vücudunu çevir ve arka camdan bak."
+    }
+   },
+   "k2": {
+    "titel": "Direksiyonu tam sağa kır",
+    "text": "Yavaşça geri git ve bu sırada direksiyonu tam sağa kır. Aracın arkası park yerine döner. Arkaya bak; ön taraf sola, yola doğru savrulur – öncesinde tekrar bak!",
+    "regel": "§ 9 Abs. 5 · § 1 Abs. 2 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Düz geri",
+    "text": "Direksiyonu düzelt, biraz düz geri git – böylece araç kaldırıma yaklaşır.",
+    "regel": "Temel sürüş görevi: paralel park",
+    "frage": null
+   },
+   "k4": {
+    "titel": "Ters yöne kır",
+    "text": "Sağ ön köşe öndeki aracın arkasını geçince: direksiyonu tam sola kır. Araç kaldırıma paralel hale döner.",
+    "regel": "Temel sürüş görevi: paralel park",
+    "frage": {
+     "text": "Ne zaman sola kırarım?",
+     "optionen": [
+      "Hemen başta",
+      "Ön taraf öndeki aracı geçince",
+      "Hiç"
+     ],
+     "richtig": 1,
+     "erklaerung": "Çok erken ters kırarsan önden çarparsın – çok geç kırarsan arka taraf kaldırıma gelir."
+    }
+   },
+   "k5": {
+    "titel": "Hizala",
+    "text": "Önde ve arkada benzer boşluk kalana kadar biraz ileri git. Hedef: kaldırıma paralel ve yakın (yaklaşık değer: 30 cm'ye kadar), ama ona değmeden.",
+    "regel": "Temel sürüş görevi: paralel park",
+    "frage": {
+     "text": "Araç kaldırımdan ne kadar uzak olabilir?",
+     "optionen": [
+      "Fark etmez",
+      "Yakın – yaklaşık değer 30 cm'ye kadar",
+      "En az 1 m"
+     ],
+     "richtig": 1,
+     "erklaerung": "İyi park edilmiş: kaldırıma paralel ve yakın – ama değmeden."
+    }
+   }
+  }
+ },
+ "links_gegen": {
+  "titel": "Karşıdan trafik varken sola dönüş",
+  "kurz": "Karşıdan gelen trafiğin ve karşıdan sağa dönenlerin önceliği var",
+  "kapitel": {
+   "k0": {
+    "titel": "Şeride yerleş",
+    "text": "Ayna, sol sinyal, yolun ortasına doğru yerleş. Yerleşmeden önce arkadan gelen trafiğe dikkat et.",
+    "regel": "§ 9 Abs. 1 StVO",
+    "frage": {
+     "text": "Sola dönmek için nereye yerleşirim?",
+     "optionen": [
+      "En sağa",
+      "Yolun ortasına kadar",
+      "Karşı şeride"
+     ],
+     "richtig": 1,
+     "erklaerung": "Sola dönüş: yolun ortasına kadar yerleş (tek yönlü yollarda mümkün olduğunca sola)."
+    }
+   },
+   "k1": {
+    "titel": "Kavşağın içinde bekle",
+    "text": "Kavşağın içine kadar ilerle ve bekle. Tekerlekler düz dursun – arkadan çarpılırsan karşıdan gelen trafiğin içine yuvarlanmazsın.",
+    "regel": "§ 9 Abs. 3 StVO",
+    "frage": {
+     "text": "Araçlar hangi sırayla geçebilir?",
+     "reihenfolge": [
+      "Mavi (düz gidiyor)",
+      "Kırmızı (sağa dönüyor)",
+      "Kamyonet (düz gidiyor)",
+      "Sürücü kursu aracı (sola)"
+     ],
+     "erklaerung": "Sola dönen, karşıdan gelen trafiğe yol verir – karşıdan sağa dönene de. Sürücü kursu aracı en son geçer."
+    }
+   },
+   "k2": {
+    "titel": "Karşıdan gelen trafiği geçir",
+    "text": "Karşıdan düz gidenlerin ve sağa dönenlerin önceliği var. Ancak her yer boşsa ve artık yaya da geçmiyorsa dön.",
+    "regel": "§ 9 Abs. 3 · § 9 Abs. 4 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Yayalara dikkat et",
+    "text": "Döneceğim sokakta bir yaya yolu geçiyor. Özellikle dikkatli ol – karşıya geçene kadar bekle.",
+    "regel": "§ 9 Abs. 3 StVO",
+    "frage": {
+     "text": "Yaya hâlâ yolda. Ne yapmalı?",
+     "optionen": [
+      "Korna çalmak",
+      "O geçene kadar beklemek",
+      "Hemen arkasından geçmek"
+     ],
+     "richtig": 1,
+     "erklaerung": "Dönerken yayalara özellikle dikkat et – gerekirse bekle."
+    }
+   },
+   "k4": {
+    "titel": "Sola omuz üzerinden bakış",
+    "text": "Dönmeden hemen önce: sola omuz üzerinden bak (bisikletliler, sollayanlar), sonra seri şekilde geniş bir kavisle dön.",
+    "regel": "§ 9 Abs. 1 StVO",
+    "frage": null
+   }
+  }
+ },
+ "quer_rueck": {
+  "titel": "Geri geri park (dik)",
+  "kurz": "Geri geri dik park yerine – sonra iyi görüşle ileri çıkış",
+  "kapitel": {
+   "k0": {
+    "titel": "Park yerini geç",
+    "text": "Otoparkın yolunda yavaşça git, sağ sinyal ver ve aracın arkası park yerini yaklaşık 1–2 m geçene kadar ilerle.",
+    "regel": "§ 1 Abs. 2 StVO",
+    "frage": null
+   },
+   "k1": {
+    "titel": "Her yöne bak",
+    "text": "Geri gitmeden önce her yöne bak – otopark yolundaki yayalar ve arabalar!",
+    "regel": "§ 9 Abs. 5 StVO",
+    "frage": {
+     "text": "Dik park yerine neden geri geri girilir?",
+     "optionen": [
+      "Sonra çıkarken öne doğru iyi görüş için",
+      "Zorunlu olduğu için",
+      "Daha hızlı olduğu için"
+     ],
+     "richtig": 0,
+     "erklaerung": "Geri geri girerken daha dar dönülebilir ve park yerinden çıkarken çapraz trafiği görürsün."
+    }
+   },
+   "k2": {
+    "titel": "Direksiyonu tam kır",
+    "text": "Yavaşça geri git ve direksiyonu tam sağa kır. Arkaya ve yandaki arabaların köşelerine bak.",
+    "regel": "Temel sürüş görevi: dik park",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Düz geri",
+    "text": "Araç yandakilere paralel olunca: direksiyonu düzelt ve ortadan park yerinin sonuna kadar geri git.",
+    "regel": "Sınav yönergesi · Temel sürüş görevleri",
+    "frage": {
+     "text": "Direksiyon ne zaman düzeltilir?",
+     "optionen": [
+      "Park yerine girer girmez",
+      "Araç yandaki arabalara paralel olunca",
+      "Hiçbir zaman"
+     ],
+     "richtig": 1,
+     "erklaerung": "Sonra düz devam – yoksa araç yamuk durur."
+    }
+   }
+  }
+ },
+ "quer_vor": {
+  "titel": "İleri park (dik)",
+  "kurz": "İleri doğru dik park yerine – açılarak",
+  "kapitel": {
+   "k0": {
+    "titel": "Yaklaş ve açıl",
+    "text": "Otopark yolunda park yerine yavaşça yaklaş, sağ sinyal ver. Kavis park yerine sığsın diye biraz sola açıl.",
+    "regel": "§ 1 Abs. 2 StVO",
+    "frage": {
+     "text": "İleri park etmeden önce neden açılırım?",
+     "optionen": [
+      "Kavis dar park yerine sığsın diye",
+      "Daha hızlı olduğu için",
+      "Gerek yok"
+     ],
+     "richtig": 0,
+     "erklaerung": "İleri giderken arka tekerlekler virajı içeriden keser – açılmak, aracın arkasının yandaki arabaya sürtmesini önler."
+    }
+   },
+   "k1": {
+    "titel": "Direksiyonu tam kır",
+    "text": "Park yerinin ortası yaklaşık dış ayna hizasına gelince: direksiyonu tam sağa kır. Yandaki arabaların köşelerine dikkat et (sağa omuz üzerinden bakış).",
+    "regel": "Temel sürüş görevi: dik park",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Düz içeri",
+    "text": "Direksiyonu düzelt ve ön taraf sonuna yaklaşana kadar ortadan park yerine gir. İki taraftan da araçtan inilebilmeli.",
+    "regel": "Sınav yönergesi · Temel sürüş görevleri",
+    "frage": {
+     "text": "Sonra park yerinden çıkarken dezavantaj ne?",
+     "optionen": [
+      "Hiçbiri",
+      "Geri geri çıkış – trafiği kötü görürsün",
+      "Daha çok benzin gerekir"
+     ],
+     "richtig": 1,
+     "erklaerung": "Bu yüzden geri geri park önerilir: çıkış o zaman ileri doğru, iyi görüşle olur."
+    }
+   }
+  }
+ },
+ "rechts_rad": {
+  "titel": "Bisiklet yolu varken sağa dönüş",
+  "kurz": "Omuz üzerinden bakış – düz giden bisikletlinin önceliği var",
+  "kapitel": {
+   "k0": {
+    "titel": "Sağa yerleş ve sinyal ver",
+    "text": "Ayna, sağ sinyal, mümkün olduğunca sağa yerleş. Yolun sağ yanında bir bisiklet yolu var.",
+    "regel": "§ 9 Abs. 1 StVO",
+    "frage": {
+     "text": "Burada öncelik kimde?",
+     "optionen": [
+      "Bende – ben daha hızlıyım",
+      "Düz giden bisikletlide",
+      "Kavşağa önce kim ulaşırsa"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 9 Abs. 3 StVO: Dönen kişi, yolun yanında aynı yönde giden bisikletlilere yol vermek zorundadır."
+    }
+   },
+   "k1": {
+    "titel": "Sağa omuz üzerinden bakış",
+    "text": "Dönmeden hemen önce: ayna ve sağa omuz üzerinden bakış (Schulterblick) – bisikletli kör noktada olabilir.",
+    "regel": "§ 9 Abs. 1 · § 9 Abs. 3 StVO",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Bekle",
+    "text": "Bisikletli arkadan geliyor ve düz gidiyor. Dur ve onu geçir – ancak sonra dar bir kavisle sağa dön.",
+    "regel": "§ 9 Abs. 3 StVO",
+    "frage": {
+     "text": "Şimdi ne yaparım?",
+     "optionen": [
+      "Bisikletlinin önünden hızla dönmek",
+      "Durmak ve onu geçirmek",
+      "Fren yapsın diye korna çalmak"
+     ],
+     "richtig": 1,
+     "erklaerung": "Bisikletlinin önceliği var. Sağa dönüşte bisikletlilerle olan kazalar şehir trafiğindeki en ağır kazalar arasındadır."
+    }
+   },
+   "k3": {
+    "titel": "Dönüş – gözlemeye devam",
+    "text": "Ancak yol boşsa dön. Dönerken bisikletlilere ve yayalara bakmaya devam et – bir sonraki bisikletli zaten geliyor.",
+    "regel": "§ 9 Abs. 3 StVO",
+    "frage": null
+   }
+  }
+ },
+ "reissverschluss": {
+  "titel": "Şerit bittiğinde fermuar sistemi",
+  "kurz": "İki şeridi de daralmaya kadar kullan, sonra sırayla",
+  "kapitel": {
+   "k0": {
+    "titel": "Şerit bitiyor",
+    "text": "Daralma levhası haber veriyor: Sağ şerit bitiyor. İki şerit de daralmaya kadar kullanılmaya devam eder.",
+    "regel": "Trafik işareti 531 · § 7 Abs. 4 StVO",
+    "frage": {
+     "text": "Sola ne zaman geçerim?",
+     "optionen": [
+      "Levhayı görür görmez",
+      "Daralmanın başlamasından hemen önce",
+      "Hiç, diğerleri beklemeli"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 7 Abs. 4 StVO: Daralmanın başlamasından hemen önce, sırayla şeride geçilir."
+    }
+   },
+   "k1": {
+    "titel": "En öne kadar git",
+    "text": "Çok erken şerit değiştirme: Sağdan daralmaya kadar giden, yolu doğru kullanır ve trafik sıkışıklığını kısa tutmaya yardım eder.",
+    "regel": "§ 7 Abs. 4 StVO",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Sinyal ver ve boşluğa bak",
+    "text": "Sol sinyal ver, hızını soldaki araç sırasına uydur ve arkasına gireceğin aracı seç.",
+    "regel": "§ 7 Abs. 5 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Sırayla şeride geç",
+    "text": "Daralmadan hemen önce: omuz üzerinden bakış – ve sırayla, bir aracın arkasından sola katıl. Soldan gidenler her seferinde bir aracı içeri alır.",
+    "regel": "§ 7 Abs. 4 · § 7 Abs. 5 StVO",
+    "frage": {
+     "text": "Kim kimi içeri almalı?",
+     "optionen": [
+      "Kimse, önce gelen geçer",
+      "Soldan gidenler her seferinde bir aracı sırayla içeri alır",
+      "Sağdan gidenler her yer boşalana kadar beklemeli"
+     ],
+     "richtig": 1,
+     "erklaerung": "Fermuar sistemi (Reißverschluss): sırayla, biri soldan, biri sağdan."
+    }
+   },
+   "k4": {
+    "titel": "Unutma",
+    "text": "Fermuar sistemi, bir şerit bittiğinde veya kapandığında geçerlidir. Otoban girişindeki katılım şeridinde GEÇERLİ DEĞİLDİR – orada devam eden trafiğin ilk geçiş hakkı vardır.",
+    "regel": "§ 7 Abs. 4 · § 18 Abs. 3 StVO",
+    "frage": null
+   }
+  }
+ },
+ "rettungsgasse": {
+  "titel": "Kurtarma koridoru",
+  "kurz": "Trafik daha yavaşlarken: en soldaki sola, diğer herkes sağa",
+  "kapitel": {
+   "k0": {
+    "titel": "Trafik tıkanıyor",
+    "text": "Trafik yavaşlıyor. Artık sadece yürüme hızında gidiliyorsa veya herkes duruyorsa kurtarma koridoru (Rettungsgasse) oluşturulmalıdır – mavi ışık gelince değil.",
+    "regel": "§ 11 Abs. 2 StVO",
+    "frage": {
+     "text": "Kurtarma koridoru ne zaman oluşturulur?",
+     "optionen": [
+      "Ancak siren sesini duyduğumda",
+      "Yürüme hızına düşülür düşülmez veya trafik durunca",
+      "Sadece önümde kaza olduğunda"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 11 Abs. 2 StVO: yürüme hızında veya durma halinde – hemen."
+    }
+   },
+   "k1": {
+    "titel": "Nereye kaçılır?",
+    "text": "Koridor, en soldaki şerit ile onun hemen sağındaki şerit arasında oluşur: En soldan giden sola kaçar – diğer herkes sağa.",
+    "regel": "§ 11 Abs. 2 StVO",
+    "frage": {
+     "text": "Üç şeridin ortasındakinde gidiyorsun. Nereye?",
+     "optionen": [
+      "Sola",
+      "Sağa",
+      "Olduğum yerde kalırım"
+     ],
+     "richtig": 1,
+     "erklaerung": "En soldaki şerit hariç herkes sağa kaçar."
+    }
+   },
+   "k2": {
+    "titel": "Acil durum aracı geliyor",
+    "text": "Mavi ışık ve siren: hemen yolu aç. Olduğun yerde kal, artık ileri geri manevra yapma – koridor düz ve boş olmalı.",
+    "regel": "§ 38 Abs. 1 · § 11 Abs. 2 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Koridoru açık bırak",
+    "text": "Bir acil durum aracı geçmiş olsa da koridor boş kalır – çoğu zaman başkaları da gelir. Arkasından gitme!",
+    "regel": "§ 11 Abs. 2 · § 38 Abs. 1 StVO",
+    "frage": {
+     "text": "Ambulans geçti. Şimdi ne olacak?",
+     "optionen": [
+      "Arkasından gitmek, böylece daha hızlı olur",
+      "Koridoru açık bırakmak, başkaları da gelebilir",
+      "Hemen şeride geri dönmek"
+     ],
+     "richtig": 1,
+     "erklaerung": "Kurtarma koridoru, trafik tekrar akana kadar korunur."
+    }
+   },
+   "k4": {
+    "titel": "Unutma",
+    "text": "Emniyet şeridi sabırsızlar için bir şerit değildir. Kurtarma koridoru oluşturmayan veya kendisi koridordan geçen, para cezası, ceza puanı ve sürüş yasağı riskine girer.",
+    "regel": "§ 11 Abs. 2 StVO · BKatV",
+    "frage": null
+   }
+  }
+ },
+ "rvl": {
+  "titel": "Sağdan gelen önceliklidir (30 km/h bölgesi)",
+  "kurz": "Önce kim geçer? Levhasız bir kavşakta üç araba",
+  "kapitel": {
+   "k0": {
+    "titel": "Levhasız kavşak",
+    "text": "30 km/h bölgesinde (Tempo-30-Zone) neredeyse hiç öncelik levhası yoktur – burada sağdan gelen önceliklidir (rechts vor links). Durabilmek için yavaşça yaklaş.",
+    "regel": "Trafik işareti 274.1 · § 8 Abs. 1 StVO",
+    "frage": {
+     "text": "Bu kavşakta hangi kural geçerli?",
+     "optionen": [
+      "Sağdan gelen önceliklidir",
+      "Geniş olan yolun önceliği var",
+      "Önce gelen geçer"
+     ],
+     "richtig": 0,
+     "erklaerung": "Levha, trafik ışığı veya polis yoksa § 8 Abs. 1 StVO geçerlidir: Sağdan gelenin ilk geçiş hakkı vardır."
+    }
+   },
+   "k1": {
+    "titel": "Önce kim geçer?",
+    "text": "Üçü de duruyor. Herkes sağına bakar: Sağında kimse olmayan önce geçebilir.",
+    "regel": "§ 8 Abs. 1 · § 8 Abs. 2 StVO",
+    "frage": {
+     "text": "Araçlar hangi sırayla geçebilir?",
+     "reihenfolge": [
+      "Mavi (sağdan)",
+      "Sürücü kursu aracı",
+      "Kırmızı (sola dönüyor)"
+     ],
+     "erklaerung": "Mavinin sağında kimse yok ve önce o geçer. Sonra sürücü kursu aracı (mavi onun sağındaydı). Kırmızı en son geçer – kırmızının sağında sürücü kursu aracı duruyordu."
+    }
+   },
+   "k2": {
+    "titel": "Mavi geçiyor",
+    "text": "Mavi arabanın sağından kimse gelmiyor ve ilk o geçiyor.",
+    "regel": "§ 8 Abs. 1 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Sonra sürücü kursu aracı",
+    "text": "Şimdi sağ taraf boş – sürücü kursu aracı kavşağı düz geçiyor.",
+    "regel": "§ 8 Abs. 1 StVO",
+    "frage": null
+   },
+   "k4": {
+    "titel": "En son kırmızı",
+    "text": "Kırmızı sola dönüyor. Sürücü kursu aracı sağından geldiği için beklemek zorundaydı.",
+    "regel": "§ 8 Abs. 1 · § 9 Abs. 1 StVO",
+    "frage": null
+   },
+   "k5": {
+    "titel": "Unutma",
+    "text": "Beklemek zorunda olan, bunu yavaş giderek gösterir. Dört tarafta da araba varsa sürücüler anlaşır – biri hakkından vazgeçer.",
+    "regel": "§ 8 Abs. 2 · § 11 Abs. 3 StVO",
+    "frage": null
+   }
+  }
+ },
+ "schulbus": {
+  "titel": "Dörtlüleri yanan okul otobüsü",
+  "kurz": "Sollama yok, yürüme hızı – karşı yönde de – ve çocuklara karşı hazırlıklı ol",
+  "kapitel": {
+   "k0": {
+    "titel": "Dörtlüleri yanan okul otobüsü",
+    "text": "Okul otobüsü dörtlüleri yanarak durağa yaklaşıyor. Artık sollanamaz.",
+    "regel": "§ 20 Abs. 3 StVO",
+    "frage": {
+     "text": "Otobüs dörtlüleri yanarak durağa yaklaşırken onu sollayabilir miyim?",
+     "optionen": [
+      "Evet, yol boşsa",
+      "Hayır",
+      "Sadece korna çalarak"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 20 Abs. 3 StVO: Dörtlüleri yanarak durağa yaklaşan hat ve okul otobüsleri sollanamaz."
+    }
+   },
+   "k1": {
+    "titel": "Otobüs duruyor – çocuklar iniyor",
+    "text": "En iyisi önce otobüsün arkasında mesafe bırakarak dur. Çocukların ne yapacağı belli olmaz; otobüsün arkasından veya önünden yola koşabilirler.",
+    "regel": "§ 20 Abs. 4 · § 3 Abs. 2a StVO",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Yürüme hızı",
+    "text": "Yanından sadece yürüme hızıyla (Schrittgeschwindigkeit, yaklaşık 4–7 km/h) ve kimseyi tehlikeye atmayacak kadar mesafeyle geç. Bu karşıdan gelen trafik için de geçerli!",
+    "regel": "§ 20 Abs. 4 StVO",
+    "frage": {
+     "text": "Yürüme hızı karşıdan gelen trafik için de geçerli mi?",
+     "optionen": [
+      "Hayır, sadece aynı yön için",
+      "Evet – aynı yoldaki karşı yön trafiği de sadece yürüme hızında gider",
+      "Sadece okul günlerinde"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 20 Abs. 4 StVO: Yürüme hızı aynı yoldaki karşı yön trafiği için de geçerlidir."
+    }
+   },
+   "k3": {
+    "titel": "Çocuk yola koşuyor!",
+    "text": "Otobüsün önünden bir çocuk yolu geçiyor. Hemen dur – gerekirse beklemek zorundasın.",
+    "regel": "§ 20 Abs. 4 StVO",
+    "frage": {
+     "text": "Ne yaparım?",
+     "optionen": [
+      "Kaçınıp devam etmek",
+      "Durmak ve çocuk güvenle karşıya geçene kadar beklemek",
+      "Korna çalmak"
+     ],
+     "richtig": 1,
+     "erklaerung": "Gerekirse beklemek zorundasın – yolcuların tehlikeye atılması kesinlikle önlenmelidir."
+    }
+   },
+   "k4": {
+    "titel": "Otobüs hareket ediyor",
+    "text": "Otobüs duraktan çıkmak için sol sinyal veriyor. Otobüsün hareket etmesine izin verilmelidir – gerekirse bekle.",
+    "regel": "§ 20 Abs. 5 StVO",
+    "frage": null
+   }
+  }
+ },
+ "stop": {
+  "titel": "Dur levhası (Trafik işareti 206)",
+  "kurz": "Her zaman durma çizgisinde tamamen dur – sonra yavaşça ilerle",
+  "kapitel": {
+   "k0": {
+    "titel": "Dur! Yol ver",
+    "text": "Trafik işareti 206 şu demek: durma çizgisinde dur – her zaman, yol boş olsa bile – ve sonra yol ver.",
+    "regel": "Trafik işareti 206 · Trafik işareti 294",
+    "frage": {
+     "text": "Yolun boş olduğunu görsem de dur levhasında durmak zorunda mıyım?",
+     "optionen": [
+      "Hayır, yavaşça geçmek yeter",
+      "Evet – her zaman tamamen dur",
+      "Sadece geceleri"
+     ],
+     "richtig": 1,
+     "erklaerung": "Trafik işareti 206: Durmak zorunludur. Tekerlekler tamamen durmalı."
+    }
+   },
+   "k1": {
+    "titel": "Durma çizgisinde tam duruş",
+    "text": "Araç durma çizgisinde duruyor – tekerlekler hareketsiz. Buradan çoğu zaman henüz yeterince görülmez.",
+    "regel": "Trafik işareti 206 · Trafik işareti 294",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Yavaşça ilerle",
+    "text": "Görüş çizgisine kadar yavaşça ilerle ve tekrar dur. Sola, sağa, sola bak.",
+    "regel": "§ 8 Abs. 2 StVO",
+    "frage": {
+     "text": "Durma çizgisinde görüş kapalı. Şimdi ne olacak?",
+     "optionen": [
+      "Direkt hareket etmek",
+      "Yavaşça ilerlemek ve tekrar bakmak",
+      "Korna çalmak"
+     ],
+     "richtig": 1,
+     "erklaerung": "Durma çizgisinde durduktan sonra görüş çizgisine kadar dikkatlice ilerleyebilirsin."
+    }
+   },
+   "k3": {
+    "titel": "Çapraz trafiği geçir",
+    "text": "Ana yoldaki iki aracın da ilk geçiş hakkı var. Ancak yol boşsa sağa dön.",
+    "regel": "§ 8 Abs. 2 StVO",
+    "frage": null
+   }
+  }
+ },
+ "ueberholen": {
+  "titel": "Şehirlerarası yolda sollama",
+  "kurz": "Görüşü kontrol et, karşıdan gelen trafiği bekle, seri şekilde solla, mesafe bırakarak şeride dön",
+  "worum": "Önünde 60 km/h ile giden bir kamyon var, izin verilen hız 100. Sollama, yerleşim yeri dışındaki en tehlikeli manevralardan biridir: Karşı yönün şeridinde gidersin. Ancak yol yeterince uzun bir mesafe boyunca boşsa olur.",
+  "worumRegel": "§ 5 StVO",
+  "varianten": {
+   "richtig": "Doğrusu böyle",
+   "falsch": "Tipik hata"
+  },
+  "rf": {
+   "richtig": "Şu an doğrusunun nasıl yapıldığını görüyorsun. Aynı durumun, pratikte en sık yapılan hatayla olan hali de var: çok yakından takip etmek ve görüş açık değilken şeritten çıkmak.",
+   "falsch": "Şu an tipik hatayı görüyorsun. İşlerin nerede bozulduğuna dikkat et: mesafe, kırmızı alan, selektör. Sonra doğru versiyonla doğrudan karşılaştırmak faydalı olur."
+  },
+  "rfKnopf": {
+   "richtig": "Doğru versiyonu izle",
+   "falsch": "Tipik hatayı izle"
+  },
+  "kapitel": {
+   "lkw": {
+    "titel": "Önde yavaş kamyon",
+    "text": "Yerleşim yeri dışı, izin verilen hız 100 km/h, önde 60 ile giden bir kamyon var. Yeterli mesafe bırak, en az hız göstergesinin yarısı kadar metre. Böylece onun yanından ileriyi görürsün ve hız alabilirsin.",
+    "regel": "§ 4 Abs. 1 · § 5 Abs. 2 StVO",
+    "frage": {
+     "text": "Ne zaman sollayabilirim?",
+     "optionen": [
+      "Daha hızlı olduğum her zaman",
+      "Sadece sollama boyunca karşıdan gelen trafiğin engellenmeyeceği kesinse ve ben çok daha hızlıysam",
+      "Sadece sağdan"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 5 Abs. 2 StVO: Sollama sadece karşıdan gelen trafiğin engellenmesi kesinlikle söz konusu değilse ve çok daha yüksek hızla yapılır."
+    }
+   },
+   "gegen": {
+    "titel": "Karşıdan gelen trafik",
+    "text": "Karşıdan bir araba geliyor. Şimdi şeritten çıkma, bekle. Yeşil veya kırmızı alan, gereken yaklaşık 500 m'nin boş olup olmadığını gösterir.",
+    "regel": "§ 5 Abs. 2 StVO",
+    "frage": {
+     "text": "100 km/h ile 60 km/h giden bir kamyonu sollamak için yaklaşık ne kadar boş yol gerekir?",
+     "optionen": [
+      "Yaklaşık 100 m",
+      "Yaklaşık 250 m sollama mesafesi, ve karşıdan gelen trafik bu sürede bir o kadar daha yaklaşır: yaklaşık 500 m görüş",
+      "Yaklaşık 50 m"
+     ],
+     "richtig": 1,
+     "erklaerung": "Sollama mesafesi ≈ (iki aracın boyu + öncesindeki ve sonrasındaki mesafe) × v₁ ÷ (v₁ − v₂) ≈ 100 m × 100 ÷ 40 ≈ 250 m. Aynı sürede karşıdan gelen trafik de yaklaşık bir o kadar yol alır."
+    }
+   },
+   "sichern": {
+    "titel": "Ayna, omuz üzerinden bakış, sinyal",
+    "text": "Yol boş ve açık görüşlü, düz çizgi yok. İç ve dış ayna, sola omuz üzerinden bakış (Schulterblick), sonra sol sinyal. Şimdiden biraz hız al.",
+    "regel": "§ 5 Abs. 4 · § 5 Abs. 4a StVO"
+   },
+   "vorbei": {
+    "titel": "Seri şekilde geç",
+    "text": "Şeritten çık ve seri şekilde hızlan. Azami hız sınır olarak kalır. Kamyonla arana yeterli yan mesafe bırak.",
+    "regel": "§ 5 Abs. 2 · § 5 Abs. 4 · § 3 Abs. 3 StVO",
+    "frage": {
+     "text": "Sollama sırasında kamyon hızlanıyor. Buna hakkı var mı?",
+     "optionen": [
+      "Evet",
+      "Hayır, sollanan kişi hızını artıramaz"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 5 Abs. 6 StVO: Sollanan kişi hızını artıramaz."
+    }
+   },
+   "einordnen": {
+    "titel": "Sağ sinyal, tekrar şeride dön",
+    "text": "İç ayna: Kamyon içinde tamamen görününce sağ sinyal ver ve şeride dön. Hemen önüne kırma.",
+    "regel": "§ 5 Abs. 4 · § 5 Abs. 4a StVO"
+   },
+   "verbot": {
+    "titel": "İleride sollama yasağı",
+    "text": "Önce kısa aralıklı uyarı çizgisi düz çizgiyi haber verir, sonra Trafik işareti 276 geçerli olur. Burada sağdan bir tarla yolu bağlanıyor, oradaki traktör yola çıkmak istiyor. Başlamış bir sollama bundan önce bitirilmiş olmalı.",
+    "regel": "Trafik işareti 276 · Trafik işareti 295",
+    "frage": {
+     "text": "Sollamak için düz orta çizginin üzerinden geçebilir miyim?",
+     "optionen": [
+      "Evet, kısa süreliğine",
+      "Hayır",
+      "Sadece traktörlerde"
+     ],
+     "richtig": 1,
+     "erklaerung": "Şerit sınır çizgisinin (Trafik işareti 295) üzerinden geçilemez."
+    }
+   },
+   "f_dicht": {
+    "titel": "Çok yakından takip",
+    "text": "60 km/h'de sadece 12 m mesafe. Kamyon ileriyi görmeni engelliyor: Karşıdan trafik gelip gelmediğini böyle göremezsin. Doğrusu en az 30 m olurdu.",
+    "regel": "§ 4 Abs. 1 StVO",
+    "frage": {
+     "text": "60 km/h'de doğru mesafe ne kadar (pratik kural)?",
+     "optionen": [
+      "6 m",
+      "Hız göstergesinin yarısı: 30 m",
+      "Bir araç boyu"
+     ],
+     "richtig": 1,
+     "erklaerung": "Yerleşim yeri dışında pratik kural: hız göstergesinin yarısı kadar metre, yani 60 km/h'de 30 m. Bu yaklaşık 2 saniyedir."
+    }
+   },
+   "f_raus": {
+    "titel": "Görüş açık değilken şeritten çıkmak",
+    "text": "İlk karşı araç geçer geçmez şeritten çıkılmış; omuz üzerinden bakmadan, hız almadan ve arkasından ne geldiğini bilmeden. Alan kırmızı: Kamyonet zaten çok yakın.",
+    "regel": "§ 5 Abs. 2 · § 5 Abs. 3 Nr. 1 StVO",
+    "frage": {
+     "text": "Burada ne yardımcı olurdu?",
+     "optionen": [
+      "Daha hızlı şeritten çıkmak",
+      "Geride kalmak, mesafeyi açmak ve ancak yolun boş olduğu kesinse sollamak",
+      "Korna çalmak"
+     ],
+     "richtig": 1,
+     "erklaerung": "Trafik durumu belirsizken sollama yasaktır (§ 5 Abs. 3 Nr. 1 StVO). Daha fazla mesafeyle yolun boş olup olmadığını görürsün."
+    }
+   },
+   "f_gegen": {
+    "titel": "Karşıdan gelen fren yapmak zorunda",
+    "text": "Kamyonet fren yapıyor ve selektör yapıyor. Karşıdan gelen trafiği engelleyen, sollamamalıydı. Şimdi geriye sadece tehlikeli bir şeride dönüş kalıyor.",
+    "regel": "§ 5 Abs. 2 StVO"
+   },
+   "f_knapp": {
+    "titel": "Çok yakından şeride dönmek",
+    "text": "Boşluğa dalmak, kamyonun sadece birkaç metre önüne. Kamyon fren yapmak zorunda kalıyor. Sollayan, şeride dönerken sollananı engelleyemez.",
+    "regel": "§ 5 Abs. 4 StVO"
+   },
+   "f_besser": {
+    "titel": "Doğrusu böyle olurdu",
+    "text": "Mesafeni koru, karşıdan gelen trafiği bekle ve ancak yol kesin olarak boşsa hız alarak solla. Emin değilsen: sollama. İpucu: “Doğrusu böyle” versiyonunu izle.",
+    "regel": "§ 5 Abs. 2 · § 5 Abs. 3 StVO"
+   }
+  },
+  "merken": [
+   [
+    "Sadece yol açık görüşlüyse ve sollama boyunca karşıdan gelen trafik engellenmeyecekse, ve sadece çok daha yüksek hızla solla.",
+    "§ 5 Abs. 2 StVO"
+   ],
+   [
+    "Trafik durumu belirsizse sollama. Emin değilsen: arkasında kal.",
+    "§ 5 Abs. 3 Nr. 1 StVO"
+   ],
+   [
+    "Şeritten çıkmadan önce: ayna, omuz üzerinden bakış, sinyal. Şeride dönerken sollananı engelleme.",
+    "§ 5 Abs. 4 · Abs. 4a StVO"
+   ],
+   [
+    "Sollanan kişi hızlanamaz.",
+    "§ 5 Abs. 6 StVO"
+   ],
+   [
+    "Pratik formül: 100 km/h ile 60 km/h giden bir kamyonun yanından geçmek için yaklaşık 250 m sollama mesafesi ve yaklaşık 500 m açık görüş gerekir.",
+    "Pratik formül"
+   ]
+  ]
+ },
+ "voreinander": {
+  "titel": "İki sola dönen: birbirinin önünden",
+  "kurz": "Karşı karşıya duran ve sola dönenler birbirinin önünden döner",
+  "kapitel": {
+   "k0": {
+    "titel": "İki sola dönen",
+    "text": "Sürücü kursu aracı ve kırmızı araba ikisi de sola dönmek istiyor ve karşı karşıya duruyor.",
+    "regel": "§ 9 Abs. 4 StVO",
+    "frage": {
+     "text": "İkisi nasıl döner?",
+     "optionen": [
+      "Birbirinin önünden – her biri diğerinin önünden döner",
+      "Birbirinin etrafından dolaşarak",
+      "Önce kim geldiyse o önce"
+     ],
+     "richtig": 0,
+     "erklaerung": "§ 9 Abs. 4 StVO: Karşılıklı gelen sola dönenler birbirinin önünden döner – trafik durumu veya kavşak başka bir şey gerektirmiyorsa."
+    }
+   },
+   "k1": {
+    "titel": "Birbirinin önünden dönmek",
+    "text": "İkisi aynı anda hareket eder ve diğerinin önünden döner – arabalar sağ sağa karşılaşır. Bu zaman kazandırır – ama diğer sola dönen araç arkasından gelen karşı trafiği görmeni engeller, bu yüzden özellikle dikkatli ol.",
+    "regel": "§ 9 Abs. 4 StVO",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Unutma",
+    "text": "Birbirinin etrafından (arka arkaya dolaşarak) dönmek sadece yol çizgileri, trafik ışığı düzeni veya kavşağın yapısı bunu gerektiriyorsa olur.",
+    "regel": "§ 9 Abs. 4 StVO",
+    "frage": null
+   }
+  }
+ },
+ "wenden": {
+  "titel": "Üç manevrada geri dönüş",
+  "kurz": "Dar bir sokakta ileri ve geri giderek yön değiştirme",
+  "kapitel": {
+   "k0": {
+    "titel": "Hazırlık",
+    "text": "Sağ kenarda dur. Kontrol et: Burada geri dönmek serbest mi ve yol açık görüşlü mü? Sol sinyal ver ve iki yöne de bak.",
+    "regel": "§ 9 Abs. 5 StVO",
+    "frage": {
+     "text": "Geri dönüşte en önemli kontrol noktası ne?",
+     "optionen": [
+      "Mümkün olduğunca az manevra",
+      "Her manevradan önce iki yönü de gözlemek",
+      "Hızlıca bitirmek"
+     ],
+     "richtig": 1,
+     "erklaerung": "Geri dönerken kimse tehlikeye atılmamalı (§ 9 Abs. 5 StVO) – gözlem işin özüdür."
+    }
+   },
+   "k1": {
+    "titel": "1. manevra: ileri, tam sola",
+    "text": "Yavaşça hareket et ve bu sırada direksiyonu tam sola kır – karşıdaki kaldırıma az kalana kadar. Durmadan hemen önce direksiyonu sağa çevirmeye başla.",
+    "regel": "Temel sürüş görevi: geri dönüş",
+    "frage": null
+   },
+   "k2": {
+    "titel": "2. manevra: geri, tam sağa",
+    "text": "Geri vites, tekrar her yöne bak, yavaşça geri git ve direksiyonu tam sağa kır – arkandaki kaldırıma az kalana kadar.",
+    "regel": "§ 9 Abs. 5 StVO",
+    "frage": {
+     "text": "Geri giderken direksiyonu hangi yöne çeviririm?",
+     "optionen": [
+      "Sola",
+      "Sağa – aracın arkası sağa gitmeli",
+      "Hiç"
+     ],
+     "richtig": 1,
+     "erklaerung": "Geri giderken: direksiyonu, arka tarafın gitmesini istediğin yöne çevir."
+    }
+   },
+   "k3": {
+    "titel": "3. manevra: ileri, soldan çıkış",
+    "text": "Tekrar gözlemle, direksiyonu tam sola kır ve yeni yöne doğru çık. Sağ şeride yerleş.",
+    "regel": "§ 2 Abs. 2 StVO",
+    "frage": null
+   },
+   "k4": {
+    "titel": "Unutma",
+    "text": "Araç dururken direksiyon çevirme, araç yavaşça ilerlerken çevir. Manevra sayısı ikinci planda – kaldırıma değmemeli.",
+    "regel": "Sınav yönergesi · Temel sürüş görevleri",
+    "frage": null
+   }
+  }
+ },
+ "zebra": {
+  "titel": "Yaya geçidi (Zebrastreifen)",
+  "kurz": "İleriye bak, frene hazır ol – karşıya geçmek isteyenin önceliği var",
+  "kapitel": {
+   "k0": {
+    "titel": "Trafik işareti 350 – ileride yaya geçidi",
+    "text": "Erkenden gazdan ayağını çek ve kaldırımları gözle: Karşıya geçmek isteyen var mı? Çocuklar küçüktür ve zor görülür.",
+    "regel": "Trafik işareti 350 · § 26 Abs. 1 StVO",
+    "frage": {
+     "text": "Biri karşıya geçmek istediği belli oluyorsa yaya geçidine nasıl yaklaşırım?",
+     "optionen": [
+      "Normal devam ederim, o beklemeli",
+      "Sadece düşük hızla, gerekirse beklerim",
+      "Korna çalıp geçerim"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 26 Abs. 1 StVO: Yayaların karşıya geçmesine izin ver, sadece düşük hızla yaklaş, gerekirse bekle."
+    }
+   },
+   "k1": {
+    "titel": "Dur",
+    "text": "Yayalar yürümeye başlıyor – yaya geçidinin önünde dur, üzerinde değil. Bekleyen arabayı sollamak ve yanından geçmek yasaktır.",
+    "regel": "§ 26 Abs. 1 · § 26 Abs. 3 StVO",
+    "frage": {
+     "text": "Önümdeki araba yaya geçidinde duruyor. Onu soldan sollayabilir miyim?",
+     "optionen": [
+      "Evet, hızlıysam",
+      "Hayır – yaya geçitlerinde sollama yapılamaz",
+      "Evet, korna çalarak"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 26 Abs. 3 StVO: Yaya geçitlerinde sollama yapılamaz."
+    }
+   },
+   "k2": {
+    "titel": "Ancak yol boşsa",
+    "text": "Ancak herkes yaya geçidini güvenle terk ettiğinde devam et – karşı taraftakiler de. Göz teması yardımcı olur.",
+    "regel": "§ 26 Abs. 1 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Unutma",
+    "text": "Yaya geçidinin arkasında trafik tıkanıyorsa, orada beklemen gerekecekse yaya geçidinin üzerine girme.",
+    "regel": "§ 26 Abs. 2 StVO",
+    "frage": null
+   }
+  }
+ }
+}
