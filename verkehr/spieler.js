@@ -66,10 +66,20 @@ const CSS = `
 [dir="rtl"].vv .vv-anz{left:auto;right:10px;} [dir="rtl"].vv .vv-tempo{right:auto;left:10px;}
 .vv .vv-tempo small{font-size:12.5px;opacity:.8;font-weight:600;}
 .vv .vv-fehler{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;background:var(--vv-surface);}
-.vv .vv-teaser{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(15,20,17,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);}
-.vv .vv-teaser-karte{max-width:420px;background:var(--vv-bg);border-radius:16px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.3);max-height:100%;overflow:auto;}
+.vv .vv-teaser{margin-top:10px;}
+.vv .vv-teaser-karte{background:var(--vv-surface);border:2px solid var(--vv-gold-r);border-radius:16px;padding:16px 18px;box-shadow:0 6px 20px rgba(0,0,0,.12);}
+.vv .vv-buehne.gedimmt canvas{filter:brightness(.55) saturate(.7);}
 .vv .vv-teaser-karte h3{font-family:var(--ff-titel,'Playfair Display',Georgia,serif);font-size:20px;margin:0 0 6px;}
 .vv .vv-teaser-karte ul{margin:8px 0 12px;padding-inline-start:20px;font-size:14.5px;}
+/* Handy: Kamera-Knöpfe in EINER schmalen Reihe, damit sie die Szene nicht verdecken */
+@media (max-width:560px){
+  .vv .vv-ol{right:62px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:5px;}
+  .vv .vv-ol::-webkit-scrollbar{display:none;}
+  [dir="rtl"].vv .vv-ol{left:62px;}
+  .vv .vv-pille{min-height:36px;padding:0 10px;font-size:12.5px;flex:none;}
+  .vv .vv-anz{font-size:12.5px;padding:5px 10px;max-width:calc(100% - 110px);}
+  .vv .vv-tempo{font-size:14px;padding:5px 10px;}
+}
 .vv .vv-steuer{display:flex;align-items:center;gap:8px;margin:10px 0 0;}
 .vv .vv-knopf{min-height:44px;min-width:44px;padding:0 14px;border-radius:999px;border:1px solid var(--vv-hair);background:var(--vv-surface);font-weight:700;font-size:14.5px;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;}
 .vv .vv-knopf.haupt{background:var(--vv-gruen);color:#fff;border-color:transparent;min-width:52px;}
@@ -192,7 +202,7 @@ export function starte(el, daten, opt){
       '<div class="vv-ol" role="group" aria-label="' + esc(U.blick) + '"></div>' +
       '<div class="vv-or"><button type="button" class="vv-pille" data-tz aria-label="' + esc(U.tageszeit) + '">' + esc(U.tag) + "</button></div>" +
       '<div class="vv-anz" aria-live="polite"></div><div class="vv-tempo" aria-hidden="true"></div>' +
-      '<div class="vv-fehler" hidden><p>' + esc(U.kein3d) + '</p></div><div class="vv-teaser" hidden></div></div>' +
+      '<div class="vv-fehler" hidden><p>' + esc(U.kein3d) + '</p></div></div><div class="vv-teaser" hidden></div>' +
     '<div class="vv-steuer"><button type="button" class="vv-knopf haupt" data-spielen aria-label="' + esc(U.abspielen) + '"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>' +
       '<div class="vv-zl" role="slider" tabindex="0" aria-label="' + esc(U.zeit) + '" aria-valuemin="0"><div class="vv-zl-bahn"></div><div class="vv-zl-fuell"></div></div></div>' +
     '<div class="vv-chips" role="group" aria-label="' + esc(U.kapitel) + '"></div>' +
@@ -311,7 +321,7 @@ export function starte(el, daten, opt){
   function springe(t, sofort){
     st.t = Math.max(0, Math.min(V.dauer, t));
     st.wartet = false;
-    $(".vv-teaser").hidden = true;
+    teaserWeg();
     const n = aktKapitel(st.t);
     if(n !== st.kapitel || sofort) kapitelZeigen(n);
     if(sofort && welt) welt.setzeKamera(welt.kameraArt(), true);
@@ -322,20 +332,23 @@ export function starte(el, daten, opt){
   function spielen(an){
     st.laeuft = an;
     if(an && st.t >= V.dauer - 0.05) springe(0, true);
-    if(an) $(".vv-teaser").hidden = true;
+    if(an) teaserWeg();
     const k = $("[data-spielen]");
     k.setAttribute("aria-label", an ? U.anhalten : U.abspielen);
     k.innerHTML = an ? '<svg viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>' : '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
   }
 
+  function teaserWeg(){ $(".vv-teaser").hidden = true; $(".vv-buehne").classList.remove("gedimmt"); }
   function teaserZeigen(){
     if(!teaser) return;
     const box = $(".vv-teaser");
     box.innerHTML = '<div class="vv-teaser-karte" role="dialog" aria-label="' + esc(U.teaserTitel) + '"><h3>' + esc(U.teaserTitel) + "</h3><p style=\"margin:0\">" + esc(U.teaserText) + "</p>" +
-      "<ul>" + (teaser.gesperrt || []).slice(0, 3).map((t) => "<li>" + esc(t) + "</li>").join("") + ((teaser.gesperrt || []).length > 3 ? "<li>…</li>" : "") + "</ul>" +
+      "<ul>" + (teaser.gesperrt || []).map((t) => "<li>" + esc(t) + "</li>").join("") + "</ul>" +
       '<div class="vv-md-knoepfe">' + (opt.onVollzugang ? '<button type="button" class="vv-knopf gold" data-anfrage>' + esc(U.teaserKnopf) + "</button>" : "") +
       '<button type="button" class="vv-knopf" data-nochmal>' + esc(U.nochmal) + "</button></div></div>";
     box.hidden = false;
+    $(".vv-buehne").classList.add("gedimmt");
+    try{ box.scrollIntoView({ block: "nearest", behavior: ruhig ? "auto" : "smooth" }); }catch(e){}
     const a = box.querySelector("[data-anfrage]"); if(a) a.addEventListener("click", () => opt.onVollzugang(daten.id));
     box.querySelector("[data-nochmal]").addEventListener("click", () => { springe(0, true); spielen(true); });
   }
