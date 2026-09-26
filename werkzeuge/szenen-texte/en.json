@@ -1,0 +1,1368 @@
+{
+ "abfahren": {
+  "titel": "Leaving the motorway",
+  "kurz": "Get in lane early, use the exit lane, only brake there",
+  "kapitel": {
+   "k0": {
+    "titel": "Exit announced",
+    "text": "The advance direction sign announces the exit 1000 m ahead. Plan now: move to the right-hand lane early – not at the last second from the left.",
+    "regel": "Sign 449 · § 7 Abs. 5 StVO",
+    "frage": {
+     "text": "When do I move to the right?",
+     "optionen": [
+      "Right at the exit",
+      "Early, at the latest before the countdown markers",
+      "Doesn't matter, across the hatched area if necessary"
+     ],
+     "richtig": 1,
+     "erklaerung": "Get in lane in good time so the lane change works without rushing or endangering anyone."
+    }
+   },
+   "k1": {
+    "titel": "Indicator, mirrors, shoulder check",
+    "text": "Indicate right, check the interior and exterior mirrors, shoulder check to the right – then move briskly into the right-hand lane.",
+    "regel": "§ 7 Abs. 5 StVO",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Get into the right-hand lane",
+    "text": "Stay in the right-hand lane and keep your speed. Switch the indicator off again.",
+    "regel": "§ 2 Abs. 2 StVO (keep-right rule, Rechtsfahrgebot)",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Advance direction sign 500 m",
+    "text": "The exit is announced once more 500 m ahead. From now on, avoid overtaking if possible.",
+    "regel": "Sign 449",
+    "frage": null
+   },
+   "k4": {
+    "titel": "Countdown markers",
+    "text": "Markers with 3, 2, 1 stripes: 300, 200, 100 m left until the start of the exit lane.",
+    "regel": "Sign 450",
+    "frage": {
+     "text": "What does the marker with two stripes mean?",
+     "optionen": [
+      "200 m left to the exit",
+      "Speed 200",
+      "Two lanes free"
+     ],
+     "richtig": 0,
+     "erklaerung": "Sign 450: 3 stripes = 300 m, 2 = 200 m, 1 = 100 m."
+    }
+   },
+   "k5": {
+    "titel": "Indicate right",
+    "text": "Indicate right in good time before the exit lane – the traffic behind you must see it early.",
+    "regel": "§ 7 Abs. 5 StVO",
+    "frage": null
+   },
+   "k6": {
+    "titel": "Mirrors, shoulder check, move over",
+    "text": "Mirrors and shoulder check to the right, then cross the wide broken line into the exit lane.",
+    "regel": "Sign 340 · § 7 Abs. 5 StVO",
+    "frage": null
+   },
+   "k7": {
+    "titel": "Only brake now",
+    "text": "Only reduce your speed once you are in the exit lane, not before on the motorway. There you must not drive faster than in the through lanes.",
+    "regel": "§ 7a Abs. 3 StVO",
+    "frage": {
+     "text": "Where do I reduce my speed?",
+     "optionen": [
+      "Already in the right-hand lane",
+      "In the exit lane",
+      "Only in the bend"
+     ],
+     "richtig": 1,
+     "erklaerung": "Braking on the motorway endangers the traffic behind you – only slow down in the exit lane, and reach the indicated speed before the bend."
+    }
+   },
+   "k8": {
+    "titel": "Bend and speedometer",
+    "text": "Brake down to the indicated speed limit (here 60 km/h) by the time you reach the sign, before the bend gets tighter. After a long motorway drive, 60 km/h feels very slow – check your speedometer!",
+    "regel": "Sign 274 · § 3 Abs. 1 StVO",
+    "frage": {
+     "text": "Why look at the speedometer?",
+     "optionen": [
+      "Because after driving fast you misjudge your speed",
+      "Because of the fuel gauge",
+      "You don't need to"
+     ],
+     "richtig": 0,
+     "erklaerung": "After a motorway drive you underestimate your own speed (you get used to it)."
+    }
+   },
+   "k9": {
+    "titel": "Remember",
+    "text": "Missed the exit? Drive on to the next one. Never reverse or turn around on the motorway – not even on the hard shoulder.",
+    "regel": "§ 18 Abs. 7 StVO",
+    "frage": null
+   }
+  }
+ },
+ "auffahren": {
+  "titel": "Joining the motorway",
+  "kurz": "Acceleration lane, find a gap, merge",
+  "kapitel": {
+   "k0": {
+    "titel": "Junction",
+    "text": "The slip road leads to the motorway in its own curve. Already watch the motorway traffic here: How fast is it, where are the gaps?",
+    "regel": "Sign 330.1 · § 18 Abs. 2 StVO",
+    "frage": {
+     "text": "Who will have right of way when merging in a moment?",
+     "optionen": [
+      "Me – I'm in the acceleration lane",
+      "The traffic on the main carriageway",
+      "Whoever is faster"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 18 Abs. 3 StVO: The traffic on the main carriageway has right of way."
+    }
+   },
+   "k1": {
+    "titel": "Acceleration lane: speed up",
+    "text": "In the acceleration lane, briskly speed up to the speed of the traffic. Here you may drive faster than in the through lanes – that is intended.",
+    "regel": "§ 7a Abs. 2 StVO",
+    "frage": {
+     "text": "What is the most important task now?",
+     "optionen": [
+      "Drive slowly and wait",
+      "Briskly accelerate to the speed of the traffic",
+      "Pull to the left immediately"
+     ],
+     "richtig": 1,
+     "erklaerung": "At a speed similar to the traffic you can merge safely. Merging too slowly forces others to brake."
+    }
+   },
+   "k2": {
+    "titel": "Indicate left",
+    "text": "Announce the lane change in good time and clearly – indicate left.",
+    "regel": "§ 7 Abs. 5 StVO",
+    "frage": {
+     "text": "When do I indicate?",
+     "optionen": [
+      "Only when I'm already changing lanes",
+      "In good time beforehand",
+      "Not at all, it's obvious"
+     ],
+     "richtig": 1,
+     "erklaerung": "Every lane change must be announced in good time and clearly (§ 7 Abs. 5 StVO)."
+    }
+   },
+   "k3": {
+    "titel": "Choose a gap",
+    "text": "The lorry is ahead on the right, the red car is keeping a large distance. The gap behind the lorry fits: match your speed and keep enough distance (rule of thumb: half the speedometer reading in metres).",
+    "regel": "§ 18 Abs. 3 · § 4 Abs. 1 StVO",
+    "frage": {
+     "text": "Where do I merge?",
+     "optionen": [
+      "Next to the lorry",
+      "Into the gap behind the lorry",
+      "In front of the lorry, I'll step on it"
+     ],
+     "richtig": 1,
+     "erklaerung": "The gap behind the lorry is big enough. In front of it things would get tight, and it has right of way."
+    }
+   },
+   "k4": {
+    "titel": "Mirrors and shoulder check",
+    "text": "Just before the change: interior and exterior mirrors, then a shoulder check to the left – otherwise the blind spot stays invisible.",
+    "regel": "§ 7 Abs. 5 StVO: rule out any danger to others",
+    "frage": {
+     "text": "What comes directly before the lane change?",
+     "optionen": [
+      "Turning the radio down",
+      "Mirrors and shoulder check to the left",
+      "Sounding the horn"
+     ],
+     "richtig": 1,
+     "erklaerung": "Only with a shoulder check can you see a vehicle in the blind spot."
+    }
+   },
+   "k5": {
+    "titel": "Merging",
+    "text": "Cross over the wide broken line – not over the solid line or the hatched area. Move across briskly and smoothly, don't wait until the end of the lane.",
+    "regel": "Sign 340 · Sign 295 · Sign 298 · § 7 Abs. 5 StVO",
+    "frage": null
+   },
+   "k6": {
+    "titel": "Indicator off, keep your distance",
+    "text": "After the change, switch the indicator off and keep driving on the right. Distance to the lorry ahead: at least half the speedometer reading in metres.",
+    "regel": "§ 2 Abs. 2 · § 4 Abs. 1 StVO",
+    "frage": {
+     "text": "And now?",
+     "optionen": [
+      "Overtake on the left straight away",
+      "Indicator off, drive on the right, keep your distance",
+      "Continue on the hard shoulder"
+     ],
+     "richtig": 1,
+     "erklaerung": "Keep-right rule (§ 2 Abs. 2 StVO) and sufficient distance (§ 4 Abs. 1 StVO)."
+    }
+   },
+   "k7": {
+    "titel": "Remember",
+    "text": "The zip merge (Reißverschlussverfahren) does not apply when joining the motorway: whoever joins must give way. If there is no gap, stop at the end of the lane if necessary – never swerve onto the hard shoulder.",
+    "regel": "§ 18 Abs. 3 StVO · § 7 Abs. 4 does not apply here",
+    "frage": null
+   }
+  }
+ },
+ "doppel": {
+  "titel": "Turning left from two lanes",
+  "kurz": "Two turning lanes – everyone stays in their lane",
+  "kapitel": {
+   "k0": {
+    "titel": "Two left-turn lanes",
+    "text": "Both lanes lead to the left (arrows, Sign 297), the traffic light is green. Get in lane in good time, indicate – and stay in the lane you have chosen.",
+    "regel": "Sign 297 · § 9 Abs. 1 StVO",
+    "frage": {
+     "text": "The driving school car is in the right-hand of the two left-turn lanes. Which lane does it turn into?",
+     "optionen": [
+      "Into the right-hand lane of the road it is turning into",
+      "Into the left-hand lane",
+      "Doesn't matter"
+     ],
+     "richtig": 0,
+     "erklaerung": "Left stays left, right stays right – that way there is no conflict with the car next to you."
+    }
+   },
+   "k1": {
+    "titel": "Keep your lane through the turn",
+    "text": "Turn side by side, evenly. The broken guide lines in the junction show the way. No lane changes in the junction!",
+    "regel": "§ 7 Abs. 5 · § 9 Abs. 1 StVO",
+    "frage": null
+   },
+   "k2": {
+    "titel": "After turning",
+    "text": "Only after the junction – with indicator, mirrors and shoulder check – change lanes if needed.",
+    "regel": "§ 7 Abs. 5 StVO",
+    "frage": null
+   }
+  }
+ },
+ "ecke": {
+  "titel": "Reversing round a corner to the right",
+  "kurz": "Reversing into a side road – evenly and close to the kerb",
+  "kapitel": {
+   "k0": {
+    "titel": "Stop past the junction",
+    "text": "Stop at the right-hand edge of the road about two to three car lengths past the side road. All-round check – other traffic has priority.",
+    "regel": "§ 9 Abs. 5 StVO",
+    "frage": {
+     "text": "What is most important when reversing?",
+     "optionen": [
+      "Being as fast as possible",
+      "Driving slowly and watching all around",
+      "Only looking in the interior mirror"
+     ],
+     "richtig": 1,
+     "erklaerung": "When reversing, nobody may be endangered – go slowly, looking back and all around."
+    }
+   },
+   "k1": {
+    "titel": "Straight back",
+    "text": "Turn your body, look through the rear window and roll straight back – about 50 cm from the kerb.",
+    "regel": "Basic manoeuvre: reversing",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Steer round the corner",
+    "text": "When the rear wheel reaches the corner: steer to the right so that the car follows the curve of the kerb evenly. The front swings out to the left into the road – look all around again first!",
+    "regel": "§ 9 Abs. 5 StVO",
+    "frage": {
+     "text": "Which way do I steer so that the rear goes to the right?",
+     "optionen": [
+      "To the right",
+      "To the left"
+     ],
+     "richtig": 0,
+     "erklaerung": "When reversing: turn the steering wheel in the direction you want the rear to go."
+    }
+   },
+   "k3": {
+    "titel": "Continue straight",
+    "text": "Once the car is parallel to the kerb of the side road: straighten the steering wheel and reverse about one more car length.",
+    "regel": "Test guidelines (Prüfungsrichtlinie) · Basic manoeuvres",
+    "frage": null
+   }
+  }
+ },
+ "eng": {
+  "titel": "Narrowing: obstacle on my side",
+  "kurz": "Whoever has to pass the obstacle lets oncoming traffic through",
+  "kapitel": {
+   "k0": {
+    "titel": "Obstacle ahead",
+    "text": "A lorry is standing on my side with its hazard lights on. The road is too narrow for two vehicles side by side.",
+    "regel": "§ 6 StVO",
+    "frage": {
+     "text": "Who may go through the narrowing first?",
+     "optionen": [
+      "Me – I was there first",
+      "The oncoming traffic – the obstacle is on my side",
+      "Whoever is faster"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 6 StVO: Anyone who wants to pass an obstacle on the left must let oncoming vehicles through."
+    }
+   },
+   "k1": {
+    "titel": "Wait at a distance",
+    "text": "Stop in good time and at a distance from the obstacle – that leaves room to pull out and you can see oncoming traffic better.",
+    "regel": "§ 6 StVO",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Signal that you are pulling out",
+    "text": "When it's clear: mirrors, shoulder check to the left, indicate left and pass the lorry with enough side clearance – watch out for people getting out.",
+    "regel": "§ 6 · § 7 Abs. 5 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Move back in",
+    "text": "After the obstacle, indicate right and move back to the right.",
+    "regel": "§ 6 · § 2 Abs. 2 StVO",
+    "frage": null
+   }
+  }
+ },
+ "gefahr": {
+  "titel": "Emergency stop: 30 or 50?",
+  "kurz": "Reaction distance + braking distance = stopping distance – with reaction test",
+  "kapitel": {
+   "k0": {
+    "titel": "Two cars, same reaction",
+    "text": "Two drives compared in the same lane: the driving school car at 50 km/h and – semi-transparent – the same car at 30 km/h. In a moment a ball will roll onto the road between the parked cars, and a child will run after it.",
+    "regel": "§ 3 Abs. 1 · § 3 Abs. 2a StVO",
+    "frage": null
+   },
+   "k1": {
+    "titel": "Danger! Reaction time",
+    "text": "About 1 second passes before your foot is on the brake. During this time the car keeps going without braking: almost 14 m at 50 km/h, just over 8 m at 30 km/h.",
+    "regel": "Rule of thumb, reaction distance: (km/h ÷ 10) · 3",
+    "frage": {
+     "text": "How long is the reaction distance at 50 km/h (rule of thumb)?",
+     "optionen": [
+      "5 m",
+      "15 m",
+      "25 m"
+     ],
+     "richtig": 1,
+     "erklaerung": "(50 ÷ 10) · 3 = 15 m. The exact calculation gives about 14 m per second."
+    }
+   },
+   "k2": {
+    "titel": "Emergency braking",
+    "text": "Press the brake and clutch fully at the same time and keep the pressure on. The ABS rattles – that is intended. Keep a relaxed grip on the steering wheel so you can swerve.",
+    "regel": "Rule of thumb, emergency braking: (km/h ÷ 10)² ÷ 2",
+    "frage": {
+     "text": "How long is the braking distance in an emergency stop from 50 km/h (rule of thumb)?",
+     "optionen": [
+      "12.5 m",
+      "25 m",
+      "50 m"
+     ],
+     "richtig": 0,
+     "erklaerung": "(50 ÷ 10)² ÷ 2 = 12.5 m. Normal braking distance (no emergency): (50 ÷ 10)² = 25 m."
+    }
+   },
+   "k3": {
+    "titel": "The result",
+    "text": "The 30 km/h car stops in time. At 50 km/h the distance isn't enough – at the spot where the ball is, the car would still be going about 35 km/h. 30 km/h saves lives.",
+    "regel": "§ 3 Abs. 1 · § 3 Abs. 2a StVO",
+    "frage": {
+     "text": "Why is a 30 km/h limit outside schools so important?",
+     "optionen": [
+      "Because of the noise",
+      "The stopping distance is much shorter – at 50, at the point where I would already have stopped at 30, I'm still going almost as fast as when I started braking",
+      "It is only a recommendation"
+     ],
+     "richtig": 1,
+     "erklaerung": "The braking distance increases with the square of the speed."
+    }
+   }
+  }
+ },
+ "gruenpfeil": {
+  "titel": "Green arrow at red",
+  "kurz": "Stop first, then turn right carefully – traffic with a green light goes first",
+  "kapitel": {
+   "k0": {
+    "titel": "Red – with green arrow sign",
+    "text": "The traffic light shows red. Next to it on the right there is a green arrow on a black metal sign (Sign 720) – not a light arrow!",
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO · Sign 720",
+    "frage": {
+     "text": "What does the green arrow require first?",
+     "optionen": [
+      "Roll through slowly",
+      "Stop completely at the stop line",
+      "Nothing, it shows green"
+     ],
+     "richtig": 1,
+     "erklaerung": "After stopping, turning right at red is permitted – stopping is mandatory."
+    }
+   },
+   "k1": {
+    "titel": "Stop at the stop line",
+    "text": "Stop completely. In front of me a pedestrian is crossing the road on green.",
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "frage": {
+     "text": "Who goes first?",
+     "optionen": [
+      "Me, I have the arrow",
+      "Pedestrians and cross traffic with a green light",
+      "Whoever was there first"
+     ],
+     "richtig": 1,
+     "erklaerung": "Any obstruction or danger – especially to pedestrians and vehicles with a green light in their direction – must be ruled out."
+    }
+   },
+   "k2": {
+    "titel": "Edge forward to the sight line",
+    "text": "The crossing is clear. Edge forward slowly to the sight line and stop again.",
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Cross traffic has green",
+    "text": "A car is coming from the left on green – it must be neither obstructed nor endangered. Wait.",
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "frage": null
+   },
+   "k4": {
+    "titel": "Turning",
+    "text": "The blue car has passed. Shoulder check to the right and turn slowly – only from the right-hand lane!",
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "frage": null
+   },
+   "k5": {
+    "titel": "Remember",
+    "text": "A lit green arrow in the traffic light = its own green phase for turning. Green metal sign = turn only after stopping, with the greatest care.",
+    "regel": "§ 37 Abs. 2 StVO",
+    "frage": null
+   }
+  }
+ },
+ "kreisel": {
+  "titel": "Roundabout",
+  "kurz": "Enter without indicating, traffic on the roundabout has right of way, indicate when leaving",
+  "kapitel": {
+   "k0": {
+    "titel": "Sign 215 below Sign 205",
+    "text": "Roundabout with \"Give way\": traffic on the roundabout has right of way. Approach slowly and look to the left.",
+    "regel": "Sign 215 · Sign 205 · § 9a Abs. 1 StVO",
+    "frage": {
+     "text": "Do I indicate when entering the roundabout?",
+     "optionen": [
+      "Yes, right",
+      "Yes, left",
+      "No – indicating when entering is not allowed"
+     ],
+     "richtig": 2,
+     "erklaerung": "§ 9a Abs. 1 StVO: Using the indicator when entering is not permitted."
+    }
+   },
+   "k1": {
+    "titel": "Give way",
+    "text": "The blue car is already on the roundabout and has right of way. Stop at the give-way line and let it pass.",
+    "regel": "§ 9a Abs. 1 StVO · Sign 341",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Entering",
+    "text": "Clear – enter without indicating. On the roundabout you drive anticlockwise; stopping on the roundabout is prohibited.",
+    "regel": "§ 9a Abs. 1 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Indicate right to exit",
+    "text": "After passing the exit before yours, indicate right, mirrors and shoulder check to the right – cyclists and pedestrians!",
+    "regel": "§ 9 Abs. 1 StVO",
+    "frage": {
+     "text": "When do I indicate to exit?",
+     "optionen": [
+      "Not at all",
+      "After the exit before mine – in good time before leaving",
+      "Already when entering"
+     ],
+     "richtig": 1,
+     "erklaerung": "Leaving is announced: indicate right as soon as you have passed the exit before your own."
+    }
+   },
+   "k4": {
+    "titel": "Pedestrians at the crossing",
+    "text": "After the exit there is a zebra crossing. Anyone who wants to use it has priority – approach at moderate speed and wait.",
+    "regel": "§ 26 Abs. 1 StVO",
+    "frage": {
+     "text": "The pedestrian wants to use the zebra crossing. Who has priority?",
+     "optionen": [
+      "Me – I'm coming out of the roundabout",
+      "The pedestrian",
+      "Whoever is faster"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 26 Abs. 1 StVO: Pedestrians who clearly want to use the crossing must be allowed to cross."
+    }
+   }
+  }
+ },
+ "laengs": {
+  "titel": "Reverse parking (parallel)",
+  "kurz": "Sideways into a parking space at the edge of the road",
+  "kapitel": {
+   "k0": {
+    "titel": "Check the space",
+    "text": "Does the space fit? Rule of thumb: at least one good car length plus about 1.5 m. Indicate right early so the traffic behind knows what you are doing.",
+    "regel": "§ 1 Abs. 2 · § 12 StVO",
+    "frage": {
+     "text": "When do I indicate?",
+     "optionen": [
+      "Only when reversing",
+      "Already when approaching the space",
+      "Not at all, I'm only parking"
+     ],
+     "richtig": 1,
+     "erklaerung": "Indicate right early – that way the traffic behind you understands why you are stopping."
+    }
+   },
+   "k1": {
+    "titel": "Stop next to the car in front",
+    "text": "Stop parallel next to the front car, about 50 cm to 1 m to the side. Your rear is roughly level with its rear.",
+    "regel": "Basic manoeuvre: parallel parking",
+    "frage": {
+     "text": "What comes before reversing?",
+     "optionen": [
+      "Reverse immediately",
+      "All-round check – especially to the rear",
+      "Sound the horn"
+     ],
+     "richtig": 1,
+     "erklaerung": "Look all around before every movement; when reversing, turn your body and look through the rear window."
+    }
+   },
+   "k2": {
+    "titel": "Full lock to the right",
+    "text": "Roll back slowly while steering fully to the right. The rear swings into the space. Keep looking back; the front swings out to the left into the road – look again first!",
+    "regel": "§ 9 Abs. 5 · § 1 Abs. 2 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Straight back",
+    "text": "Straighten the steering wheel and roll straight back a little – this brings the car closer to the kerb.",
+    "regel": "Basic manoeuvre: parallel parking",
+    "frage": null
+   },
+   "k4": {
+    "titel": "Steer the other way",
+    "text": "When the right front corner has passed the rear of the car in front: steer fully to the left. The car turns parallel to the kerb.",
+    "regel": "Basic manoeuvre: parallel parking",
+    "frage": {
+     "text": "When do I steer to the left?",
+     "optionen": [
+      "Straight away at the start",
+      "When the front has passed the car in front",
+      "Not at all"
+     ],
+     "richtig": 1,
+     "erklaerung": "Steering back too early makes the front hit the other car – too late puts the rear against the kerb."
+    }
+   },
+   "k5": {
+    "titel": "Straighten up",
+    "text": "Move forward a little until there is roughly the same space in front and behind. Goal: parallel and close to the kerb (guide value: up to about 30 cm), without touching it.",
+    "regel": "Basic manoeuvre: parallel parking",
+    "frage": {
+     "text": "How far from the kerb may the car be?",
+     "optionen": [
+      "Doesn't matter",
+      "Close – guide value up to about 30 cm",
+      "At least 1 m"
+     ],
+     "richtig": 1,
+     "erklaerung": "Well parked: parallel and close to the kerb – but without touching it."
+    }
+   }
+  }
+ },
+ "links_gegen": {
+  "titel": "Turning left with oncoming traffic",
+  "kurz": "Oncoming traffic and oncoming right-turners have priority",
+  "kapitel": {
+   "k0": {
+    "titel": "Getting in lane",
+    "text": "Mirrors, indicate left, move towards the centre. Before moving over, watch the traffic behind you.",
+    "regel": "§ 9 Abs. 1 StVO",
+    "frage": {
+     "text": "Where do I position myself to turn left?",
+     "optionen": [
+      "Far right",
+      "Up to the centre of the road",
+      "On the opposite side of the road"
+     ],
+     "richtig": 1,
+     "erklaerung": "Turning left: position up to the centre (in one-way streets as far left as possible)."
+    }
+   },
+   "k1": {
+    "titel": "Wait in the junction",
+    "text": "Drive forward into the junction and wait. Keep the wheels straight – if you are hit from behind, you won't roll into oncoming traffic.",
+    "regel": "§ 9 Abs. 3 StVO",
+    "frage": {
+     "text": "In which order may the vehicles go?",
+     "reihenfolge": [
+      "Blue (straight on)",
+      "Red (turning right)",
+      "Van (straight on)",
+      "Driving school car (left)"
+     ],
+     "erklaerung": "Anyone turning left lets oncoming traffic through – including the right-turner from opposite. The driving school car goes last."
+    }
+   },
+   "k2": {
+    "titel": "Let oncoming traffic through",
+    "text": "Vehicles going straight on and right-turners from opposite have priority. Only turn when everything is clear and no pedestrians are crossing any more.",
+    "regel": "§ 9 Abs. 3 · § 9 Abs. 4 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Watch out for pedestrians",
+    "text": "In the road I'm turning into, a pedestrian is crossing. Take special care – wait until he is across.",
+    "regel": "§ 9 Abs. 3 StVO",
+    "frage": {
+     "text": "The pedestrian is still in the road. What do I do?",
+     "optionen": [
+      "Sound the horn",
+      "Wait until he has passed",
+      "Drive through just behind him"
+     ],
+     "richtig": 1,
+     "erklaerung": "When turning, take special care of pedestrians – wait if necessary."
+    }
+   },
+   "k4": {
+    "titel": "Shoulder check to the left",
+    "text": "Immediately before turning: shoulder check to the left (cyclists, overtaking vehicles), then turn briskly in a wide arc.",
+    "regel": "§ 9 Abs. 1 StVO",
+    "frage": null
+   }
+  }
+ },
+ "quer_rueck": {
+  "titel": "Reverse parking (bay)",
+  "kurz": "Reversing into a parking bay – later drive out forwards with a good view",
+  "kapitel": {
+   "k0": {
+    "titel": "Drive past the space",
+    "text": "Drive slowly along the aisle, indicate right and drive past the space until your rear is about 1–2 m beyond it.",
+    "regel": "§ 1 Abs. 2 StVO",
+    "frage": null
+   },
+   "k1": {
+    "titel": "All-round check",
+    "text": "Look all around before reversing – pedestrians and cars in the aisle!",
+    "regel": "§ 9 Abs. 5 StVO",
+    "frage": {
+     "text": "Why reverse into the bay?",
+     "optionen": [
+      "You have a good view ahead when driving out later",
+      "It is required",
+      "Because it's quicker"
+     ],
+     "richtig": 0,
+     "erklaerung": "Going in backwards lets you steer more tightly, and when leaving you can see the cross traffic."
+    }
+   },
+   "k2": {
+    "titel": "Full lock",
+    "text": "Reverse slowly and steer fully to the right. Look back and at the corners of the neighbouring cars.",
+    "regel": "Basic manoeuvre: bay parking",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Straight back",
+    "text": "When the car is parallel to its neighbours: straighten the steering wheel and roll back centrally to the end of the space.",
+    "regel": "Test guidelines (Prüfungsrichtlinie) · Basic manoeuvres",
+    "frage": {
+     "text": "When do I straighten the steering?",
+     "optionen": [
+      "As soon as I'm in the space",
+      "When the car is parallel to the neighbouring cars",
+      "Never"
+     ],
+     "richtig": 1,
+     "erklaerung": "Then continue straight – otherwise the car ends up at an angle."
+    }
+   }
+  }
+ },
+ "quer_vor": {
+  "titel": "Forward parking (bay)",
+  "kurz": "Forwards into a parking bay – swinging out first",
+  "kapitel": {
+   "k0": {
+    "titel": "Approach and swing out",
+    "text": "Drive slowly along the aisle towards the space, indicate right. Swing out a little to the left so the arc fits into the space.",
+    "regel": "§ 1 Abs. 2 StVO",
+    "frage": {
+     "text": "Why do I swing out before parking forwards?",
+     "optionen": [
+      "So the arc fits into the narrow space",
+      "Because it's quicker",
+      "You don't need to"
+     ],
+     "richtig": 0,
+     "erklaerung": "When driving forwards, the rear wheels cut the corner on the inside – swinging out prevents the rear from scraping the neighbouring car."
+    }
+   },
+   "k1": {
+    "titel": "Full lock",
+    "text": "When the middle of the space is roughly level with the exterior mirror: steer fully to the right. Watch the corners of the neighbouring cars (shoulder check to the right).",
+    "regel": "Basic manoeuvre: bay parking",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Straight in",
+    "text": "Straighten the steering wheel and roll centrally into the space until the front is just short of the end. It must be possible to get out on both sides.",
+    "regel": "Test guidelines (Prüfungsrichtlinie) · Basic manoeuvres",
+    "frage": {
+     "text": "What is the disadvantage when leaving the space later?",
+     "optionen": [
+      "None",
+      "Reversing out – poor view of the traffic",
+      "You need more fuel"
+     ],
+     "richtig": 1,
+     "erklaerung": "That's why reverse parking is recommended: you then drive out forwards with a good view."
+    }
+   }
+  }
+ },
+ "rechts_rad": {
+  "titel": "Turning right with a cycle path",
+  "kurz": "Shoulder check – the cyclist going straight on has priority",
+  "kapitel": {
+   "k0": {
+    "titel": "Move to the right and indicate",
+    "text": "Mirrors, indicate right, position as far right as possible. There is a cycle path to the right of the road.",
+    "regel": "§ 9 Abs. 1 StVO",
+    "frage": {
+     "text": "Who has priority here?",
+     "optionen": [
+      "Me – I'm faster",
+      "The cyclist going straight on",
+      "Whoever reaches the junction first"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 9 Abs. 3 StVO: Anyone turning must let cyclists through who are travelling in the same direction beside the road."
+    }
+   },
+   "k1": {
+    "titel": "Shoulder check to the right",
+    "text": "Immediately before turning: mirrors and shoulder check to the right – the cyclist may be in the blind spot.",
+    "regel": "§ 9 Abs. 1 · § 9 Abs. 3 StVO",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Wait",
+    "text": "The cyclist is coming from behind and going straight on. Stop and let him through – only then turn right in a tight arc.",
+    "regel": "§ 9 Abs. 3 StVO",
+    "frage": {
+     "text": "What do I do now?",
+     "optionen": [
+      "Turn quickly in front of the cyclist",
+      "Stop and let him through",
+      "Sound the horn so he brakes"
+     ],
+     "richtig": 1,
+     "erklaerung": "The cyclist has priority. Accidents between right-turning vehicles and cyclists are among the most serious in city traffic."
+    }
+   },
+   "k3": {
+    "titel": "Turning – keep watching",
+    "text": "Only turn when it's clear. While turning, keep watching for cyclists and pedestrians – the next cyclist is already coming.",
+    "regel": "§ 9 Abs. 3 StVO",
+    "frage": null
+   }
+  }
+ },
+ "reissverschluss": {
+  "titel": "Zip merge when a lane ends",
+  "kurz": "Use both lanes up to the narrowing, then take turns",
+  "kapitel": {
+   "k0": {
+    "titel": "Lane ends",
+    "text": "The lane-reduction sign announces: the right-hand lane ends. Both lanes continue to be used up to the narrowing.",
+    "regel": "Sign 531 · § 7 Abs. 4 StVO",
+    "frage": {
+     "text": "When do I move to the left?",
+     "optionen": [
+      "Immediately when I see the sign",
+      "Immediately before the start of the narrowing",
+      "Not at all, the others have to wait"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 7 Abs. 4 StVO: Merge immediately before the start of the narrowing, taking turns."
+    }
+   },
+   "k1": {
+    "titel": "Drive up to the front",
+    "text": "Don't change lanes too early: driving on the right up to the narrowing uses the road correctly and helps keep the queue short.",
+    "regel": "§ 7 Abs. 4 StVO",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Indicate and look for a gap",
+    "text": "Indicate left, match your speed to the left-hand queue and look for the vehicle you will merge behind.",
+    "regel": "§ 7 Abs. 5 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Merge in turn",
+    "text": "Immediately before the narrowing: shoulder check – and merge to the left in turn, after one vehicle. Drivers on the left each let one vehicle in.",
+    "regel": "§ 7 Abs. 4 · § 7 Abs. 5 StVO",
+    "frage": {
+     "text": "Who has to let whom in?",
+     "optionen": [
+      "Nobody, first come first served",
+      "Drivers on the left each let one vehicle in, taking turns",
+      "Drivers on the right have to wait until everything is clear"
+     ],
+     "richtig": 1,
+     "erklaerung": "Zip merge (Reißverschlussverfahren): alternately, one from the left, one from the right."
+    }
+   },
+   "k4": {
+    "titel": "Remember",
+    "text": "The zip merge applies when a lane ends or is blocked. It does NOT apply to the acceleration lane of a motorway slip road – there the through traffic has right of way.",
+    "regel": "§ 7 Abs. 4 · § 18 Abs. 3 StVO",
+    "frage": null
+   }
+  }
+ },
+ "rettungsgasse": {
+  "titel": "Emergency corridor",
+  "kurz": "As soon as traffic slows to a crawl: far-left lane moves left, everyone else moves right",
+  "kapitel": {
+   "k0": {
+    "titel": "Traffic slowing down",
+    "text": "The traffic is getting slower. As soon as vehicles are only moving at walking pace or everyone has stopped, the emergency corridor (Rettungsgasse) must be formed – not only when the blue lights arrive.",
+    "regel": "§ 11 Abs. 2 StVO",
+    "frage": {
+     "text": "When is the emergency corridor formed?",
+     "optionen": [
+      "Only when I hear a siren",
+      "As soon as traffic is at walking pace or at a standstill",
+      "Only if there are accidents ahead of me"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 11 Abs. 2 StVO: at walking pace or standstill – immediately."
+    }
+   },
+   "k1": {
+    "titel": "Which way to move?",
+    "text": "The corridor is formed between the far-left lane and the lane immediately to its right: whoever is in the far-left lane moves to the left – everyone else moves to the right.",
+    "regel": "§ 11 Abs. 2 StVO",
+    "frage": {
+     "text": "You are in the middle of three lanes. Which way?",
+     "optionen": [
+      "To the left",
+      "To the right",
+      "Stay where I am"
+     ],
+     "richtig": 1,
+     "erklaerung": "All lanes except the far-left one move to the right."
+    }
+   },
+   "k2": {
+    "titel": "Emergency vehicle coming",
+    "text": "Blue lights and siren: clear the way immediately. Stay put, stop manoeuvring back and forth – the corridor must be straight and clear.",
+    "regel": "§ 38 Abs. 1 · § 11 Abs. 2 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Keep the corridor open",
+    "text": "The corridor stays clear even after an emergency vehicle has passed – often more follow. Don't follow it!",
+    "regel": "§ 11 Abs. 2 · § 38 Abs. 1 StVO",
+    "frage": {
+     "text": "The ambulance has passed. What now?",
+     "optionen": [
+      "Follow it, that's quicker",
+      "Keep the corridor open, more may come",
+      "Move back into the lane immediately"
+     ],
+     "richtig": 1,
+     "erklaerung": "The emergency corridor remains until traffic is flowing again."
+    }
+   },
+   "k4": {
+    "titel": "Remember",
+    "text": "The hard shoulder is not a lane for the impatient. Anyone who fails to form the emergency corridor or drives in it themselves risks a fine, penalty points and a driving ban.",
+    "regel": "§ 11 Abs. 2 StVO · BKatV",
+    "frage": null
+   }
+  }
+ },
+ "rvl": {
+  "titel": "Right before left (30 km/h zone)",
+  "kurz": "Who goes first? Three cars at a junction without signs",
+  "kapitel": {
+   "k0": {
+    "titel": "Junction without signs",
+    "text": "In a 30 km/h zone there are almost never priority signs – here \"right before left\" (rechts vor links) applies. Approach slowly so that you can stop.",
+    "regel": "Sign 274.1 · § 8 Abs. 1 StVO",
+    "frage": {
+     "text": "Which rule applies at this junction?",
+     "optionen": [
+      "Right before left",
+      "The wider road has right of way",
+      "Whoever is there first goes"
+     ],
+     "richtig": 0,
+     "erklaerung": "Without signs, traffic lights or police, § 8 Abs. 1 StVO applies: whoever comes from the right has right of way."
+    }
+   },
+   "k1": {
+    "titel": "Who goes first?",
+    "text": "All three have stopped. Each looks to the right: whoever has nobody there may go first.",
+    "regel": "§ 8 Abs. 1 · § 8 Abs. 2 StVO",
+    "frage": {
+     "text": "In which order may the vehicles go?",
+     "reihenfolge": [
+      "Blue (from the right)",
+      "Driving school car",
+      "Red (turning left)"
+     ],
+     "erklaerung": "Blue has nobody on its right and goes first. Then the driving school car (Blue was on its right). Red goes last – the driving school car was on Red's right."
+    }
+   },
+   "k2": {
+    "titel": "Blue goes",
+    "text": "The blue car has nobody coming from the right and goes first.",
+    "regel": "§ 8 Abs. 1 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Then the driving school car",
+    "text": "Now the right is clear – the driving school car goes straight across the junction.",
+    "regel": "§ 8 Abs. 1 StVO",
+    "frage": null
+   },
+   "k4": {
+    "titel": "Red goes last",
+    "text": "Red turns left. It had to wait because the driving school car came from the right.",
+    "regel": "§ 8 Abs. 1 · § 9 Abs. 1 StVO",
+    "frage": null
+   },
+   "k5": {
+    "titel": "Remember",
+    "text": "Whoever has to wait shows this by approaching at moderate speed. If there are cars on all four sides, the drivers communicate – one gives up their right of way.",
+    "regel": "§ 8 Abs. 2 · § 11 Abs. 3 StVO",
+    "frage": null
+   }
+  }
+ },
+ "schulbus": {
+  "titel": "School bus with hazard lights",
+  "kurz": "No overtaking, walking pace – oncoming traffic too – and expect children",
+  "kapitel": {
+   "k0": {
+    "titel": "School bus with hazard lights",
+    "text": "The school bus is approaching the bus stop with its hazard lights on. It must not be overtaken now.",
+    "regel": "§ 20 Abs. 3 StVO",
+    "frage": {
+     "text": "May I overtake the bus while it is approaching the stop with its hazard lights on?",
+     "optionen": [
+      "Yes, if the road is clear",
+      "No",
+      "Only if I sound the horn"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 20 Abs. 3 StVO: Public service buses and school buses approaching a stop with their hazard lights on must not be overtaken."
+    }
+   },
+   "k1": {
+    "titel": "Bus stops – children get off",
+    "text": "It's best to stop behind the bus at a distance first. Children are unpredictable and may run into the road behind or in front of the bus.",
+    "regel": "§ 20 Abs. 4 · § 3 Abs. 2a StVO",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Walking pace",
+    "text": "Only pass at walking pace (about 4–7 km/h) and with enough distance that nobody is endangered. This also applies to oncoming traffic!",
+    "regel": "§ 20 Abs. 4 StVO",
+    "frage": {
+     "text": "Does the walking-pace rule also apply to oncoming traffic?",
+     "optionen": [
+      "No, only to the same direction",
+      "Yes – oncoming traffic on the same carriageway also drives at walking pace",
+      "Only on school days"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 20 Abs. 4 StVO: Walking pace also applies to oncoming traffic on the same carriageway."
+    }
+   },
+   "k3": {
+    "titel": "Child runs into the road!",
+    "text": "A child is running across the road in front of the bus. Stop immediately – if necessary, you must wait.",
+    "regel": "§ 20 Abs. 4 StVO",
+    "frage": {
+     "text": "What do I do?",
+     "optionen": [
+      "Swerve and keep going",
+      "Stop and wait until the child is safely across",
+      "Sound the horn"
+     ],
+     "richtig": 1,
+     "erklaerung": "If necessary, you must wait – any danger to passengers must be ruled out."
+    }
+   },
+   "k4": {
+    "titel": "Bus pulls away",
+    "text": "The bus indicates left to pull away from the stop. The bus must be allowed to pull away – wait if necessary.",
+    "regel": "§ 20 Abs. 5 StVO",
+    "frage": null
+   }
+  }
+ },
+ "stop": {
+  "titel": "Stop sign (Sign 206)",
+  "kurz": "Always stop completely at the stop line – then edge forward",
+  "kapitel": {
+   "k0": {
+    "titel": "Stop! Give way",
+    "text": "Sign 206 means: stop at the stop line – always, even if the road is clear – and then give way.",
+    "regel": "Sign 206 · Sign 294",
+    "frage": {
+     "text": "Do I have to stop at the stop sign even if I can see that the road is clear?",
+     "optionen": [
+      "No, rolling is enough",
+      "Yes – always stop completely",
+      "Only at night"
+     ],
+     "richtig": 1,
+     "erklaerung": "Sign 206: Stopping is mandatory. The wheels must come to a standstill."
+    }
+   },
+   "k1": {
+    "titel": "Standstill at the stop line",
+    "text": "The car is at the stop line – the wheels are stationary. From here you often can't see enough yet.",
+    "regel": "Sign 206 · Sign 294",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Edge forward",
+    "text": "Edge forward slowly to the sight line and stop again. Look left, right, left.",
+    "regel": "§ 8 Abs. 2 StVO",
+    "frage": {
+     "text": "The view is blocked at the stop line. What now?",
+     "optionen": [
+      "Just drive off",
+      "Edge forward slowly and look again",
+      "Sound the horn"
+     ],
+     "richtig": 1,
+     "erklaerung": "After stopping at the stop line you may edge forward carefully to the sight line."
+    }
+   },
+   "k3": {
+    "titel": "Let cross traffic through",
+    "text": "Both vehicles on the priority road have right of way. Only turn right when it's clear.",
+    "regel": "§ 8 Abs. 2 StVO",
+    "frage": null
+   }
+  }
+ },
+ "ueberholen": {
+  "titel": "Overtaking on a country road",
+  "kurz": "Check the view, wait for oncoming traffic, overtake briskly, pull back in with distance",
+  "worum": "Ahead of you is a lorry doing 60 km/h; the limit is 100. Overtaking is one of the most dangerous manoeuvres outside built-up areas: you are driving in the lane of oncoming traffic. It only works if the road is clear far enough ahead.",
+  "worumRegel": "§ 5 StVO",
+  "varianten": {
+   "richtig": "The right way",
+   "falsch": "Typical mistake"
+  },
+  "rf": {
+   "richtig": "You are watching how it's done correctly. The same situation is also available with the mistake that happens most often in practice: following too closely and pulling out without a clear view.",
+   "falsch": "You are watching the typical mistake. Notice where it goes wrong: the distance, the red area, the headlight flash. Afterwards it's worth comparing it directly with the correct version."
+  },
+  "rfKnopf": {
+   "richtig": "View the correct version",
+   "falsch": "View the typical mistake"
+  },
+  "kapitel": {
+   "lkw": {
+    "titel": "Slow lorry ahead",
+    "text": "Outside built-up areas, the limit is 100 km/h, and a lorry ahead is doing 60. Keep enough distance, at least half the speedometer reading in metres. That way you can see past it and build up speed.",
+    "regel": "§ 4 Abs. 1 · § 5 Abs. 2 StVO",
+    "frage": {
+     "text": "When may I overtake?",
+     "optionen": [
+      "Whenever I'm faster",
+      "Only if it is clear that oncoming traffic will not be obstructed during the whole overtaking manoeuvre, and I am significantly faster",
+      "Only on the right"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 5 Abs. 2 StVO: Only overtake if obstruction of oncoming traffic is ruled out, and at a significantly higher speed."
+    }
+   },
+   "gegen": {
+    "titel": "Oncoming traffic",
+    "text": "A car is coming towards you. Don't pull out now – wait. The green or red area shows whether the required roughly 500 m are clear.",
+    "regel": "§ 5 Abs. 2 StVO",
+    "frage": {
+     "text": "Roughly how much clear road do I need to overtake a lorry doing 60 km/h at 100 km/h?",
+     "optionen": [
+      "About 100 m",
+      "About 250 m overtaking distance, and in that time oncoming traffic covers about the same distance again: around 500 m of visibility",
+      "About 50 m"
+     ],
+     "richtig": 1,
+     "erklaerung": "Overtaking distance ≈ (both vehicle lengths + gap before and after) × v₁ ÷ (v₁ − v₂) ≈ 100 m × 100 ÷ 40 ≈ 250 m. In the same time, oncoming traffic covers roughly the same distance again."
+    }
+   },
+   "sichern": {
+    "titel": "Mirrors, shoulder check, indicator",
+    "text": "The road is clear and you can see well ahead, no solid line. Interior and exterior mirrors, shoulder check to the left, then indicate left. Start building up a little speed already.",
+    "regel": "§ 5 Abs. 4 · § 5 Abs. 4a StVO"
+   },
+   "vorbei": {
+    "titel": "Pass briskly",
+    "text": "Pull out and accelerate briskly. The speed limit remains the limit. Keep sufficient side clearance from the lorry.",
+    "regel": "§ 5 Abs. 2 · § 5 Abs. 4 · § 3 Abs. 3 StVO",
+    "frage": {
+     "text": "The lorry speeds up while being overtaken. Is it allowed to?",
+     "optionen": [
+      "Yes",
+      "No, a vehicle being overtaken must not increase its speed"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 5 Abs. 6 StVO: A vehicle being overtaken must not increase its speed."
+    }
+   },
+   "einordnen": {
+    "titel": "Indicate right, move back in",
+    "text": "Interior mirror: only when you can see the whole lorry in it, indicate right and move back in. Don't cut in just in front of it.",
+    "regel": "§ 5 Abs. 4 · § 5 Abs. 4a StVO"
+   },
+   "verbot": {
+    "titel": "No overtaking ahead",
+    "text": "First the warning line with short gaps announces the solid line, then Sign 276 applies. Here a farm track joins from the right, and the tractor there wants to get onto the road. An overtaking manoeuvre already started must be completed before this point.",
+    "regel": "Sign 276 · Sign 295",
+    "frage": {
+     "text": "May I cross the solid centre line to overtake?",
+     "optionen": [
+      "Yes, briefly",
+      "No",
+      "Only for tractors"
+     ],
+     "richtig": 1,
+     "erklaerung": "The lane boundary line (Sign 295) must not be crossed."
+    }
+   },
+   "f_dicht": {
+    "titel": "Following too closely",
+    "text": "Only 12 m distance at 60 km/h. The lorry blocks your view ahead: you can't see whether oncoming traffic is coming. At least 30 m would be correct.",
+    "regel": "§ 4 Abs. 1 StVO",
+    "frage": {
+     "text": "What distance is correct at 60 km/h (rule of thumb)?",
+     "optionen": [
+      "6 m",
+      "Half the speedometer: 30 m",
+      "One car length"
+     ],
+     "richtig": 1,
+     "erklaerung": "Rule of thumb outside built-up areas: half the speedometer reading in metres, i.e. 30 m at 60 km/h. That is about 2 seconds."
+    }
+   },
+   "f_raus": {
+    "titel": "Pulling out without a clear view",
+    "text": "Pulled out straight after the first oncoming vehicle, without a shoulder check, without building up speed and without knowing what comes next. The area is red: the van is already too close.",
+    "regel": "§ 5 Abs. 2 · § 5 Abs. 3 Nr. 1 StVO",
+    "frage": {
+     "text": "What would have helped here?",
+     "optionen": [
+      "Pulling out faster",
+      "Dropping back, increasing the distance and only overtaking when the road is definitely clear",
+      "Sounding the horn"
+     ],
+     "richtig": 1,
+     "erklaerung": "Overtaking is not permitted when the traffic situation is unclear (§ 5 Abs. 3 Nr. 1 StVO). With more distance you can see whether the road is clear."
+    }
+   },
+   "f_gegen": {
+    "titel": "Oncoming traffic has to brake",
+    "text": "The van brakes and flashes its headlights. Anyone who obstructs oncoming traffic should not have overtaken. Now only a dangerous cut-in is left.",
+    "regel": "§ 5 Abs. 2 StVO"
+   },
+   "f_knapp": {
+    "titel": "Cutting in too close",
+    "text": "Straight into the gap, only a few metres in front of the lorry. The lorry has to brake. When overtaking, you must not obstruct the overtaken vehicle when moving back in.",
+    "regel": "§ 5 Abs. 4 StVO"
+   },
+   "f_besser": {
+    "titel": "This is how it should have been done",
+    "text": "Keep your distance, wait for oncoming traffic and only overtake, with a run-up, when the road is definitely clear. If in doubt: don't overtake. Tip: take a look at the \"The right way\" version.",
+    "regel": "§ 5 Abs. 2 · § 5 Abs. 3 StVO"
+   }
+  },
+  "merken": [
+   [
+    "Only overtake if you can see the road clearly and oncoming traffic will not be obstructed during the whole overtaking manoeuvre, and only at a significantly higher speed.",
+    "§ 5 Abs. 2 StVO"
+   ],
+   [
+    "Don't overtake when the traffic situation is unclear. If in doubt: stay behind.",
+    "§ 5 Abs. 3 Nr. 1 StVO"
+   ],
+   [
+    "Before pulling out: mirrors, shoulder check, indicator. When moving back in, don't obstruct the vehicle you have overtaken.",
+    "§ 5 Abs. 4 · Abs. 4a StVO"
+   ],
+   [
+    "A vehicle being overtaken must not speed up.",
+    "§ 5 Abs. 6 StVO"
+   ],
+   [
+    "Rule of thumb: to pass a lorry doing 60 km/h at 100 km/h, you need around 250 m of overtaking distance and around 500 m of clear view.",
+    "Rule of thumb"
+   ]
+  ]
+ },
+ "voreinander": {
+  "titel": "Two left-turners: turning in front of each other",
+  "kurz": "Opposing left-turners turn in front of each other",
+  "kapitel": {
+   "k0": {
+    "titel": "Two left-turners",
+    "text": "The driving school car and the red car both want to turn left and are facing each other.",
+    "regel": "§ 9 Abs. 4 StVO",
+    "frage": {
+     "text": "How do the two turn?",
+     "optionen": [
+      "In front of each other – each turns in front of the other",
+      "Around each other",
+      "Whoever is there first goes first"
+     ],
+     "richtig": 0,
+     "erklaerung": "§ 9 Abs. 4 StVO: Opposing left-turners turn in front of each other – unless the traffic situation or the layout of the junction requires otherwise."
+    }
+   },
+   "k1": {
+    "titel": "Turning in front of each other",
+    "text": "Both set off at the same time and turn in front of each other – the cars pass right side to right side. This saves time – but the other left-turner blocks the view of the oncoming traffic behind it, so pay particular attention.",
+    "regel": "§ 9 Abs. 4 StVO",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Remember",
+    "text": "Turn around each other (passing behind each other) only if road markings, traffic lights or the layout of the junction require it.",
+    "regel": "§ 9 Abs. 4 StVO",
+    "frage": null
+   }
+  }
+ },
+ "wenden": {
+  "titel": "Three-point turn",
+  "kurz": "Turning around by driving forwards and backwards in a narrow road",
+  "kapitel": {
+   "k0": {
+    "titel": "Preparation",
+    "text": "Stop at the right-hand edge. Check: Is turning allowed here and can you see well? Indicate left and look in both directions.",
+    "regel": "§ 9 Abs. 5 StVO",
+    "frage": {
+     "text": "What is the most important check when turning around?",
+     "optionen": [
+      "As few moves as possible",
+      "Watching in both directions before every move",
+      "Getting it done quickly"
+     ],
+     "richtig": 1,
+     "erklaerung": "When turning around, nobody may be endangered (§ 9 Abs. 5 StVO) – observation is the key point."
+    }
+   },
+   "k1": {
+    "titel": "1st move: forwards, full lock left",
+    "text": "Move off slowly while steering fully to the left – until just before the opposite kerb. Just before stopping, already start steering back to the right.",
+    "regel": "Basic manoeuvre: turning around",
+    "frage": null
+   },
+   "k2": {
+    "titel": "2nd move: backwards, full lock right",
+    "text": "Reverse gear, look all around again, reverse slowly and steer fully to the right – until just before the kerb behind you.",
+    "regel": "§ 9 Abs. 5 StVO",
+    "frage": {
+     "text": "Which way do I steer when reversing?",
+     "optionen": [
+      "Left",
+      "Right – the rear should go to the right",
+      "Not at all"
+     ],
+     "richtig": 1,
+     "erklaerung": "When reversing: turn the steering wheel in the direction you want the rear to go."
+    }
+   },
+   "k3": {
+    "titel": "3rd move: forwards, out to the left",
+    "text": "Observe once more, steer fully to the left and drive off in the new direction. Move to the right.",
+    "regel": "§ 2 Abs. 2 StVO",
+    "frage": null
+   },
+   "k4": {
+    "titel": "Remember",
+    "text": "Don't steer while stationary, but while the car is rolling slowly. The number of moves is secondary – the kerb must not be touched.",
+    "regel": "Test guidelines (Prüfungsrichtlinie) · Basic manoeuvres",
+    "frage": null
+   }
+  }
+ },
+ "zebra": {
+  "titel": "Pedestrian crossing (zebra crossing)",
+  "kurz": "Look ahead, be ready to brake – anyone who wants to cross has priority",
+  "kapitel": {
+   "k0": {
+    "titel": "Sign 350 – crossing ahead",
+    "text": "Ease off the accelerator early and watch the pavements: Does someone want to cross? Children are small and hard to see.",
+    "regel": "Sign 350 · § 26 Abs. 1 StVO",
+    "frage": {
+     "text": "How do I approach a zebra crossing when someone clearly wants to cross?",
+     "optionen": [
+      "Carry on as normal, they have to wait",
+      "Only at moderate speed, waiting if necessary",
+      "Sound the horn and drive through"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 26 Abs. 1 StVO: Allow pedestrians to cross, approach only at moderate speed, wait if necessary."
+    }
+   },
+   "k1": {
+    "titel": "Stopping",
+    "text": "The pedestrians start to cross – stop before the crossing, not on it. Overtaking or passing the waiting car is prohibited.",
+    "regel": "§ 26 Abs. 1 · § 26 Abs. 3 StVO",
+    "frage": {
+     "text": "The car in front of me stops at the zebra crossing. May I overtake it on the left?",
+     "optionen": [
+      "Yes, if I'm quick",
+      "No – overtaking is not allowed at pedestrian crossings",
+      "Yes, with the horn"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 26 Abs. 3 StVO: Overtaking is not allowed at pedestrian crossings."
+    }
+   },
+   "k2": {
+    "titel": "Only when it's clear",
+    "text": "Only drive on when everyone has safely left the crossing – on the other side too. Eye contact helps.",
+    "regel": "§ 26 Abs. 1 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Remember",
+    "text": "If traffic is backed up beyond the crossing, don't drive onto the zebra crossing if you would have to wait on it.",
+    "regel": "§ 26 Abs. 2 StVO",
+    "frage": null
+   }
+  }
+ }
+}

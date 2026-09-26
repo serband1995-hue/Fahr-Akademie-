@@ -7,7 +7,7 @@
                muss bremsen, zu knapp vor dem Lkw eingeschert
    Texte stehen je Sprache in TEXTE; fehlt eine Sprache, gilt Deutsch.
    ===================================================================== */
-import { tempoProfil, spurVerlauf, fahrt, fenster, KMH } from "../motor.js";
+import { tempoProfil, spurVerlauf, fahrt, fenster, KMH } from "../../verkehr/motor.js";
 
 const SP = 3.5, ZR = SP / 2, ZL = -SP / 2;       // Spurmitten: rechts +, links −
 const L_FS = 4.25, L_LKW = 16.5;                 // Fahrschule (Kompaktwagen), Sattelzug

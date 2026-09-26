@@ -87,11 +87,20 @@ minderjährig — entsprechend vorsichtig mit Daten umgehen.
   (`KLICK_FLAECHEN` + `tastaturSystemStarten`). Neue Klickflächen mit
   `data-…`-Attribut dort eintragen — oder gleich `<button>` verwenden.
 - **Verkehr verstehen** (`verkehr/`, Stufe 6): eigener 3D-Motor `motor.js` auf
-  three.js (`vendor/three-0.186.1.min.js`, fest), Szenen in `verkehr/szenen/`.
-  Eine Szene ist eine reine Funktion der Zeit (pose(t), sig(t)) – Springen,
-  Anhalten, halbes Tempo ohne Nebenwirkungen. Mitdenken OHNE Bewertung
-  (E6 = a): keine Antwortknöpfe, kein Rot/Grün, nichts gespeichert.
-  `vorschau.html` ist nur die Musterszene zur Abstimmung (W2), nicht verlinkt.
+  three.js (`vendor/three-0.186.1.min.js`, fest), Stadt/Autobahn-Welt und
+  Verkehrsteilnehmer in `stadt.js`, Bedienung in `spieler.js` (lädt die App erst
+  beim Öffnen einer Szene per `import()`). Eine Szene ist eine reine Funktion der
+  Zeit – Springen, Anhalten, halbes Tempo ohne Nebenwirkungen. Mitdenken OHNE
+  Bewertung (E6 = a): keine Antwortknöpfe, kein Rot/Grün, nichts gespeichert.
+  **Szenendaten liegen NICHT im Repo**, sondern in `academy_szenen` (kein
+  öffentlicher Lesezugriff; nur Super-Admin liest/ändert Kostprobe/Aktiv).
+  Ausgeliefert nur über `academy-szene`: Vollzugang, Kostprobe oder Gratis-Thema
+  → ganze Szene, sonst nur Kapitel 1 (`teaser.gesperrt` = Titel der übrigen).
+  Erzeugt werden die Daten mit `werkzeuge/szenen-export.js` (tastet die
+  Kompass-Lernszenen und `werkzeuge/szenen/*.js` ab; Übersetzungen in
+  `werkzeuge/szenen-texte/{tr,en,ar}.json`, gleiche Struktur wie `texte.de`).
+  Die Kompass-Szenen stammen aus dem öffentlichen Kompass-Repo – die Sperre
+  schützt die Akademie-Oberfläche, nicht die Rohdaten.
 - **Zweites Supabase-Projekt `oectrvkjunntzsggyhxv`** (Fahrlehrer-Kompass) ist
   ein separates Projekt mit eigenem Chat. Hier nur als Bridge-Partner
   relevant — nicht versehentlich hineinschreiben.

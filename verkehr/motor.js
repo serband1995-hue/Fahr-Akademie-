@@ -878,12 +878,12 @@ function baueSchild(M, s, rand){
   return g;
 }
 
-function baueBaeume(M, liste, rnd){
+function baueBaeume(M, liste, rnd, nahFn){
   const g = new THREE.Group();
   const laub = liste.filter(function(b){ return b.art === "laub"; }), nadel = liste.filter(function(b){ return b.art === "nadel"; });
   const stamm = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.16, 0.26, 1, 7), M.rinde, liste.length);
   const KB = 6; // Laubballen je nahem Baum
-  const nah = function(b){ return Math.abs(b.z) < 45; };
+  const nah = nahFn || function(b){ return Math.abs(b.z) < 45; };
   const krone = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 1), M.laub, laub.filter(nah).length * KB);
   const kroneFern = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 0), M.laub, laub.length * 3);
   const kegel = new THREE.InstancedMesh(new THREE.ConeGeometry(1, 1, 8, 1), M.laub, nadel.length * 2);
@@ -1140,7 +1140,8 @@ export function erstelleWelt(canvas, opt){
   function freigeben(wurzel){
     wurzel.traverse(function(o){
       if(o.geometry) o.geometry.dispose();
-      if(o.material && !geteilt.has(o.material) && !o.isSprite){ if(o.material.map) o.material.map.dispose(); o.material.dispose(); }
+      if(!o.material || o.isSprite) return;
+      (Array.isArray(o.material) ? o.material : [o.material]).forEach(function(m){ if(geteilt.has(m)) return; if(m.map) m.map.dispose(); m.dispose(); });
     });
   }
   welt.freigeben = freigeben;
@@ -1157,11 +1158,14 @@ export function erstelleWelt(canvas, opt){
       f.stand = p;
       const g = f.bau.gruppe;
       g.position.set(p.x, 0, p.z); g.rotation.y = p.h;
+      g.visible = p.sichtbar !== false;
+      if(f.bau.animiere) f.bau.animiere(p, t, s);
       f.bau.raeder.forEach(function(r){
         r.dreh.rotation.z = -(p.s || 0) / r.r;
         if(r.lenk) r.lenk.rotation.y = Math.max(-0.6, Math.min(0.6, (p.lenk || 0) * 2.2));
       });
       const L = f.bau.lichter, an = Math.floor(t * 1.5 * 2) % 2 === 0; // Blinker 1,5 Hz (90 je Minute)
+      if(!L) return;
       const bl = (s.blinker === "links" || s.warnblink) && an, br = (s.blinker === "rechts" || s.warnblink) && an;
       const lh = s.lichthupe ? (Math.floor(t * 5) % 2 === 0) : false;
       L.mats.front.emissiveIntensity = lh ? 6 : nacht ? 3 : 0;
@@ -1180,6 +1184,7 @@ export function erstelleWelt(canvas, opt){
       }
     });
     welt.dreher.forEach(function(d){ d.rotor.rotation.x = t * d.tempo; });
+    (welt.ticker || []).forEach(function(fn){ fn(t); });
   };
 
   // Kameras: "oben" (Draufsicht), "schraeg" (von hinten oben), "fahrer" (Fahrersicht)
@@ -1196,10 +1201,31 @@ export function erstelleWelt(canvas, opt){
       kam.sollZiel.set(v.x + fx * 40, v.y - 0.9, v.z + fz * 40);
       kamera.fov = 62;
     } else if(kam.art === "oben"){
-      kam.sollPos.set(p.x + fx * 9, 64, 0.01);
-      kam.sollZiel.set(p.x + fx * 9, 0, 0);
+      const ko = welt.kameraOpt || {}, fe = ko.fest;
+      if(fe && ko.obenFest){
+        kam.sollPos.set(fe.x, ko.obenHoehe || 40, fe.z + 0.01); kam.sollZiel.set(fe.x, 0, fe.z);
+      } else if(ko.folgeZ){
+        const v = ko.obenVor === undefined ? 6 : ko.obenVor;
+        kam.sollPos.set(p.x + fx * v, ko.obenHoehe || 40, p.z + fz * v + 0.01); kam.sollZiel.set(p.x + fx * v, 0, p.z + fz * v);
+      } else {
+        kam.sollPos.set(p.x + fx * 9, 64, 0.01);
+        kam.sollZiel.set(p.x + fx * 9, 0, 0);
+      }
       kamera.fov = 44;
+    } else if(kam.art === "uebersicht" && welt.kameraOpt && welt.kameraOpt.fest){
+      // feste Sicht schraeg von oben auf eine Kreuzung oder Parkluecke
+      const fe = welt.kameraOpt.fest, bx = Math.cos(fe.blick), bz = Math.sin(fe.blick);
+      kam.sollPos.set(fe.x - bx * fe.abstand, fe.hoehe, fe.z - bz * fe.abstand);
+      kam.sollZiel.set(fe.x + bx * fe.abstand * 0.12, 0, fe.z + bz * fe.abstand * 0.12);
+      kamera.fov = 50;
     } else {
+      const ko = welt.kameraOpt || {};
+      if(ko.stadt){
+        kam.sollPos.set(p.x - fx * 11, 5.2, p.z - fz * 11);
+        kam.sollZiel.set(p.x + fx * 16, 0.9, p.z + fz * 16);
+        kamera.fov = 52;
+        return;
+      }
       kam.sollPos.set(p.x - fx * 17, 7.5, p.z - fz * 17 + 1.5);
       kam.sollZiel.set(p.x + fx * 28, 1.2, p.z + fz * 28 - 0.8);
       kamera.fov = 48;
@@ -1217,14 +1243,18 @@ export function erstelleWelt(canvas, opt){
         if(kam.weich <= 0){ kam.pos.copy(kam.sollPos); kam.ziel.copy(kam.sollZiel); }
       } else { kam.pos.copy(kam.sollPos); kam.ziel.copy(kam.sollZiel); }
       kamera.position.copy(kam.pos); kamera.up.set(kam.art === "oben" ? 1 : 0, kam.art === "oben" ? 0 : 1, 0);
+      const koU = welt.kameraOpt || {};
+      if(kam.art === "oben" && koU.fest && koU.obenFest) kamera.up.set(Math.cos(koU.fest.blick), 0, Math.sin(koU.fest.blick));
       kamera.lookAt(kam.ziel); kamera.updateProjectionMatrix();
       // In der Fahrersicht das eigene Dachschild/Kopf nicht vor die Linse holen
       if(fokus.bau.kopf) fokus.bau.kopf.visible = kam.art !== "fahrer";
       const L = fokus.bau.lichter;
       [L.glanzFront, L.glanzBlinkL, L.glanzBlinkR].forEach(function(a){ a.forEach(function(sp){ sp.visible = kam.art !== "fahrer"; }); });
       // Sonne und Schattenbereich wandern mit
-      const fp = fokus.stand, vor = kam.art === "oben" ? 22 : 25;
-      const cx = fp.x + Math.cos(-fp.h) * vor, cz = fp.z;
+      const fp = fokus.stand, vor = kam.art === "oben" ? 22 : 25, ko = welt.kameraOpt || {};
+      let cx = fp.x + Math.cos(-fp.h) * vor, cz = fp.z;
+      if(ko.fest && (kam.art === "uebersicht" || (kam.art === "oben" && ko.obenFest))){ cx = ko.fest.x; cz = ko.fest.z; }
+      else if(ko.stadt){ cx = fp.x + Math.cos(-fp.h) * 12; cz = fp.z + Math.sin(-fp.h) * 12; }
       const sr = welt.sonnenRichtung || new THREE.Vector3(0.3, 0.8, -0.4);
       const tx = Math.round(cx / 1.2) * 1.2, tz = Math.round(cz / 1.2) * 1.2;
       sonne.target.position.set(tx, 0, tz);
@@ -1250,7 +1280,7 @@ export function erstelleWelt(canvas, opt){
 
   // Hilfsflaechen (halbtransparent auf der Fahrbahn): { id, farbe }
   const hilfen = {};
-  welt.hilfe = function(id, sichtbar, x0, x1, z0, z1, farbe){
+  welt.hilfe = function(id, sichtbar, x0, x1, z0, z1, farbe, deckkraft){
     let m = hilfen[id];
     if(!m){
       m = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.32, depthWrite: false, fog: false, polygonOffset: true, polygonOffsetFactor: -4 }));
@@ -1259,10 +1289,14 @@ export function erstelleWelt(canvas, opt){
     m.visible = !!sichtbar;
     if(!sichtbar) return;
     m.position.set((x0 + x1) / 2, 0.03, (z0 + z1) / 2); m.scale.set(Math.max(0.01, x1 - x0), Math.max(0.01, z1 - z0), 1);
-    m.material.color.set(farbe || "#2e9e5a");
+    m.material.color.set(farbe || "#2e9e5a"); m.material.opacity = deckkraft || 0.32;
   };
 
   welt.setzeTageszeit("tag");
   welt.setzeQualitaet(qualitaet.stufe);
   return welt;
 }
+
+// Bausteine fuer weitere Module (Stadt-Szenen)
+export const bausteine = { leinwand: leinwand, textur: textur, rauschen: rauschen, asphaltTextur: asphaltTextur, grasTextur: grasTextur, schildTextur: schildTextur,
+  schriftTextur: schriftTextur, kiste: kiste, viereck: viereck, verschmelzen: verschmelzen, rad: rad, insasse: insasse, baueBaeume: baueBaeume, baueWolken: baueWolken, glanzTextur: glanzTextur };
