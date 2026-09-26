@@ -1,6 +1,6 @@
 # Fahr-Akademie — Projektgedächtnis
 
-Vanilla-JS-App (eine `index.html`, ~3.740 Zeilen) für Fahrschüler. Backend:
+Vanilla-JS-App (eine `index.html`, ~8.300 Zeilen) für Fahrschüler. Backend:
 Supabase-Projekt `fxgljvhpikjcejhghgbp` (eu-central-1). Nutzer teilweise
 minderjährig — entsprechend vorsichtig mit Daten umgehen.
 
@@ -23,7 +23,7 @@ minderjährig — entsprechend vorsichtig mit Daten umgehen.
 - Betrifft es die Datenbank: `get_advisors` danach ausführen (security +
   performance).
 - Betrifft es eine Edge Function: `verify_jwt` ausdrücklich auf `false`
-  (alle 17 Functions sind bewusst öffentlich, machen ihre eigene Prüfung).
+  (alle 21 Functions sind bewusst öffentlich, machen ihre eigene Prüfung).
 - Sicherheitsbehauptungen mit echten Tests beweisen (RLS-Simulation,
   Transaktion + Rollback), nicht nur behaupten.
 
@@ -43,9 +43,19 @@ minderjährig — entsprechend vorsichtig mit Daten umgehen.
   beider Projekte, per `get_decrypted_secret()`. `academy-kandidaten-sync`
   schreibt NIE in `academy_schueler` — nur in `academy_kandidaten`. Ein
   Kompass-Fehler kann also nie bestehende Zugänge/PINs verändern.
-- **Prüfungsvideos sind bewusst ohne Sperre.** Falls je ein Quiz oder ein
-  Lernpfad mit Sperre gebaut wird: Prüfungsstrecken (`academy_pruefer`)
-  bleiben frei zugänglich, das ist expliziter Wunsch.
+- **Prüfungsstrecken gehören zum Vollzugang** (Entscheidung Serband,
+  26.09.2026 — ersetzt den früheren Satz "Prüfungsvideos sind bewusst ohne
+  Sperre", der nicht mehr dem Code entsprach). Sie sind wie alle anderen
+  Videos über `academy-video-token` gesperrt; eine einzelne Strecke kann per
+  `academy_videos.gratis` als Kostprobe freigegeben werden.
+- **Abmelden nur mit eindeutigem Code** (26.09.2026): Die App meldet Schüler
+  nur bei `session_ungueltig`, `session_abgelaufen`, `zugang_gesperrt`,
+  `zugang_abgelaufen` oder `schule_pausiert` ab (Feld `code` in der Antwort
+  der Edge Functions). Neue Ablehnungsgründe brauchen einen eigenen Code,
+  sonst bleibt der Schüler angemeldet — das ist Absicht.
+- **supabase-js liegt im Repo** (`vendor/`, feste Version). Bei einem Update
+  neue Datei mit neuer Versionsnummer anlegen, Script-Tag und `sw.js`
+  (STATIC_ASSETS + CACHE_NAME) anpassen.
 - **Zweites Supabase-Projekt `oectrvkjunntzsggyhxv`** (Fahrlehrer-Kompass) ist
   ein separates Projekt mit eigenem Chat. Hier nur als Bridge-Partner
   relevant — nicht versehentlich hineinschreiben.

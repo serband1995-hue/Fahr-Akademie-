@@ -20,7 +20,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<!-- 26.09.2026: supabase-js in fester Version selbst ausgeliefert (vorher "@2" vom CDN,
+     ohne Pruefsumme). Der Service Worker speichert die Datei zwischen -> die App startet
+     auch, wenn das CDN nicht erreichbar ist. Rueckfall aufs CDN, falls die Datei fehlt. -->
+<script src="vendor/supabase-js-2.117.2.min.js"></script>
+<script>if(typeof supabase === "undefined"){ document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.min.js"><\/script>'); }</script>
 <style>
   /* ---- DESIGN-TOKENS — visuelle Sprache "Papier & Strecke" (13.09.2026) ----
      Zentrale Werte für Farbe/Abstand/Radius/Schrift/Bewegung. Neue Bausteine greifen
@@ -29,7 +33,11 @@
   :root{
     /* Marke / Tinte. Grün ist ab jetzt Marke und Tinte, KEIN Status mehr. */
     --gruen:#2F4A34; --gruen-hell:#4B7A56;
-    --auf-tief:#FFFFFF;                         /* NEU — Tinte auf dunklem Grund: Grün, Warn, Bild-Overlay */
+    /* 26.09.2026: Grün als SCHRIFT bekommt ein eigenes Token. Im Dunkelmodus stand
+       dunkelgrüne Schrift auf fast schwarzem Grund (1,4:1) -- kaum lesbar. */
+    --gruen-text:#2F4A34;
+    --auf-tief:#FFFFFF;
+    --auf-warn:#FFFFFF;                         /* 26.09.2026 — Tinte auf Warn-Flächen */                         /* NEU — Tinte auf dunklem Grund: Grün, Warn, Bild-Overlay */
 
     /* Flächen. Das Papier selbst ist die helle Fläche, Karten liegen DARIN
        (vorher lagen sie darauf — deshalb ist --surface jetzt dunkler als --bg). */
@@ -118,8 +126,11 @@
       --text:#EDE7D9;
       --muted:#A79E8A;                            /* war #A39A87 */
       --faint:#8C8472;                            /* war #7E7768 — 4,2:1 statt 3,2:1 */
+      --gruen:#3F6B4B;                            /* 26.09.2026 — Füllung heller: hebt sich vom Grund ab, weiße Schrift bleibt 6:1 */
+      --gruen-text:#9CCAA6;                       /* 26.09.2026 — Grün als Schrift: 9:1 statt 1,4:1 */
       --gruen-hell:#7FA98A;
       --auf-tief:#FFFFFF;
+      --auf-warn:#191D1A;                         /* 26.09.2026 — dunkle Schrift auf hellem Warn-Rot: 6:1 statt 2,6:1 */
       --gold:#E0A868;
       --gold-text:#E9B87E;                        /* im Dunkeln darf Gold Text sein: 7,4:1 */
       --gold-schwach:rgba(224,168,104,.16);       /* war .18 */
@@ -178,7 +189,7 @@
   .sprach-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);
     border-radius:var(--r-m);padding:11px 16px;font-size:14px;font-weight:600;
     font-family:inherit;cursor:pointer;min-height:44px;}
-  .sprach-btn.aktiv{background:var(--gruen);color:var(--auf-tief);border-color:var(--gruen);}
+  .sprach-btn.aktiv{background:var(--gruen);color:var(--auf-tief);border-color:var(--gruen-text);}
   /* Bereich 10.9 vorbereitet: bei Arabisch dreht sich die Leserichtung. Nur die
      Ausrichtung anpassen -- Zahlen, Fortschrittsbalken und Symbole bleiben wie sie sind. */
   [dir="rtl"] body{ text-align:right; }
@@ -258,7 +269,7 @@
     min-height:44px;display:flex;align-items:center;justify-content:center;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
-  .bottom-nav-item.active{background:var(--surface-tint);color:var(--gruen);}
+  .bottom-nav-item.active{background:var(--surface-tint);color:var(--gruen-text);}
 
   h1{font-family:'Playfair Display',serif;font-weight:700;letter-spacing:0;font-size:30px;margin:0;}
   .tagline{font-family:'Playfair Display',serif;font-style:italic;font-weight:500;color:var(--gruen-hell);font-size:16px;margin:2px 0 0;}
@@ -629,7 +640,7 @@
   .az-leiste{display:flex;flex-wrap:wrap;gap:2px;justify-content:center;padding:8px 4px;
     margin-bottom:10px;position:sticky;top:0;z-index:5;background:var(--bg);border-radius:10px;}
   .az-buchstabe{font-size:12px;font-weight:700;padding:4px 6px;border-radius:5px;cursor:pointer;
-    color:var(--gruen);min-width:20px;text-align:center;}
+    color:var(--gruen-text);min-width:20px;text-align:center;}
   .az-buchstabe:active{background:var(--gold);color:var(--auf-gold);}
   .az-buchstabe.az-leer{opacity:.22;cursor:default;}
   .az-kopf{font-weight:700;font-size:13px;color:var(--gold-text);margin:14px 0 6px;letter-spacing:1px;}
@@ -650,7 +661,7 @@
     background:var(--surface-strong);border:1px solid var(--border);color:var(--text);
     padding:12px 14px;border-radius:12px;font-size:14.5px;font-family:'Barlow',sans-serif;width:100%;
   }
-  .admin-form input[type="checkbox"]{width:18px;height:18px;flex:none;accent-color:var(--gruen);}
+  .admin-form input[type="checkbox"]{width:18px;height:18px;flex:none;accent-color:var(--gruen-text);}
   .admin-form label{font-size:11.5px;color:var(--faint);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:-4px;}
   .admin-form-title{font-weight:700;font-size:15px;margin-bottom:2px;}
   .icon-btn{background:none;border:none;color:var(--faint);font-size:16px;cursor:pointer;padding:4px 8px;}
@@ -668,7 +679,7 @@
   .logout{ min-height:44px; }
   .krumen{ min-height:44px; }
   /* Ankreuzfelder sind im Original winzig -- vergrößern, ohne das Layout zu sprengen */
-  input[type="checkbox"]{ width:22px; height:22px; accent-color:var(--gruen); }
+  input[type="checkbox"]{ width:22px; height:22px; accent-color:var(--gruen-text); }
   .bulk-pick, .klasse-cb-label{ min-height:44px; }
   /* A–Z-Leiste: 26 Buchstaben nebeneinander können keine 44px haben, sonst passt
      die Leiste auf keinen Bildschirm. Kompromiss: deutlich größer als vorher und
@@ -709,10 +720,10 @@
   .bereich-chip .ring{position:relative;width:46px;height:46px;}
   .bereich-chip .ring svg{transform:rotate(-90deg);}
   .bereich-chip .ring .ring-icon{position:absolute;inset:0;display:flex;align-items:center;
-    justify-content:center;color:var(--gruen);}
+    justify-content:center;color:var(--gruen-text);}
   .bereich-chip .chip-name{font-size:10.5px;line-height:1.15;text-align:center;color:var(--muted);
     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-  .bereich-chip.aktiv .chip-name{color:var(--gruen);font-weight:600;}
+  .bereich-chip.aktiv .chip-name{color:var(--gruen-text);font-weight:600;}
 
   /* --- Suchleiste (Punkt 1.4) --- */
   .suchzeile{display:flex;align-items:center;gap:var(--sp-s);background:var(--surface);
@@ -734,7 +745,7 @@
   .krumen{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);
     padding:10px 15px;border-radius:var(--r-pill);min-height:40px;
     color:var(--muted);font-size:var(--fs-body);font-family:inherit;cursor:pointer;}
-  .krumen:active{background:var(--surface-tint);color:var(--gruen);}
+  .krumen:active{background:var(--surface-tint);color:var(--gruen-text);}
 
   /* --- "Weiter"-Button nach Videoende (Punkt 1.8) --- */
   .weiter-naechstes{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-m);
@@ -776,7 +787,7 @@
   .bereich-tile:active{transform:translateY(2px); box-shadow:0 0 0 var(--border), 0 2px 6px rgba(43,40,30,.08);}
   .bereich-tile.voll{border-color:var(--gold-rand); box-shadow:0 2px 0 var(--gold-rand), 0 4px 12px rgba(217,149,76,.12);}
   .bt-icon{width:48px;height:48px;border-radius:var(--r-m);background:var(--surface-tint);
-    color:var(--gruen);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    color:var(--gruen-text);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
   .bereich-tile.voll .bt-icon{background:var(--gold-schwach);color:var(--gold-text);}
   .bt-icon .ic{width:26px;height:26px;}
   .bt-body{flex:1;min-width:0;}
@@ -811,7 +822,7 @@
   .konto-btn{background:none;border:none;cursor:pointer;padding:0;
     min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:flex-end;}
   .konto-kreis{width:30px;height:30px;border-radius:50%;background:var(--surface-tint);
-    color:var(--gruen);display:flex;align-items:center;justify-content:center;
+    color:var(--gruen-text);display:flex;align-items:center;justify-content:center;
     font-size:11px;font-weight:700;flex-shrink:0;}
 
   /* --- Ueberschrift + Quittung (ersetzt Prozentangabe: Zeit kann man nicht durchfallen) --- */
@@ -916,7 +927,7 @@
   .blatt-knoepfe{display:flex;gap:var(--sp-s);margin-top:18px;}
   .blatt-knoepfe > *{flex:1;min-height:46px;}
   /* Gefaehrliche Aktion: rot und klar unterscheidbar, nie als Gold-Hauptknopf. */
-  .blatt-warn{border:none;border-radius:var(--r-m);background:var(--warn);color:var(--auf-tief);
+  .blatt-warn{border:none;border-radius:var(--r-m);background:var(--warn);color:var(--auf-warn);
     font-family:inherit;font-size:14.5px;font-weight:800;cursor:pointer;}
 
   /* --- Video-Zeile (13.09.2026) — ersetzt die 2:3-Poster (.vg-card) an den drei
@@ -971,7 +982,7 @@
   /* --- Eigene Bereichsseite (Netflix-artige Videoauswahl) --- */
   .bereich-detail-head{display:flex;align-items:center;gap:var(--sp-m);margin-bottom:var(--sp-m);}
   .bereich-detail-head .bdh-icon{width:52px;height:52px;border-radius:var(--r-m);
-    background:var(--surface-tint);color:var(--gruen);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    background:var(--surface-tint);color:var(--gruen-text);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
   .bereich-detail-head .bdh-icon .ic{width:28px;height:28px;}
   .bereich-detail-head h2{font-size:19px;margin:0 0 4px;color:var(--text);}
   .bdh-bar{height:6px;border-radius:var(--r-pill);background:var(--border);overflow:hidden;width:100%;max-width:220px;}
@@ -987,7 +998,7 @@
   @media (min-width:560px){ .kpi-grid{grid-template-columns:repeat(4,1fr);} }
   .kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-m);
     padding:var(--sp-m);}
-  .kpi .kpi-zahl{font-size:24px;font-weight:700;color:var(--gruen);line-height:1.1;}
+  .kpi .kpi-zahl{font-size:24px;font-weight:700;color:var(--gruen-text);line-height:1.1;}
   .kpi .kpi-label{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.25;}
   .kpi.warn{border-color:var(--gold-rand);background:var(--gold-schwach);}
   .kpi.warn .kpi-zahl{color:var(--gold-text);}
@@ -1029,7 +1040,7 @@
   .thema-zeile{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:var(--r-s);
     cursor:pointer;font-size:13.5px;color:var(--text);}
   .thema-zeile:active{background:var(--surface-tint);}
-  .thema-zeile input{width:17px;height:17px;flex:none;accent-color:var(--gruen);}
+  .thema-zeile input{width:17px;height:17px;flex:none;accent-color:var(--gruen-text);}
   .thema-bereich{font-size:10.5px;color:var(--faint);margin-left:auto;flex-shrink:0;}
 
   /* --- Zeilen für anonyme Dashboard-Aggregate (Meistgesehene Videos, Kaufinteresse) --- */
@@ -1037,7 +1048,7 @@
     border-bottom:1px solid var(--border);font-size:13px;}
   .hist-zeile:last-child{border-bottom:none;}
   .hist-titel{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;}
-  .hist-anzahl{background:var(--surface-tint);color:var(--gruen);border-radius:var(--r-pill);
+  .hist-anzahl{background:var(--surface-tint);color:var(--gruen-text);border-radius:var(--r-pill);
     padding:2px 9px;font-size:11.5px;font-weight:700;flex-shrink:0;}
   .hist-anzahl.oft{background:var(--gold-schwach);color:var(--gold-text);}
   /* ================= SEITENMENÜ (Drawer), Dashboard, Nützliches ================= */
@@ -1057,15 +1068,15 @@
     display:flex;flex-direction:column;box-shadow:8px 0 24px rgba(0,0,0,.15);}
   .drawer.open{transform:translateX(0);}
   .drawer-head{padding:var(--sp-l) var(--sp-l) var(--sp-m);border-bottom:1px solid var(--border);}
-  .drawer-head .dh-name{font-size:var(--fs-titel);font-weight:var(--fw-titel);color:var(--gruen);}
+  .drawer-head .dh-name{font-size:var(--fs-titel);font-weight:var(--fw-titel);color:var(--gruen-text);}
   .drawer-head .dh-sub{font-size:var(--fs-meta);color:var(--muted);margin-top:2px;}
   .drawer-items{flex:1;overflow-y:auto;padding:var(--sp-s) 0;}
   .drawer-item{display:flex;align-items:center;gap:var(--sp-m);padding:13px var(--sp-l);
     color:var(--text);cursor:pointer;font-size:var(--fs-body);}
   .drawer-item:active{background:var(--surface-tint);}
   .drawer-item .ic{color:var(--gruen-hell);flex-shrink:0;}
-  .drawer-item.aktiv{background:var(--surface-tint);color:var(--gruen);font-weight:600;}
-  .drawer-item.aktiv .ic{color:var(--gruen);}
+  .drawer-item.aktiv{background:var(--surface-tint);color:var(--gruen-text);font-weight:600;}
+  .drawer-item.aktiv .ic{color:var(--gruen-text);}
   .drawer-foot{padding:var(--sp-m) var(--sp-l);border-top:1px solid var(--border);
     font-size:11px;color:var(--faint);}
 
@@ -1087,7 +1098,7 @@
     color:var(--gold-text);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
   .pdf-karte .pdf-titel{font-size:var(--fs-body);font-weight:var(--fw-karte);}
   .pdf-karte .pdf-meta{font-size:11.5px;color:var(--muted);margin-top:2px;}
-  .pdf-karte a{margin-left:auto;color:var(--gruen);flex-shrink:0;}
+  .pdf-karte a{margin-left:auto;color:var(--gruen-text);flex-shrink:0;}
   .info-block{padding:var(--sp-m);margin-bottom:var(--sp-s);}
   .info-block p{margin:0 0 var(--sp-s);font-size:var(--fs-body);line-height:1.5;}
   .info-block p:last-child{margin-bottom:0;}
@@ -1157,6 +1168,30 @@
     #ladebalken::after{animation:none;width:100%;}
     #netz-streifen{transition:none;}
   }
+
+  /* ================= STUFE 1 (26.09.2026) =================
+     D3: fehlende Knopfklasse + Tippflächen mindestens 44px (WCAG 2.5.5).
+     A1/A12: Hinweise für Abmeldegrund, fehlende Verbindung und Video-Fehler. */
+  .btn-still{display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    min-height:44px;padding:10px 18px;border-radius:var(--r-pill);cursor:pointer;
+    background:var(--surface);border:1px solid var(--hairline);color:var(--text);
+    font-family:inherit;font-size:15px;font-weight:600;}
+  .btn-still:active{transform:scale(var(--druck-2));background:var(--surface-strong);}
+  .btn-still:focus-visible,.btn-primary:focus-visible,.btn-sekundaer:focus-visible,.sf-chip:focus-visible,.krumen:focus-visible{
+    outline:3px solid var(--gruen-text);outline-offset:2px;}
+  .krumen{min-height:44px;}
+  .sf-chip{min-height:44px;display:inline-flex;align-items:center;padding:8px 16px;}
+  .such-clear{min-width:44px;min-height:44px;align-items:center;justify-content:center;}
+  .such-clear.sichtbar{display:inline-flex;}
+  .abmelde-hinweis{margin:0 0 14px;padding:14px 16px;border-radius:var(--r-m);text-align:left;
+    background:var(--gold-schwach);border:1px solid var(--gold-rand);color:var(--text);
+    display:flex;flex-direction:column;gap:10px;align-items:flex-start;}
+  .abmelde-hinweis p{margin:0;font-size:15px;line-height:1.45;}
+  .offline-karte,.video-fehler{margin:40px auto;max-width:420px;padding:22px;border-radius:var(--r-l);
+    background:var(--surface);border:1px solid var(--hairline);text-align:center;}
+  .offline-karte h2{font-family:var(--ff-titel);font-size:var(--fs-titel);margin:0 0 8px;}
+  .offline-karte p,.video-fehler p{margin:0 0 16px;color:var(--text);font-size:15px;line-height:1.5;}
+  .offline-karte .btn-primary,.video-fehler .btn-primary{width:100%;}
 </style>
 </head>
 <body>
@@ -1362,7 +1397,9 @@ async function gesperrtesVideoAngetippt(videoId, stufe, el){
     text: t("gesperrtVollzugang") + ". " + t("siegelSatz"),
     okText: t("zugangAnfragen")
   });
-  if(weiter) zugangAnfragen(el, stufe || "Start");
+  // 26.09.2026: Die Anfrage bekommt KEINE Video-Zeile mehr als "Knopf" -- sonst wurde der
+  // Zeileninhalt durch "Anfrage gesendet" ersetzt und die Zeile war zerstoert.
+  if(weiter) zugangAnfragen(null, stufe || "Start");
 }
 // Kostprobe (12.09.2026): Das Video wird zusaetzlich uebergeben, weil "gratis" auf ZWEI
 // Ebenen gelten kann -- das ganze Thema (academy_tags.gratis) oder ein einzelnes Video
@@ -1374,6 +1411,10 @@ function videoSperrgrund(tag, video){
   if(tagGesperrt(tag)) return "klasse";
   if(session && session.vollzugang) return null;
   if(video && video.gratis) return null;   // Kostprobe: einzelnes Video frei
+  // 26.09.2026: Der Server prueft ALLE Themen eines Videos, nicht nur das, unter dem es
+  // gerade angezeigt wird. Frueher rechnete z.B. die #Themen-Ansicht mit dem angetippten
+  // Thema -- ein Paketkaeufer sah dort Schloesser auf Videos, die ihm gehoeren.
+  if(video && videoFreiUeberThemen(video)) return null;
   if(tag && tag.gratis) return null;       // ganzes Thema frei
   // 18.09.2026: persoenlich freigeschaltet -- geschenktes Einzelvideo oder gekauftes
   // Paket. Muss mit academy-video-token uebereinstimmen, sonst zeigt die App ein
@@ -1383,6 +1424,32 @@ function videoSperrgrund(tag, video){
   if(tag && tag.stufe && session && Array.isArray(session.freigabe_stufen)
      && session.freigabe_stufen.indexOf(tag.stufe) !== -1) return null;
   return "vollzugang";
+}
+
+// Gleiche Regel wie academy-video-token: frei, wenn irgendein (nicht archiviertes) Thema
+// des Videos gratis ist oder in einem gekauften Paket steckt. allTags enthaelt bereits nur
+// nicht archivierte Themen -- genau wie der Server sie zaehlt.
+function videoFreiUeberThemen(video){
+  if(!video || !Array.isArray(videoTags)) return false;
+  const stufen = (session && Array.isArray(session.freigabe_stufen)) ? session.freigabe_stufen : [];
+  for(let i = 0; i < videoTags.length; i++){
+    const vt = videoTags[i];
+    if(vt.video_id !== video.id) continue;
+    const tg = tagNachId(vt.tag_id);
+    if(!tg) continue;
+    if(tg.gratis) return true;
+    if(tg.stufe && stufen.indexOf(tg.stufe) !== -1) return true;
+  }
+  return false;
+}
+let _tagIndex = null, _tagIndexQuelle = null;
+function tagNachId(id){
+  if(_tagIndexQuelle !== allTags){
+    _tagIndex = {};
+    (allTags || []).forEach(function(t){ _tagIndex[t.id] = t; });
+    _tagIndexQuelle = allTags;
+  }
+  return _tagIndex[id] || null;
 }
 
 // Zuordnungs-Reihenfolge (10.09.2026): Ein Video kann fachlich zu mehreren Bereichen
@@ -1522,9 +1589,22 @@ function schuelerStatus(s){
   return "aktiv";
 }
 
-const supa = DEMO_MODE ? null : supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// 26.09.2026: Speicher lesen darf nie die App anhalten -- ein beschaedigter Eintrag oder
+// gesperrter Speicher (privater Modus) fuehrte vorher zum weissen Bildschirm.
+function lsLesen(schluessel, rueckfall){
+  try{
+    const roh = localStorage.getItem(schluessel);
+    return roh ? JSON.parse(roh) : rueckfall;
+  } catch(e){ return rueckfall; }
+}
+function lsText(schluessel, rueckfall){
+  try{ return localStorage.getItem(schluessel) || rueckfall; } catch(e){ return rueckfall; }
+}
+// Fehlt die Bibliothek ganz (kein Netz beim allerersten Start), zeigt init() eine
+// Meldung mit Neu-laden-Knopf statt eines weissen Bildschirms.
+const supa = DEMO_MODE ? null : (typeof supabase !== "undefined" ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null);
 
-let adminSession = JSON.parse(localStorage.getItem("academy_admin_session") || "null");
+let adminSession = lsLesen("academy_admin_session", null);
 let myRole = null;
 let mySchule = null;
 let allSchulen = [];
@@ -1562,7 +1642,7 @@ let abrJahr = null;         // Filter: Jahr, null = alle
 let abrSchule = "";         // Filter: Schul-ID, "__direkt__" = nur Direktverkauf
 let abrNurOffen = false;    // Filter: nur unbezahlte Belege
 
-let session = JSON.parse(localStorage.getItem("academy_session") || "null");
+let session = lsLesen("academy_session", null);
 let wzInterval = null; // 07.09.2026: Timer-Handle fuer das wandernde Wasserzeichen im Player
 
 // 09.09.2026, Betrugsschutz Punkt 1+2: stabile Geraete-Kennung.
@@ -1892,10 +1972,181 @@ Object.assign(I18N.ar, {
   regLoslegen:"ابدأ الآن", regZumAnmelden:"إلى تسجيل الدخول"
 });
 
-let sprache = localStorage.getItem("academy_sprache") || "de";
+let sprache = lsText("academy_sprache", "de");
 if(!I18N[sprache]) sprache = "de"; // unbekannter gespeicherter Wert -> sicher auf Deutsch
 
 // t("schluessel", {platzhalter:wert}) -- fällt bei fehlender Übersetzung auf Deutsch zurück.
+/* 26.09.2026: Neue Texte fuer Abmeldegruende, Offline-Hinweis und Video-Fehler.
+   Als Nachtrag statt mitten in die grossen Woerterbuecher, damit die Aenderung
+   nachvollziehbar bleibt. TR/EN/AR wie oben: vor Livegang gegenlesen lassen. */
+Object.assign(I18N.de, {
+  abmGeraet:"Du wurdest abgemeldet, weil dieser Zugang auf einem anderen Gerät verwendet wurde. Der Zugang gilt nur für ein Gerät.",
+  abmSitzung:"Deine Anmeldung ist abgelaufen. Bitte melde dich neu an.",
+  abmAbgelaufen:"Dein Zugang ist abgelaufen. Bitte wende dich an deine Fahrschule für eine Verlängerung.",
+  abmGesperrt:"Dein Zugang wurde gesperrt. Bitte wende dich an deine Fahrschule.",
+  abmPausiert:"Der Zugang deiner Fahrschule ist gerade pausiert. Bitte wende dich an deine Fahrschule.",
+  verstanden:"Verstanden",
+  offlineTitel:"Keine Verbindung",
+  offlineText:"Die Inhalte konnten nicht geladen werden. Prüf dein Internet und versuch es nochmal.",
+  neuLaden:"Neu laden",
+  videoGebiet:"Dieses Video gehört zu einem anderen Prüfgebiet.",
+  videoFehler:"Das Video konnte gerade nicht geladen werden. Versuch es gleich nochmal.",
+  zuVieleVersuche:"Zu viele Fehlversuche. Bitte versuch es in ein paar Minuten erneut.",
+  geraeteSperre:"Dieser Zugang wurde gerade auf einem anderen Gerät verwendet. Bitte versuch es in ein paar Minuten erneut.",
+  bitteBeidesEingeben:"Bitte Telefonnummer und PIN eingeben",
+  loginFehlgeschlagen:"Anmeldung fehlgeschlagen. Bitte versuch es nochmal."
+});
+Object.assign(I18N.tr, {
+  abmGeraet:"Bu erişim başka bir cihazda kullanıldığı için oturumun kapatıldı. Erişim yalnızca bir cihaz için geçerlidir.",
+  abmSitzung:"Oturumunun süresi doldu. Lütfen tekrar giriş yap.",
+  abmAbgelaufen:"Erişim süren doldu. Uzatmak için lütfen sürücü kursuna başvur.",
+  abmGesperrt:"Erişimin engellendi. Lütfen sürücü kursuna başvur.",
+  abmPausiert:"Sürücü kursunun erişimi şu anda duraklatıldı. Lütfen sürücü kursuna başvur.",
+  verstanden:"Anladım",
+  offlineTitel:"Bağlantı yok",
+  offlineText:"İçerikler yüklenemedi. İnternet bağlantını kontrol edip tekrar dene.",
+  neuLaden:"Yeniden yükle",
+  videoGebiet:"Bu video başka bir sınav bölgesine ait.",
+  videoFehler:"Video şu anda yüklenemedi. Birazdan tekrar dene.",
+  zuVieleVersuche:"Çok fazla hatalı deneme. Lütfen birkaç dakika sonra tekrar dene.",
+  geraeteSperre:"Bu erişim az önce başka bir cihazda kullanıldı. Lütfen birkaç dakika sonra tekrar dene.",
+  bitteBeidesEingeben:"Lütfen telefon numarasını ve PIN'i gir",
+  loginFehlgeschlagen:"Giriş başarısız. Lütfen tekrar dene."
+});
+Object.assign(I18N.en, {
+  abmGeraet:"You were signed out because this access was used on another device. Access is valid for one device only.",
+  abmSitzung:"Your session has expired. Please sign in again.",
+  abmAbgelaufen:"Your access has expired. Please contact your driving school to extend it.",
+  abmGesperrt:"Your access has been blocked. Please contact your driving school.",
+  abmPausiert:"Your driving school's access is currently paused. Please contact your driving school.",
+  verstanden:"Got it",
+  offlineTitel:"No connection",
+  offlineText:"The content could not be loaded. Check your internet connection and try again.",
+  neuLaden:"Reload",
+  videoGebiet:"This video belongs to a different test area.",
+  videoFehler:"The video could not be loaded right now. Please try again shortly.",
+  zuVieleVersuche:"Too many failed attempts. Please try again in a few minutes.",
+  geraeteSperre:"This access was just used on another device. Please try again in a few minutes.",
+  bitteBeidesEingeben:"Please enter your phone number and PIN",
+  loginFehlgeschlagen:"Sign-in failed. Please try again."
+});
+Object.assign(I18N.ar, {
+  abmGeraet:"تم تسجيل خروجك لأن هذا الحساب استُخدم على جهاز آخر. الحساب صالح لجهاز واحد فقط.",
+  abmSitzung:"انتهت صلاحية تسجيل الدخول. يرجى تسجيل الدخول مرة أخرى.",
+  abmAbgelaufen:"انتهت صلاحية وصولك. يرجى التواصل مع مدرسة القيادة لتمديده.",
+  abmGesperrt:"تم إيقاف وصولك. يرجى التواصل مع مدرسة القيادة.",
+  abmPausiert:"وصول مدرسة القيادة الخاصة بك متوقف حاليًا. يرجى التواصل مع مدرسة القيادة.",
+  verstanden:"فهمت",
+  offlineTitel:"لا يوجد اتصال",
+  offlineText:"تعذّر تحميل المحتوى. تحقّق من اتصالك بالإنترنت وحاول مرة أخرى.",
+  neuLaden:"إعادة التحميل",
+  videoGebiet:"هذا الفيديو يتبع منطقة امتحان أخرى.",
+  videoFehler:"تعذّر تحميل الفيديو الآن. حاول مرة أخرى بعد قليل.",
+  zuVieleVersuche:"محاولات خاطئة كثيرة. يرجى المحاولة بعد بضع دقائق.",
+  geraeteSperre:"استُخدم هذا الحساب للتو على جهاز آخر. يرجى المحاولة بعد بضع دقائق.",
+  bitteBeidesEingeben:"يرجى إدخال رقم الهاتف والرمز السري",
+  loginFehlgeschlagen:"فشل تسجيل الدخول. يرجى المحاولة مرة أخرى."
+});
+
+/* 26.09.2026 (D8): restliche feste deutsche Texte der Schuelerseite. */
+Object.assign(I18N.de, {
+  zTitel:"Bevor es losgeht", zSub:"Bitte einmal bestätigen, dann kann's weitergehen.",
+  zP1:"Die Videos der Fahr-Akademie sind eine <b>freiwillige, ergänzende Lernhilfe</b> zu deiner Fahrausbildung und <b>ersetzen nicht</b> den Unterricht bei deiner Fahrschule.",
+  zP2:"Es gibt <b>keine Garantie</b>, dass du mit diesen Videos die Führerscheinprüfung bestehst — der Lernerfolg hängt von vielen Faktoren ab, die außerhalb unserer Kontrolle liegen.",
+  zP3:"Dein Zugang (Telefonnummer + PIN) ist <b>persönlich und nicht übertragbar</b>. Die Weitergabe an Dritte verstößt gegen die Nutzungsbedingungen und kann ohne Vorankündigung zur <b>sofortigen Sperrung</b> deines Zugangs führen, ohne Anspruch auf Erstattung.",
+  zCheck:"Ich habe das gelesen und bin einverstanden.", zVerbindlich:"Rechtlich verbindlich ist die deutsche Fassung",
+  zMoment:"Einen Moment …", zFehler:"Das hat leider nicht geklappt — bitte nochmal versuchen.",
+  pushFrage:"Benachrichtigt werden, wenn neue Videos freigeschaltet werden?", pushAn:"Aktivieren", pushSpaeter:"Später",
+  pushOk:"Benachrichtigungen aktiviert", pushNein:"Berechtigung nicht erteilt",
+  suchPlatzhalter:"Suchen, z. B. Kreisverkehr", fAlle:"Alle", fOffen:"Offen", fFertig:"Fertig",
+  nichtsGefunden:"Nichts gefunden für „{q}“.", nichtsImFilter:"Nichts in diesem Filter.",
+  vonVideos:"{g} von {n} Videos", vonGesehen:"{g} von {n} gesehen", enthaelt:"Enthält:",
+  zahlungsinfo:"Du bekommst dann die Zahlungsinfos. Erst nach Zahlung wird freigeschaltet.",
+  themenIntro:"Ein Video kann mehrere Themen haben — tippe eins an, um alle passenden Videos zu sehen.",
+  keineThemen:"Noch keine Themen vergeben.", keineVideos:"Keine Videos gefunden.",
+  mDashboard:"Dashboard", mThemen:"# Themen", mNuetzliches:"Nützliches", mRechtliches:"Rechtliches",
+  mHilfe:"Hilfe & Kontakt", mUeber:"Über diese App"
+});
+Object.assign(I18N.tr, {
+  zTitel:"Başlamadan önce", zSub:"Lütfen bir kez onayla, sonra devam edebilirsin.",
+  zP1:"Fahr-Akademie videoları sürücü eğitimine <b>isteğe bağlı, tamamlayıcı bir öğrenme desteğidir</b> ve sürücü kursundaki derslerin <b>yerini tutmaz</b>.",
+  zP2:"Bu videolarla ehliyet sınavını geçeceğin konusunda <b>hiçbir garanti yoktur</b> — öğrenme başarısı bizim kontrolümüz dışındaki birçok etkene bağlıdır.",
+  zP3:"Erişimin (telefon numarası + PIN) <b>kişiseldir ve devredilemez</b>. Üçüncü kişilere vermek kullanım koşullarına aykırıdır ve önceden haber verilmeden, iade hakkı olmaksızın erişiminin <b>derhal engellenmesine</b> yol açabilir.",
+  zCheck:"Okudum ve kabul ediyorum.", zVerbindlich:"Hukuken bağlayıcı olan Almanca metindir",
+  zMoment:"Bir dakika …", zFehler:"Maalesef olmadı — lütfen tekrar dene.",
+  pushFrage:"Yeni videolar açıldığında bildirim almak ister misin?", pushAn:"Etkinleştir", pushSpaeter:"Sonra",
+  pushOk:"Bildirimler etkinleştirildi", pushNein:"İzin verilmedi",
+  suchPlatzhalter:"Ara, örn. döner kavşak", fAlle:"Tümü", fOffen:"Açık", fFertig:"Bitti",
+  nichtsGefunden:"„{q}“ için sonuç bulunamadı.", nichtsImFilter:"Bu filtrede bir şey yok.",
+  vonVideos:"{n} videodan {g}", vonGesehen:"{n} videodan {g} izlendi", enthaelt:"İçerik:",
+  zahlungsinfo:"Ödeme bilgilerini sonra alırsın. Ödemeden sonra açılır.",
+  themenIntro:"Bir videonun birden fazla konusu olabilir — uygun tüm videoları görmek için birine dokun.",
+  keineThemen:"Henüz konu yok.", keineVideos:"Video bulunamadı.",
+  mDashboard:"Genel bakış", mThemen:"# Konular", mNuetzliches:"Faydalı bilgiler", mRechtliches:"Yasal bilgiler",
+  mHilfe:"Yardım ve iletişim", mUeber:"Bu uygulama hakkında"
+});
+Object.assign(I18N.en, {
+  zTitel:"Before you start", zSub:"Please confirm once, then you can continue.",
+  zP1:"The Fahr-Akademie videos are a <b>voluntary, supplementary learning aid</b> for your driving training and <b>do not replace</b> lessons at your driving school.",
+  zP2:"There is <b>no guarantee</b> that you will pass your driving test with these videos — learning success depends on many factors outside our control.",
+  zP3:"Your access (phone number + PIN) is <b>personal and non-transferable</b>. Passing it on to others violates the terms of use and can lead to your access being <b>blocked immediately</b> without notice and without a refund.",
+  zCheck:"I have read this and agree.", zVerbindlich:"The German version is legally binding",
+  zMoment:"One moment …", zFehler:"That didn't work — please try again.",
+  pushFrage:"Get notified when new videos are unlocked?", pushAn:"Turn on", pushSpaeter:"Later",
+  pushOk:"Notifications turned on", pushNein:"Permission not granted",
+  suchPlatzhalter:"Search, e.g. roundabout", fAlle:"All", fOffen:"Open", fFertig:"Done",
+  nichtsGefunden:"Nothing found for “{q}”.", nichtsImFilter:"Nothing in this filter.",
+  vonVideos:"{g} of {n} videos", vonGesehen:"{g} of {n} watched", enthaelt:"Includes:",
+  zahlungsinfo:"You will then receive the payment details. Access is unlocked after payment.",
+  themenIntro:"A video can have several topics — tap one to see all matching videos.",
+  keineThemen:"No topics yet.", keineVideos:"No videos found.",
+  mDashboard:"Overview", mThemen:"# Topics", mNuetzliches:"Useful info", mRechtliches:"Legal",
+  mHilfe:"Help & contact", mUeber:"About this app"
+});
+Object.assign(I18N.ar, {
+  zTitel:"قبل أن تبدأ", zSub:"يرجى التأكيد مرة واحدة، ثم يمكنك المتابعة.",
+  zP1:"فيديوهات Fahr-Akademie هي <b>وسيلة تعلّم اختيارية ومكمّلة</b> لتدريبك على القيادة و<b>لا تحلّ محلّ</b> الدروس في مدرسة القيادة.",
+  zP2:"<b>لا يوجد ضمان</b> بأنك ستنجح في امتحان رخصة القيادة بهذه الفيديوهات — فالنجاح يعتمد على عوامل كثيرة خارج سيطرتنا.",
+  zP3:"وصولك (رقم الهاتف + الرمز السري) <b>شخصي وغير قابل للتحويل</b>. إعطاؤه للآخرين يخالف شروط الاستخدام وقد يؤدي إلى <b>إيقاف وصولك فورًا</b> دون إشعار ودون استرداد.",
+  zCheck:"قرأت ذلك وأوافق.", zVerbindlich:"النص الألماني هو الملزم قانونيًا",
+  zMoment:"لحظة …", zFehler:"للأسف لم ينجح ذلك — يرجى المحاولة مرة أخرى.",
+  pushFrage:"هل تريد إشعارًا عند فتح فيديوهات جديدة؟", pushAn:"تفعيل", pushSpaeter:"لاحقًا",
+  pushOk:"تم تفعيل الإشعارات", pushNein:"لم يتم منح الإذن",
+  suchPlatzhalter:"بحث، مثلًا دوّار", fAlle:"الكل", fOffen:"مفتوح", fFertig:"منتهٍ",
+  nichtsGefunden:"لا نتائج لـ «{q}».", nichtsImFilter:"لا شيء في هذا الفلتر.",
+  vonVideos:"{g} من {n} فيديو", vonGesehen:"شوهد {g} من {n}", enthaelt:"يتضمن:",
+  zahlungsinfo:"ستحصل بعدها على معلومات الدفع. يتم الفتح بعد الدفع.",
+  themenIntro:"قد يكون للفيديو عدة مواضيع — اضغط على موضوع لرؤية كل الفيديوهات المناسبة.",
+  keineThemen:"لا توجد مواضيع بعد.", keineVideos:"لم يتم العثور على فيديوهات.",
+  mDashboard:"نظرة عامة", mThemen:"# المواضيع", mNuetzliches:"معلومات مفيدة", mRechtliches:"معلومات قانونية",
+  mHilfe:"المساعدة والتواصل", mUeber:"حول هذا التطبيق"
+});
+
+/* 26.09.2026: Abmelden NUR bei eindeutigem Grund vom Server. Frueher fuehrte jede
+   401/403-Antwort zum Abmelden mit dem Text "anderes Geraet" -- auch ein falsch
+   eingestellter Server oder ein Video aus einem anderen Pruefgebiet haetten damit
+   Schueler rausgeworfen. Unbekannte Codes: angemeldet bleiben. */
+const ABMELDE_GRUENDE = {
+  session_ungueltig: "abmGeraet",
+  session_abgelaufen: "abmSitzung",
+  zugang_abgelaufen: "abmAbgelaufen",
+  zugang_gesperrt: "abmGesperrt",
+  schule_pausiert: "abmPausiert"
+};
+function istAbmeldeGrund(data){
+  return !!(data && data.code && Object.prototype.hasOwnProperty.call(ABMELDE_GRUENDE, data.code));
+}
+// Der Grund bleibt auf der Login-Seite stehen, bis er weggeklickt wird (vorher: 2,6 s Toast).
+let abmeldeHinweis = null;
+function abmeldenWegen(code){
+  abmeldeHinweis = ABMELDE_GRUENDE[code] || "abmSitzung";
+  doLogout();
+}
+// Speicherzugriffe duerfen nie die App anhalten (privater Modus, voller Speicher).
+function speichereSession(){
+  try{ localStorage.setItem("academy_session", JSON.stringify(session)); } catch(e){}
+}
+
 function t(schluessel, werte){
   let text = (I18N[sprache] && I18N[sprache][schluessel]) || I18N.de[schluessel] || schluessel;
   if(werte){
@@ -2010,7 +2261,7 @@ function bereichName(stufe){
 function setzeSprache(code){
   if(!I18N[code]) return;
   sprache = code;
-  localStorage.setItem("academy_sprache", code);
+  try{ localStorage.setItem("academy_sprache", code); }catch(e){}
   wendeSprachRichtungAn();
   // Inhaltstexte (Videotitel, Themen) werden beim LADEN uebersetzt, nicht beim Zeichnen.
   // Ein reines renderCatalog() wuerde die Titel deshalb in der alten Sprache stehen
@@ -2041,7 +2292,7 @@ function bindeSprachReiheVorLogin(neuZeichnen){
         if(f.id) gemerkt[f.id] = f.value;
       });
       sprache = code;
-      localStorage.setItem("academy_sprache", code);
+      try{ localStorage.setItem("academy_sprache", code); }catch(e){}
       wendeSprachRichtungAn();
       neuZeichnen();
       Object.keys(gemerkt).forEach(function(id){
@@ -2078,7 +2329,7 @@ let meineGebiete = null;
 let mainView = "start"; // "start" | "lernpfad" | "pruefungsstrecken" | "verlauf" | "konto"
 let openPruefer = new Set();
 let verlaufData = []; // rohe Ansehen-Ereignisse aus academy-progress (oder lokal im Demo-Modus)
-let seenVideoIds = new Set(JSON.parse(localStorage.getItem("academy_demo_seen") || "[]"));
+let seenVideoIds = new Set((function(){ const a = lsLesen("academy_demo_seen", []); return Array.isArray(a) ? a : []; })());
 let openStufen = new Set();
 let pruefungFilter = "alle"; // "alle" | "bestanden" | "nicht_bestanden" -- nur für die Stufe "Prüfung"
 // Nützliches (13.09.2026): Klassen-Filter für die neuen Textkarten -- LKW/CE-Themen sollen
@@ -2138,14 +2389,14 @@ function navIstWurzel(z){
    sonst hiesse eine Themenseite innerhalb des Lernpfads faelschlich "Reihenfolge". */
 function navName(z){
   if(!z) return t("start");
-  if(z.recht) return "Rechtliches";
-  if(z.hashtag) return "# Themen";
-  if(z.drawer === "dashboard") return "Dashboard";
-  if(z.drawer === "themen") return "# Themen";
-  if(z.drawer === "nuetzliches") return "Nützliches";
-  if(z.drawer === "rechtliches") return "Rechtliches";
-  if(z.drawer === "hilfe") return "Hilfe & Kontakt";
-  if(z.drawer === "ueber") return "Über diese App";
+  if(z.recht) return t("mRechtliches");
+  if(z.hashtag) return t("mThemen");
+  if(z.drawer === "dashboard") return t("mDashboard");
+  if(z.drawer === "themen") return t("mThemen");
+  if(z.drawer === "nuetzliches") return t("mNuetzliches");
+  if(z.drawer === "rechtliches") return t("mRechtliches");
+  if(z.drawer === "hilfe") return t("mHilfe");
+  if(z.drawer === "ueber") return t("mUeber");
   if(z.bereich) return bereichName(z.bereich);
   if(z.view === "lernpfad") return t("lernpfad");
   if(z.view === "pruefungsstrecken") return t("pruefung");
@@ -2211,13 +2462,17 @@ function zurueckPille(){
 let deepLinkTagId = null; // gesetzt bei ?tag=..., steuert einmaligen Scroll+Highlight
 
 function esc(s){
-  const d = document.createElement("div");
-  d.textContent = s == null ? "" : String(s);
-  return d.innerHTML;
+  // 26.09.2026: maskiert jetzt auch " und ' -- esc() steckt in rund 80 Attributen
+  // (value="...", data-*="..."). Vorher schnitt z.B. ein " im Suchfeld den Text ab
+  // und haette in Verwaltungsfeldern Attribute einschleusen koennen.
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+  });
 }
 
 function init(){
   druckSystemStarten(); // einmal pro App-Start: ein Listener statt vieler (13.09.2026)
+  if(!DEMO_MODE && !supa){ zeigeOfflineHinweis(); return; }
   if(location.hash === "#admin"){
     if(adminSession){ ensureRoleThenShowAdminApp(); } else { showAdminLogin(); }
     return;
@@ -2239,6 +2494,8 @@ function showLogin(){
       "<h1>Fahr-Akademie</h1>" +
       '<div class="tagline">' + esc(t("tagline")) + "</div>" +
       sprachReiheVorLogin() +
+      (abmeldeHinweis ? '<div class="abmelde-hinweis" role="alert"><p>' + esc(t(abmeldeHinweis)) +
+        '</p><button type="button" class="btn-still" id="abm-ok">' + esc(t("verstanden")) + '</button></div>' : "") +
       '<div class="login-card glass">' +
         '<input id="lo-tel" type="tel" placeholder="' + esc(t("telefon")) + '" autocomplete="off">' +
         '<div class="pw-field">' +
@@ -2259,6 +2516,11 @@ function showLogin(){
       (DEMO_MODE ? '<div class="demo-badge">Demo-Modus — beliebige Eingabe funktioniert</div>' : "") +
       '<div style="margin-top:22px;"><a id="admin-link" style="color:var(--faint);font-size:12px;cursor:pointer;text-decoration:underline;">Admin-Bereich</a></div>' +
     "</div>";
+  const abmOk = document.getElementById("abm-ok");
+  if(abmOk) abmOk.addEventListener("click", function(){
+    abmeldeHinweis = null;
+    const h = abmOk.closest(".abmelde-hinweis"); if(h) h.remove();
+  });
   document.getElementById("lo-btn").addEventListener("click", doLogin);
   document.getElementById("lo-pin").addEventListener("keydown", function(e){ if(e.key === "Enter") doLogin(); });
   document.getElementById("lo-pin-toggle").addEventListener("click", function(){
@@ -2430,11 +2692,11 @@ async function doLogin(){
   const pin = document.getElementById("lo-pin").value.trim();
   const errEl = document.getElementById("lo-err");
   errEl.textContent = "";
-  if(!tel || !pin){ errEl.textContent = "Bitte Telefonnummer und PIN eingeben"; return; }
+  if(!tel || !pin){ errEl.textContent = t("bitteBeidesEingeben"); return; }
 
   if(DEMO_MODE){
     session = { demo:true, name:"Testfahrer" };
-    localStorage.setItem("academy_session", JSON.stringify(session));
+    speichereSession();
     showApp();
     return;
   }
@@ -2446,18 +2708,25 @@ async function doLogin(){
       body: JSON.stringify({ telefon: tel, pin: pin, geraete_id: geraeteId() })
     });
     const data = await res.json();
-    if(!res.ok){ errEl.textContent = data.error || "Login fehlgeschlagen"; return; }
+    if(!res.ok){
+      const codeText = { pin_falsch:"loginFehler", zu_viele_versuche:"zuVieleVersuche", geraetewechsel_sperre:"geraeteSperre",
+        zugang_abgelaufen:"abmAbgelaufen", zugang_gesperrt:"abmGesperrt", schule_pausiert:"abmPausiert" }[data.code];
+      // Deutsch: Servertext (nennt z.B. die Minuten). Andere Sprachen: uebersetzter Text.
+      errEl.textContent = (sprache === "de" && data.error) ? data.error : (codeText ? t(codeText) : (data.error || t("loginFehlgeschlagen")));
+      return;
+    }
+    abmeldeHinweis = null;
     session = data;
-    localStorage.setItem("academy_session", JSON.stringify(session));
+    speichereSession();
     showApp();
   } catch(e){
-    errEl.textContent = "Verbindungsfehler — bitte Internet prüfen";
+    errEl.textContent = t("keineVerbindung");
   }
 }
 
 function doLogout(){
   stopWatermark();
-  localStorage.removeItem("academy_session");
+  try{ localStorage.removeItem("academy_session"); }catch(e){}
   session = null;
   openStufen = new Set();
   showLogin();
@@ -2495,11 +2764,11 @@ async function enablePushClicked(){
   const ok = await subscribeToPush();
   const banner = document.getElementById("pushBanner");
   if(banner) banner.remove();
-  if(ok) showToast("Benachrichtigungen aktiviert ✓");
-  else showToast("Berechtigung nicht erteilt");
+  if(ok) showToast(t("pushOk"));
+  else showToast(t("pushNein"));
 }
 function dismissPushBanner(){
-  localStorage.setItem("academy_push_dismissed", "1");
+  try{ localStorage.setItem("academy_push_dismissed", "1"); }catch(e){}
   const banner = document.getElementById("pushBanner");
   if(banner) banner.remove();
 }
@@ -2507,16 +2776,16 @@ async function maybeShowPushBanner(){
   if(!("Notification" in window) || DEMO_MODE || !session || session.demo) return;
   if(Notification.permission === "granted"){ subscribeToPush(); return; }
   if(Notification.permission === "denied") return;
-  if(localStorage.getItem("academy_push_dismissed") === "1") return;
+  if(lsText("academy_push_dismissed", "") === "1") return;
   const el = document.getElementById("app");
   if(!el || document.getElementById("pushBanner")) return;
   const banner = document.createElement("div");
   banner.id = "pushBanner";
   banner.style.cssText = "position:sticky;top:0;z-index:50;background:var(--gold);color:var(--auf-gold);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px;";
-  banner.innerHTML = '<span>🔔 Benachrichtigt werden, wenn neue Videos freigeschaltet werden?</span>' +
+  banner.innerHTML = '<span>' + esc(t("pushFrage")) + '</span>' +
     '<span style="display:flex;gap:8px;white-space:nowrap;">' +
-    '<button id="pushBannerYes" style="background:var(--gruen);color:var(--auf-tief);border:none;border-radius:8px;padding:6px 12px;">Aktivieren</button>' +
-    '<button id="pushBannerNo" style="background:transparent;color:var(--auf-gold);border:none;">Später</button></span>';
+    '<button id="pushBannerYes" style="background:var(--gruen);color:var(--auf-tief);border:none;border-radius:8px;padding:6px 12px;min-height:44px;">' + esc(t("pushAn")) + '</button>' +
+    '<button id="pushBannerNo" style="background:transparent;color:var(--auf-gold);border:none;min-height:44px;">' + esc(t("pushSpaeter")) + '</button></span>';
   el.prepend(banner);
   document.getElementById("pushBannerYes").addEventListener("click", enablePushClicked);
   document.getElementById("pushBannerNo").addEventListener("click", dismissPushBanner);
@@ -2540,25 +2809,23 @@ async function showApp(){
       });
       const data = await res.json();
       if(res.ok && data.ok){
-        session.vollzugang = data.vollzugang;
-        session.agb_akzeptiert_am = data.agb_akzeptiert_am;
-        session.ablauf_am = data.ablauf_am;
-        session.klassen_freigabe = data.klassen_freigabe;
+        // 26.09.2026: Jedes Feld nur uebernehmen, wenn der Server es wirklich mitschickt.
+        // Fehlt eins (z.B. Teilfehler auf dem Server), bleibt der letzte bekannte Stand --
+        // eine fehlende Angabe darf einem Zahler nie etwas wegnehmen. Neu dabei: geschenkte
+        // Videos, gekaufte Pakete und Pruefgebiete -- vorher erst nach neuem Login sichtbar.
+        ["vollzugang","agb_akzeptiert_am","ablauf_am","klassen_freigabe","gebiete",
+         "freigabe_videos","freigabe_stufen","schule_id","klasse","pruefungstermin"].forEach(function(k){
+          if(Object.prototype.hasOwnProperty.call(data, k)) session[k] = data[k];
+        });
         if(data.telefon) session.telefon = data.telefon; // 07.09.2026: fuers Wasserzeichen im Player
-        localStorage.setItem("academy_session", JSON.stringify(session));
-      } else if(res.status === 401){
-        // Session existiert serverseitig nicht mehr. Seit der Ein-Geraet-Sperre
-        // (09.09.2026) ist der haeufigste Grund: jemand hat sich mit denselben
-        // Zugangsdaten auf einem anderen Geraet angemeldet. Ohne Erklaerung steht
-        // der Schueler sonst ratlos vor dem Login und meldet sich als "Fehler".
-        doLogout();
-        showToast("Du wurdest abgemeldet, weil dieser Zugang auf einem anderen Gerät verwendet wurde. Der Zugang gilt nur für ein Gerät.");
-        return;
-      } else if(res.status === 403){
-        doLogout();
-        showToast(data.error === "zugang_abgelaufen" ? "Dein Zugang ist abgelaufen." : "Dein Zugang wurde gesperrt. Bitte wende dich an deine Fahrschule.");
+        speichereSession();
+      } else if(istAbmeldeGrund(data)){
+        // Session serverseitig weg (haeufigster Grund seit 09.09.2026: Login auf anderem
+        // Geraet), Zugang abgelaufen/gesperrt oder Schule pausiert.
+        abmeldenWegen(data.code);
         return;
       }
+      // Alles andere (Serverfehler, unbekannte Antwort): mit letztem Stand weitermachen.
     } catch(e){ /* offline o.ä. -- mit letztem bekannten Stand weitermachen */ }
   }
 
@@ -2594,8 +2861,19 @@ async function showApp(){
       }, 150);
     }
   } catch(e){
-    document.getElementById("app").innerHTML = '<div class="err">Katalog konnte nicht geladen werden</div>';
+    zeigeOfflineHinweis();
   }
+}
+
+// 26.09.2026: Statt "Alles gesehen" bei 0 Videos eine klare Meldung mit Neu-laden-Knopf.
+function zeigeOfflineHinweis(){
+  document.getElementById("app").innerHTML =
+    '<div class="offline-karte" role="alert">' +
+      '<h2>' + esc(t("offlineTitel")) + '</h2>' +
+      '<p>' + esc(t("offlineText")) + '</p>' +
+      '<button type="button" class="btn-primary" id="offline-neu">' + esc(t("neuLaden")) + '</button>' +
+    '</div>';
+  document.getElementById("offline-neu").addEventListener("click", function(){ if(!supa && !DEMO_MODE){ location.reload(); } else { showApp(); } });
 }
 
 // ---- ZUSTIMMUNGS-SPERRE (25.08.2026) ----
@@ -2604,23 +2882,24 @@ async function showApp(){
 function renderZustimmung(){
   document.getElementById("app").innerHTML =
     '<div style="padding-top:10px;">' +
-      '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Bevor es losgeht</div>' +
-      '<div class="admin-sub" style="margin-bottom:16px;">Bitte einmal bestätigen, dann kann\'s weitergehen.</div>' +
+      '<div class="tagline" style="font-size:20px;margin-bottom:4px;">' + esc(t("zTitel")) + '</div>' +
+      '<div class="admin-sub" style="margin-bottom:16px;">' + esc(t("zSub")) + '</div>' +
+      // 26.09.2026 (D8): Text in der gewaehlten Sprache. Die Uebersetzungen sind statisch
+      // und enthalten nur <b> -- deshalb ohne esc(). Bei Fremdsprache steht der deutsche,
+      // rechtlich verbindliche Text zum Aufklappen darunter.
       '<div class="karte info-block">' +
-        '<p>Die Videos der Fahr-Akademie sind eine <b>freiwillige, ergänzende Lernhilfe</b> zu deiner ' +
-        'Fahrausbildung und <b>ersetzen nicht</b> den Unterricht bei deiner Fahrschule.</p>' +
-        '<p>Es gibt <b>keine Garantie</b>, dass du mit diesen Videos die Führerscheinprüfung bestehst — ' +
-        'der Lernerfolg hängt von vielen Faktoren ab, die außerhalb unserer Kontrolle liegen.</p>' +
-        '<p>Dein Zugang (Telefonnummer + PIN) ist <b>persönlich und nicht übertragbar</b>. Die Weitergabe ' +
-        'an Dritte verstößt gegen die Nutzungsbedingungen und kann ohne Vorankündigung zur ' +
-        '<b>sofortigen Sperrung</b> deines Zugangs führen, ohne Anspruch auf Erstattung.</p>' +
+        '<p>' + t("zP1") + '</p><p>' + t("zP2") + '</p><p>' + t("zP3") + '</p>' +
+        (sprache !== "de"
+          ? '<details style="margin-top:10px;"><summary>' + esc(t("zVerbindlich")) + '</summary>' +
+              '<p lang="de" dir="ltr">' + I18N.de.zP1 + '</p><p lang="de" dir="ltr">' + I18N.de.zP2 + '</p><p lang="de" dir="ltr">' + I18N.de.zP3 + '</p></details>'
+          : "") +
       "</div>" +
       '<label style="display:flex;align-items:flex-start;gap:10px;padding:14px 4px;font-size:14px;color:var(--text);">' +
-        '<input type="checkbox" id="zustimmung-cb" style="width:20px;height:20px;flex:none;margin-top:1px;accent-color:var(--gruen);">' +
-        '<span>Ich habe das gelesen und bin einverstanden.</span>' +
+        '<input type="checkbox" id="zustimmung-cb" style="width:20px;height:20px;flex:none;margin-top:1px;accent-color:var(--gruen-text);">' +
+        '<span>' + esc(t("zCheck")) + '</span>' +
       "</label>" +
       '<button id="zustimmung-weiter" disabled style="width:100%;padding:14px;border:none;border-radius:14px;' +
-        'background:var(--border);color:var(--faint);font-family:inherit;font-size:15px;font-weight:700;">Weiter</button>' +
+        'background:var(--border);color:var(--faint);font-family:inherit;font-size:15px;font-weight:700;">' + esc(t("weiter")) + '</button>' +
       '<div id="zustimmung-err" style="color:var(--warn);font-size:13px;margin-top:8px;text-align:center;"></div>' +
     "</div>";
 
@@ -2633,7 +2912,7 @@ function renderZustimmung(){
   });
   btn.addEventListener("click", async function(){
     if(!cb.checked) return;
-    btn.disabled = true; btn.textContent = "Einen Moment …";
+    btn.disabled = true; btn.textContent = t("zMoment");
     try{
       const res = await fetch(SUPABASE_URL + "/functions/v1/academy-accept-terms", {
         method: "POST",
@@ -2642,16 +2921,16 @@ function renderZustimmung(){
       });
       const data = await res.json();
       if(!res.ok || !data.ok){
-        document.getElementById("zustimmung-err").textContent = "Das hat leider nicht geklappt — bitte nochmal versuchen.";
-        btn.disabled = false; btn.textContent = "Weiter";
+        document.getElementById("zustimmung-err").textContent = t("zFehler");
+        btn.disabled = false; btn.textContent = t("weiter");
         return;
       }
       session.agb_akzeptiert_am = data.agb_akzeptiert_am;
-      localStorage.setItem("academy_session", JSON.stringify(session));
+      speichereSession();
       showApp();
     } catch(e){
-      document.getElementById("zustimmung-err").textContent = "Verbindungsfehler — bitte Internet prüfen.";
-      btn.disabled = false; btn.textContent = "Weiter";
+      document.getElementById("zustimmung-err").textContent = t("keineVerbindung");
+      btn.disabled = false; btn.textContent = t("weiter");
     }
   });
 }
@@ -2703,6 +2982,10 @@ async function loadCatalog(){
   // einem Fehler die vorhandenen Daten unveraendert lassen und nichts anfassen.
   if(tagsRes.error || videosRes.error){
     if(allTags.length || allVideos.length) return; // bereits geladen -> alten Stand behalten
+    // 26.09.2026: Beim ERSTEN Laden ohne Verbindung nicht mit leeren Listen weitermachen --
+    // sonst stand dort "Alles gesehen - stark!" bei 0 Videos. showApp zeigt dann
+    // "Keine Verbindung" mit Neu-laden-Knopf.
+    throw new Error("katalog_offline");
   }
 
   // Inhaltsuebersetzungen (10.09.2026). Bewusst EIN Abruf fuer alles statt je Video --
@@ -2748,9 +3031,10 @@ async function loadCatalog(){
     v.titel = inhalt("video", v.id, "titel", v.titel);
     if(v.beschreibung) v.beschreibung = inhalt("video", v.id, "beschreibung", v.beschreibung);
   });
-  videoTags = vtagsRes.data || [];
-  allPruefer = prRes.data || [];
-  videoPruefer = vprRes.data || [];
+  // 26.09.2026: Teilfehler ueberschreiben vorhandene Listen nicht mehr mit [].
+  if(!vtagsRes.error || !videoTags.length) videoTags = vtagsRes.data || videoTags || [];
+  if(!prRes.error || !allPruefer.length) allPruefer = prRes.data || allPruefer || [];
+  if(!vprRes.error || !videoPruefer.length) videoPruefer = vprRes.data || videoPruefer || [];
 }
 
 function buildPruefungsstrecken(){
@@ -2771,13 +3055,13 @@ function renderLernpfadHtml(){
 
   const suchLeiste =
     '<div class="suchzeile">' + icon("suche") +
-      '<input id="such-input" type="search" placeholder="Suchen, z. B. Kreisverkehr" value="' + esc(suchBegriff) + '">' +
+      '<input id="such-input" type="search" placeholder="' + esc(t("suchPlatzhalter")) + '" value="' + esc(suchBegriff) + '">' +
       '<button class="such-clear' + (suchBegriff ? " sichtbar" : "") + '" id="such-clear" aria-label="Suche löschen">' + icon("x","ic-s") + '</button>' +
     "</div>";
 
   const statusChips =
     '<div class="status-filter">' +
-      [["alle","Alle"],["offen","Offen"],["fertig","Fertig"]].map(function(p){
+      [["alle",t("fAlle")],["offen",t("fOffen")],["fertig",t("fFertig")]].map(function(p){
         return '<button class="sf-chip' + (statusFilter === p[0] ? " aktiv" : "") + '" data-statusfilter="' + p[0] + '">' + p[1] + "</button>";
       }).join("") +
     "</div>";
@@ -2796,7 +3080,7 @@ function renderLernpfadHtml(){
         '<div class="bt-icon">' + bereichIcon(g.stufe) + "</div>" +
         '<div class="bt-body"><div class="bt-titel">' + esc(bereichName(g.stufe)) + (komplettGesperrt ? ' <span class="bt-lock">' + icon("schloss","ic-s") + "</span>" : "") + "</div>" +
           '<div class="bt-bar"><div class="bt-bar-fill" style="width:' + pct + '%;"></div></div>' +
-          '<div class="bt-meta">' + gesehen + " von " + gesamt + " Videos · " + pct + "%</div></div>" +
+          '<div class="bt-meta">' + esc(t("vonVideos", { g: gesehen, n: gesamt })) + " · " + pct + "%</div></div>" +
         '<span class="bt-arrow">' + icon("weiter") + "</span>" +
       "</button>";
     }).join("");
@@ -2831,7 +3115,7 @@ function renderLernpfadHtml(){
   }).join("");
 
   return suchLeiste + statusChips + (karten || '<div class="leer-hinweis">' +
-    (suchBegriff ? 'Nichts gefunden für „' + esc(suchBegriff) + '".' : "Nichts in diesem Filter.") + "</div>");
+    (suchBegriff ? esc(t("nichtsGefunden", { q: suchBegriff })) : esc(t("nichtsImFilter"))) + "</div>");
 }
 
 function renderPruefungsstreckenHtml(){
@@ -2860,17 +3144,17 @@ function renderPruefungsstreckenHtml(){
       return renderVideoZeile({
         video: v, tag: x ? x.tag : null, code: x ? x.code : null,
         gesperrt: !!sperrgrund, sperrgrund: sperrgrund,
-        unterzeile: tagsForVideo ? "Enthält: " + tagsForVideo : ""
+        unterzeile: tagsForVideo ? t("enthaelt") + " " + tagsForVideo : ""
       });
     }).join("");
 
     const anfrageKarte = gesperrtAnzahl > 0
       ? '<div class="karte anfrage-karte">' +
-          '<div class="anfrage-text">' + icon("schloss") + " " + esc(t("vollzugangBanner",{anzahl:gesperrtAnzahl, bereich:g.pruefer.name})) + "</div>" +
+          '<div class="anfrage-text">' + icon("schloss") + " " + esc(t("vollzugangBanner",{anzahl:gesperrtAnzahl, bereich:bereichName("Prüfungsstrecken")})) + "</div>" +
           '<button class="anfrage-btn" data-zugang-anfragen="Prüfungsstrecken">' +
             icon("krone") + "<span>" + esc(t("zugangAnfragen")) + "</span>" +
           "</button>" +
-          '<div class="anfrage-klein">Du bekommst dann die Zahlungsinfos. Erst nach Zahlung wird freigeschaltet.</div>' +
+          '<div class="anfrage-klein">' + esc(t("zahlungsinfo")) + '</div>' +
         "</div>"
       : "";
 
@@ -2927,7 +3211,8 @@ function renderStartHtml(){
     const letztesId = verlaufData[0].video_id;
     for(const g of pfad){
       const x = g.videos.find(function(v){ return v.video.id === letztesId; });
-      if(x){ fortsetzenX = x; fortsetzenGruppe = g.stufe; break; }
+      // 26.09.2026: ein inzwischen versiegeltes Video nicht mehr als "Weiter schauen" anbieten
+      if(x && !x.gesperrt){ fortsetzenX = x; fortsetzenGruppe = g.stufe; break; }
     }
     if(fortsetzenX) fortsetzenLabel = t("weiterSchauen");
   }
@@ -3010,7 +3295,7 @@ function renderStartHtml(){
     } else if(komplettFrei){
       meta = gesamt + " " + t("videos") + dauerTeil + " · " + esc(t("offenFuerAlle"));
     } else {
-      meta = gesehen + " von " + gesamt + " gesehen" + dauerTeil;
+      meta = t("vonGesehen", { g: gesehen, n: gesamt }) + dauerTeil;
     }
 
     const kopfOderName = istJetzt
@@ -3076,12 +3361,12 @@ function renderStartHtml(){
     const heute = new Date(); heute.setHours(0,0,0,0);
     const tage = Math.round((termin - heute) / 86400000);
     if(!isNaN(tage) && tage >= 0 && tage <= 60){
-      const wann = tage === 0 ? "heute" : (tage === 1 ? "morgen" : "in " + tage + " Tagen");
+      const wann = tage === 0 ? t("heute") : (tage === 1 ? t("morgen") : t("inTagen", { n: tage }));
       terminKarte =
         '<div class="karte" style="margin-top:var(--sp-l);">' +
           '<div class="section-label" style="margin:0 0 6px;">' + esc(t("deinePruefung")) + "</div>" +
           '<div style="font-size:var(--fs-karte);font-weight:var(--fw-karte);">' + esc(wann) + "</div>" +
-          '<div class="admin-sub">' + esc(termin.toLocaleDateString("de-DE")) + "</div>" +
+          '<div class="admin-sub">' + esc(termin.toLocaleDateString(sprache === "de" ? "de-DE" : sprache)) + "</div>" +
         "</div>";
     }
   }
@@ -3144,7 +3429,7 @@ function renderBereichDetailHtml(){
         '<button class="anfrage-btn" data-zugang-anfragen="' + esc(selectedBereich) + '">' +
           icon("krone") + "<span>" + esc(t("zugangAnfragen")) + "</span>" +
         "</button>" +
-        '<div class="anfrage-klein">Du bekommst dann die Zahlungsinfos. Erst nach Zahlung wird freigeschaltet.</div>' +
+        '<div class="anfrage-klein">' + esc(t("zahlungsinfo")) + '</div>' +
       "</div>"
     : "";
 
@@ -3163,7 +3448,7 @@ function renderBereichDetailHtml(){
       '<div style="flex:1;">' +
         "<h2>" + esc(bereichName(selectedBereich)) + "</h2>" +
         '<div class="bdh-bar"><div class="bdh-bar-fill" style="width:' + pct + '%;"></div></div>' +
-        '<div class="admin-sub" style="margin-top:4px;">' + gesehen + " von " + gesamt + " Videos gesehen</div>" +
+        '<div class="admin-sub" style="margin-top:4px;">' + esc(t("vonGesehen", { g: gesehen, n: gesamt })) + "</div>" +
       "</div>" +
     "</div>" +
     vollzugangBanner +
@@ -3290,23 +3575,25 @@ const NUETZLICHE_PDFS = [
 // Kurze Themen als aufklappbare Textkarte statt PDF (13.09.2026) -- spart Gestaltungsarbeit
 // bei jedem neuen Thema. Nur wirklich druckwürdige Sachen bleiben PDF (siehe oben).
 // klasse steuert den Filter: "alle" erscheint überall, "pkw"/"lkw" nur im eigenen Reiter
-// und im Reiter "Alle". Zahlen recherchiert und mit Quellen geprüft, Stand 13.09.2026 --
+// und im Reiter "Alle". Zahlen recherchiert und mit Quellen geprüft, Stand 13.09.2026,
+// korrigiert 26.09.2026 (Fahrverbot bei Handy/Rettungsgasse, Tachograph 56 Tage, Punkte) --
 // hier steht nichts aus dem Gedächtnis.
 const NUETZLICHE_THEMEN = [
   { id:"buko_punkte", klasse:"alle", titel:"Bußgeldkatalog — die Punkte-Systematik",
     html:"<p>Seit der Reform gibt es drei Stufen im Fahreignungsregister (Flensburg):</p>" +
       "<p><b>1 Punkt</b> — schwere Verstöße, z. B. Handy am Steuer, einfacher Vorfahrtsverstoß.<br>" +
       "<b>2 Punkte</b> — sehr schwere Verstöße mit Regelfahrverbot, z. B. Rotlichtverstoß mit Gefährdung.<br>" +
-      "<b>3 Punkte</b> — schwere Straftaten: Alkohol/Drogen am Steuer, Unfallflucht, schwere Nötigung.</p>" +
-      "<p>Ab <b>8 Punkten</b> ist die Fahrerlaubnis weg. Das Kraftfahrt-Bundesamt informiert bei Punktestand automatisch.</p>" },
+      "<b>3 Punkte</b> — Straftaten, bei denen das Gericht die Fahrerlaubnis entzieht, z. B. Trunkenheit am Steuer ab 1,1 Promille oder Unfallflucht mit Entzug.</p>" +
+      "<p>Alkohol ab 0,5 Promille als Ordnungswidrigkeit bringt 2 Punkte. Bei 4–5 Punkten gibt es eine Ermahnung, bei 6–7 Punkten eine Verwarnung, ab <b>8 Punkten</b> ist die Fahrerlaubnis weg.</p>" },
   { id:"buko_handy", klasse:"alle", titel:"Handyverbot am Steuer — § 23 Abs. 1a StVO",
     html:"<p>Betrifft nicht nur Telefonieren, sondern jedes elektronische Gerät, das in der Hand gehalten und bedient wird — auch Powerbanks, Taschenrechner oder eine E-Zigarette mit Touchdisplay zählen laut Rechtsprechung dazu.</p>" +
-      "<p><b>100 € + 1 Punkt</b> im Normalfall.<br><b>150 € + 2 Punkte</b> bei Gefährdung anderer.<br><b>200 €</b> bei einer Sachbeschädigung.</p>" +
+      "<p><b>100 € + 1 Punkt</b> im Normalfall.<br><b>150 € + 2 Punkte + 1 Monat Fahrverbot</b> bei Gefährdung anderer.<br><b>200 € + 2 Punkte + 1 Monat Fahrverbot</b> bei einer Sachbeschädigung.</p>" +
       "<p>Erlaubt bleibt die Nutzung über eine Freisprecheinrichtung, ohne das Gerät in der Hand zu halten.</p>" },
   { id:"buko_rettungsgasse", klasse:"alle", titel:"Rettungsgasse — § 11 Abs. 2 StVO",
     html:"<p>Pflicht auf Autobahnen und mehrspurigen Außerortsstraßen, sobald der Verkehr auf Schrittgeschwindigkeit abfällt oder steht — nicht erst wenn die Polizei durchfahren will.</p>" +
       "<p>Gebildet wird sie <b>zwischen dem äußerst linken und dem direkt daneben liegenden Fahrstreifen</b>. Fahren also grundsätzlich ganz links so weit wie möglich links, alle anderen so weit wie möglich rechts.</p>" +
-      "<p>Wer keine Rettungsgasse bildet: ab <b>200 €, 2 Punkte, 1 Monat Fahrverbot</b>. Unbefugtes Befahren der Gasse wird genauso hart geahndet.</p>" },
+      "<p>Wer keine Rettungsgasse bildet: <b>200 € + 2 Punkte</b>. Werden Einsatzfahrzeuge dadurch behindert, gefährdet oder kommt es zu einer Sachbeschädigung: <b>240 € bis 320 €, 2 Punkte und 1 Monat Fahrverbot</b>.</p>" +
+      "<p>Wer die Gasse unbefugt befährt, um schneller voranzukommen: <b>ab 240 €, 2 Punkte und 1 Monat Fahrverbot</b>.</p>" },
   { id:"probezeit", klasse:"pkw", titel:"Probezeit — die Grundregeln",
     html:"<p>Die Probezeit dauert regulär <b>2 Jahre</b> ab bestandener Prüfung, für alle Führerscheinklassen außer Sonderklassen wie T/L.</p>" +
       "<p>Bei einem <b>A-Verstoß</b> (schwerwiegend, z. B. Rotlicht, Alkohol) oder <b>zwei B-Verstößen</b> (weniger schwerwiegend): Probezeit verlängert sich einmalig auf <b>4 Jahre</b> plus Pflicht-Aufbauseminar (ASF, meist 300–600 €).</p>" +
@@ -3327,7 +3614,7 @@ const NUETZLICHE_THEMEN = [
       "<p>Verantwortlich sind sowohl der Fahrer als auch der Verlader — beide können bei mangelhafter Sicherung belangt werden. Übliche Hilfsmittel sind Zurrgurte, Sperrbalken und Antirutschmatten.</p>" },
   { id:"lkw_tacho", klasse:"lkw", titel:"Digitaler Tachograph",
     html:"<p>Zeichnet Lenk-, Arbeits- und Ruhezeiten automatisch über die persönliche Fahrerkarte auf. Pflicht in praktisch allen neueren LKW über 3,5 t im gewerblichen Verkehr.</p>" +
-      "<p>Die Aufzeichnungen der letzten 28 Tage müssen im Fahrzeug mitgeführt werden — Kontrollen durch Bundesamt für Güterverkehr (BAG) und Polizei greifen direkt darauf zu.</p>" },
+      "<p>Seit dem 31.12.2024 müssen die Aufzeichnungen des laufenden Tages und der <b>vorangegangenen 56 Tage</b> bei Kontrollen vorgelegt werden können (vorher 28 Tage) — Kontrollen durch das Bundesamt für Logistik und Mobilität (BALM, früher BAG) und die Polizei greifen direkt darauf zu.</p>" },
   { id:"lkw_tempo80", klasse:"lkw", titel:"Sondertempo 80 auf der Autobahn",
     html:"<p>Für LKW über 3,5 t gilt auf Autobahnen und richtungsgetrennten Kraftfahrstraßen einheitlich <b>80 km/h</b> (§ 18 Abs. 5 StVO) — unabhängig vom genauen Gewicht, und unabhängig davon, ob ein Schild eine höhere Geschwindigkeit erlaubt.</p>" +
       "<p>Auf normalen Landstraßen außerhalb geschlossener Ortschaften gilt dagegen die gestaffelte Regel: bis 7,5 t sind 80 km/h erlaubt, darüber nur noch <b>60 km/h</b> — das gilt dort auch bei mehrspurigem Ausbau.</p>" }
@@ -3370,7 +3657,7 @@ function renderNuetzlichesHtml(){
     "</div>";
   }).join("");
   return zurueckPille() +
-    '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Nützliches</div>' +
+    '<div class="tagline" style="font-size:20px;margin-bottom:4px;">' + esc(t("mNuetzliches")) + '</div>' +
     '<div class="admin-sub" style="margin-bottom:14px;">Kurz erklärt und zum Nachlesen — inklusive der Gesetzestexte als PDF.</div>' +
     filterBar +
     themenKarten +
@@ -3381,7 +3668,7 @@ function renderNuetzlichesHtml(){
 
 function renderHilfeHtml(){
   return zurueckPille() +
-    '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Hilfe &amp; Kontakt</div>' +
+    '<div class="tagline" style="font-size:20px;margin-bottom:4px;">' + esc(t("mHilfe")) + '</div>' +
     '<div class="karte info-block">' +
       '<p><b>Frage zu einem Video oder deinem Zugang?</b><br>Wende dich direkt an deine Fahrschule bzw. deinen Fahrlehrer — dort wurde dein Zugang eingerichtet.</p>' +
       '<p><b>PIN vergessen?</b><br>Deine Fahrschule kann dir die PIN erneut zuschicken.</p>' +
@@ -3391,7 +3678,7 @@ function renderHilfeHtml(){
 
 function renderUeberHtml(){
   return zurueckPille() +
-    '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Über diese App</div>' +
+    '<div class="tagline" style="font-size:20px;margin-bottom:4px;">' + esc(t("mUeber")) + '</div>' +
     '<div class="karte info-block">' +
       '<p>Fahr-Akademie ist eine <b>Ergänzung zur amtlichen Fahrausbildung</b> — kein Ersatz für den Unterricht bei deiner Fahrschule.</p>' +
       '<p>Deine Daten (Name, Telefonnummer, Fortschritt) werden ausschließlich auf Servern in Deutschland gespeichert (Frankfurt am Main).</p>' +
@@ -3545,7 +3832,7 @@ function renderRechtlichesHtml(){
   }).join("");
 
   return zurueckPille() +
-    '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Rechtliches</div>' +
+    '<div class="tagline" style="font-size:20px;margin-bottom:4px;">' + esc(t("mRechtliches")) + '</div>' +
     status +
     '<div class="admin-sub" style="margin-bottom:14px;">Alle rechtlichen Informationen zur Fahr-Akademie.</div>' +
     zeilen;
@@ -3567,8 +3854,8 @@ function renderThemenHtml(){
     }).join("");
     return zurueckPille() +
       '<div class="tagline" style="font-size:20px;margin-bottom:4px;"># Themen</div>' +
-      '<div class="admin-sub" style="margin-bottom:14px;">Ein Video kann mehrere Themen haben — tippe eins an, um alle passenden Videos zu sehen.</div>' +
-      '<div style="display:flex;flex-wrap:wrap;">' + (chips || '<div class="leer-hinweis">Noch keine Themen vergeben.</div>') + "</div>";
+      '<div class="admin-sub" style="margin-bottom:14px;">' + esc(t("themenIntro")) + '</div>' +
+      '<div style="display:flex;flex-wrap:wrap;">' + (chips || '<div class="leer-hinweis">' + esc(t("keineThemen")) + '</div>') + "</div>";
   }
 
   const tag = allTags.find(function(t){ return t.id === selectedHashtag; });
@@ -3590,7 +3877,7 @@ function renderThemenHtml(){
 
   return '<button class="krumen zurueck-zeile" data-hashtag-zurueck>' + icon("zurueck") + "<span># Themen</span></button>" +
     '<div class="tagline" style="font-size:19px;margin-bottom:14px;">#' + esc(tag ? tag.label : "") + "</div>" +
-    (karten || '<div class="leer-hinweis">Keine Videos gefunden.</div>');
+    (karten || '<div class="leer-hinweis">' + esc(t("keineVideos")) + '</div>');
 }
 
 /* 27.08.2026: Seit dem Papierbogen-Layout scrollt auf breiten Bildschirmen
@@ -3679,12 +3966,12 @@ function renderCatalog(){
   // Seitenmenü (☰): Dashboard, Nützliches, Hilfe, Über diese App -- Dinge, die man selten
   // braucht, damit die Bottom-Nav nicht überladen wird.
   const drawerLinks = [
-    ["dashboard","dashboard","Dashboard"],
-    ["themen","hashtag","# Themen"],
-    ["nuetzliches","buch","Nützliches"],
-    ["rechtliches","schild","Rechtliches"],
-    ["hilfe","frage","Hilfe & Kontakt"],
-    ["ueber","info","Über diese App"]
+    ["dashboard","dashboard",t("mDashboard")],
+    ["themen","hashtag",t("mThemen")],
+    ["nuetzliches","buch",t("mNuetzliches")],
+    ["rechtliches","schild",t("mRechtliches")],
+    ["hilfe","frage",t("mHilfe")],
+    ["ueber","info",t("mUeber")]
   ];
   const drawerHtml =
     '<div class="drawer-backdrop' + (drawerOpen ? " open" : "") + '" id="drawer-backdrop"></div>' +
@@ -3854,6 +4141,9 @@ function renderCatalog(){
 // ob überhaupt etwas passiert ist.
 async function zugangAnfragen(btn, bereich){
   if(!session || !session.session_token){ showToast("Bitte neu anmelden"); return; }
+  // Ohne echten Knopf (z.B. aus dem Blatt einer versiegelten Zeile): Platzhalter,
+  // damit die Anzeige-Logik unten unveraendert bleiben kann.
+  if(!btn || btn.tagName !== "BUTTON") btn = { innerHTML:"", disabled:false };
   const urspruenglich = btn.innerHTML;
   btn.disabled = true;
   btn.innerHTML = "<span>Wird gesendet …</span>";
@@ -3942,7 +4232,7 @@ async function holeWerbecode(){
 
 function markSeen(videoId){
   seenVideoIds.add(videoId);
-  localStorage.setItem("academy_demo_seen", JSON.stringify(Array.from(seenVideoIds)));
+  try{ localStorage.setItem("academy_demo_seen", JSON.stringify(Array.from(seenVideoIds))); } catch(e){}
 }
 
 // Bereich 1.1: In welchem Bereich liegt dieses Video? (für den Breadcrumb)
@@ -3963,12 +4253,13 @@ function findeNaechstesOffenes(aktuellId){
     if(gruppe){
       const idx = gruppe.videos.findIndex(function(x){ return x.video.id === aktuellId; });
       for(let i = idx + 1; i < gruppe.videos.length; i++){
-        if(!seenVideoIds.has(gruppe.videos[i].video.id)) return gruppe.videos[i];
+        // 26.09.2026: versiegelte Videos nie als "Weiter" vorschlagen
+        if(!seenVideoIds.has(gruppe.videos[i].video.id) && !gruppe.videos[i].gesperrt) return gruppe.videos[i];
       }
     }
   }
   for(const g of pfad){
-    const offen = g.videos.find(function(x){ return x.video.id !== aktuellId && !seenVideoIds.has(x.video.id); });
+    const offen = g.videos.find(function(x){ return x.video.id !== aktuellId && !seenVideoIds.has(x.video.id) && !x.gesperrt; });
     if(offen) return offen;
   }
   return null;
@@ -4177,19 +4468,18 @@ async function openVideo(videoId){
     const data = await res.json();
 
     if(!res.ok){
-      if(res.status === 401 || res.status === 403){
-        // Wie bei showApp(): seit der Ein-Geraet-Sperre ist der haeufigste Grund ein
-        // paralleler Login auf einem anderen Geraet. Ohne Hinweis wirkt das wie ein Bug.
+      // 26.09.2026: Nur bei eindeutigem Grund abmelden (siehe ABMELDE_GRUENDE). Ein Video
+      // aus einem anderen Pruefgebiet, ein gesperrtes Video oder ein Serverfehler zeigen
+      // nur eine Meldung mit Zurueck-Knopf -- der Schueler bleibt angemeldet.
+      if(istAbmeldeGrund(data)){
         stopWatermark();
-        localStorage.removeItem("academy_session");
-        session = null;
-        showLogin();
-        showToast("Du wurdest abgemeldet, weil dieser Zugang auf einem anderen Gerät verwendet wurde. Der Zugang gilt nur für ein Gerät.");
+        abmeldenWegen(data.code);
         return;
       }
-      document.getElementById("app").innerHTML =
-        '<div class="err">' + esc(data.error || "Fehler beim Laden") + '</div><button id="back-btn" class="back">Zurück</button>';
-      document.getElementById("back-btn").addEventListener("click", renderCatalog);
+      const meldung = data.code === "gebiet_nicht_freigegeben" ? t("videoGebiet")
+        : data.code === "vollzugang_erforderlich" ? (t("gesperrtVollzugang") + ". " + t("siegelSatz"))
+        : (sprache === "de" && data.error) ? data.error : t("videoFehler");
+      zeigeVideoFehler(meldung);
       return;
     }
 
@@ -4199,8 +4489,11 @@ async function openVideo(videoId){
     // es geht also nichts kaputt bei Videos ohne Untertitel.
     // WICHTIG: Die Untertiteldateien selbst müssen in Bunny Stream je Video
     // hochgeladen werden (Video > Captions). Das kann ich nicht für dich tun.
-    const embedUrl = "https://iframe.mediadelivery.net/embed/" + data.library_id + "/" + data.bunny_video_id +
-      "?token=" + data.token + "&expires=" + data.expires + "&captions=" + encodeURIComponent(sprache);
+    // 26.09.2026: Bestandteile kodiert und die ganze Adresse beim Einsetzen escaped --
+    // eine manipulierte Video-ID kann so kein Attribut ins iframe schmuggeln.
+    const embedUrl = "https://iframe.mediadelivery.net/embed/" + encodeURIComponent(data.library_id) + "/" +
+      encodeURIComponent(data.bunny_video_id) + "?token=" + encodeURIComponent(data.token) +
+      "&expires=" + encodeURIComponent(data.expires) + "&captions=" + encodeURIComponent(sprache);
 
     // Server hat den Fortschritt schon gespeichert — lokal sofort mitziehen,
     // damit Häkchen/Verlauf auch ohne Neu-Login sofort aktuell sind.
@@ -4213,17 +4506,17 @@ async function openVideo(videoId){
     const kontext = findeVideoKontext(videoId);
     const naechstes = findeNaechstesOffenes(videoId);
     const krume = '<button id="back-btn" class="krumen">' + icon("zurueck") +
-      "<span>" + esc(kontext ? kontext.stufe : "Übersicht") + "</span></button>";
+      "<span>" + esc(kontext ? bereichName(kontext.stufe) : t("lernpfad")) + "</span></button>";
     const weiterBtn = naechstes
       ? '<button class="weiter-naechstes" data-weiter="' + esc(naechstes.video.id) + '">' +
-          '<span><span class="wn-label">Weiter</span><br><span class="wn-titel">' + esc(naechstes.video.titel) + "</span></span>" +
+          '<span><span class="wn-label">' + esc(t("weiter")) + '</span><br><span class="wn-titel">' + esc(naechstes.video.titel) + "</span></span>" +
           icon("weiter") +
         "</button>"
       : "";
 
     document.getElementById("app").innerHTML =
       krume +
-      '<div class="player-wrap"><iframe src="' + embedUrl + '" loading="lazy" ' +
+      '<div class="player-wrap"><iframe src="' + esc(embedUrl) + '" ' +
       'style="border:0;width:100%;aspect-ratio:16/9;display:block;" allow="autoplay; fullscreen"></iframe></div>' +
       weiterBtn;
     startWatermark();
@@ -4246,8 +4539,17 @@ async function openVideo(videoId){
     const wb = document.querySelector("[data-weiter]");
     if(wb) wb.addEventListener("click", function(){ openVideo(wb.dataset.weiter); });
   } catch(e){
-    document.getElementById("app").innerHTML = '<div class="err">Verbindungsfehler</div>';
+    // Vorher: Sackgasse ohne Zurueck-Knopf.
+    zeigeVideoFehler(t("videoFehler"));
   }
+}
+
+function zeigeVideoFehler(meldung){
+  stopWatermark();
+  document.getElementById("app").innerHTML =
+    '<div class="video-fehler" role="alert"><p>' + esc(meldung) + '</p>' +
+    '<button id="back-btn" class="btn-primary" type="button">' + esc(t("zurueck")) + '</button></div>';
+  document.getElementById("back-btn").addEventListener("click", renderCatalog);
 }
 
 /* ============================================================
@@ -4482,7 +4784,7 @@ async function doAdminLogin(){
     adminSession = { demo:true, email:email };
     myRole = "super_admin";
     mySchule = null;
-    localStorage.setItem("academy_admin_session", JSON.stringify(adminSession));
+    try{ localStorage.setItem("academy_admin_session", JSON.stringify(adminSession)); }catch(e){}
     showAdminApp();
     return;
   }
@@ -4490,7 +4792,7 @@ async function doAdminLogin(){
     const { data, error } = await supa.auth.signInWithPassword({ email:email, password:pass });
     if(error){ errEl.textContent = "Login fehlgeschlagen: " + error.message; return; }
     adminSession = { email:email };
-    localStorage.setItem("academy_admin_session", JSON.stringify(adminSession));
+    try{ localStorage.setItem("academy_admin_session", JSON.stringify(adminSession)); }catch(e){}
 
     const { data: roleRow, error: roleError } = await supa
       .from("academy_admin_users").select("rolle, schule_id").eq("user_id", data.user.id).maybeSingle();
@@ -4516,7 +4818,7 @@ async function doAdminLogin(){
 }
 
 function doAdminLogout(){
-  localStorage.removeItem("academy_admin_session");
+  try{ localStorage.removeItem("academy_admin_session"); }catch(e){}
   adminSession = null;
   location.hash = "";
   init();
@@ -4646,33 +4948,37 @@ async function loadAdminData(){
     allSchulen = [{id:"boost",name:"Fahrschule Boost",aktiv:true}];
     return;
   }
-  const flRes = await supa.from("academy_fahrlehrer").select("*");
-  const prRes = await supa.from("academy_pruefer").select("*");
-  const scRes = await supa.from("academy_schueler").select("*").order("erstellt_am",{ascending:false});
-  const tgRes = await supa.from("academy_tags").select("*").order("reihenfolge");
-  const vdRes = await supa.from("academy_videos").select("*").order("reihenfolge");
-  const vtRes = await supa.from("academy_video_tags").select("*");
-  const vprRes = await supa.from("academy_video_pruefer").select("*");
-  // Gebiete + Freigaben (15.09.2026)
-  const pkRes = await supa.from("academy_pakete").select("*").order("reihenfolge");
+  // 26.09.2026: Alle Abfragen GLEICHZEITIG statt nacheinander (vorher ~17 Runden
+  // hintereinander -- unterwegs mehrere Sekunden Wartezeit bei jedem Neuladen).
+  // Kommentare zu den einzelnen Abfragen:
+  // - Gebiete + Freigaben (15.09.2026)
+  // - academy_fortschritt: Rohdaten fuer Betrugserkennung/Inaktiv-Kachel. Kommen wegen
+  //   fehlender RLS-Policy IMMER leer zurueck (bekannt, Übergabe 5.2/5.4) -- braucht erst
+  //   die rechtliche Freigabe fuer Einzelauswertung. NICHT anfassen.
+  // - academy_kandidaten: Bereich 8.4
+  // - academy_sperre_klicks: Freemium (28.08.2026), welche Bereiche wecken Interesse
+  // - Meistgesehene Videos + Kaufinteresse ueber anonyme DB-Funktionen (15.09.2026)
+  const [flRes, prRes, scRes, tgRes, vdRes, vtRes, vprRes, pkRes, gbRes, sgRes,
+         fsRes, kdRes, skRes, topVidRes, topSperrRes] = await Promise.all([
+    supa.from("academy_fahrlehrer").select("*"),
+    supa.from("academy_pruefer").select("*"),
+    supa.from("academy_schueler").select("*").order("erstellt_am",{ascending:false}),
+    supa.from("academy_tags").select("*").order("reihenfolge"),
+    supa.from("academy_videos").select("*").order("reihenfolge"),
+    supa.from("academy_video_tags").select("*"),
+    supa.from("academy_video_pruefer").select("*"),
+    supa.from("academy_pakete").select("*").order("reihenfolge"),
+    supa.from("academy_gebiete").select("*").order("name"),
+    supa.from("academy_schule_gebiete").select("*"),
+    supa.from("academy_fortschritt").select("*").order("gesehen_am", {ascending:false}),
+    supa.from("academy_kandidaten").select("*"),
+    supa.from("academy_sperre_klicks").select("stufe"),
+    supa.rpc("academy_dash_top_videos"),
+    supa.rpc("academy_dash_sperr_stufen")
+  ]);
   allPakete = pkRes.data || [];
-  const gbRes = await supa.from("academy_gebiete").select("*").order("name");
-  const sgRes = await supa.from("academy_schule_gebiete").select("*");
   allGebiete = gbRes.data || [];
   alleSchuleGebiete = sgRes.data || [];
-  // Rohdaten für die Betrugserkennung (Schnellwechsel) und die Inaktiv-Kachel.
-  // Kommen wegen fehlender RLS-Policy auf academy_fortschritt aktuell IMMER leer
-  // zurueck (bekannt, siehe Übergabe 5.2/5.4) -- braucht erst die rechtliche
-  // Freigabe fuer Einzelauswertung, bevor das repariert wird. NICHT anfassen.
-  const fsRes = await supa.from("academy_fortschritt").select("*").order("gesehen_am", {ascending:false});
-  const kdRes = await supa.from("academy_kandidaten").select("*"); // Bereich 8.4
-  // Freemium (28.08.2026): welche gesperrten Bereiche wecken das meiste Interesse?
-  const skRes = await supa.from("academy_sperre_klicks").select("stufe");
-  // 15.09.2026: Meistgesehene Videos + Kaufinteresse laufen jetzt separat über
-  // fertige, anonyme DB-Funktionen (kein schueler_id in der Antwort) -- die
-  // Rohzeilen oben bleiben dafür ungenutzt, RLS-Fix ist bewusst nicht angefasst.
-  const topVidRes = await supa.rpc("academy_dash_top_videos");
-  const topSperrRes = await supa.rpc("academy_dash_sperr_stufen");
   allFahrlehrer = flRes.data || [];
   allPruefer = prRes.data || [];
   allSchueler = scRes.data || [];
@@ -5279,13 +5585,27 @@ async function deleteGebiet(id){
 
 async function setzeGebietsFreigabe(schuleId, gebietId, frei, cb){
   if(DEMO_MODE) return;
+  // 26.09.2026: Entziehen nimmt Schuelern Videos weg -> erst nach Rueckfrage mit Zahlen.
+  if(!frei){
+    const schuleX = allSchulen.find(function(x){ return x.id === schuleId; });
+    const gebietX = allGebiete.find(function(x){ return x.id === gebietId; });
+    const betroffen = allSchueler.filter(function(s){ return s.schule_id === schuleId && s.aktiv; }).length;
+    const videos = allVideos.filter(function(v){ return v.gebiet_id === gebietId; }).length;
+    const ok = await blattBestaetigen({
+      titel: "Gebiet „" + (gebietX ? gebietX.name : gebietId) + "“ entziehen?",
+      text: betroffen + " aktive Schüler von " + (schuleX ? schuleX.name : "dieser Fahrschule") +
+        " sehen danach " + videos + " Video" + (videos === 1 ? "" : "s") + " aus diesem Gebiet nicht mehr.",
+      okText: "Entziehen", gefaehrlich: true
+    });
+    if(!ok){ if(cb) cb.checked = true; return; }
+  }
   let fehler = null;
   if(frei){
-    const res = await supa.from("academy_schule_gebiete").insert({ schule_id: schuleId, gebiet_id: gebietId });
-    fehler = res.error;
+    const res = await supa.from("academy_schule_gebiete").insert({ schule_id: schuleId, gebiet_id: gebietId }).select("gebiet_id");
+    fehler = aenderungOk(res) ? null : (res.error || { message: "keine Berechtigung für diese Änderung" });
   } else {
-    const res = await supa.from("academy_schule_gebiete").delete().eq("schule_id", schuleId).eq("gebiet_id", gebietId);
-    fehler = res.error;
+    const res = await supa.from("academy_schule_gebiete").delete().eq("schule_id", schuleId).eq("gebiet_id", gebietId).select("gebiet_id");
+    fehler = aenderungOk(res) ? null : (res.error || { message: "keine Berechtigung für diese Änderung" });
   }
   if(fehler){
     showToast("Fehler: " + fehler.message);
@@ -5917,11 +6237,12 @@ async function createSchueler(){
   }
 }
 
+// 26.09.2026: liefert true/false, damit "PIN gesendet" nur nach echtem Versand erscheint.
 async function sendPinMail(schueler){
-  if(!schueler.email) return;
+  if(!schueler.email) return false;
   if(DEMO_MODE){
-    console.log("[DEMO] PIN-Mail an " + schueler.email + ": PIN " + schueler.pin);
-    return;
+    console.log("[DEMO] PIN-Mail an " + schueler.email);
+    return true;
   }
   try{
     // Seit Schritt 3 (18.07.2026): die Function schlägt E-Mail/PIN selbst in der DB
@@ -5937,6 +6258,7 @@ async function sendPinMail(schueler){
     const data = await res.json();
     if(!res.ok){
       showToast("Mail-Versand fehlgeschlagen: " + (data.error || "unbekannter Fehler"));
+      return false;
     } else {
       // Partner-Modell: Zeitstempel setzen, damit der Schüler von der
       // "wartet auf Versand"-Liste im Dashboard verschwindet.
@@ -5945,9 +6267,11 @@ async function sendPinMail(schueler){
       schueler.pin_versendet_am = jetztIso;
       const lokal = allSchueler.find(function(x){ return x.id === schueler.id; });
       if(lokal) lokal.pin_versendet_am = jetztIso;
+      return true;
     }
   } catch(e){
     showToast("Schüler gespeichert, aber Mail-Versand fehlgeschlagen");
+    return false;
   }
 }
 
@@ -5955,7 +6279,8 @@ async function resendPin(id){
   const s = allSchueler.find(function(x){ return x.id === id; });
   if(!s){ return; }
   if(!s.email){ showToast("Keine E-Mail hinterlegt"); return; }
-  await sendPinMail(s);
+  const gesendet = await sendPinMail(s);
+  if(!gesendet) return; // Fehlermeldung kam schon aus sendPinMail
   showToast("PIN an " + s.email + " gesendet");
   // 13.09.2026: Dashboard und Schueler-Liste sind seit dem Tab-Umbau KEINE
   // getrennten Tabs mehr, sondern stehen gleichzeitig im DOM -- der Knopf kann aus
@@ -5972,18 +6297,25 @@ async function resendPin(id){
 // Monatsuebersicht mit Filtern bleibt der eigene Abrechnung-Tab zustaendig.
 // allVerkaeufe wird beim Betreten des Schueler-Tabs geladen (renderAdminSchuelerTab).
 function schuelerAbrechnungHtml(s){
-  const beleg = allVerkaeufe.find(function(v){ return v.schueler_id === s.id; });
-  if(!beleg){
+  // 26.09.2026: ALLE Belege dieses Schuelers zeigen. Vorher nur den neuesten -- ein
+  // zweiter Beleg (z.B. nach erneutem Freischalten) war in der Karte unsichtbar.
+  const belege = allVerkaeufe.filter(function(v){ return v.schueler_id === s.id; });
+  if(!belege.length){
     return '<div class="ak-abrechnung admin-sub">Noch kein Beleg vorhanden.</div>';
   }
+  return (belege.length > 1 ? '<div class="admin-sub" style="margin-bottom:6px;">' + belege.length + ' Belege</div>' : "") +
+    belege.map(schuelerBelegHtml).join("");
+}
+function schuelerBelegHtml(beleg){
   const bezahlt = !!beleg.bezahlt_am;
   if(myRole !== "super_admin"){
     // Read-only, wie die bestehende Partner-Ansicht im Abrechnung-Tab: ein Partner
     // darf laut Datenbank-Richtlinie ohnehin nichts aendern -- Eingabefelder waeren
     // hier nur eine Attrappe.
     return '<div class="ak-abrechnung">' +
-      '<div class="admin-sub">Du hast berechnet: <b>' + Number(beleg.verkaufspreis || 0).toFixed(2) + " €</b></div>" +
-      '<div class="admin-sub">Anteil Fahr-Akademie: <b>' + Number(beleg.provision || 0).toFixed(2) + " €</b></div>" +
+      '<div class="admin-sub">Beleg vom ' + fmtDate(beleg.verkauft_am) + '</div>' +
+      '<div class="admin-sub">Du hast berechnet: <b>' + fmtEuro(Number(beleg.verkaufspreis || 0)) + "</b></div>" +
+      '<div class="admin-sub">Anteil Fahr-Akademie: <b>' + fmtEuro(Number(beleg.provision || 0)) + "</b></div>" +
       '<div class="admin-badge ' + (bezahlt ? "ok" : "warn") + '" style="margin-top:6px;display:inline-block;">' +
         (bezahlt ? "beglichen" : "offen") + "</div>" +
     "</div>";
@@ -5991,6 +6323,7 @@ function schuelerAbrechnungHtml(s){
   // Super-Admin: editierbar -- exakt dieselben Felder/Klassen wie im Abrechnung-Tab
   // (abr-felder/abr-feld), nur fuer diesen einen Beleg statt der ganzen Liste.
   return '<div class="ak-abrechnung" data-beleg="' + esc(beleg.id) + '">' +
+    '<div class="admin-sub" style="margin-bottom:6px;">Beleg vom ' + fmtDate(beleg.verkauft_am) + '</div>' +
     '<div class="abr-felder">' +
       '<div class="abr-feld"><label>Preis</label>' +
         '<input type="text" inputmode="decimal" data-f="preis" value="' +
@@ -6032,8 +6365,8 @@ async function schuelerBelegSpeichern(belegId){
 
   const res = await supa.from("academy_verkaeufe")
     .update({ verkaufspreis: preis, provision: provision, rechnung_nr: rechnung || null })
-    .eq("id", belegId);
-  if(res.error){ showToast("Konnte nicht gespeichert werden"); return; }
+    .eq("id", belegId).select("id");
+  if(!aenderungOk(res)){ showToast("Konnte nicht gespeichert werden — keine Berechtigung oder keine Verbindung"); return; }
   // Lokal nachziehen statt neu zu laden -- der naechste Render soll sofort den
   // neuen Stand zeigen (gleiches Muster wie bei sendPinMail).
   const lokal = allVerkaeufe.find(function(x){ return x.id === belegId; });
@@ -6045,12 +6378,7 @@ async function schuelerBelegSpeichern(belegId){
 async function schuelerBelegBezahltUmschalten(belegId){
   const v = allVerkaeufe.find(function(x){ return x.id === belegId; });
   if(!v) return;
-  const neu = v.bezahlt_am ? null : new Date().toISOString();
-  const res = await supa.from("academy_verkaeufe").update({ bezahlt_am: neu }).eq("id", belegId);
-  if(res.error){ showToast("Konnte nicht geändert werden"); return; }
-  v.bezahlt_am = neu;
-  showToast(neu ? "Als bezahlt markiert" : "Wieder auf offen gesetzt");
-  renderAdminSchueler();
+  if(await belegBezahltUmschalten(v)) renderAdminSchueler();
 }
 
 async function toggleSchueler(id){
@@ -6088,7 +6416,8 @@ async function toggleSchueler(id){
     renderAdminSchueler();
     return;
   }
-  const { error } = await supa.from("academy_schueler").update({ aktiv: aktuell.aktiv, sperrgrund: aktuell.sperrgrund }).eq("id", id);
+  const _aend = await supa.from("academy_schueler").update({ aktiv: aktuell.aktiv, sperrgrund: aktuell.sperrgrund }).eq("id", id).select("id");
+  const error = aenderungOk(_aend) ? null : (_aend.error || { message: "keine Berechtigung für diese Änderung" }); // 26.09.2026: 0 Zeilen = nicht gespeichert
   if(error){
     aktuell.aktiv = standVorher;   // Anzeige nicht auf einem Zustand stehen lassen, den die DB nicht hat
     showToast("Fehler: " + error.message);
@@ -6139,19 +6468,19 @@ async function toggleVollzugang(id){
     });
     if(eingabe === null) return; // abgebrochen
 
-    const roh = String(eingabe).trim().replace(",", ".");
+    const roh = String(eingabe).trim();
     if(roh !== ""){
-      const zahl = Number(roh);
-      if(!isFinite(zahl) || zahl < 0){ showToast("Bitte einen gültigen Betrag eingeben"); return; }
+      const zahl = parseEuro(roh);   // 26.09.2026: versteht auch "1.200" und "1.200,50"
+      if(zahl === null || zahl < 0){ showToast("Bitte einen gültigen Betrag eingeben"); return; }
       preisEingabe = Math.round(zahl * 100) / 100;
       // Verkauf unter dem eigenen Einkaufspreis: rechnerisch erlaubt, aber der Partner
       // soll es bewusst tun und nicht erst auf der Rechnung merken.
       if(istPartner && meinAnteil != null && preisEingabe < meinAnteil){
         if(!await blattBestaetigen({
           titel: "Du machst damit Verlust",
-          text: "Du berechnest " + preisEingabe + " €, zahlst aber " + meinAnteil +
-            " € an die Fahr-Akademie.\n\nDas sind " + (meinAnteil - preisEingabe).toFixed(2) +
-            " € Verlust bei diesem Zugang.",
+          text: "Du berechnest " + fmtEuro(preisEingabe) + ", zahlst aber " + fmtEuro(meinAnteil) +
+            " an die Fahr-Akademie.\n\nDas sind " + fmtEuro(meinAnteil - preisEingabe) +
+            " Verlust bei diesem Zugang.",
           okText: "Trotzdem freischalten", gefaehrlich: true
         })) return;
       }
@@ -6195,7 +6524,8 @@ async function toggleVollzugang(id){
     felder.verkaufspreis = preisEingabe;
     aktuell.verkaufspreis = preisEingabe;
   }
-  const { error } = await supa.from("academy_schueler").update(felder).eq("id", id);
+  const _aend = await supa.from("academy_schueler").update(felder).eq("id", id).select("id");
+  const error = aenderungOk(_aend) ? null : (_aend.error || { message: "keine Berechtigung für diese Änderung" }); // 26.09.2026: 0 Zeilen = nicht gespeichert
   if(error){
     // Zuruecksetzen: sonst zeigt die Liste einen Zustand an, den die Datenbank nicht hat.
     aktuell.vollzugang = standVorher;
@@ -6553,7 +6883,8 @@ async function setzeVideoGebiet(videoId, gebietId){
 
   if(DEMO_MODE){ v.gebiet_id = gebietId; renderAdminVideos(); return; }
 
-  const { error } = await supa.from("academy_videos").update({ gebiet_id: gebietId }).eq("id", videoId);
+  const _aend = await supa.from("academy_videos").update({ gebiet_id: gebietId }).eq("id", videoId).select("id");
+  const error = aenderungOk(_aend) ? null : (_aend.error || { message: "keine Berechtigung für diese Änderung" }); // 26.09.2026: 0 Zeilen = nicht gespeichert
   if(error){
     showToast("Fehler: " + error.message);
     const sel = document.querySelector('[data-gebiet-select="' + videoId + '"]');
@@ -6580,12 +6911,20 @@ async function addVideoPruefer(videoId, prueferId){
 }
 
 async function removeVideoPruefer(videoId, prueferId){
+  const vX = allVideos.find(function(x){ return x.id === videoId; });
+  const pX = allPruefer.find(function(x){ return x.id === prueferId; });
+  if(!await blattBestaetigen({
+    titel: "Prüfer entfernen?",
+    text: (pX ? pX.name : "Dieser Prüfer") + " wird von „" + (vX ? vX.titel : "diesem Video") + "“ entfernt. Das Video erscheint dann nicht mehr unter diesem Prüfer.",
+    okText: "Entfernen", gefaehrlich: true
+  })) return;
   if(DEMO_MODE){
     videoPruefer = videoPruefer.filter(function(vp){ return !(vp.video_id === videoId && vp.pruefer_id === prueferId); });
     renderAdminVideos();
     return;
   }
-  const { error } = await supa.from("academy_video_pruefer").delete().eq("video_id", videoId).eq("pruefer_id", prueferId);
+  const _del = await supa.from("academy_video_pruefer").delete().eq("video_id", videoId).eq("pruefer_id", prueferId).select("video_id");
+  const error = aenderungOk(_del) ? null : (_del.error || { message: "keine Berechtigung für diese Änderung" });
   if(error){ showToast("Fehler: " + error.message); return; }
   await loadAdminData();
   renderAdminVideos();
@@ -6598,6 +6937,14 @@ async function editVideoBunnyId(id){
     text:v.titel, wert:v.bunny_video_id || "", platzhalter:"z. B. a1b2c3d4-…" });
   if(neueId === null) return;
   const trimmed = neueId.trim();
+  // 26.09.2026: Ein leeres Feld blendet das Video fuer alle Schueler aus -> Rueckfrage.
+  if(!trimmed && v.bunny_video_id){
+    if(!await blattBestaetigen({
+      titel: "Video ausblenden?",
+      text: "Ohne Bunny-ID ist „" + v.titel + "“ für alle Schüler unsichtbar, bis du wieder eine ID einträgst.",
+      okText: "Ausblenden", gefaehrlich: true
+    })) return;
+  }
 
   if(DEMO_MODE){
     v.bunny_video_id = trimmed || null;
@@ -6605,7 +6952,8 @@ async function editVideoBunnyId(id){
     showToast("Bunny-ID aktualisiert (Demo)");
     return;
   }
-  const { error } = await supa.from("academy_videos").update({ bunny_video_id: trimmed || null }).eq("id", id);
+  const _aend = await supa.from("academy_videos").update({ bunny_video_id: trimmed || null }).eq("id", id).select("id");
+  const error = aenderungOk(_aend) ? null : (_aend.error || { message: "keine Berechtigung für diese Änderung" }); // 26.09.2026: 0 Zeilen = nicht gespeichert
   if(error){ showToast("Fehler: " + error.message); return; }
   await loadAdminData();
   renderAdminVideos();
@@ -6635,7 +6983,8 @@ async function editVideoFahrzeug(id){
     showToast("Fahrzeug aktualisiert (Demo)");
     return;
   }
-  const { error } = await supa.from("academy_videos").update({ fahrzeug: trimmed || null }).eq("id", id);
+  const _aend = await supa.from("academy_videos").update({ fahrzeug: trimmed || null }).eq("id", id).select("id");
+  const error = aenderungOk(_aend) ? null : (_aend.error || { message: "keine Berechtigung für diese Änderung" }); // 26.09.2026: 0 Zeilen = nicht gespeichert
   if(error){ showToast("Fehler: " + error.message); return; }
   await loadAdminData();
   renderAdminVideos();
@@ -6938,11 +7287,54 @@ function fmtEuro(v){
 }
 
 // "100,50" und "100.50" sollen beide funktionieren -- deutsche Tastatur schreibt Komma.
+// 26.09.2026: Tausenderpunkte werden erkannt. Vorher wurde "1.200" als 1,20 € gelesen
+// und "1.200,50" war ungueltig.
 function parseEuro(roh){
-  const t = String(roh == null ? "" : roh).trim().replace(/[\s€]/g,"").replace(",",".");
+  let t = String(roh == null ? "" : roh).trim().replace(/[\s€]/g,"");
   if(t === "") return null;
+  if(t.indexOf(",") !== -1){
+    t = t.replace(/\./g, "").replace(",", ".");          // 1.200,50 -> 1200.50
+  } else if(/^\d{1,3}(\.\d{3})+$/.test(t)){
+    t = t.replace(/\./g, "");                            // 1.200 -> 1200
+  }
+  if(!/^-?\d+(\.\d+)?$/.test(t)) return null;
   const n = Number(t);
   return isFinite(n) ? n : null;
+}
+
+// 26.09.2026: Eine Aenderung gilt nur als gespeichert, wenn die Datenbank wirklich eine
+// Zeile zurueckgibt. Fehlt die Berechtigung (Row Level Security), meldet Supabase
+// KEINEN Fehler, sondern aendert einfach 0 Zeilen -- das sah bisher wie Erfolg aus.
+function aenderungOk(res){
+  return !!res && !res.error && Array.isArray(res.data) && res.data.length > 0;
+}
+
+// Beim Markieren als bezahlt den Betrag abfragen (vorgefuellt mit dem hinterlegten Anteil),
+// damit kein Beleg ohne Betrag als "beglichen" im Kassenbuch landet.
+async function belegBezahltUmschalten(v){
+  if(v.bezahlt_am){
+    const res = await supa.from("academy_verkaeufe").update({ bezahlt_am: null }).eq("id", v.id).select("id");
+    if(!aenderungOk(res)){ showToast("Konnte nicht geändert werden — keine Berechtigung oder keine Verbindung"); return false; }
+    v.bezahlt_am = null;
+    showToast("Wieder auf offen gesetzt");
+    return true;
+  }
+  const eingabe = await blattEingabe({
+    titel: "Als bezahlt markieren",
+    text: (v.schueler_name ? v.schueler_name + "\n" : "") + "Welcher Betrag ist eingegangen (Anteil Fahr-Akademie)?",
+    wert: v.provision == null ? "" : String(v.provision).replace(".", ","),
+    platzhalter: "0,00",
+    okText: "Bezahlt"
+  });
+  if(eingabe === null) return false;
+  const betrag = parseEuro(eingabe);
+  if(betrag === null || betrag < 0){ showToast("Bitte einen gültigen Betrag eingeben"); return false; }
+  const neu = new Date().toISOString();
+  const res = await supa.from("academy_verkaeufe").update({ bezahlt_am: neu, provision: betrag }).eq("id", v.id).select("id");
+  if(!aenderungOk(res)){ showToast("Konnte nicht geändert werden — keine Berechtigung oder keine Verbindung"); return false; }
+  v.bezahlt_am = neu; v.provision = betrag;
+  showToast("Als bezahlt markiert: " + fmtEuro(betrag));
+  return true;
 }
 
 async function ladeVerkaeufe(){
@@ -6995,8 +7387,8 @@ async function renderAdminAbrechnung(){
         '<div class="admin-row"><div>' +
           '<div class="admin-name">' + esc(v.schueler_name || "—") + "</div>" +
           '<div class="admin-sub">Freigeschaltet am ' + fmtDate(v.verkauft_am) + "</div>" +
-          '<div class="admin-sub">Du hast berechnet: <b>' + Number(v.verkaufspreis || 0).toFixed(2) + " €</b></div>" +
-          '<div class="admin-sub">Anteil Fahr-Akademie: <b>' + Number(v.provision || 0).toFixed(2) + " €</b></div>" +
+          '<div class="admin-sub">Du hast berechnet: <b>' + fmtEuro(Number(v.verkaufspreis || 0)) + "</b></div>" +
+          '<div class="admin-sub">Anteil Fahr-Akademie: <b>' + fmtEuro(Number(v.provision || 0)) + "</b></div>" +
         "</div>" +
         '<div style="text-align:right;"><div class="admin-badge ' + (v.bezahlt_am ? "ok" : "warn") + '">' +
           (v.bezahlt_am ? "beglichen" : "offen") + "</div></div>" +
@@ -7010,11 +7402,11 @@ async function renderAdminAbrechnung(){
         '<div class="admin-sub">Freigeschaltete Zugänge</div>' +
         '<div class="admin-name" style="margin-bottom:10px;">' + allVerkaeufe.length + "</div>" +
         '<div class="admin-sub">Von dir eingenommen</div>' +
-        '<div class="admin-name" style="margin-bottom:10px;">' + summeEinnahmen.toFixed(2) + " €</div>" +
+        '<div class="admin-name" style="margin-bottom:10px;">' + fmtEuro(summeEinnahmen) + "</div>" +
         '<div class="admin-sub">Anteil Fahr-Akademie gesamt</div>' +
-        '<div class="admin-name" style="margin-bottom:10px;">' + summeSchuld.toFixed(2) + " €</div>" +
+        '<div class="admin-name" style="margin-bottom:10px;">' + fmtEuro(summeSchuld) + "</div>" +
         '<div class="admin-sub">Davon noch offen</div>' +
-        '<div class="admin-name" style="color:var(--gold-text);">' + offeneSchuld.toFixed(2) + " €</div>" +
+        '<div class="admin-name" style="color:var(--gold-text);">' + fmtEuro(offeneSchuld) + "</div>" +
         '<div class="admin-sub" style="margin-top:12px;opacity:.8;">Was du darüber hinaus einnimmst, behältst du. Den Preis legst du bei jedem Schüler selbst fest.</div>' +
       "</div>" +
       '<div class="section-label" style="margin:18px 0 8px;">Einzelne Zugänge</div>' +
@@ -7240,8 +7632,8 @@ async function verkaufSpeichern(id){
 
   const res = await supa.from("academy_verkaeufe")
     .update({ verkaufspreis: preis, provision: provision, rechnung_nr: rechnung || null })
-    .eq("id", id);
-  if(res.error){ showToast("Konnte nicht gespeichert werden"); return; }
+    .eq("id", id).select("id");
+  if(!aenderungOk(res)){ showToast("Konnte nicht gespeichert werden — keine Berechtigung oder keine Verbindung"); return; }
   showToast("Gespeichert");
   renderAdminAbrechnung();
 }
@@ -7249,19 +7641,15 @@ async function verkaufSpeichern(id){
 async function verkaufBezahltUmschalten(id){
   const v = allVerkaeufe.find(function(x){ return x.id === id; });
   if(!v) return;
-  const neu = v.bezahlt_am ? null : new Date().toISOString();
-  const res = await supa.from("academy_verkaeufe").update({ bezahlt_am: neu }).eq("id", id);
-  if(res.error){ showToast("Konnte nicht geändert werden"); return; }
-  showToast(neu ? "Als bezahlt markiert" : "Wieder auf offen gesetzt");
-  renderAdminAbrechnung();
+  if(await belegBezahltUmschalten(v)) renderAdminAbrechnung();
 }
 
 async function verkaufGeschenktUmschalten(id){
   const v = allVerkaeufe.find(function(x){ return x.id === id; });
   if(!v) return;
   const neu = !v.geschenkt;
-  const res = await supa.from("academy_verkaeufe").update({ geschenkt: neu }).eq("id", id);
-  if(res.error){ showToast("Konnte nicht geändert werden"); return; }
+  const res = await supa.from("academy_verkaeufe").update({ geschenkt: neu }).eq("id", id).select("id");
+  if(!aenderungOk(res)){ showToast("Konnte nicht geändert werden — keine Berechtigung oder keine Verbindung"); return; }
   showToast(neu ? "Als geschenkt markiert — zählt nicht mehr in Umsatz" : "Geschenkt-Markierung aufgehoben");
   renderAdminAbrechnung();
 }
@@ -7411,9 +7799,9 @@ function renderAdminKandidaten(){
   // Wenn der letzte Abgleich lange her ist, einmal still im Hintergrund nachziehen.
   // So ist die Liste beim Öffnen aktuell, ohne dass du an etwas denken musst.
   // 12 Stunden, damit zwischen zwei Nachtläufen höchstens einmal zusätzlich geprüft wird.
-  const letzterSyncZeit = Number(localStorage.getItem("academy_letzter_sync") || 0);
+  const letzterSyncZeit = Number(lsText("academy_letzter_sync", "0"));
   if(!DEMO_MODE && Date.now() - letzterSyncZeit > 12*60*60*1000){
-    localStorage.setItem("academy_letzter_sync", String(Date.now()));
+    try{ localStorage.setItem("academy_letzter_sync", String(Date.now())); }catch(e){}
     kandidatenAbgleichen(null);
   }
 }
@@ -7457,7 +7845,7 @@ async function kandidatenAbgleichen(btn){
       return;
     }
 
-    localStorage.setItem("academy_letzter_sync", String(Date.now()));
+    try{ localStorage.setItem("academy_letzter_sync", String(Date.now())); }catch(e){}
     const hatAenderung = (data.neu || 0) + (data.aktualisiert || 0) > 0;
 
     if(still){
@@ -7653,9 +8041,20 @@ async function renderKlassenFreigabe(zielId){
 
   el.querySelectorAll(".klasse-cb").forEach(function(cb){
     cb.addEventListener("change", async function(){
-      const { error } = await supa.from("academy_klassen_freigabe")
+      // 26.09.2026: Sperren erst nach Rueckfrage -- betrifft alle Schueler dieser Klasse.
+      if(!cb.checked){
+        const betroffen = allSchueler.filter(function(s){ return s.klasse === cb.value && s.aktiv; }).length;
+        const ok = await blattBestaetigen({
+          titel: "Klasse " + cb.value + " sperren?",
+          text: "Die Klassen-Themen sind danach für " + betroffen + " aktive Schüler der Klasse " + cb.value + " gesperrt.",
+          okText: "Sperren", gefaehrlich: true
+        });
+        if(!ok){ cb.checked = true; return; }
+      }
+      const _kf = await supa.from("academy_klassen_freigabe")
         .update({ freigegeben: cb.checked, geaendert_am: new Date().toISOString() })
-        .eq("klasse", cb.value);
+        .eq("klasse", cb.value).select("klasse");
+      const error = aenderungOk(_kf) ? null : (_kf.error || { message: "keine Berechtigung für diese Änderung" });
       if(error){
         showToast("Fehler: " + error.message);
         cb.checked = !cb.checked; // Anzeige zurücksetzen, damit sie zum echten Stand passt
@@ -7692,7 +8091,8 @@ async function bulkVerlaengern(){
     const basis = new Date(s.ablauf_am) > new Date() ? new Date(s.ablauf_am) : new Date();
     basis.setMonth(basis.getMonth() + 6);
     if(DEMO_MODE){ s.ablauf_am = basis.toISOString(); ok++; continue; }
-    const { error } = await supa.from("academy_schueler").update({ ablauf_am: basis.toISOString() }).eq("id", id);
+    const _aend = await supa.from("academy_schueler").update({ ablauf_am: basis.toISOString() }).eq("id", id).select("id");
+  const error = aenderungOk(_aend) ? null : (_aend.error || { message: "keine Berechtigung für diese Änderung" }); // 26.09.2026: 0 Zeilen = nicht gespeichert
     if(error){ fehler++; continue; }
     await protokolliere("zugang_verlaengert", "schueler", id, s.name, "neu gültig bis " + basis.toISOString().slice(0,10));
     ok++;
@@ -7717,7 +8117,8 @@ async function bulkSperrenSetzen(aktiv){
     const s = allSchueler.find(function(x){ return x.id === id; });
     if(!s){ fehler++; continue; }
     if(DEMO_MODE){ s.aktiv = aktiv; ok++; continue; }
-    const { error } = await supa.from("academy_schueler").update({ aktiv: aktiv }).eq("id", id);
+    const _aend = await supa.from("academy_schueler").update({ aktiv: aktiv }).eq("id", id).select("id");
+  const error = aenderungOk(_aend) ? null : (_aend.error || { message: "keine Berechtigung für diese Änderung" }); // 26.09.2026: 0 Zeilen = nicht gespeichert
     if(error){ fehler++; continue; }
     await protokolliere(aktiv ? "schueler_entsperrt" : "schueler_gesperrt", "schueler", id, s.name, "Sammelaktion");
     ok++;
@@ -7808,14 +8209,30 @@ async function createSchule(){
 async function toggleSchule(id){
   const s = allSchulen.find(function(x){ return x.id === id; });
   if(!s) return;
-  s.aktiv = !s.aktiv;
+  const neu = !s.aktiv;
 
   if(DEMO_MODE){
+    s.aktiv = neu;
     renderAdminSchulen();
     return;
   }
-  const { error } = await supa.from("academy_schulen").update({ aktiv: s.aktiv }).eq("id", id);
-  if(error){ showToast("Fehler: " + error.message); return; }
+  // 26.09.2026: Pausieren sperrt ALLE Schueler dieser Fahrschule sofort aus -> Rueckfrage.
+  if(!neu){
+    const betroffen = allSchueler.filter(function(x){ return x.schule_id === id && x.aktiv; }).length;
+    const ok = await blattBestaetigen({
+      titel: s.name + " pausieren?",
+      text: betroffen + " aktive Schüler dieser Fahrschule kommen danach nicht mehr in die App, bis du die Schule wieder aktivierst.",
+      okText: "Pausieren", gefaehrlich: true
+    });
+    if(!ok){ renderAdminSchulen(); return; }
+  }
+  const _aend = await supa.from("academy_schulen").update({ aktiv: neu }).eq("id", id).select("id");
+  const error = aenderungOk(_aend) ? null : (_aend.error || { message: "keine Berechtigung für diese Änderung" }); // 26.09.2026: 0 Zeilen = nicht gespeichert
+  // Anzeige erst nach bestaetigtem Speichern umstellen -- vorher zeigte der Schalter
+  // bei einem Fehler einen Stand, den die Datenbank gar nicht hatte.
+  if(error){ showToast("Fehler: " + error.message); renderAdminSchulen(); return; }
+  s.aktiv = neu;
+  await protokolliere(neu ? "schule_aktiviert" : "schule_pausiert", "schule", id, s.name, null);
   renderAdminSchulen();
 }
 
