@@ -20,25 +20,25 @@ const UI = {
     richtigIst: "Richtig ist", reihenfolge: "Die Reihenfolge", kein3d: "Dein Gerät kann die 3D-Darstellung leider nicht anzeigen. Die Erklärungen findest du unten.",
     worum: "Worum geht's?", merken: "Die Regel zum Merken", rf: "Richtig und falsch", zeit: "Zeitleiste", kapitel: "Kapitel", blick: "Blickwinkel", tageszeit: "Tageszeit wechseln", fassung: "Fassung",
     teaserTitel: "Weiter geht's mit dem Vollzugang", teaserText: "Das war die Kostprobe. Mit dem Vollzugang siehst du die ganze Szene mit allen Kapiteln und Fragen:", teaserKnopf: "Zugang anfragen", nochmal: "Kostprobe nochmal", gesperrt: "Mit Vollzugang", buehne: "Animierte 3D-Szene",
-    kapZurueck: "Zurück", kapWeiter: "Weiter", alleKap: "Alle Kapitel", ende: "Ende der Szene", aufbau: "Szene wird aufgebaut …" },
+    kapZurueck: "Zurück", kapWeiter: "Weiter", alleKap: "Alle Kapitel", ende: "Ende der Szene", aufbau: "Szene wird aufgebaut …", zurFrage: "Zur Frage" },
   en: { abspielen: "Play", anhalten: "Pause", uebersicht: "Overview", schraeg: "Follow", oben: "Top", fahrer: "Driver", tag: "Day", daemmerung: "Dusk", nacht: "Night",
     halb: "½ speed", vonVorn: "Restart", kamFolgt: "Camera follows the explanation", mitdenken: "Think along: scene pauses at questions", md: "Think along", aufl: "Show answer", weiter: "Continue",
     richtigIst: "Correct is", reihenfolge: "The order", kein3d: "Your device cannot show the 3D view. You'll find the explanations below.",
     worum: "What is it about?", merken: "Rules to remember", rf: "Right and wrong", zeit: "Timeline", kapitel: "Chapters", blick: "View", tageszeit: "Change time of day", fassung: "Version",
     teaserTitel: "Continue with full access", teaserText: "That was the preview. With full access you get the whole scene with all chapters and questions:", teaserKnopf: "Request access", nochmal: "Preview again", gesperrt: "Full access", buehne: "Animated 3D scene",
-    kapZurueck: "Back", kapWeiter: "Next", alleKap: "All chapters", ende: "End of scene", aufbau: "Building the scene …" },
+    kapZurueck: "Back", kapWeiter: "Next", alleKap: "All chapters", ende: "End of scene", aufbau: "Building the scene …", zurFrage: "To the question" },
   tr: { abspielen: "Oynat", anhalten: "Durdur", uebersicht: "Genel bakış", schraeg: "Takip", oben: "Üstten", fahrer: "Sürücü", tag: "Gündüz", daemmerung: "Alacakaranlık", nacht: "Gece",
     halb: "½ hız", vonVorn: "Baştan", kamFolgt: "Kamera açıklamayı takip eder", mitdenken: "Birlikte düşün: sahne sorularda durur", md: "Birlikte düşün", aufl: "Cevabı göster", weiter: "Devam",
     richtigIst: "Doğru cevap", reihenfolge: "Sıralama", kein3d: "Cihazın 3D görünümü gösteremiyor. Açıklamaları aşağıda bulabilirsin.",
     worum: "Konu ne?", merken: "Akılda tutulacak kurallar", rf: "Doğru ve yanlış", zeit: "Zaman çizelgesi", kapitel: "Bölümler", blick: "Bakış açısı", tageszeit: "Günün saatini değiştir", fassung: "Sürüm",
     teaserTitel: "Tam erişimle devam et", teaserText: "Bu bir tadımlıktı. Tam erişimle sahnenin tamamını tüm bölümler ve sorularla görürsün:", teaserKnopf: "Erişim iste", nochmal: "Tadımlığı tekrar izle", gesperrt: "Tam erişim", buehne: "Hareketli 3D sahne",
-    kapZurueck: "Geri", kapWeiter: "İleri", alleKap: "Tüm bölümler", ende: "Sahnenin sonu", aufbau: "Sahne hazırlanıyor …" },
+    kapZurueck: "Geri", kapWeiter: "İleri", alleKap: "Tüm bölümler", ende: "Sahnenin sonu", aufbau: "Sahne hazırlanıyor …", zurFrage: "Soruya git" },
   ar: { abspielen: "تشغيل", anhalten: "إيقاف مؤقت", uebersicht: "نظرة عامة", schraeg: "متابعة", oben: "من الأعلى", fahrer: "السائق", tag: "نهار", daemmerung: "غسق", nacht: "ليل",
     halb: "½ السرعة", vonVorn: "من البداية", kamFolgt: "الكاميرا تتبع الشرح", mitdenken: "فكّر معنا: يتوقف المشهد عند الأسئلة", md: "فكّر معنا", aufl: "أظهر الإجابة", weiter: "متابعة",
     richtigIst: "الإجابة الصحيحة", reihenfolge: "الترتيب", kein3d: "جهازك لا يستطيع عرض المشهد ثلاثي الأبعاد. تجد الشرح في الأسفل.",
     worum: "عمّ يدور الأمر؟", merken: "قواعد للحفظ", rf: "الصحيح والخطأ", zeit: "الخط الزمني", kapitel: "الفصول", blick: "زاوية الرؤية", tageszeit: "تغيير وقت اليوم", fassung: "النسخة",
     teaserTitel: "تابع مع الوصول الكامل", teaserText: "كان هذا عرضًا تجريبيًا. مع الوصول الكامل ترى المشهد كاملًا بكل الفصول والأسئلة:", teaserKnopf: "اطلب الوصول", nochmal: "شاهد العرض مرة أخرى", gesperrt: "وصول كامل", buehne: "مشهد متحرك ثلاثي الأبعاد",
-    kapZurueck: "رجوع", kapWeiter: "التالي", alleKap: "كل الفصول", ende: "نهاية المشهد", aufbau: "جارٍ تجهيز المشهد …" }
+    kapZurueck: "رجوع", kapWeiter: "التالي", alleKap: "كل الفصول", ende: "نهاية المشهد", aufbau: "جارٍ تجهيز المشهد …", zurFrage: "إلى السؤال" }
 };
 const BUCHST = ["A", "B", "C", "D"];
 
@@ -85,6 +85,8 @@ const CSS = `
 .vv .vv-teaser-karte h3{font-family:var(--ff-titel,'Playfair Display',Georgia,serif);font-size:20px;margin:0 0 6px;}
 .vv .vv-teaser-karte ul{margin:8px 0 12px;padding-inline-start:20px;font-size:14.5px;}
 .vv .vv-steuer{display:flex;align-items:center;gap:8px;margin:10px 0 0;}
+.vv .vv-zurfrage{flex:none;padding:0 14px 0 12px;}
+.vv .vv-zurfrage[hidden]{display:none;}
 .vv .vv-knopf{min-height:44px;min-width:44px;padding:0 14px;border-radius:999px;border:1px solid var(--vv-hair);background:var(--vv-surface);font-weight:700;font-size:14.5px;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;}
 .vv .vv-knopf.haupt{background:var(--vv-gruen);color:#fff;border-color:transparent;min-width:52px;}
 .vv .vv-knopf.gold{background:var(--vv-gold);color:#2B2A22;border-color:transparent;}
@@ -240,7 +242,8 @@ export function starte(el, daten, opt){
     '<div class="vv-kamreihe" role="group" aria-label="' + esc(U.blick) + '"></div>' +
     '<div class="vv-teaser" hidden></div>' +
     '<div class="vv-steuer"><button type="button" class="vv-knopf haupt" data-spielen aria-label="' + esc(U.abspielen) + '"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>' +
-      '<div class="vv-zl" role="slider" tabindex="0" aria-label="' + esc(U.zeit) + '" aria-valuemin="0"><div class="vv-zl-bahn"></div><div class="vv-zl-fuell"></div></div></div>' +
+      '<div class="vv-zl" role="slider" tabindex="0" aria-label="' + esc(U.zeit) + '" aria-valuemin="0"><div class="vv-zl-bahn"></div><div class="vv-zl-fuell"></div></div>' +
+      '<button type="button" class="vv-knopf gold vv-zurfrage" data-zurfrage hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4h2v12l5-5 1.4 1.4L12 19.8 4.6 12.4 6 11l5 5z"/></svg>' + esc(U.zurFrage) + "</button></div>" +
     '<section class="vv-karte vv-kk" aria-live="polite"><div class="vv-kk-kopf"><span class="vv-kk-nr"></span><h3 class="vv-kk-titel"></h3></div><p class="vv-kk-text"></p><span class="vv-regel vv-kk-regel"></span><div class="vv-kk-frage"></div>' +
       '<div class="vv-kk-nav"><button type="button" class="vv-knopf" data-kapzur>‹ ' + esc(U.kapZurueck) + '</button><button type="button" class="vv-knopf haupt-leicht" data-kapvor>' + esc(U.kapWeiter) + " ›</button></div></section>" +
     '<div class="vv-chips" role="group" aria-label="' + esc(U.kapitel) + '"></div>' +
@@ -248,7 +251,8 @@ export function starte(el, daten, opt){
     '<div class="vv-reihe"><button type="button" class="vv-knopf" data-halb aria-pressed="false">' + esc(U.halb) + '</button><button type="button" class="vv-knopf" data-vorn>' + esc(U.vonVorn) + '</button><button type="button" class="vv-knopf" data-autokam aria-pressed="true">' + esc(U.kamFolgt) + "</button></div>" +
     '<label class="vv-schalter"><input type="checkbox" data-md> ' + esc(U.mitdenken) + "</label>" +
     (mehrere && (T.rf || TD.rf) ? '<section class="vv-karte"><h3>' + esc(U.rf) + '</h3><p style="margin:0" class="vv-rf-text"></p><div class="vv-md-knoepfe"><button type="button" class="vv-knopf" data-rf></button></div></section>' : "") +
-    (merken ? '<section class="vv-karte vv-merken"><h3>' + esc(U.merken) + "</h3><ol>" + merken.map((m) => "<li><span>" + esc(m[0]) + '<span class="par">' + esc(m[1]) + "</span></span></li>").join("") + "</ol></section>" : "");
+    (merken ? '<section class="vv-karte vv-merken"><h3>' + esc(U.merken) + "</h3><ol>" + merken.map((m) => "<li><span>" + esc(m[0]) + '<span class="par">' + esc(m[1]) + "</span></span></li>").join("") + "</ol></section>" : "") +
+    '<div class="vv-platzhalter" aria-hidden="true"></div>';
   el.appendChild(wurzel);
   const $ = (s) => wurzel.querySelector(s);
   const $$ = (s) => Array.from(wurzel.querySelectorAll(s));
@@ -369,6 +373,7 @@ export function starte(el, daten, opt){
 
   function aktKapitel(t){ let n = -1; V.kapitel.forEach((k, i) => { if(t >= k.t - 1e-6) n = i; }); return n; }
   function kapitelZeigen(n){
+    kkVorher();
     st.kapitel = n; st.aufgeloest = false;
     const k = V.kapitel[Math.max(0, n)], tx = kapTxt(k.id);
     const gesamt = V.kapitel.length + (teaser && teaser.gesperrt ? teaser.gesperrt.length : 0);
@@ -383,10 +388,41 @@ export function starte(el, daten, opt){
     $("[data-kapvor]").disabled = letztes && !teaser;
     $$(".vv-chip").forEach((m, i) => {
       m.classList.toggle("aktiv", i === n);
-      if(i === n && st.laeuft) chipMitte(m);
+      if(i === n) chipMitte(m);
     });
     frageZeigen(tx.frage, false);
     if(st.autoKam && k.kamera) kameraSetzen(k.kamera, false);
+    kkNachher();
+  }
+
+  // Die Kapitelkarte ist mit Frage viel höher als ohne. Schrumpfte sie, wurde die Seite
+  // kürzer und der Browser schob alles nach unten (Bild sprang). Ein unsichtbarer Platzhalter
+  // am Ende gleicht das aus: die Seite wird während einer Szene nie kürzer.
+  let kkMax = 0, kkBreite = 0;
+  function kkVorher(){
+    // vorübergehend großzügig, damit auch die Zwischen-Messung nichts kürzt
+    $(".vv-platzhalter").style.height = (kkMax + $(".vv-kk").offsetHeight) + "px";
+  }
+  function kkNachher(){
+    const b = wurzel.clientWidth, h = $(".vv-kk").offsetHeight;
+    if(b !== kkBreite){ kkBreite = b; kkMax = 0; }
+    if(h > kkMax) kkMax = h;
+    $(".vv-platzhalter").style.height = (kkMax - h) + "px";
+    frageKnopf();
+  }
+
+  // Hält die Szene bei einer Frage an und die Frage ist nicht ganz zu sehen
+  // (Handy: unter dem Bild, Antworten hinter der Fußleiste), erscheint neben der Zeitleiste "Zur Frage ↓".
+  // Gescrollt wird nur auf Fingertipp, nie von selbst.
+  let frageImBlick = true;
+  function frageKnopf(){
+    const k = $("[data-zurfrage]"); if(!k) return;
+    k.hidden = !(st.wartet && !frageImBlick && $(".vv-md"));
+  }
+  function bildZeigen(){
+    // nach "Weiter" in der Frage: Bild zurück in den Blick, falls es oben herausgerollt ist
+    const r = $(".vv-buehne").getBoundingClientRect();
+    if(r.top < 0 || r.bottom > window.innerHeight) try{ $(".vv-buehne").scrollIntoView({ block: "nearest", behavior: ruhig ? "auto" : "smooth" }); }catch(e){}
   }
 
   // Nur den Chip-Streifen waagerecht verschieben – scrollIntoView würde auch die
@@ -401,6 +437,10 @@ export function starte(el, daten, opt){
 
   // Mitdenken ohne Bewertung: keine Antwortknöpfe, kein Rot/Grün, nichts gespeichert
   function frageZeigen(fr, aufgeloest){
+    kkVorher();
+    try{ frageBauen(fr, aufgeloest); } finally { kkNachher(); }
+  }
+  function frageBauen(fr, aufgeloest){
     const box = $(".vv-kk-frage");
     if(!fr){ box.innerHTML = ""; return; }
     let liste = "";
@@ -414,7 +454,7 @@ export function starte(el, daten, opt){
       '<div class="vv-md-knoepfe">' + (aufgeloest ? "" : '<button type="button" class="vv-knopf" data-aufl>' + esc(U.aufl) + "</button>") +
       (st.wartet ? '<button type="button" class="vv-knopf haupt" data-weiter style="padding:0 18px">' + esc(U.weiter) + "</button>" : "") + "</div></div>";
     const a = box.querySelector("[data-aufl]"); if(a) a.addEventListener("click", () => { st.aufgeloest = true; frageZeigen(fr, true); });
-    const w = box.querySelector("[data-weiter]"); if(w) w.addEventListener("click", () => { st.wartet = false; frageZeigen(fr, st.aufgeloest); spielen(true); });
+    const w = box.querySelector("[data-weiter]"); if(w) w.addEventListener("click", () => { st.wartet = false; frageZeigen(fr, st.aufgeloest); spielen(true); bildZeigen(); });
   }
 
   function kameraSetzen(art, vonHand){
@@ -429,7 +469,7 @@ export function starte(el, daten, opt){
 
   function springe(t, sofort){
     st.t = Math.max(0, Math.min(V.dauer, t));
-    st.wartet = false;
+    st.wartet = false; frageKnopf();
     teaserWeg();
     const n = aktKapitel(st.t);
     if(n !== st.kapitel || sofort) kapitelZeigen(n);
@@ -440,6 +480,8 @@ export function starte(el, daten, opt){
 
   function spielen(an){
     st.laeuft = an;
+    if(an) st.wartet = false;
+    frageKnopf();
     if(an && st.t >= V.dauer - 0.05) springe(0, true);
     if(an) teaserWeg();
     const k = $("[data-spielen]");
@@ -524,6 +566,12 @@ export function starte(el, daten, opt){
 
   // Bedienung
   $("[data-spielen]").addEventListener("click", () => { st.wartet = false; spielen(!st.laeuft); });
+  $("[data-zurfrage]").addEventListener("click", () => {
+    const f = $(".vv-md"); if(f) try{ f.scrollIntoView({ block: "center", behavior: ruhig ? "auto" : "smooth" }); }catch(e){}
+  });
+  // unten 90 px abziehen: dort liegt am Handy die feste Fußleiste
+  const frageIo = window.IntersectionObserver ? new IntersectionObserver((e) => { frageImBlick = e[e.length - 1].intersectionRatio > 0.97; frageKnopf(); }, { rootMargin: "0px 0px -90px 0px", threshold: [0, 0.5, 0.97, 1] }) : null;
+  if(frageIo) frageIo.observe($(".vv-kk-frage"));
   $("[data-kapzur]").addEventListener("click", () => { const n = Math.max(0, aktKapitel(st.t)); const ziel = st.t > V.kapitel[n].t + 1.5 ? n : Math.max(0, n - 1); spielen(false); springe(V.kapitel[ziel].t + 0.01, true); });
   $("[data-kapvor]").addEventListener("click", () => {
     const n = Math.max(0, aktKapitel(st.t));
@@ -573,7 +621,7 @@ export function starte(el, daten, opt){
     springe, spielen, variante, kameraSetzen, welt: () => welt,
     zerstoeren(){
       st.aus = true; cancelAnimationFrame(raf);
-      if(ro) ro.disconnect(); if(io) io.disconnect();
+      if(ro) ro.disconnect(); if(io) io.disconnect(); if(frageIo) frageIo.disconnect();
       if(welt){
         try{
           welt.leereFahrzeuge(); if(welt.strasse){ welt.szene.remove(welt.strasse); welt.freigeben(welt.strasse); welt.strasse = null; }
