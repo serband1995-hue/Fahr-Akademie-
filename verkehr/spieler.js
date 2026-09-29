@@ -38,7 +38,8 @@ const UI = {
     richtigIst: "الإجابة الصحيحة", reihenfolge: "الترتيب", kein3d: "جهازك لا يستطيع عرض المشهد ثلاثي الأبعاد. تجد الشرح في الأسفل.",
     worum: "عمّ يدور الأمر؟", merken: "قواعد للحفظ", rf: "الصحيح والخطأ", zeit: "الخط الزمني", kapitel: "الفصول", blick: "زاوية الرؤية", tageszeit: "تغيير وقت اليوم", fassung: "النسخة",
     teaserTitel: "تابع مع الوصول الكامل", teaserText: "كان هذا عرضًا تجريبيًا. مع الوصول الكامل ترى المشهد كاملًا بكل الفصول والأسئلة:", teaserKnopf: "اطلب الوصول", nochmal: "شاهد العرض مرة أخرى", gesperrt: "وصول كامل", buehne: "مشهد متحرك ثلاثي الأبعاد",
-    kapZurueck: "رجوع", kapWeiter: "التالي", alleKap: "كل الفصول", ende: "نهاية المشهد", aufbau: "جارٍ تجهيز المشهد …", zurFrage: "إلى السؤال" }
+    kapZurueck: "رجوع", kapWeiter: "التالي", alleKap: "كل الفصول", ende: "نهاية المشهد", aufbau: "جارٍ تجهيز المشهد …", zurFrage: "إلى السؤال" },
+  es: {"abspielen":"Reproducir","anhalten":"Pausa","uebersicht":"Vista general","schraeg":"Seguir","oben":"Arriba","fahrer":"Conductor","tag":"Día","daemmerung":"Anochecer","nacht":"Noche","halb":"½ velocidad","vonVorn":"Desde el inicio","kamFolgt":"La cámara sigue la explicación","mitdenken":"Piensa conmigo: la escena se detiene en las preguntas","md":"Piensa conmigo","aufl":"Ver solución","weiter":"Seguir","richtigIst":"Lo correcto es","reihenfolge":"El orden","kein3d":"Tu dispositivo no puede mostrar la vista 3D. Encontrarás las explicaciones abajo.","worum":"¿De qué se trata?","merken":"La regla para recordar","rf":"Correcto e incorrecto","zeit":"Línea de tiempo","kapitel":"Capítulos","blick":"Punto de vista","tageszeit":"Cambiar hora del día","fassung":"Versión","teaserTitel":"Continúa con el acceso completo","teaserText":"Esa era la muestra. Con el acceso completo ves la escena entera con todos los capítulos y preguntas:","teaserKnopf":"Solicitar acceso","nochmal":"Ver muestra otra vez","gesperrt":"Con acceso completo","buehne":"Escena 3D animada","kapZurueck":"Atrás","kapWeiter":"Siguiente","alleKap":"Todos los capítulos","ende":"Fin de la escena","aufbau":"Preparando la escena …","zurFrage":"Ir a la pregunta"}
 };
 const BUCHST = ["A", "B", "C", "D"];
 
@@ -116,7 +117,7 @@ const CSS = `
 .vv .vv-kk{border-inline-start:4px solid var(--vv-gruen-hell);}
 .vv .vv-kk.falsch{border-inline-start-color:var(--vv-warn);}
 .vv .vv-kk-kopf{display:flex;align-items:baseline;gap:8px;}
-.vv .vv-kk-nr{font-size:13.5px;font-weight:700;color:var(--vv-faint);}
+.vv .vv-kk-nr{font-size:13.5px;font-weight:700;color:var(--vv-faint);white-space:nowrap;flex:none;}
 .vv .vv-kk h3{margin:0;font-size:20px;}
 .vv .vv-kk p{margin:6px 0 0;}
 .vv .vv-md{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--vv-bg);border:1px solid var(--vv-hair);}

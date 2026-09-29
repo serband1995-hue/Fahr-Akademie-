@@ -1669,7 +1669,7 @@ async function gesperrtesVideoAngetippt(videoId, stufe, el){
   const weiter = await blattBestaetigen({
     titel: v ? v.titel : t("versiegelt"),
     text: t("gesperrtVollzugang") + ". " + t("siegelSatz"),
-    okText: t("zugangAnfragen")
+    okText: t("zugangAnfragen"), abbruchText: t("abbrechen")
   });
   // 26.09.2026: Die Anfrage bekommt KEINE Video-Zeile mehr als "Knopf" -- sonst wurde der
   // Zeileninhalt durch "Anfrage gesendet" ersetzt und die Zeile war zerstoert.
@@ -1975,7 +1975,8 @@ const SPRACHEN = [
   { code:"de", name:"Deutsch" },
   { code:"tr", name:"Türkçe" },
   { code:"en", name:"English" },
-  { code:"ar", name:"العربية", rtl:true }
+  { code:"ar", name:"العربية", rtl:true },
+  { code:"es", name:"Español" }
 ];
 
 const I18N = {
@@ -2177,7 +2178,8 @@ const I18N = {
     weiterBei:"متابعة من الدقيقة {m}",
     zugang:"الوصول",
     zugangAnfragen:"طلب الوصول"
-  }
+  },
+  es:{}   // Texte weiter unten per Object.assign(I18N.es, …); fehlende Schlüssel fallen auf Deutsch zurück
 };
 
 // ---- Punkt 5 (15.09.2026): Login-Rest, Registrierung, PIN-Seite, Rechtshinweis ----
@@ -2555,6 +2557,805 @@ Object.assign(I18N.en, { vorschauHinweis:"Preview: the first {n} seconds", vorsc
   weiterBei:"Continue at {zeit}", kapitelTitel:"Chapters", fehlerTitel:"This is where it went wrong", fehlerNormal:"Failing is part of it — these moments teach you the most." });
 Object.assign(I18N.ar, { vorschauHinweis:"معاينة: أول {n} ثانية", vorschauEnde:"انتهت المعاينة. الفيديو كاملًا متاح مع الوصول الكامل.",
   weiterBei:"تابع من {zeit}", kapitelTitel:"الفصول", fehlerTitel:"هنا حدث الخطأ", fehlerNormal:"الرسوب جزء من الطريق — من هذه اللحظات تتعلم أكثر." });
+
+/* 29.09.2026: Alles, was Schüler sehen, in allen Sprachen. Diese Texte standen vorher
+   fest auf Deutsch im Code (Hilfe, Über, Nützliches, Zugang anfragen, Freunde einladen …).
+   Die Rechtstexte selbst bleiben deutsch (nur die deutsche Fassung ist verbindlich).
+   **fett** ist nur in ueber1–3 erlaubt (tFett). */
+Object.assign(I18N.de, {
+  bereichLeer:"Dieser Bereich ist noch leer.", fBestanden:"Bestanden", fNichtBestanden:"Nicht bestanden",
+  bereichKeineVideos:"Noch keine Videos in diesem Bereich.", verlaufLeer:"Noch nichts angesehen — starte in der Übersicht!",
+  streckenLeer:"Noch keine Prüfungsstrecken hinterlegt.", videoAnzahl1:"1 Video", videoAnzahl:"{n} Videos",
+  werbeTitel:"Freunde einladen", werbeText:"Kennst du jemanden, der auch bald Prüfung hat? Gib deinen Code weiter — ihr bekommt beide einen Rabatt.",
+  werbeKnopf:"Meinen Code anzeigen", werbeTeilen:"Link teilen",
+  werbeNachricht:"Ich lerne meine Prüfungsstrecken mit der Fahr-Akademie — die echten Strecken, die der Prüfer fährt. Mit meinem Code bekommst du Rabatt: {link}",
+  textKopiert:"Text kopiert — jetzt einfügen", textZumKopieren:"Text zum Kopieren", abbrechen:"Abbrechen", allesKlar:"Alles klar",
+  moment:"Moment …", nichtGeklappt:"Das hat nicht geklappt. Bitte nochmal versuchen.", keinInternet:"Keine Verbindung — bitte Internet prüfen.",
+  neuAnmelden:"Bitte neu anmelden",
+  dashSub:"Alle Bereiche auf einen Blick — antippen öffnet den Bereich.", dashLeer:"Noch keine Bereiche verfügbar.",
+  nuetzSub:"Kurz erklärt und zum Nachlesen — inklusive der Gesetzestexte als PDF.", nuetzLeer:"Für diesen Filter noch keine Themen hinterlegt.",
+  nuetzPdfs:"Gesetzestexte zum Herunterladen", nuetzMehr:"Weitere Themen kommen laufend dazu.", pdfOeffnen:"PDF öffnen",
+  hilfeF1:"Frage zu einem Video oder deinem Zugang?", hilfeA1:"Wende dich direkt an deine Fahrschule bzw. deinen Fahrlehrer — dort wurde dein Zugang eingerichtet.",
+  hilfeF2:"PIN vergessen?", hilfeA2:"Deine Fahrschule kann dir die PIN erneut zuschicken.",
+  hilfeF3:"Video lädt nicht?", hilfeA3:"Prüf deine Internetverbindung — die Videos werden nicht heruntergeladen, sondern gestreamt.",
+  ueber1:"Fahr-Akademie ist eine **Ergänzung zur amtlichen Fahrausbildung** — kein Ersatz für den Unterricht bei deiner Fahrschule.",
+  ueber2:"Deine Daten (Name, Telefonnummer, Fortschritt) werden ausschließlich auf Servern in Deutschland gespeichert (Frankfurt am Main).",
+  ueber3:"Bitte gib deine PIN nicht weiter — dein Zugang ist persönlich auf dich ausgestellt.",
+  zugestimmtAm:"Zugestimmt am {datum}", rechtSub:"Alle rechtlichen Informationen zur Fahr-Akademie.",
+  rechtNurDeutsch:"Die Rechtstexte gibt es nur auf Deutsch — verbindlich ist die deutsche Fassung.",
+  rImpressum:"Impressum", rImpressumSub:"Anbieterkennzeichnung nach § 5 DDG",
+  rDatenschutz:"Datenschutzerklärung", rDatenschutzSub:"Welche Daten wir speichern und warum",
+  rAgb:"Allgemeine Geschäftsbedingungen", rAgbSub:"Nutzungsbedingungen der Fahr-Akademie",
+  rWiderruf:"Widerrufsbelehrung", rWiderrufSub:"Dein Widerrufsrecht bei Vertragsschluss",
+  drawerFuss:"Fahr-Akademie — Ergänzung zur amtlichen Fahrausbildung",
+  anfrageSendet:"Wird gesendet …", anfrageLaeuft:"Anfrage läuft schon",
+  anfrageLaeuftText:"Deine Anfrage ist schon unterwegs — melde dich gern nochmal bei deinem Fahrlehrer.",
+  anfrageGesendet:"Anfrage gesendet", anfrageDanke:"Danke! Deine Anfrage ist raus.",
+  anfrageSchritte:"So geht es weiter:\n\n1. Dein Fahrlehrer meldet sich mit den Zahlungsinfos\n2. Nach Zahlung wird dein Zugang freigeschaltet\n3. Alle Bereiche sind dann sofort offen — ohne neu anzumelden",
+  schonVoll:"Du hast bereits den vollen Zugang.", videoLaedt:"Video wird geladen …",
+  adminLink:"Admin-Bereich"
+});
+Object.assign(I18N.tr, { adminLink:"Yönetici girişi" });
+Object.assign(I18N.en, { adminLink:"Admin area" });
+Object.assign(I18N.ar, { adminLink:"منطقة الإدارة" });
+Object.assign(I18N.es, { adminLink:"Área de administración" });
+/* 29.09.2026: Übersetzungen der neuen Texte (TR/EN/AR) und Spanisch komplett. */
+Object.assign(I18N.tr, {
+  bereichLeer:"Bu bölüm henüz boş.",
+  fBestanden:"Geçti",
+  fNichtBestanden:"Geçemedi",
+  bereichKeineVideos:"Bu bölümde henüz video yok.",
+  verlaufLeer:"Henüz hiçbir şey izlemedin — Genel bakış bölümünden başla!",
+  streckenLeer:"Henüz sınav güzergâhı eklenmedi.",
+  videoAnzahl1:"1 video",
+  videoAnzahl:"{n} video",
+  werbeTitel:"Arkadaşlarını davet et",
+  werbeText:"Yakında sınava girecek birini tanıyor musun? Kodunu paylaş — ikiniz de indirim kazanırsınız.",
+  werbeKnopf:"Kodumu göster",
+  werbeTeilen:"Bağlantıyı paylaş",
+  werbeNachricht:"Sınav güzergâhlarımı Fahr-Akademie ile çalışıyorum — sınav görevlisinin gerçekten kullandığı güzergâhlar. Benim kodumla indirim alırsın: {link}",
+  textKopiert:"Metin kopyalandı — şimdi yapıştır",
+  textZumKopieren:"Kopyalanacak metin",
+  abbrechen:"İptal",
+  allesKlar:"Tamam",
+  moment:"Bir saniye …",
+  nichtGeklappt:"Bu olmadı. Lütfen tekrar dene.",
+  keinInternet:"Bağlantı yok — lütfen internetini kontrol et.",
+  neuAnmelden:"Lütfen tekrar giriş yap",
+  dashSub:"Tüm bölümler bir bakışta — açmak için dokun.",
+  dashLeer:"Henüz kullanılabilir bölüm yok.",
+  nuetzSub:"Kısaca açıklandı, sonra okumak için — kanun metinleri de PDF olarak.",
+  nuetzLeer:"Bu filtre için henüz konu yok.",
+  nuetzPdfs:"İndirilebilir kanun metinleri (Almanca)",
+  nuetzMehr:"Sürekli yeni konular ekleniyor.",
+  pdfOeffnen:"PDF'i aç",
+  hilfeF1:"Bir video ya da erişimin hakkında sorun mu var?",
+  hilfeA1:"Doğrudan sürücü kursuna ya da direksiyon hocana başvur — erişimin orada oluşturuldu.",
+  hilfeF2:"PIN'ini mi unuttun?",
+  hilfeA2:"Sürücü kursun PIN'ini sana tekrar gönderebilir.",
+  hilfeF3:"Video yüklenmiyor mu?",
+  hilfeA3:"İnternet bağlantını kontrol et — videolar indirilmez, canlı akışla oynatılır.",
+  ueber1:"Fahr-Akademie **resmi sürücü eğitimine bir ektir** — sürücü kursundaki derslerin yerini tutmaz.",
+  ueber2:"Verilerin (ad, telefon numarası, ilerleme) yalnızca Almanya'daki sunucularda saklanır (Frankfurt am Main).",
+  ueber3:"Lütfen PIN'ini kimseyle paylaşma — erişimin kişisel olarak sana verildi.",
+  zugestimmtAm:"Onay tarihi: {datum}",
+  rechtSub:"Fahr-Akademie ile ilgili tüm yasal bilgiler.",
+  rechtNurDeutsch:"Yasal metinler yalnızca Almanca mevcuttur — bağlayıcı olan Almanca metindir.",
+  rImpressum:"Künye (Impressum)",
+  rImpressumSub:"§ 5 DDG uyarınca hizmet sağlayıcı bilgileri",
+  rDatenschutz:"Gizlilik politikası",
+  rDatenschutzSub:"Hangi verileri neden saklıyoruz",
+  rAgb:"Genel Hüküm ve Koşullar",
+  rAgbSub:"Fahr-Akademie kullanım koşulları",
+  rWiderruf:"Cayma hakkı bilgilendirmesi",
+  rWiderrufSub:"Sözleşme yaparken cayma hakkın",
+  drawerFuss:"Fahr-Akademie — resmi sürücü eğitimine ek",
+  anfrageSendet:"Gönderiliyor …",
+  anfrageLaeuft:"Talebin zaten işlemde",
+  anfrageLaeuftText:"Talebin zaten yolda — istersen direksiyon hocana tekrar ulaş.",
+  anfrageGesendet:"Talep gönderildi",
+  anfrageDanke:"Teşekkürler! Talebin gönderildi.",
+  anfrageSchritte:"Sonraki adımlar:\n\n1. Direksiyon hocan ödeme bilgileriyle sana ulaşır\n2. Ödemeden sonra erişimin açılır\n3. Tüm bölümler hemen açık olur — tekrar giriş yapmadan",
+  schonVoll:"Zaten tam erişimin var.",
+  videoLaedt:"Video yükleniyor …"
+});
+Object.assign(I18N.en, {
+  bereichLeer:"This area is still empty.",
+  fBestanden:"Passed",
+  fNichtBestanden:"Not passed",
+  bereichKeineVideos:"No videos in this area yet.",
+  verlaufLeer:"Nothing watched yet — start with the overview!",
+  streckenLeer:"No exam routes added yet.",
+  videoAnzahl1:"1 video",
+  videoAnzahl:"{n} videos",
+  werbeTitel:"Invite friends",
+  werbeText:"Know someone who has their test coming up soon? Share your code — you both get a discount.",
+  werbeKnopf:"Show my code",
+  werbeTeilen:"Share link",
+  werbeNachricht:"I'm learning my exam routes with Fahr-Akademie — the real routes the examiner drives. With my code you get a discount: {link}",
+  textKopiert:"Text copied — now paste it",
+  textZumKopieren:"Text to copy",
+  abbrechen:"Cancel",
+  allesKlar:"Got it",
+  moment:"One moment …",
+  nichtGeklappt:"That didn't work. Please try again.",
+  keinInternet:"No connection — please check your internet.",
+  neuAnmelden:"Please sign in again",
+  dashSub:"All areas at a glance — tap to open an area.",
+  dashLeer:"No areas available yet.",
+  nuetzSub:"Briefly explained and for reference — including the legal texts as PDF.",
+  nuetzLeer:"No topics for this filter yet.",
+  nuetzPdfs:"Legal texts to download (in German)",
+  nuetzMehr:"More topics are added all the time.",
+  pdfOeffnen:"Open PDF",
+  hilfeF1:"Question about a video or your access?",
+  hilfeA1:"Contact your driving school or driving instructor directly — that's where your access was set up.",
+  hilfeF2:"Forgot your PIN?",
+  hilfeA2:"Your driving school can send you your PIN again.",
+  hilfeF3:"Video not loading?",
+  hilfeA3:"Check your internet connection — the videos aren't downloaded, they're streamed.",
+  ueber1:"Fahr-Akademie is a **supplement to official driver training** — not a replacement for lessons at your driving school.",
+  ueber2:"Your data (name, phone number, progress) is stored exclusively on servers in Germany (Frankfurt am Main).",
+  ueber3:"Please don't share your PIN — your access is issued to you personally.",
+  zugestimmtAm:"Agreed on {datum}",
+  rechtSub:"All legal information about Fahr-Akademie.",
+  rechtNurDeutsch:"The legal texts are only available in German — the German version is binding.",
+  rImpressum:"Legal notice (Impressum)",
+  rImpressumSub:"Provider identification under § 5 DDG",
+  rDatenschutz:"Privacy policy",
+  rDatenschutzSub:"What data we store and why",
+  rAgb:"Terms and conditions",
+  rAgbSub:"Terms of use of Fahr-Akademie",
+  rWiderruf:"Cancellation policy",
+  rWiderrufSub:"Your right of withdrawal when you sign a contract",
+  drawerFuss:"Fahr-Akademie — supplement to official driver training",
+  anfrageSendet:"Sending …",
+  anfrageLaeuft:"Request already in progress",
+  anfrageLaeuftText:"Your request is already on its way — feel free to contact your driving instructor again.",
+  anfrageGesendet:"Request sent",
+  anfrageDanke:"Thanks! Your request has been sent.",
+  anfrageSchritte:"What happens next:\n\n1. Your driving instructor gets in touch with the payment details\n2. After payment, your access is unlocked\n3. All areas are then open right away — without signing in again",
+  schonVoll:"You already have full access.",
+  videoLaedt:"Loading video …"
+});
+Object.assign(I18N.ar, {
+  bereichLeer:"هذا القسم ما زال فارغًا.",
+  fBestanden:"ناجح",
+  fNichtBestanden:"غير ناجح",
+  bereichKeineVideos:"لا توجد فيديوهات في هذا القسم بعد.",
+  verlaufLeer:"لم تشاهد شيئًا بعد — ابدأ من «نظرة عامة»!",
+  streckenLeer:"لم تُضَف مسارات امتحان بعد.",
+  videoAnzahl1:"فيديو واحد",
+  videoAnzahl:"{n} فيديوهات",
+  werbeTitel:"ادعُ أصدقاءك",
+  werbeText:"هل تعرف شخصًا سيقدّم الامتحان قريبًا أيضًا؟ شارك رمزك — وستحصلان كلاكما على خصم.",
+  werbeKnopf:"اعرض رمزي",
+  werbeTeilen:"شارك الرابط",
+  werbeNachricht:"أتعلّم مسارات امتحاني مع Fahr-Akademie — المسارات الحقيقية التي يسلكها الممتحن. برمزي تحصل على خصم: {link}",
+  textKopiert:"تم نسخ النص — الصقه الآن",
+  textZumKopieren:"نص للنسخ",
+  abbrechen:"إلغاء",
+  allesKlar:"حسنًا",
+  moment:"لحظة …",
+  nichtGeklappt:"لم ينجح ذلك. يُرجى المحاولة مرة أخرى.",
+  keinInternet:"لا يوجد اتصال — يُرجى التحقق من الإنترنت.",
+  neuAnmelden:"يُرجى تسجيل الدخول من جديد",
+  dashSub:"كل الأقسام في لمحة — اضغط لفتح القسم.",
+  dashLeer:"لا توجد أقسام متاحة بعد.",
+  nuetzSub:"شرح موجز وللرجوع إليه — مع النصوص القانونية بصيغة PDF.",
+  nuetzLeer:"لا توجد مواضيع لهذا الفلتر بعد.",
+  nuetzPdfs:"نصوص قانونية للتنزيل (بالألمانية)",
+  nuetzMehr:"تُضاف مواضيع جديدة باستمرار.",
+  pdfOeffnen:"افتح PDF",
+  hilfeF1:"سؤال عن فيديو أو عن حسابك؟",
+  hilfeA1:"تواصل مباشرة مع مدرسة القيادة أو مدرّب القيادة — فهناك تم إنشاء حسابك.",
+  hilfeF2:"نسيت رمز PIN؟",
+  hilfeA2:"يمكن لمدرسة القيادة أن ترسل لك رمز PIN مرة أخرى.",
+  hilfeF3:"الفيديو لا يعمل؟",
+  hilfeA3:"تحقّق من اتصالك بالإنترنت — الفيديوهات لا تُنزَّل، بل تُبثّ مباشرة.",
+  ueber1:"Fahr-Akademie **مكمّلة لتعليم القيادة الرسمي** — وليست بديلًا عن الدروس في مدرسة القيادة.",
+  ueber2:"تُحفظ بياناتك (الاسم، رقم الهاتف، التقدّم) حصرًا على خوادم في ألمانيا (Frankfurt am Main).",
+  ueber3:"يُرجى عدم إعطاء رمز PIN لأحد — حسابك صادر لك شخصيًا.",
+  zugestimmtAm:"تمت الموافقة في {datum}",
+  rechtSub:"كل المعلومات القانونية عن Fahr-Akademie.",
+  rechtNurDeutsch:"النصوص القانونية متوفرة بالألمانية فقط — والنسخة الألمانية هي الملزِمة.",
+  rImpressum:"بيانات الناشر (Impressum)",
+  rImpressumSub:"تعريف مقدّم الخدمة وفق § 5 DDG",
+  rDatenschutz:"سياسة الخصوصية",
+  rDatenschutzSub:"ما البيانات التي نحفظها ولماذا",
+  rAgb:"الشروط والأحكام العامة",
+  rAgbSub:"شروط استخدام Fahr-Akademie",
+  rWiderruf:"معلومات حق الانسحاب",
+  rWiderrufSub:"حقك في الانسحاب عند إبرام العقد",
+  drawerFuss:"Fahr-Akademie — مكمّلة لتعليم القيادة الرسمي",
+  anfrageSendet:"جارٍ الإرسال …",
+  anfrageLaeuft:"الطلب قيد المعالجة",
+  anfrageLaeuftText:"طلبك في الطريق بالفعل — يمكنك التواصل مع مدرّب القيادة مرة أخرى.",
+  anfrageGesendet:"تم إرسال الطلب",
+  anfrageDanke:"شكرًا! تم إرسال طلبك.",
+  anfrageSchritte:"الخطوات التالية:\n\n1. سيتواصل معك مدرّب القيادة بمعلومات الدفع\n2. بعد الدفع يُفعَّل حسابك\n3. تُفتح كل الأقسام فورًا — دون تسجيل دخول جديد",
+  schonVoll:"لديك الوصول الكامل بالفعل.",
+  videoLaedt:"جارٍ تحميل الفيديو …"
+});
+Object.assign(I18N.es, {
+  start:"Inicio",
+  lernpfad:"Resumen",
+  pruefung:"Examinadores",
+  verlauf:"Vistos",
+  konto:"Cuenta",
+  willkommen:"Hola de nuevo",
+  weiterSchauen:"SEGUIR VIENDO",
+  alsNaechstes:"A continuación",
+  deineBereiche:"Tus áreas",
+  videosGesehen:"de {gesamt} vídeos vistos",
+  allesGesehen:"Lo has visto todo — ¡genial!",
+  allesGesehenSub:"Échale otro vistazo a las rutas de examen cuando quieras.",
+  empfohlen:"RECOMENDADO PARA TI",
+  empfohlenSub:"Tu próximo tema — toca para abrirlo",
+  deinePruefung:"Tu examen",
+  heute:"hoy",
+  morgen:"mañana",
+  inTagen:"en {n} días",
+  deinZugang:"Tu acceso",
+  name:"Nombre",
+  gueltigBis:"Acceso válido hasta",
+  abmelden:"Cerrar sesión",
+  sprache:"Idioma",
+  spracheHinweis:"Los vídeos y los nombres de los temas siguen en alemán.",
+  zurueck:"Atrás",
+  zumStart:"Inicio",
+  laedt:"Cargando …",
+  gesperrtKlasse:"Solo clase {klasse} — pide a tu autoescuela que la desbloquee",
+  gesperrtVollzugang:"Incluido en el acceso completo",
+  vollzugangBanner:"{anzahl} vídeos sobre {bereich} te esperan. Habla con tu autoescuela para desbloquear el acceso completo.",
+  telefon:"Número de teléfono",
+  pin:"PIN",
+  anmelden:"Iniciar sesión",
+  loginFehler:"Número de teléfono o PIN incorrecto",
+  keineVerbindung:"Sin conexión — inténtalo de nuevo en un momento",
+  abgehakt:"Marcado",
+  abhaken:"Marcar como hecho",
+  abschnitte:"Secciones",
+  anfrageUnterwegs:"Solicitud enviada",
+  bereichVon:"ÁREA {n} DE {g}",
+  danach:"Después",
+  deinPin:"Tu PIN",
+  deinVerlauf:"Tu historial",
+  dieStrecke:"La ruta",
+  duBistHier:"Estás aquí",
+  einOffen:"queda un vídeo pendiente",
+  freierBereich:"Área gratuita",
+  hier:"aquí",
+  keinKauf:"No hay compras en la app. Tu profesor de autoescuela te da acceso.",
+  kopieren:"Copiar",
+  kopiert:"Copiado",
+  nichtsAbgehakt:"Aún no has marcado nada",
+  noch:"quedan",
+  nurDu:"Solo tú ves esto. Tú mismo lo marcas — nadie te evalúa.",
+  offenFuerAlle:"abierto para todos",
+  offenOhne:"abierto sin desbloquear",
+  pinAnzeigen:"Mostrar PIN",
+  pinEingabe:"Introduce tu PIN de cuatro cifras.",
+  pinWarnung:"Es la única forma de volver a entrar en la app. Hazle una foto ahora.",
+  quittung:"Has visto {g} de {a}.",
+  siegelSatz:"Esta área está bloqueada. Tu profesor de autoescuela te la abre — normalmente el mismo día.",
+  strecke:"Ruta",
+  versiegelt:"bloqueado",
+  videos:"Vídeos",
+  vollzugang:"Acceso completo",
+  weiter:"Seguir",
+  weiterBei:"Seguir en {zeit}",
+  zugang:"Acceso",
+  zugangAnfragen:"Solicitar acceso",
+  tagline:"Tu camino al examen",
+  pinVerbergen:"Ocultar PIN",
+  nochKeinZugang:"¿Aún no tienes acceso?",
+  startzugangSichern:"Conseguir acceso inicial",
+  startzugangVorteile:"✓ Vehículo y técnica completo ✓ 1 ruta de examen para probar",
+  regTitel:"Tu acceso inicial",
+  regTagline:"Listo en 30 segundos",
+  regName:"Tu nombre",
+  regNamePh:"Nombre y apellidos",
+  regTel:"Número de móvil",
+  regTelHinweis:"Con él iniciarás sesión más adelante.",
+  regMail:"Correo electrónico",
+  regMailHinweis:"Te enviaremos tu PIN a esta dirección.",
+  regKlasse:"Clase de permiso",
+  klB:"B (coche)",
+  klBE:"BE (coche con remolque)",
+  klA:"A (moto)",
+  klAM:"AM (ciclomotor)",
+  klC:"C (camión)",
+  klCE:"CE (camión con remolque)",
+  regCode:"Código de recomendación detectado:",
+  regBtn:"Crear acceso inicial",
+  regLaeuft:"Creando …",
+  regRecht:"Al crearlo aceptas las condiciones de uso. La Fahr-Akademie es un recurso de aprendizaje complementario y no sustituye la formación en la autoescuela. ¿Tienes menos de 18 años? Entonces necesitas el permiso de tus padres.",
+  regSchonZugang:"Ya tengo acceso",
+  regErrName:"Introduce tu nombre.",
+  regErrTel:"Introduce tu número de móvil.",
+  regErrMail:"El correo electrónico no parece correcto.",
+  regErrAllg:"No ha funcionado. Inténtalo de nuevo.",
+  regErrNetz:"Sin conexión — revisa tu internet.",
+  regFertig:"¡Listo, {name}!",
+  regMailGesendet:"También te la hemos enviado por correo electrónico.",
+  regAnmeldenMit:"Inicia sesión con {tel} + PIN",
+  regPinKasten:"No necesitas contraseña. Si pierdes el PIN, tu profesor de autoescuela te ayuda — lo ve en su panel.",
+  regLoslegen:"Empezar ahora",
+  regZumAnmelden:"Ir a iniciar sesión",
+  abmGeraet:"Se ha cerrado tu sesión porque este acceso se usó en otro dispositivo. El acceso solo vale para un dispositivo.",
+  abmSitzung:"Tu sesión ha caducado. Vuelve a iniciar sesión.",
+  abmAbgelaufen:"Tu acceso ha caducado. Habla con tu autoescuela para ampliarlo.",
+  abmGesperrt:"Tu acceso ha sido bloqueado. Habla con tu autoescuela.",
+  abmPausiert:"El acceso de tu autoescuela está en pausa. Habla con tu autoescuela.",
+  verstanden:"Entendido",
+  offlineTitel:"Sin conexión",
+  offlineText:"No se ha podido cargar el contenido. Revisa tu internet e inténtalo de nuevo.",
+  neuLaden:"Recargar",
+  videoGebiet:"Este vídeo pertenece a otra zona de examen.",
+  videoFehler:"El vídeo no se ha podido cargar. Inténtalo de nuevo en un momento.",
+  zuVieleVersuche:"Demasiados intentos fallidos. Vuelve a intentarlo en unos minutos.",
+  geraeteSperre:"Este acceso se acaba de usar en otro dispositivo. Vuelve a intentarlo en unos minutos.",
+  bitteBeidesEingeben:"Introduce el número de teléfono y el PIN",
+  loginFehlgeschlagen:"No se ha podido iniciar sesión. Inténtalo de nuevo.",
+  zTitel:"Antes de empezar",
+  zSub:"Confírmalo una vez y podrás continuar.",
+  zP1:"Los vídeos de la Fahr-Akademie son una <b>ayuda de aprendizaje voluntaria y complementaria</b> a tu formación como conductor y <b>no sustituyen</b> las clases de tu autoescuela.",
+  zP2:"<b>No hay garantía</b> de que apruebes el examen del permiso con estos vídeos — el aprendizaje depende de muchos factores que escapan a nuestro control.",
+  zP3:"Tu acceso (número de teléfono + PIN) es <b>personal e intransferible</b>. Compartirlo con otras personas infringe las condiciones de uso y puede llevar, sin previo aviso, al <b>bloqueo inmediato</b> de tu acceso, sin derecho a reembolso.",
+  zCheck:"Lo he leído y estoy de acuerdo.",
+  zVerbindlich:"La versión alemana es la jurídicamente vinculante",
+  zMoment:"Un momento …",
+  zFehler:"Lo sentimos, no ha funcionado — inténtalo de nuevo.",
+  pushFrage:"¿Quieres recibir un aviso cuando se desbloqueen vídeos nuevos?",
+  pushAn:"Activar",
+  pushSpaeter:"Más tarde",
+  pushOk:"Notificaciones activadas",
+  pushNein:"Permiso no concedido",
+  suchPlatzhalter:"Buscar, p. ej. rotonda",
+  fAlle:"Todos",
+  fOffen:"Pendientes",
+  fFertig:"Hechos",
+  nichtsGefunden:"No hay resultados para «{q}».",
+  nichtsImFilter:"No hay nada en este filtro.",
+  vonVideos:"{g} de {n} vídeos",
+  vonGesehen:"{g} de {n} vistos",
+  enthaelt:"Incluye:",
+  zahlungsinfo:"Después recibirás los datos de pago. El acceso se desbloquea tras el pago.",
+  themenIntro:"Un vídeo puede tener varios temas — toca uno para ver todos los vídeos relacionados.",
+  keineThemen:"Aún no hay temas asignados.",
+  keineVideos:"No se han encontrado vídeos.",
+  mDashboard:"Panel",
+  mThemen:"# Temas",
+  mNuetzliches:"Útil",
+  mRechtliches:"Información legal",
+  mVerkehr:"Entender el tráfico",
+  vvIntro:"Situaciones típicas como escena 3D: mírala, detenla y cámbiale el punto de vista. Cada escena explica paso a paso qué norma se aplica y por qué.",
+  vvKachel:"Nuevo: {n} situaciones de tráfico en 3D – mira, detén, entiende.",
+  vvKachelKnopf:"Ver escenas",
+  vvKatInnerorts:"En ciudad",
+  vvKatUeberland:"Carretera",
+  vvKatGrundfahr:"Maniobras básicas",
+  vvKatAutobahn:"Autopista",
+  vvKapitel:"{n} capítulos",
+  vvKostprobe:"Muestra",
+  vvNurAnfang:"Primer capítulo gratis",
+  vvLaden:"Cargando escena …",
+  vvFehler:"La escena no se ha podido cargar. Inténtalo de nuevo en un momento.",
+  vvVideos:"Así es en la realidad",
+  vvVideosText:"Vídeos relacionados de la Akademie:",
+  vvDemo:"Las escenas 3D no están disponibles en el modo demo.",
+  mHilfe:"Ayuda y contacto",
+  mUeber:"Sobre esta app",
+  navStrecken:"Rutas",
+  navLabel:"Navegación principal",
+  mPruefungstag:"El día del examen",
+  iosHinweis:"Consejo para iPhone: abre siempre la Akademie desde el icono de tu pantalla de inicio. Safari y el icono cuentan como dos dispositivos distintos — si cambias, se cierra tu sesión.",
+  vorschauHinweis:"Vista previa: los primeros {n} segundos",
+  vorschauEnde:"Esa era la vista previa. El vídeo completo está en el acceso completo.",
+  kapitelTitel:"Capítulos",
+  fehlerTitel:"Aquí estuvo el fallo",
+  fehlerNormal:"Suspender forma parte del proceso — justo de estos momentos es de donde más aprendes.",
+  bereichLeer:"Esta área aún está vacía.",
+  fBestanden:"Aprobado",
+  fNichtBestanden:"Suspendido",
+  bereichKeineVideos:"Aún no hay vídeos en esta área.",
+  verlaufLeer:"Aún no has visto nada — ¡empieza por el Resumen!",
+  streckenLeer:"Aún no hay rutas de examen disponibles.",
+  videoAnzahl1:"1 vídeo",
+  videoAnzahl:"{n} vídeos",
+  werbeTitel:"Invita a tus amigos",
+  werbeText:"¿Conoces a alguien que también tenga pronto el examen? Pásale tu código — los dos obtendréis un descuento.",
+  werbeKnopf:"Ver mi código",
+  werbeTeilen:"Compartir enlace",
+  werbeNachricht:"Estoy aprendiendo mis rutas de examen con la Fahr-Akademie — las rutas reales que hace el examinador. Con mi código tienes descuento: {link}",
+  textKopiert:"Texto copiado — ahora pégalo",
+  textZumKopieren:"Texto para copiar",
+  abbrechen:"Cancelar",
+  allesKlar:"De acuerdo",
+  moment:"Un momento …",
+  nichtGeklappt:"No ha funcionado. Inténtalo de nuevo.",
+  keinInternet:"Sin conexión — revisa tu internet.",
+  neuAnmelden:"Vuelve a iniciar sesión",
+  dashSub:"Todas las áreas de un vistazo — toca una para abrirla.",
+  dashLeer:"Aún no hay áreas disponibles.",
+  nuetzSub:"Explicado de forma breve y para consultar — con los textos legales en PDF.",
+  nuetzLeer:"Aún no hay temas para este filtro.",
+  nuetzPdfs:"Textos legales para descargar",
+  nuetzMehr:"Se irán añadiendo más temas.",
+  pdfOeffnen:"Abrir PDF",
+  hilfeF1:"¿Tienes una pregunta sobre un vídeo o tu acceso?",
+  hilfeA1:"Habla directamente con tu autoescuela o tu profesor de autoescuela — allí se creó tu acceso.",
+  hilfeF2:"¿Has olvidado tu PIN?",
+  hilfeA2:"Tu autoescuela puede volver a enviarte el PIN.",
+  hilfeF3:"¿El vídeo no carga?",
+  hilfeA3:"Revisa tu conexión a internet — los vídeos no se descargan, se reproducen en streaming.",
+  ueber1:"Fahr-Akademie es un **complemento a la formación oficial de conducción** — no sustituye las clases de tu autoescuela.",
+  ueber2:"Tus datos (nombre, número de teléfono, progreso) se guardan exclusivamente en servidores en Alemania (Fráncfort del Meno).",
+  ueber3:"No compartas tu PIN con nadie — tu acceso es personal y está a tu nombre.",
+  zugestimmtAm:"Aceptado el {datum}",
+  rechtSub:"Toda la información legal sobre la Fahr-Akademie.",
+  rechtNurDeutsch:"Los textos legales solo están en alemán — la versión alemana es la vinculante.",
+  rImpressum:"Aviso legal",
+  rImpressumSub:"Datos del proveedor según § 5 DDG",
+  rDatenschutz:"Política de privacidad",
+  rDatenschutzSub:"Qué datos guardamos y por qué",
+  rAgb:"Condiciones generales",
+  rAgbSub:"Condiciones de uso de la Fahr-Akademie",
+  rWiderruf:"Derecho de desistimiento",
+  rWiderrufSub:"Tu derecho de desistimiento al contratar",
+  drawerFuss:"Fahr-Akademie — complemento a la formación oficial de conducción",
+  anfrageSendet:"Enviando …",
+  anfrageLaeuft:"Solicitud en curso",
+  anfrageLaeuftText:"Tu solicitud ya está en camino — si quieres, vuelve a hablar con tu profesor de autoescuela.",
+  anfrageGesendet:"Solicitud enviada",
+  anfrageDanke:"¡Gracias! Tu solicitud se ha enviado.",
+  anfrageSchritte:"Así sigue:\n\n1. Tu profesor de autoescuela te enviará los datos de pago\n2. Tras el pago se desbloquea tu acceso\n3. Todas las áreas quedan abiertas al momento — sin volver a iniciar sesión",
+  schonVoll:"Ya tienes el acceso completo.",
+  videoLaedt:"Cargando vídeo …"
+});
+PRUEFUNGSTAG.es = {
+ "einleitung": "Estar nervioso es normal. Quien sabe lo que le espera conduce más tranquilo. Aquí tienes, paso a paso, cómo transcurre el día.",
+ "abschnitte": [
+  {
+   "titel": "Qué debes llevar",
+   "punkte": [
+    "DNI o pasaporte — sin un documento de identidad válido no se hace el examen.",
+    "Gafas o lentillas, si las necesitas para conducir.",
+    "Calzado cómodo y plano — nada de chanclas ni tacones.",
+    "Lo demás (orden de examen, justificante de formación) lo tiene tu autoescuela."
+   ]
+  },
+  {
+   "titel": "Así es el examen",
+   "punkte": [
+    "El punto de encuentro suele ser la autoescuela o el centro de examen. Llega 15 minutos antes.",
+    "El examinador comprueba tu documento de identidad. Tu profesor de autoescuela va a tu lado y el examinador, detrás.",
+    "Antes de arrancar: ajusta el asiento, los espejos, el volante y el cinturón. A menudo hay preguntas sobre técnica, por ejemplo sobre neumáticos, luces o líquidos.",
+    "Luego el recorrido: en ciudad, fuera de poblado y a menudo por autopista o autovía. El examinador te indica a tiempo hacia dónde ir.",
+    "Por el camino suele haber dos maniobras básicas, por ejemplo aparcar, dar la vuelta o una frenada de emergencia.",
+    "Al final te dan el resultado en el mismo coche. ¿Aprobado? Entonces recibes tu permiso de conducir o, con BF17, el certificado de examen."
+   ]
+  },
+  {
+   "titel": "Si cometes un error",
+   "punkte": [
+    "No todo error significa «suspendido». Se valora tu impresión general.",
+    "Mantén la calma y sigue conduciendo concentrado. No pienses en el último error, sino en el próximo cruce.",
+    "Si un error es tan peligroso que el examinador tiene que intervenir, el examen se termina. Entonces tu autoescuela planifica contigo la próxima fecha.",
+    "Muchos aprueban en el segundo intento — justo con lo que aprendieron en el primero."
+   ]
+  },
+  {
+   "titel": "Contra los nervios",
+   "punkte": [
+    "La noche anterior: acuéstate temprano. Por la mañana: come y bebe algo, y pasa por el baño antes.",
+    "Ejercicio de respiración antes de subir al coche: inspira 4 segundos, aguanta 4 segundos, espira 6 segundos. Repítelo de tres a cinco veces.",
+    "El día anterior, repasa las rutas de tu zona de examen — no todo, solo los puntos difíciles.",
+    "Ya lo has hecho muchas veces en las clases prácticas. El examen es un trayecto como cualquier otro."
+   ]
+  }
+ ]
+};
+// Nützliches: Titel/Text der Info-Karten und Titel/Beschreibung der PDFs (Schlüssel = id bzw. Dateiname)
+const NUETZLICH_UE = {
+ "tr": {
+  "buko_punkte": {
+   "titel": "Trafik cezaları kataloğu — ceza puanı sistemi",
+   "html": "<p>Reformdan bu yana Fahreignungsregister'da (Flensburg sürücü sicili) üç kademe var:</p><p><b>1 puan</b> — ağır ihlaller, ör. direksiyonda cep telefonu, basit geçiş üstünlüğü ihlali.<br><b>2 puan</b> — standart sürüş yasağı getiren çok ağır ihlaller, ör. tehlike yaratarak kırmızı ışıkta geçmek.<br><b>3 puan</b> — mahkemenin ehliyete el koyduğu suçlar, ör. 1,1 promilden itibaren alkollü araç kullanmak ya da ehliyete el konulan kaza yerinden kaçma.</p><p>Kabahat olarak 0,5 promilden itibaren alkol 2 puan getirir. 4–5 puanda uyarı yazısı, 6–7 puanda resmi ihtar gelir, <b>8 puandan</b> itibaren ehliyet gider.</p>"
+  },
+  "buko_handy": {
+   "titel": "Direksiyonda telefon yasağı — § 23 Abs. 1a StVO",
+   "html": "<p>Sadece telefonla konuşmayı değil, elde tutularak kullanılan her elektronik cihazı kapsar — mahkeme kararlarına göre powerbank, hesap makinesi veya dokunmatik ekranlı elektronik sigara da buna dahildir.</p><p>Normal durumda <b>100 € + 1 puan</b>.<br>Başkalarını tehlikeye atarsan <b>150 € + 2 puan + 1 ay sürüş yasağı</b>.<br>Maddi hasar olursa <b>200 € + 2 puan + 1 ay sürüş yasağı</b>.</p><p>Cihazı elde tutmadan eller serbest sistemle kullanmak serbesttir.</p>"
+  },
+  "buko_rettungsgasse": {
+   "titel": "Emniyet şeridi — § 11 Abs. 2 StVO",
+   "html": "<p>Otoyollarda ve yerleşim yeri dışındaki çok şeritli yollarda trafik yürüme hızına düştüğü ya da durduğu anda zorunludur — polis geçmek istediğinde değil.</p><p>Şerit <b>en soldaki şerit ile hemen yanındaki şerit arasında</b> açılır. Yani kural olarak en soldakiler mümkün olduğunca sola, diğer herkes mümkün olduğunca sağa gider.</p><p>Emniyet şeridi açmayana: <b>200 € + 2 puan</b>. Bu yüzden acil durum araçları engellenir, tehlikeye atılır ya da maddi hasar oluşursa: <b>240 € ile 320 € arası, 2 puan ve 1 ay sürüş yasağı</b>.</p><p>Daha hızlı ilerlemek için şeridi yetkisiz kullanana: <b>240 €'dan başlayan ceza, 2 puan ve 1 ay sürüş yasağı</b>.</p>"
+  },
+  "probezeit": {
+   "titel": "Deneme süresi — temel kurallar",
+   "html": "<p>Deneme süresi normalde sınavı geçtiğin andan itibaren <b>2 yıl</b> sürer; T/L gibi özel sınıflar dışındaki tüm ehliyet sınıfları için geçerlidir.</p><p>Bir <b>A ihlalinde</b> (ağır, ör. kırmızı ışık, alkol) veya <b>iki B ihlalinde</b> (daha az ağır): deneme süresi bir kereliğine <b>4 yıla</b> uzar, ayrıca zorunlu telafi semineri (ASF, genelde 300–600 €).</p><p>Sonrasında bir A ihlali daha ya da iki B ihlali daha: yazılı ihtar + gönüllü trafik psikolojisi danışmanlığı önerisi. Bundan sonra bir A ihlali (ya da iki B) daha gelirse: <b>ehliyet gider.</b></p>"
+  },
+  "probezeit_alkohol": {
+   "titel": "Deneme süresinde alkol yasağı — § 24c StVG",
+   "html": "<p>Deneme süresindeki yeni sürücüler için istisnasız <b>0,0 promil</b> geçerlidir — deneme süresi dışındaki sürücülerin 0,5 promil sınırından farklı olarak.</p><p>İhlal hemen ağır A ihlali sayılır: ölçülen miktardan bağımsız olarak deneme süresinin uzatılması ve telafi semineri zorunludur.</p><p>Bu kural ayrıca, deneme süresi bittikten sonra da, 21 yaşından küçük tüm sürücüler için geçerlidir.</p>"
+  },
+  "lkw_lenkzeiten": {
+   "titel": "Sürüş ve dinlenme süreleri — en önemli kamyon kuralı",
+   "html": "<p>AB Tüzüğü (EG) Nr. 561/2006 ile düzenlenir, dijital takograf üzerinden denetlenir. Temel değerler:</p><p><b>Günlük sürüş süresi:</b> en fazla 9 saat, haftada iki kez 10 saate uzatılabilir.<br><b>Mola:</b> en geç 4,5 saatlik sürüşten sonra 45 dakika mola, 15 + 30 dakika olarak bölünebilir (bu sırayla).<br><b>Günlük dinlenme süresi:</b> en az 11 saat, haftada üç kez 9 saate kısaltılabilir.<br><b>Haftalık sürüş süresi:</b> en fazla 56 saat, iki haftada toplam en fazla 90 saat.<br><b>Haftalık dinlenme süresi:</b> en az 45 saat, iki haftada bir 24 saate kısaltılabilir, 3 hafta içinde telafi edilmek şartıyla.</p>"
+  },
+  "lkw_ladung": {
+   "titel": "Yük emniyeti — temel yükümlülük",
+   "html": "<p>§ 22 StVO, yükün ani frende, aniden manevra yapıldığında veya bozuk yolda bile <b>kaymayacak, devrilmeyecek veya düşmeyecek</b> şekilde yerleştirilip sabitlenmesini şart koşar.</p><p>Hem sürücü hem de yükleyen sorumludur — yetersiz sabitlemede ikisi de sorumlu tutulabilir. Yaygın araçlar spanzet kayışları, sabitleme çubukları ve kaydırmaz paspaslardır.</p>"
+  },
+  "lkw_tacho": {
+   "titel": "Dijital takograf",
+   "html": "<p>Sürüş, çalışma ve dinlenme sürelerini kişisel sürücü kartı üzerinden otomatik kaydeder. Ticari taşımacılıkta 3,5 t üzerindeki neredeyse tüm yeni kamyonlarda zorunludur.</p><p>31.12.2024'ten beri denetimlerde o günün ve <b>önceki 56 günün</b> kayıtları gösterilebilmelidir (önceden 28 gün) — Federal Lojistik ve Mobilite Dairesi (BALM, eski adıyla BAG) ve polis denetimlerde bunlara doğrudan erişir.</p>"
+  },
+  "lkw_tempo80": {
+   "titel": "Otoyolda özel hız sınırı 80",
+   "html": "<p>3,5 t üzerindeki kamyonlar için otoyollarda ve yönleri ayrılmış ekspres yollarda tek tip <b>80 km/h</b> geçerlidir (§ 18 Abs. 5 StVO) — tam ağırlıktan bağımsız olarak ve bir tabela daha yüksek hıza izin verse bile.</p><p>Yerleşim yeri dışındaki normal şehirlerarası yollarda ise kademeli kural geçerlidir: 7,5 t'ye kadar 80 km/h serbesttir, üzerinde sadece <b>60 km/h</b> — bu, orada çok şeritli yollarda da geçerlidir.</p>"
+  },
+  "Vorfahrt_Paragraph8_StVO.pdf": {
+   "titel": "Geçiş üstünlüğü — § 8 StVO",
+   "meta": "Sağdan gelen önceliği, öncelik levhaları, dönel kavşak · 30.01.2026 itibarıyla"
+  },
+  "Geschwindigkeit_Paragraph3_StVO.pdf": {
+   "titel": "Hız — § 3 StVO",
+   "meta": "Koşullara uygun hız, siste görüş mesafesi · 30.01.2026 itibarıyla"
+  },
+  "Abstand_Paragraph4_StVO.pdf": {
+   "titel": "Takip mesafesi — § 4 StVO",
+   "meta": "Hızın yarısı kuralı, güvenlik mesafesi · 30.01.2026 itibarıyla"
+  },
+  "Ueberholen_Paragraph5_StVO.pdf": {
+   "titel": "Sollama — § 5 StVO",
+   "meta": "Yan mesafe, sinyal verme, şeride geri dönme · 30.01.2026 itibarıyla"
+  },
+  "Abbiegen_Paragraph9_StVO.pdf": {
+   "titel": "Dönüş, U dönüşü, geri gitme — § 9 StVO",
+   "meta": "Şeride yerleşme, omuz kontrolü, sola dönüş kuralı · 30.01.2026 itibarıyla"
+  },
+  "Autobahn_Paragraph18_StVO.pdf": {
+   "titel": "Otoyollar ve ekspres yollar — § 18 StVO",
+   "meta": "Trafiğe katılma, çıkış, ana yolun önceliği · 30.01.2026 itibarıyla"
+  },
+  "Beleuchtung_Paragraph17_StVO.pdf": {
+   "titel": "Aydınlatma — § 17 StVO",
+   "meta": "Kısa far, uzun far, hangi ışık ne zaman zorunlu · 30.01.2026 itibarıyla"
+  },
+  "Pflichten_Fahrzeugfuehrer_Paragraph23_StVO.pdf": {
+   "titel": "Sürücünün yükümlülükleri — § 23 StVO",
+   "meta": "Görüş, araç durumu, plaka, gündüz aydınlatması · 30.01.2026 itibarıyla"
+  },
+  "Fussgaengerueberwege_Paragraph26_StVO.pdf": {
+   "titel": "Yaya geçitleri — § 26 StVO",
+   "meta": "Zebra geçit, bekleme yükümlülüğü, sollama yasağı · 30.01.2026 itibarıyla"
+  }
+ },
+ "en": {
+  "buko_punkte": {
+   "titel": "Fines catalogue — how the points system works",
+   "html": "<p>Since the reform there are three levels in the Fahreignungsregister (Flensburg driver register):</p><p><b>1 point</b> — serious offences, e.g. phone at the wheel, simple right-of-way violation.<br><b>2 points</b> — very serious offences with a standard driving ban, e.g. running a red light with endangerment.<br><b>3 points</b> — criminal offences where the court revokes the driving licence, e.g. drunk driving from 1.1 per mille or leaving the scene of an accident with revocation.</p><p>Alcohol from 0.5 per mille as an administrative offence brings 2 points. At 4–5 points you get a reminder, at 6–7 points a warning, from <b>8 points</b> your driving licence is gone.</p>"
+  },
+  "buko_handy": {
+   "titel": "Phone ban at the wheel — § 23 Abs. 1a StVO",
+   "html": "<p>This covers not only phone calls, but any electronic device that is held in the hand and operated — according to court rulings, power banks, calculators or an e-cigarette with a touch display count too.</p><p><b>100 € + 1 point</b> in the normal case.<br><b>150 € + 2 points + 1 month driving ban</b> if others are endangered.<br><b>200 € + 2 points + 1 month driving ban</b> if property is damaged.</p><p>Using a hands-free system without holding the device in your hand is still allowed.</p>"
+  },
+  "buko_rettungsgasse": {
+   "titel": "Emergency corridor — § 11 Abs. 2 StVO",
+   "html": "<p>Mandatory on motorways and multi-lane roads outside built-up areas as soon as traffic slows to walking pace or stops — not only when the police want to get through.</p><p>It is formed <b>between the far-left lane and the lane directly next to it</b>. So as a rule, vehicles in the far-left lane move as far left as possible, everyone else as far right as possible.</p><p>Not forming an emergency corridor: <b>200 € + 2 points</b>. If emergency vehicles are obstructed or endangered as a result, or property is damaged: <b>240 € to 320 €, 2 points and 1 month driving ban</b>.</p><p>Driving through the corridor without authorisation to get ahead faster: <b>from 240 €, 2 points and 1 month driving ban</b>.</p>"
+  },
+  "probezeit": {
+   "titel": "Probationary period — the basic rules",
+   "html": "<p>The probationary period normally lasts <b>2 years</b> from passing the test, for all licence classes except special classes such as T/L.</p><p>After one <b>A offence</b> (serious, e.g. red light, alcohol) or <b>two B offences</b> (less serious): the probationary period is extended once to <b>4 years</b>, plus a mandatory remedial course (ASF, usually 300–600 €).</p><p>Next A offence or two more B offences after that: written warning + recommendation of voluntary traffic-psychology counselling. If another A offence (or two B) follows after that: <b>driving licence gone.</b></p>"
+  },
+  "probezeit_alkohol": {
+   "titel": "Alcohol ban during the probationary period — § 24c StVG",
+   "html": "<p>For new drivers in the probationary period the limit is <b>0.0 per mille</b>, without exception — unlike the 0.5 per mille limit for drivers outside the probationary period.</p><p>A violation immediately counts as a serious A offence: extending the probationary period and the remedial course are mandatory, regardless of the amount measured.</p><p>This also applies to all drivers under 21, even after the probationary period has ended.</p>"
+  },
+  "lkw_lenkzeiten": {
+   "titel": "Driving and rest times — the key truck rule",
+   "html": "<p>Governed by EU Regulation (EG) Nr. 561/2006, checked via the digital tachograph. The key values:</p><p><b>Daily driving time:</b> max. 9 hours, can be extended to 10 hours twice a week.<br><b>Break:</b> after 4.5 hours of driving at the latest, a 45-minute break, can be split into 15 + 30 minutes (in this order).<br><b>Daily rest period:</b> at least 11 hours, can be reduced to 9 hours three times a week.<br><b>Weekly driving time:</b> max. 56 hours, max. 90 hours over two weeks combined.<br><b>Weekly rest period:</b> at least 45 hours, can be reduced to 24 hours every second week with compensation within 3 weeks.</p>"
+  },
+  "lkw_ladung": {
+   "titel": "Load securing — the basic duty",
+   "html": "<p>§ 22 StVO requires loads to be stowed and secured so that, even during emergency braking, a sudden swerve or on a bad road surface, they <b>cannot slip, tip over or fall off</b>.</p><p>Both the driver and the loader are responsible — both can be held liable if securing is inadequate. Common tools are lashing straps, locking bars and anti-slip mats.</p>"
+  },
+  "lkw_tacho": {
+   "titel": "Digital tachograph",
+   "html": "<p>Automatically records driving, working and rest times via the personal driver card. Mandatory in practically all newer trucks over 3.5 t in commercial transport.</p><p>Since 31.12.2024, records for the current day and the <b>previous 56 days</b> must be available for inspections (previously 28 days) — inspections by the Federal Office for Logistics and Mobility (BALM, formerly BAG) and the police access them directly.</p>"
+  },
+  "lkw_tempo80": {
+   "titel": "Special speed limit 80 on the motorway",
+   "html": "<p>For trucks over 3.5 t, a uniform <b>80 km/h</b> applies on motorways and dual carriageway expressways (§ 18 Abs. 5 StVO) — regardless of the exact weight, and regardless of whether a sign allows a higher speed.</p><p>On normal country roads outside built-up areas, however, the tiered rule applies: up to 7.5 t, 80 km/h is allowed, above that only <b>60 km/h</b> — this also applies there on multi-lane roads.</p>"
+  },
+  "Vorfahrt_Paragraph8_StVO.pdf": {
+   "titel": "Right of way — § 8 StVO",
+   "meta": "Right before left, right-of-way signs, roundabouts · As of 30.01.2026"
+  },
+  "Geschwindigkeit_Paragraph3_StVO.pdf": {
+   "titel": "Speed — § 3 StVO",
+   "meta": "Appropriate speed, visibility in fog · As of 30.01.2026"
+  },
+  "Abstand_Paragraph4_StVO.pdf": {
+   "titel": "Distance — § 4 StVO",
+   "meta": "Half-speedometer rule, safe following distance · As of 30.01.2026"
+  },
+  "Ueberholen_Paragraph5_StVO.pdf": {
+   "titel": "Overtaking — § 5 StVO",
+   "meta": "Side clearance, signalling, merging back · As of 30.01.2026"
+  },
+  "Abbiegen_Paragraph9_StVO.pdf": {
+   "titel": "Turning, U-turns, reversing — § 9 StVO",
+   "meta": "Getting in lane, shoulder check, left-turn rule · As of 30.01.2026"
+  },
+  "Autobahn_Paragraph18_StVO.pdf": {
+   "titel": "Motorways and expressways — § 18 StVO",
+   "meta": "Merging, exiting, priority of the through lanes · As of 30.01.2026"
+  },
+  "Beleuchtung_Paragraph17_StVO.pdf": {
+   "titel": "Lighting — § 17 StVO",
+   "meta": "Dipped beam, high beam, when which light is mandatory · As of 30.01.2026"
+  },
+  "Pflichten_Fahrzeugfuehrer_Paragraph23_StVO.pdf": {
+   "titel": "Duties of the driver — § 23 StVO",
+   "meta": "Visibility, condition, number plate, daytime lights · As of 30.01.2026"
+  },
+  "Fussgaengerueberwege_Paragraph26_StVO.pdf": {
+   "titel": "Pedestrian crossings — § 26 StVO",
+   "meta": "Zebra crossings, duty to wait, no overtaking · As of 30.01.2026"
+  }
+ },
+ "ar": {
+  "buko_punkte": {
+   "titel": "كتالوج الغرامات — نظام النقاط",
+   "html": "<p>منذ الإصلاح توجد ثلاث درجات في Fahreignungsregister (سجل السائقين في Flensburg):</p><p><b>نقطة واحدة</b> — مخالفات خطيرة، مثل استخدام الهاتف أثناء القيادة، أو مخالفة بسيطة لحق الأولوية.<br><b>نقطتان</b> — مخالفات خطيرة جدًا مع منع قيادة معتاد، مثل تجاوز الإشارة الحمراء مع تعريض الآخرين للخطر.<br><b>3 نقاط</b> — جرائم تسحب فيها المحكمة رخصة القيادة، مثل القيادة في حالة سُكر ابتداءً من 1,1 في الألف، أو الفرار من مكان الحادث مع سحب الرخصة.</p><p>الكحول ابتداءً من 0,5 في الألف كمخالفة إدارية يجلب نقطتين. عند 4–5 نقاط يصلك تنبيه، وعند 6–7 نقاط إنذار، وابتداءً من <b>8 نقاط</b> تُسحب رخصة القيادة.</p>"
+  },
+  "buko_handy": {
+   "titel": "منع الهاتف أثناء القيادة — § 23 Abs. 1a StVO",
+   "html": "<p>لا يقتصر على المكالمات، بل يشمل كل جهاز إلكتروني يُمسك باليد ويُستخدم — وبحسب أحكام القضاء يدخل في ذلك أيضًا الباور بانك والآلة الحاسبة والسيجارة الإلكترونية ذات الشاشة اللمسية.</p><p><b>100 € + نقطة واحدة</b> في الحالة العادية.<br><b>150 € + نقطتان + منع قيادة لمدة شهر</b> عند تعريض الآخرين للخطر.<br><b>200 € + نقطتان + منع قيادة لمدة شهر</b> عند حدوث ضرر مادي.</p><p>يبقى الاستخدام عبر نظام التحدث الحر (دون استخدام اليدين) مسموحًا، دون إمساك الجهاز باليد.</p>"
+  },
+  "buko_rettungsgasse": {
+   "titel": "ممر الطوارئ — § 11 Abs. 2 StVO",
+   "html": "<p>إلزامي على الطرق السريعة والطرق متعددة المسارات خارج المدن بمجرد أن تنخفض السرعة إلى سرعة المشي أو يتوقف السير — وليس فقط عندما تريد الشرطة المرور.</p><p>يُشكَّل <b>بين المسار الأقصى يسارًا والمسار المجاور له مباشرة</b>. أي أن من في أقصى اليسار يتحرك قدر الإمكان إلى اليسار، والجميع الآخرون قدر الإمكان إلى اليمين.</p><p>من لا يشكّل ممر الطوارئ: <b>200 € + نقطتان</b>. وإذا أدى ذلك إلى إعاقة مركبات الطوارئ أو تعريضها للخطر أو حدوث ضرر مادي: <b>من 240 € إلى 320 €، ونقطتان ومنع قيادة لمدة شهر</b>.</p><p>من يسير في الممر دون تصريح ليتقدّم بسرعة أكبر: <b>ابتداءً من 240 €، ونقطتان ومنع قيادة لمدة شهر</b>.</p>"
+  },
+  "probezeit": {
+   "titel": "فترة التجربة — القواعد الأساسية",
+   "html": "<p>تستمر فترة التجربة عادةً <b>سنتين</b> من تاريخ النجاح في الامتحان، لكل فئات رخص القيادة باستثناء الفئات الخاصة مثل T/L.</p><p>عند <b>مخالفة من الفئة A</b> (خطيرة، مثل الإشارة الحمراء أو الكحول) أو <b>مخالفتين من الفئة B</b> (أقل خطورة): تُمدَّد فترة التجربة مرة واحدة إلى <b>4 سنوات</b> مع دورة تأهيلية إلزامية (ASF، غالبًا 300–600 €).</p><p>المخالفة التالية من الفئة A أو مخالفتان أخريان من الفئة B بعد ذلك: إنذار كتابي + توصية باستشارة نفسية مرورية طوعية. وإذا أضيفت بعد ذلك مخالفة أخرى من الفئة A (أو مخالفتان B): <b>تُسحب رخصة القيادة.</b></p>"
+  },
+  "probezeit_alkohol": {
+   "titel": "منع الكحول في فترة التجربة — § 24c StVG",
+   "html": "<p>للسائقين الجدد في فترة التجربة يسري حد <b>0,0 في الألف</b> دون أي استثناء — بخلاف حد 0,5 في الألف للسائقين خارج فترة التجربة.</p><p>تُعدّ المخالفة فورًا مخالفة خطيرة من الفئة A: تمديد فترة التجربة والدورة التأهيلية إلزاميان، بغض النظر عن الكمية المقيسة.</p><p>ويسري ذلك أيضًا على جميع السائقين دون 21 عامًا، حتى بعد انتهاء فترة التجربة.</p>"
+  },
+  "lkw_lenkzeiten": {
+   "titel": "أوقات القيادة والراحة — القاعدة الأهم للشاحنات",
+   "html": "<p>تنظّمها لائحة الاتحاد الأوروبي (EG) Nr. 561/2006، وتُراقَب عبر جهاز التاكوغراف الرقمي. القيم الأساسية:</p><p><b>مدة القيادة اليومية:</b> 9 ساعات كحد أقصى، يمكن تمديدها إلى 10 ساعات مرتين في الأسبوع.<br><b>الاستراحة:</b> بعد 4,5 ساعات قيادة كحد أقصى استراحة 45 دقيقة، يمكن تقسيمها إلى 15 + 30 دقيقة (بهذا الترتيب).<br><b>الراحة اليومية:</b> 11 ساعة على الأقل، يمكن تقليصها إلى 9 ساعات ثلاث مرات في الأسبوع.<br><b>مدة القيادة الأسبوعية:</b> 56 ساعة كحد أقصى، و90 ساعة كحد أقصى في أسبوعين معًا.<br><b>الراحة الأسبوعية:</b> 45 ساعة على الأقل، يمكن تقليصها إلى 24 ساعة كل أسبوعين مع التعويض خلال 3 أسابيع.</p>"
+  },
+  "lkw_ladung": {
+   "titel": "تأمين الحمولة — الواجب الأساسي",
+   "html": "<p>تشترط § 22 StVO أن تُرتَّب الحمولة وتُثبَّت بحيث <b>لا يمكن أن تنزلق أو تنقلب أو تسقط</b> حتى عند الفرملة الكاملة أو الانحراف المفاجئ أو على طريق سيئ.</p><p>المسؤول هو السائق والمُحمِّل معًا — ويمكن مساءلة كليهما عند التثبيت غير الكافي. الوسائل المعتادة هي أحزمة الربط وقضبان التثبيت والحصائر المانعة للانزلاق.</p>"
+  },
+  "lkw_tacho": {
+   "titel": "التاكوغراف الرقمي",
+   "html": "<p>يسجّل أوقات القيادة والعمل والراحة تلقائيًا عبر بطاقة السائق الشخصية. إلزامي عمليًا في كل الشاحنات الأحدث التي تزيد عن 3,5 t في النقل التجاري.</p><p>منذ 31.12.2024 يجب أن يكون ممكنًا تقديم تسجيلات اليوم الجاري و<b>الأيام الـ56 السابقة</b> عند التفتيش (سابقًا 28 يومًا) — ويصل إليها مباشرة كلٌّ من المكتب الاتحادي للّوجستيات والتنقّل (BALM، سابقًا BAG) والشرطة.</p>"
+  },
+  "lkw_tempo80": {
+   "titel": "السرعة الخاصة 80 على الطريق السريع",
+   "html": "<p>للشاحنات التي تزيد عن 3,5 t تسري سرعة موحّدة <b>80 km/h</b> على الطرق السريعة وطرق السيارات ذات الاتجاهين المفصولين (§ 18 Abs. 5 StVO) — بغض النظر عن الوزن الدقيق، وبغض النظر عمّا إذا كانت لافتة تسمح بسرعة أعلى.</p><p>أما على الطرق العادية خارج المدن فتسري القاعدة المتدرّجة: حتى 7,5 t يُسمح بـ80 km/h، وما فوق ذلك <b>60 km/h</b> فقط — وهذا يسري هناك أيضًا على الطرق متعددة المسارات.</p>"
+  },
+  "Vorfahrt_Paragraph8_StVO.pdf": {
+   "titel": "حق الأولوية — § 8 StVO",
+   "meta": "الأولوية لليمين، لافتات الأولوية، الدوّار · بتاريخ 30.01.2026"
+  },
+  "Geschwindigkeit_Paragraph3_StVO.pdf": {
+   "titel": "السرعة — § 3 StVO",
+   "meta": "السرعة المناسبة، مدى الرؤية في الضباب · بتاريخ 30.01.2026"
+  },
+  "Abstand_Paragraph4_StVO.pdf": {
+   "titel": "المسافة — § 4 StVO",
+   "meta": "قاعدة نصف العدّاد، مسافة الأمان · بتاريخ 30.01.2026"
+  },
+  "Ueberholen_Paragraph5_StVO.pdf": {
+   "titel": "التجاوز — § 5 StVO",
+   "meta": "المسافة الجانبية، الإشارة المسبقة، العودة إلى المسار · بتاريخ 30.01.2026"
+  },
+  "Abbiegen_Paragraph9_StVO.pdf": {
+   "titel": "الانعطاف والالتفاف والرجوع للخلف — § 9 StVO",
+   "meta": "اختيار المسار، النظر فوق الكتف، قاعدة الانعطاف لليسار · بتاريخ 30.01.2026"
+  },
+  "Autobahn_Paragraph18_StVO.pdf": {
+   "titel": "الطرق السريعة وطرق السيارات — § 18 StVO",
+   "meta": "الاندماج، الخروج، أولوية الطريق الرئيسي · بتاريخ 30.01.2026"
+  },
+  "Beleuchtung_Paragraph17_StVO.pdf": {
+   "titel": "الإضاءة — § 17 StVO",
+   "meta": "الضوء المنخفض، الضوء العالي، متى يكون أيّ ضوء إلزاميًا · بتاريخ 30.01.2026"
+  },
+  "Pflichten_Fahrzeugfuehrer_Paragraph23_StVO.pdf": {
+   "titel": "واجبات سائق المركبة — § 23 StVO",
+   "meta": "الرؤية، حالة المركبة، لوحة الأرقام، الإضاءة نهارًا · بتاريخ 30.01.2026"
+  },
+  "Fussgaengerueberwege_Paragraph26_StVO.pdf": {
+   "titel": "معابر المشاة — § 26 StVO",
+   "meta": "خطوط الحمار الوحشي، واجب الانتظار، منع التجاوز · بتاريخ 30.01.2026"
+  }
+ },
+ "es": {
+  "buko_punkte": {
+   "titel": "Catálogo de multas — el sistema de puntos",
+   "html": "<p>Desde la reforma hay tres niveles en el Fahreignungsregister (registro de conductores de Flensburg):</p><p><b>1 punto</b> — infracciones graves, p. ej. el móvil al volante, una infracción simple de prioridad.<br><b>2 puntos</b> — infracciones muy graves con prohibición de conducir estándar, p. ej. saltarse un semáforo en rojo poniendo en peligro a otros.<br><b>3 puntos</b> — delitos en los que el tribunal retira el permiso de conducir, p. ej. conducir ebrio a partir de 1,1 por mil o darse a la fuga tras un accidente con retirada del permiso.</p><p>El alcohol a partir de 0,5 por mil como infracción administrativa supone 2 puntos. Con 4–5 puntos recibes un aviso, con 6–7 puntos una advertencia, y a partir de <b>8 puntos</b> pierdes el permiso de conducir.</p>"
+  },
+  "buko_handy": {
+   "titel": "Prohibición del móvil al volante — § 23 Abs. 1a StVO",
+   "html": "<p>No solo afecta a las llamadas, sino a cualquier aparato electrónico que se sostenga en la mano y se utilice — según la jurisprudencia, también cuentan las baterías externas, las calculadoras o un cigarrillo electrónico con pantalla táctil.</p><p><b>100 € + 1 punto</b> en el caso normal.<br><b>150 € + 2 puntos + 1 mes de prohibición de conducir</b> si pones en peligro a otros.<br><b>200 € + 2 puntos + 1 mes de prohibición de conducir</b> si hay daños materiales.</p><p>Sigue estando permitido usarlo con un sistema manos libres, sin sostener el aparato en la mano.</p>"
+  },
+  "buko_rettungsgasse": {
+   "titel": "Carril de emergencia — § 11 Abs. 2 StVO",
+   "html": "<p>Obligatorio en autopistas y carreteras de varios carriles fuera de poblado en cuanto el tráfico baja a paso de peatón o se detiene — no solo cuando la policía quiere pasar.</p><p>Se forma <b>entre el carril situado más a la izquierda y el carril contiguo</b>. Es decir, por norma los del carril de más a la izquierda se apartan lo más posible a la izquierda, y todos los demás lo más posible a la derecha.</p><p>Quien no forma el carril de emergencia: <b>200 € + 2 puntos</b>. Si por ello se obstaculiza o pone en peligro a los vehículos de emergencia, o hay daños materiales: <b>de 240 € a 320 €, 2 puntos y 1 mes de prohibición de conducir</b>.</p><p>Quien circula por el carril sin autorización para avanzar más rápido: <b>desde 240 €, 2 puntos y 1 mes de prohibición de conducir</b>.</p>"
+  },
+  "probezeit": {
+   "titel": "Período de prueba — las reglas básicas",
+   "html": "<p>El período de prueba dura normalmente <b>2 años</b> desde que apruebas el examen, para todas las clases de permiso salvo clases especiales como T/L.</p><p>Con una <b>infracción A</b> (grave, p. ej. semáforo en rojo, alcohol) o <b>dos infracciones B</b> (menos graves): el período de prueba se amplía una sola vez a <b>4 años</b>, más un curso de reciclaje obligatorio (ASF, normalmente 300–600 €).</p><p>Siguiente infracción A o dos infracciones B más después: advertencia por escrito + recomendación de asesoramiento voluntario en psicología del tráfico. Si después se suma otra infracción A (o dos B): <b>pierdes el permiso de conducir.</b></p>"
+  },
+  "probezeit_alkohol": {
+   "titel": "Prohibición de alcohol en el período de prueba — § 24c StVG",
+   "html": "<p>Para los conductores noveles en período de prueba rige <b>0,0 por mil</b>, sin excepción — a diferencia del límite de 0,5 por mil para los conductores fuera del período de prueba.</p><p>Una infracción cuenta de inmediato como infracción A grave: la ampliación del período de prueba y el curso de reciclaje son obligatorios, sin importar la cantidad medida.</p><p>Esto se aplica además a todos los conductores menores de 21 años, incluso después de terminar el período de prueba.</p>"
+  },
+  "lkw_lenkzeiten": {
+   "titel": "Tiempos de conducción y descanso — la norma clave para camiones",
+   "html": "<p>Lo regula el Reglamento de la UE (EG) Nr. 561/2006 y se controla mediante el tacógrafo digital. Los valores clave:</p><p><b>Tiempo de conducción diario:</b> máx. 9 horas, ampliable a 10 horas dos veces por semana.<br><b>Pausa:</b> como muy tarde tras 4,5 horas de conducción, 45 minutos de pausa, divisible en 15 + 30 minutos (en este orden).<br><b>Descanso diario:</b> mínimo 11 horas, reducible a 9 horas tres veces por semana.<br><b>Tiempo de conducción semanal:</b> máx. 56 horas, máx. 90 horas en dos semanas juntas.<br><b>Descanso semanal:</b> mínimo 45 horas, reducible a 24 horas cada dos semanas con compensación en un plazo de 3 semanas.</p>"
+  },
+  "lkw_ladung": {
+   "titel": "Sujeción de la carga — la obligación básica",
+   "html": "<p>El § 22 StVO exige que la carga se coloque y se sujete de forma que, incluso en una frenada a fondo, un esquive repentino o en una calzada en mal estado, <b>no pueda deslizarse, volcar ni caerse</b>.</p><p>Son responsables tanto el conductor como el cargador — ambos pueden ser sancionados si la sujeción es deficiente. Los medios habituales son cinchas de amarre, barras de bloqueo y alfombrillas antideslizantes.</p>"
+  },
+  "lkw_tacho": {
+   "titel": "Tacógrafo digital",
+   "html": "<p>Registra automáticamente los tiempos de conducción, trabajo y descanso mediante la tarjeta personal del conductor. Obligatorio en prácticamente todos los camiones modernos de más de 3,5 t en el transporte comercial.</p><p>Desde el 31.12.2024 deben poder presentarse en los controles los registros del día en curso y de los <b>56 días anteriores</b> (antes 28 días) — la Oficina Federal de Logística y Movilidad (BALM, antes BAG) y la policía acceden directamente a ellos en los controles.</p>"
+  },
+  "lkw_tempo80": {
+   "titel": "Velocidad especial de 80 en la autopista",
+   "html": "<p>Para camiones de más de 3,5 t rige en autopistas y autovías con calzadas separadas un límite uniforme de <b>80 km/h</b> (§ 18 Abs. 5 StVO) — sin importar el peso exacto, ni si una señal permite una velocidad mayor.</p><p>En cambio, en las carreteras convencionales fuera de poblado rige la regla escalonada: hasta 7,5 t se permiten 80 km/h, por encima solo <b>60 km/h</b> — y esto también vale allí en tramos de varios carriles.</p>"
+  },
+  "Vorfahrt_Paragraph8_StVO.pdf": {
+   "titel": "Prioridad de paso — § 8 StVO",
+   "meta": "Prioridad a la derecha, señales de prioridad, rotondas · Versión 30.01.2026"
+  },
+  "Geschwindigkeit_Paragraph3_StVO.pdf": {
+   "titel": "Velocidad — § 3 StVO",
+   "meta": "Velocidad adecuada, visibilidad con niebla · Versión 30.01.2026"
+  },
+  "Abstand_Paragraph4_StVO.pdf": {
+   "titel": "Distancia — § 4 StVO",
+   "meta": "Regla de la mitad del velocímetro, distancia de seguridad · Versión 30.01.2026"
+  },
+  "Ueberholen_Paragraph5_StVO.pdf": {
+   "titel": "Adelantar — § 5 StVO",
+   "meta": "Distancia lateral, señalización, volver al carril · Versión 30.01.2026"
+  },
+  "Abbiegen_Paragraph9_StVO.pdf": {
+   "titel": "Girar, cambiar de sentido, marcha atrás — § 9 StVO",
+   "meta": "Colocarse en el carril, mirada por encima del hombro, regla del giro a la izquierda · Versión 30.01.2026"
+  },
+  "Autobahn_Paragraph18_StVO.pdf": {
+   "titel": "Autopistas y vías rápidas — § 18 StVO",
+   "meta": "Incorporación, salida, prioridad de la calzada principal · Versión 30.01.2026"
+  },
+  "Beleuchtung_Paragraph17_StVO.pdf": {
+   "titel": "Alumbrado — § 17 StVO",
+   "meta": "Luz de cruce, luz de carretera, cuándo es obligatoria cada luz · Versión 30.01.2026"
+  },
+  "Pflichten_Fahrzeugfuehrer_Paragraph23_StVO.pdf": {
+   "titel": "Obligaciones del conductor — § 23 StVO",
+   "meta": "Visibilidad, estado del vehículo, matrícula, luces de día · Versión 30.01.2026"
+  },
+  "Fussgaengerueberwege_Paragraph26_StVO.pdf": {
+   "titel": "Pasos de peatones — § 26 StVO",
+   "meta": "Pasos de cebra, obligación de esperar, prohibición de adelantar · Versión 30.01.2026"
+  }
+ }
+};
 
 /* 26.09.2026: Abmelden NUR bei eindeutigem Grund vom Server. Frueher fuehrte jede
    401/403-Antwort zum Abmelden mit dem Text "anderes Geraet" -- auch ein falsch
@@ -2966,7 +3767,7 @@ function showLogin(){
         '<div class="neu-klein">' + esc(t("startzugangVorteile")) + "</div>" +
       "</div>" +
       (DEMO_MODE ? '<div class="demo-badge">Demo-Modus — beliebige Eingabe funktioniert</div>' : "") +
-      '<div style="margin-top:14px;"><button type="button" class="admin-link-btn" id="admin-link">Admin-Bereich</button></div>' +
+      '<div style="margin-top:14px;"><button type="button" class="admin-link-btn" id="admin-link">' + esc(t("adminLink")) + '</button></div>' +
     "</div>";
   const abmOk = document.getElementById("abm-ok");
   if(abmOk) abmOk.addEventListener("click", function(){
@@ -3673,13 +4474,13 @@ function renderPruefungsstreckenHtml(){
           '<span class="stufe-caret">▸</span>' +
           '<span class="stufe-name">' + esc(g.pruefer.name) + "</span>" +
         "</div>" +
-        '<span class="admin-badge badge-gesperrt">' + g.videos.length + " Video" + (g.videos.length === 1 ? "" : "s") +
+        '<span class="admin-badge badge-gesperrt">' + esc(g.videos.length === 1 ? t("videoAnzahl1") : t("videoAnzahl", { n: g.videos.length })) +
           (alleGesperrt ? ' · <span class="vz-siegelwort">' + esc(t("versiegelt")) + "</span>" : "") +
         "</span>" +
       "</div>" +
       (isOpen ? '<div class="video-list">' + videoRows + anfrageKarte + "</div>" : "") +
     "</div>";
-  }).join("") || '<div class="empty">Noch keine Prüfungsstrecken hinterlegt.</div>';
+  }).join("") || '<div class="empty">' + esc(t("streckenLeer")) + '</div>';
 }
 
 function fmtDateTime(iso){
@@ -3850,14 +4651,14 @@ function renderStartHtml(){
         '<div class="karte empf-card" data-vid="' + esc(treffer.x.video.id) + '" style="cursor:pointer;margin-bottom:var(--sp-l);">' +
           '<div class="empf-badge">' + esc(t("empfohlen")) + "</div>" +
           '<div style="font-size:var(--fs-karte);font-weight:var(--fw-karte);">' + esc(treffer.x.video.titel) + "</div>" +
-          '<div class="admin-sub">' + esc(empf.nachricht || treffer.gruppe) + "</div>" +
+          '<div class="admin-sub">' + esc(empf.nachricht || bereichName(treffer.gruppe)) + "</div>" +
         "</div>";
     } else if(empf.stufe && pfad.some(function(g){ return g.stufe === empf.stufe; })){
       empfKarte =
         '<div class="karte empf-card" data-gotostufe="' + esc(empf.stufe) + '" style="cursor:pointer;margin-bottom:var(--sp-l);">' +
           '<div class="empf-badge">' + esc(t("empfohlen")) + "</div>" +
-          '<div style="font-size:var(--fs-karte);font-weight:var(--fw-karte);">' + esc(empf.stufe) + "</div>" +
-          '<div class="admin-sub">' + esc(empf.nachricht || "Dein nächstes Thema — tippen zum Öffnen") + "</div>" +
+          '<div style="font-size:var(--fs-karte);font-weight:var(--fw-karte);">' + esc(bereichName(empf.stufe)) + "</div>" +
+          '<div class="admin-sub">' + esc(empf.nachricht || t("empfohlenSub")) + "</div>" +
         "</div>";
     }
   }
@@ -3897,7 +4698,7 @@ function renderBereichDetailHtml(){
   const gruppe = pfad.find(function(g){ return g.stufe === selectedBereich; });
   if(!gruppe){
     return zurueckPille() +
-      '<div class="leer-hinweis">Dieser Bereich ist noch leer.</div>';
+      '<div class="leer-hinweis">' + esc(t("bereichLeer")) + '</div>';
   }
   const gesamt = gruppe.videos.length;
   const gesehen = gruppe.videos.filter(function(x){ return seenVideoIds.has(x.video.id); }).length;
@@ -3907,7 +4708,7 @@ function renderBereichDetailHtml(){
   const filterBar = istPruefung
     ? '<div class="pruefung-filter-bar" style="padding:0 0 var(--sp-m);flex-wrap:wrap;display:flex;gap:6px;">' +
         ['alle','bestanden','nicht_bestanden'].map(function(f){
-          const label = f === 'alle' ? 'Alle' : (f === 'bestanden' ? '✅ Bestanden' : '❌ Nicht bestanden');
+          const label = f === 'alle' ? esc(t("fAlle")) : (f === 'bestanden' ? '✅ ' + esc(t("fBestanden")) : '❌ ' + esc(t("fNichtBestanden")));
           const aktiv = pruefungFilter === f;
           return '<button class="chip-btn' + (aktiv?" chip-active":"") + '" data-pruefungfilter="' + f + '">' + label + "</button>";
         }).join("") +
@@ -3959,13 +4760,13 @@ function renderBereichDetailHtml(){
     "</div>" +
     vollzugangBanner +
     filterBar +
-    (karten || '<div class="leer-hinweis">Noch keine Videos in diesem Bereich.</div>')
+    (karten || '<div class="leer-hinweis">' + esc(t("bereichKeineVideos")) + '</div>')
   );
 }
 
 function renderVerlaufHtml(){
   if(verlaufData.length === 0){
-    return '<div class="empty">Noch nichts angesehen — starte im Lernpfad!</div>';
+    return '<div class="empty">' + esc(t("verlaufLeer")) + '</div>';
   }
   // Pro Video aggregieren: wie oft gesehen, wann zuletzt
   const proVideo = {};
@@ -4008,12 +4809,10 @@ function renderKontoHtml(){
   // und der ist direkt nach bestandener Prüfung am euphorischsten.
   const werbeKarte = (session && session.vollzugang)
     ? '<div class="admin-card glass" style="margin-top:16px;border-left:4px solid var(--gold);">' +
-        '<div class="section-label" style="margin:0 0 8px;">Freunde einladen</div>' +
-        '<div class="admin-sub" style="line-height:1.5;margin-bottom:10px;">' +
-          'Kennst du jemanden, der auch bald Prüfung hat? Gib deinen Code weiter — ' +
-          'ihr bekommt beide einen Rabatt.</div>' +
+        '<div class="section-label" style="margin:0 0 8px;">' + esc(t("werbeTitel")) + '</div>' +
+        '<div class="admin-sub" style="line-height:1.5;margin-bottom:10px;">' + esc(t("werbeText")) + '</div>' +
         '<div id="werbe-anzeige"></div>' +
-        '<button class="btn-sekundaer" id="werbe-btn">Meinen Code anzeigen</button>' +
+        '<button class="btn-sekundaer" id="werbe-btn">' + esc(t("werbeKnopf")) + '</button>' +
       "</div>"
     : "";
 
@@ -4051,9 +4850,9 @@ function renderDashboardHtml(){
     "</div>";
   }).join("");
   return zurueckPille() +
-    '<div class="tagline" style="font-size:20px;margin-bottom:4px;">Dashboard</div>' +
-    '<div class="admin-sub" style="margin-bottom:14px;">Alle Bereiche auf einen Blick — antippen öffnet den Bereich.</div>' +
-    '<div class="karte">' + (rows || '<div class="leer-hinweis">Noch keine Bereiche verfügbar.</div>') + "</div>";
+    '<div class="tagline" style="font-size:20px;margin-bottom:4px;">' + esc(t("mDashboard")) + '</div>' +
+    '<div class="admin-sub" style="margin-bottom:14px;">' + esc(t("dashSub")) + '</div>' +
+    '<div class="karte">' + (rows || '<div class="leer-hinweis">' + esc(t("dashLeer")) + '</div>') + "</div>";
 }
 
 // Bibliothek der StVO-Referenz-PDFs. Wächst nach und nach, wie die Videos --
@@ -4128,15 +4927,22 @@ const NUETZLICHE_THEMEN = [
 
 // PDFs sind bewusst ausschließlich "alle" -- allgemeine StVO-Grundlagen, die für
 // jede Führerscheinklasse gelten. Deshalb kein eigenes klasse-Feld am PDF-Objekt nötig.
+// Übersetzungen der Textkarten und PDF-Beschreibungen (NUETZLICH_UE[sprache][id]).
+// Fehlt eine Übersetzung, bleibt der deutsche Text stehen. Die PDFs selbst sind
+// Gesetzestexte und bleiben deutsch.
+function nuetzText(id, feld, deutsch){
+  const u = typeof NUETZLICH_UE !== "undefined" && NUETZLICH_UE[sprache];
+  return (u && u[id] && u[id][feld]) || deutsch;
+}
 function passtZuNuetzlichFilter(klasse){
   return nuetzlichFilter === "alle" || klasse === "alle" || klasse === nuetzlichFilter;
 }
 function renderNuetzlichesHtml(){
   const filterBar = '<div style="padding:0 0 var(--sp-m);flex-wrap:wrap;display:flex;gap:6px;">' +
-    [["alle","Alle"],["pkw","PKW"],["lkw","LKW"]].map(function(f){
+    [["alle",t("fAlle")],["pkw","PKW"],["lkw","LKW"]].map(function(f){
       const aktiv = nuetzlichFilter === f[0];
       return '<button class="chip-btn' + (aktiv?" chip-active":"") + '" data-nuetzfilter="' + f[0] + '">' +
-        f[1] + "</button>";
+        esc(f[1]) + "</button>";
     }).join("") +
   "</div>";
 
@@ -4146,30 +4952,30 @@ function renderNuetzlichesHtml(){
       '<div class="stufe-header' + (isOpen ? " open" : "") + '" data-nuetzlich="' + esc(th.id) + '">' +
         '<div class="stufe-header-left">' +
           '<span class="stufe-caret">▸</span>' +
-          '<span class="stufe-name">' + esc(th.titel) + "</span>" +
+          '<span class="stufe-name">' + esc(nuetzText(th.id, "titel", th.titel)) + "</span>" +
         "</div>" +
         (th.klasse !== "alle" ? '<span class="admin-badge badge-gesperrt">' + th.klasse.toUpperCase() + "</span>" : "") +
       "</div>" +
-      (isOpen ? '<div class="karte info-block" style="margin-top:8px;">' + th.html + "</div>" : "") +
+      (isOpen ? '<div class="karte info-block" style="margin-top:8px;">' + nuetzText(th.id, "html", th.html) + "</div>" : "") +
     "</div>";
-  }).join("") || '<div class="leer-hinweis">Für diesen Filter noch keine Themen hinterlegt.</div>';
+  }).join("") || '<div class="leer-hinweis">' + esc(t("nuetzLeer")) + '</div>';
 
   const pdfKarten = NUETZLICHE_PDFS.map(function(p){
     return '<div class="karte pdf-karte">' +
       '<div class="pdf-ic">' + icon("pdf") + "</div>" +
-      '<div style="min-width:0;"><div class="pdf-titel">' + esc(p.titel) + "</div>" +
-        '<div class="pdf-meta">' + esc(p.meta) + "</div></div>" +
-      '<a href="' + esc(p.datei) + '" target="_blank" rel="noopener" aria-label="PDF öffnen">' + icon("download") + "</a>" +
+      '<div style="min-width:0;"><div class="pdf-titel">' + esc(nuetzText(p.datei, "titel", p.titel)) + "</div>" +
+        '<div class="pdf-meta">' + esc(nuetzText(p.datei, "meta", p.meta)) + "</div></div>" +
+      '<a href="' + esc(p.datei) + '" target="_blank" rel="noopener" aria-label="' + esc(t("pdfOeffnen")) + '">' + icon("download") + "</a>" +
     "</div>";
   }).join("");
   return zurueckPille() +
     '<div class="tagline" style="font-size:20px;margin-bottom:4px;">' + esc(t("mNuetzliches")) + '</div>' +
-    '<div class="admin-sub" style="margin-bottom:14px;">Kurz erklärt und zum Nachlesen — inklusive der Gesetzestexte als PDF.</div>' +
+    '<div class="admin-sub" style="margin-bottom:14px;">' + esc(t("nuetzSub")) + '</div>' +
     filterBar +
     themenKarten +
-    '<div class="admin-sub" style="margin:var(--sp-l) 0 var(--sp-s);">Gesetzestexte zum Herunterladen</div>' +
+    '<div class="admin-sub" style="margin:var(--sp-l) 0 var(--sp-s);">' + esc(t("nuetzPdfs")) + '</div>' +
     pdfKarten +
-    '<div class="leer-hinweis" style="text-align:left;padding:var(--sp-m) 0;">Weitere Themen kommen laufend dazu.</div>';
+    '<div class="leer-hinweis" style="text-align:left;padding:var(--sp-m) 0;">' + esc(t("nuetzMehr")) + '</div>';
 }
 
 /* ---------------------------------------------------------------------------
@@ -4307,13 +5113,16 @@ async function verkehrEinhaengen(){
   }
 }
 
+// Übersetzter Text mit **fett**-Markierung: erst escapen, dann nur <b> zulassen
+function tFett(schluessel){
+  return esc(t(schluessel)).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+}
+
 function renderHilfeHtml(){
   return zurueckPille() +
     '<div class="tagline" style="font-size:20px;margin-bottom:4px;">' + esc(t("mHilfe")) + '</div>' +
     '<div class="karte info-block">' +
-      '<p><b>Frage zu einem Video oder deinem Zugang?</b><br>Wende dich direkt an deine Fahrschule bzw. deinen Fahrlehrer — dort wurde dein Zugang eingerichtet.</p>' +
-      '<p><b>PIN vergessen?</b><br>Deine Fahrschule kann dir die PIN erneut zuschicken.</p>' +
-      '<p><b>Video lädt nicht?</b><br>Prüf deine Internetverbindung — die Videos werden nicht heruntergeladen, sondern gestreamt.</p>' +
+      [1, 2, 3].map(function(i){ return "<p><b>" + esc(t("hilfeF" + i)) + "</b><br>" + esc(t("hilfeA" + i)) + "</p>"; }).join("") +
     "</div>";
 }
 
@@ -4321,9 +5130,7 @@ function renderUeberHtml(){
   return zurueckPille() +
     '<div class="tagline" style="font-size:20px;margin-bottom:4px;">' + esc(t("mUeber")) + '</div>' +
     '<div class="karte info-block">' +
-      '<p>Fahr-Akademie ist eine <b>Ergänzung zur amtlichen Fahrausbildung</b> — kein Ersatz für den Unterricht bei deiner Fahrschule.</p>' +
-      '<p>Deine Daten (Name, Telefonnummer, Fortschritt) werden ausschließlich auf Servern in Deutschland gespeichert (Frankfurt am Main).</p>' +
-      '<p>Bitte gib deine PIN nicht weiter — dein Zugang ist persönlich auf dich ausgestellt.</p>' +
+      [1, 2, 3].map(function(i){ return "<p>" + tFett("ueber" + i) + "</p>"; }).join("") +
     "</div>";
 }
 
@@ -4444,30 +5251,31 @@ const RECHTSDOKUMENTE = {
 
 function renderRechtlichesHtml(){
   const status = (session && session.agb_akzeptiert_am)
-    ? '<div class="admin-sub" style="margin-bottom:14px;">Zugestimmt am ' + fmtDateTime(session.agb_akzeptiert_am) + "</div>"
+    ? '<div class="admin-sub" style="margin-bottom:14px;">' + esc(t("zugestimmtAm", { datum: fmtDateTime(session.agb_akzeptiert_am) })) + "</div>"
     : "";
 
   // Unterseite offen -- nur das jeweilige Dokument zeigen, mit eigenem Zurück
   // zur Rechtliches-Übersicht (nicht direkt zu Start, sonst verliert man die Liste).
   if(rechtDoc && RECHTSDOKUMENTE[rechtDoc]){
     const d = RECHTSDOKUMENTE[rechtDoc];
-    return '<button class="krumen zurueck-zeile" data-zurueck-recht>' + icon("zurueck") + "<span>Rechtliches</span></button>" +
+    return '<button class="krumen zurueck-zeile" data-zurueck-recht>' + icon("zurueck") + "<span>" + esc(t("mRechtliches")) + "</span></button>" +
+      (sprache !== "de" ? '<div class="admin-sub" style="margin-bottom:10px;">' + esc(t("rechtNurDeutsch")) + "</div>" : "") +
       '<div class="tagline" style="font-size:20px;margin-bottom:4px;">' + d.titel + "</div>" +
       '<div class="karte info-block">' + d.html + "</div>";
   }
 
   // Übersicht: vier Kacheln, gleiches Muster wie „Nützliches" (PDF-Karten)
   const eintraege = [
-    ["impressum","Impressum","Anbieterkennzeichnung nach § 5 DDG"],
-    ["datenschutz","Datenschutzerklärung","Welche Daten wir speichern und warum"],
-    ["agb","Allgemeine Geschäftsbedingungen","Nutzungsbedingungen der Fahr-Akademie"],
-    ["widerruf","Widerrufsbelehrung","Dein Widerrufsrecht bei Vertragsschluss"]
+    ["impressum",t("rImpressum"),t("rImpressumSub")],
+    ["datenschutz",t("rDatenschutz"),t("rDatenschutzSub")],
+    ["agb",t("rAgb"),t("rAgbSub")],
+    ["widerruf",t("rWiderruf"),t("rWiderrufSub")]
   ];
   const zeilen = eintraege.map(function(e){
     return '<div class="karte pdf-karte" data-rechtdoc="' + e[0] + '" style="cursor:pointer;">' +
       '<div class="pdf-ic">' + icon("pdf") + "</div>" +
-      '<div style="min-width:0;"><div class="pdf-titel">' + e[1] + "</div>" +
-        '<div class="pdf-meta">' + e[2] + "</div></div>" +
+      '<div style="min-width:0;"><div class="pdf-titel">' + esc(e[1]) + "</div>" +
+        '<div class="pdf-meta">' + esc(e[2]) + "</div></div>" +
       '<span class="bt-arrow" style="margin-left:auto;">' + icon("weiter") + "</span>" +
     "</div>";
   }).join("");
@@ -4475,7 +5283,8 @@ function renderRechtlichesHtml(){
   return zurueckPille() +
     '<div class="tagline" style="font-size:20px;margin-bottom:4px;">' + esc(t("mRechtliches")) + '</div>' +
     status +
-    '<div class="admin-sub" style="margin-bottom:14px;">Alle rechtlichen Informationen zur Fahr-Akademie.</div>' +
+    '<div class="admin-sub" style="margin-bottom:14px;">' + esc(t("rechtSub")) + '</div>' +
+    (sprache !== "de" ? '<div class="admin-sub" style="margin-bottom:14px;">' + esc(t("rechtNurDeutsch")) + "</div>" : "") +
     zeilen;
 }
 
@@ -4494,7 +5303,7 @@ function renderThemenHtml(){
       return '<button class="sf-chip" data-hashtag="' + esc(t.id) + '" style="margin:3px;">#' + esc(t.label) + ' · ' + nutzung[t.id] + "</button>";
     }).join("");
     return zurueckPille() +
-      '<div class="tagline" style="font-size:20px;margin-bottom:4px;"># Themen</div>' +
+      '<div class="tagline" style="font-size:20px;margin-bottom:4px;">' + esc(t("mThemen")) + '</div>' +
       '<div class="admin-sub" style="margin-bottom:14px;">' + esc(t("themenIntro")) + '</div>' +
       '<div style="display:flex;flex-wrap:wrap;">' + (chips || '<div class="leer-hinweis">' + esc(t("keineThemen")) + '</div>') + "</div>";
   }
@@ -4516,7 +5325,7 @@ function renderThemenHtml(){
     });
   }).join("");
 
-  return '<button class="krumen zurueck-zeile" data-hashtag-zurueck>' + icon("zurueck") + "<span># Themen</span></button>" +
+  return '<button class="krumen zurueck-zeile" data-hashtag-zurueck>' + icon("zurueck") + "<span>" + esc(t("mThemen")) + "</span></button>" +
     '<div class="tagline" style="font-size:19px;margin-bottom:14px;">#' + esc(tag ? tag.label : "") + "</div>" +
     (karten || '<div class="leer-hinweis">' + esc(t("keineVideos")) + '</div>');
 }
@@ -4678,7 +5487,7 @@ function renderCatalog(){
             icon(d[1]) + "<span>" + esc(d[2]) + "</span></button>";
         }).join("") +
       "</div>" +
-      '<div class="drawer-foot">Fahr-Akademie — Ergänzung zur amtlichen Fahrausbildung</div>' +
+      '<div class="drawer-foot">' + esc(t("drawerFuss")) + '</div>' +
     "</div>";
 
   document.getElementById("app").innerHTML =
@@ -4856,13 +5665,13 @@ function renderCatalog(){
 // ob überhaupt etwas passiert ist.
 async function zugangAnfragen(btn, bereich){
   if(session && session.vorschau){ showToast("In der Vorschau wird keine Anfrage gesendet"); return; }
-  if(!session || !session.session_token){ showToast("Bitte neu anmelden"); return; }
+  if(!session || !session.session_token){ showToast(t("neuAnmelden")); return; }
   // Ohne echten Knopf (z.B. aus dem Blatt einer versiegelten Zeile): Platzhalter,
   // damit die Anzeige-Logik unten unveraendert bleiben kann.
   if(!btn || btn.tagName !== "BUTTON") btn = { innerHTML:"", disabled:false };
   const urspruenglich = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = "<span>Wird gesendet …</span>";
+  btn.innerHTML = "<span>" + esc(t("anfrageSendet")) + "</span>";
   try{
     const res = await fetch(SUPABASE_URL + "/functions/v1/academy-anfrage", {
       method: "POST",
@@ -4872,31 +5681,25 @@ async function zugangAnfragen(btn, bereich){
     const d = await res.json();
 
     if(d.ok && d.bereits_angefragt){
-      btn.innerHTML = icon("check") + "<span>Anfrage läuft schon</span>";
-      showToast("Deine Anfrage ist schon unterwegs — melde dich gern nochmal bei deinem Fahrlehrer.");
+      btn.innerHTML = icon("check") + "<span>" + esc(t("anfrageLaeuft")) + "</span>";
+      showToast(t("anfrageLaeuftText"));
       return;
     }
     if(d.ok){
-      btn.innerHTML = icon("check") + "<span>Anfrage gesendet</span>";
-      await blattHinweis({
-        titel: "Danke! Deine Anfrage ist raus.",
-        text: "So geht es weiter:\n\n" +
-          "1. Dein Fahrlehrer meldet sich mit den Zahlungsinfos\n" +
-          "2. Nach Zahlung wird dein Zugang freigeschaltet\n" +
-          "3. Alle Bereiche sind dann sofort offen — ohne neu anzumelden"
-      });
+      btn.innerHTML = icon("check") + "<span>" + esc(t("anfrageGesendet")) + "</span>";
+      await blattHinweis({ titel: t("anfrageDanke"), text: t("anfrageSchritte"), okText: t("allesKlar") });
       return;
     }
     if(d.code === "hat_schon"){
       btn.innerHTML = urspruenglich; btn.disabled = false;
-      showToast("Du hast bereits den vollen Zugang.");
+      showToast(t("schonVoll"));
       return;
     }
     btn.innerHTML = urspruenglich; btn.disabled = false;
-    showToast(d.error || "Das hat nicht geklappt. Bitte nochmal versuchen.");
+    showToast((sprache === "de" && d.error) || t("nichtGeklappt"));
   } catch(e){
     btn.innerHTML = urspruenglich; btn.disabled = false;
-    showToast("Keine Verbindung — bitte Internet prüfen.");
+    showToast(t("keinInternet"));
   }
 }
 
@@ -4905,8 +5708,8 @@ async function zugangAnfragen(btn, bereich){
 async function holeWerbecode(){
   const btn = document.getElementById("werbe-btn");
   const anzeige = document.getElementById("werbe-anzeige");
-  if(!session || !session.session_token){ showToast("Bitte neu anmelden"); return; }
-  btn.disabled = true; btn.textContent = "Moment …";
+  if(!session || !session.session_token){ showToast(t("neuAnmelden")); return; }
+  btn.disabled = true; btn.textContent = t("moment");
   try{
     const res = await fetch(SUPABASE_URL + "/functions/v1/academy-anfrage", {
       method: "POST",
@@ -4915,34 +5718,33 @@ async function holeWerbecode(){
     });
     const d = await res.json();
     if(!d.ok){
-      btn.disabled = false; btn.textContent = "Meinen Code anzeigen";
-      showToast(d.error || "Das hat nicht geklappt.");
+      btn.disabled = false; btn.textContent = t("werbeKnopf");
+      showToast((sprache === "de" && d.error) || t("nichtGeklappt"));
       return;
     }
     const link = location.origin + location.pathname + "?code=" + encodeURIComponent(d.code);
     anzeige.innerHTML =
       '<div class="werbe-code">' + esc(d.code) + "</div>" +
       '<div class="admin-sub" style="margin-bottom:10px;word-break:break-all;">' + esc(link) + "</div>";
-    btn.textContent = "Link teilen";
+    btn.textContent = t("werbeTeilen");
     btn.disabled = false;
     btn.onclick = function(){
-      const text = "Ich lerne meine Prüfungsstrecken mit der Fahr-Akademie — " +
-        "die echten Strecken, die der Prüfer fährt. Mit meinem Code bekommst du Rabatt: " + link;
+      const text = t("werbeNachricht", { link: link });
       // Teilen-Dialog des Handys nutzen, wenn vorhanden -- das ist der kürzeste Weg
       // in WhatsApp. Sonst in die Zwischenablage, damit trotzdem etwas passiert.
       if(navigator.share){
         navigator.share({ title: "Fahr-Akademie", text: text }).catch(function(){});
       } else if(navigator.clipboard){
-        navigator.clipboard.writeText(text).then(function(){ showToast("Text kopiert — jetzt einfügen"); });
+        navigator.clipboard.writeText(text).then(function(){ showToast(t("textKopiert")); });
       } else {
         // Bewusst ohne await: der Handler ist nicht async und es folgt nichts mehr.
         // Das Ergebnis wird nicht gebraucht -- der Text steht im Feld zum Kopieren.
-        blattEingabe({ titel:"Text zum Kopieren", wert:text, okText:"Fertig" });
+        blattEingabe({ titel:t("textZumKopieren"), wert:text, okText:t("fFertig"), abbruchText:t("abbrechen") });
       }
     };
   } catch(e){
-    btn.disabled = false; btn.textContent = "Meinen Code anzeigen";
-    showToast("Keine Verbindung — bitte Internet prüfen.");
+    btn.disabled = false; btn.textContent = t("werbeKnopf");
+    showToast(t("keinInternet"));
   }
 }
 
@@ -5178,7 +5980,7 @@ async function openVideo(videoId){
     return;
   }
 
-  document.getElementById("app").innerHTML = '<div class="loading">Video wird geladen …</div>';
+  document.getElementById("app").innerHTML = '<div class="loading">' + esc(t("videoLaedt")) + '</div>';
   try{
     const res = await fetch(SUPABASE_URL + "/functions/v1/academy-video-token", {
       method: "POST",

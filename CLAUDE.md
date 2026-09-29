@@ -27,6 +27,21 @@ Knöpfe auf dem Bild, lange Texte (TR/AR) brechen um. Die automatische Prüfung
 dafür (Überstand, Abschneiden, Überdeckung, Knopfgrößen) lief für
 "Verkehr verstehen" über alle Szenen und Sprachen.
 
+## Sprachen (29.09.2026)
+
+Fünf Sprachen: de, tr, en, ar (rtl), **es**. Regel (Serband): **alles, was
+Schüler sehen, in allen Sprachen** – kein fester deutscher Text im Schülerteil,
+immer `t("…")` mit Schlüssel in allen Sprachen (fehlt einer, erscheint Deutsch).
+Nur die Rechtstexte (Impressum, Datenschutz, AGB, Widerruf) und die StVO-PDFs
+bleiben deutsch; die Übersicht sagt das in der jeweiligen Sprache. Inhalte aus
+der Datenbank (Bereiche, Themen, Videotitel/-beschreibungen) in
+`academy_uebersetzungen` – neue Videos brauchen dort alle vier Fremdsprachen.
+Textkarten "Nützliches": `NUETZLICH_UE`. Die Verwaltung bleibt deutsch.
+Neue Sprache = `SPRACHEN`, `I18N`, `PRUEFUNGSTAG`, `NUETZLICH_UE`, `UI` in
+`verkehr/spieler.js`, `SPRACHEN` in der Edge Function `academy-szene`,
+`werkzeuge/szenen-texte/<sprache>.json` und die Beschriftungen im
+Szenen-Export (`szenen-export.js`, `werkzeuge/szenen/*.js`).
+
 ## Vor jedem Bau-Schritt
 
 - Betrifft es die Datenbank: `get_advisors` danach ausführen (security +
@@ -107,7 +122,7 @@ dafür (Überstand, Abschneiden, Überdeckung, Knopfgrößen) lief für
   → ganze Szene, sonst nur Kapitel 1 (`teaser.gesperrt` = Titel der übrigen).
   Erzeugt werden die Daten mit `werkzeuge/szenen-export.js` (tastet die
   Kompass-Lernszenen und `werkzeuge/szenen/*.js` ab; Übersetzungen in
-  `werkzeuge/szenen-texte/{tr,en,ar}.json`, gleiche Struktur wie `texte.de`).
+  `werkzeuge/szenen-texte/{tr,en,ar,es}.json`, gleiche Struktur wie `texte.de`).
   Die Kompass-Szenen stammen aus dem öffentlichen Kompass-Repo – die Sperre
   schützt die Akademie-Oberfläche, nicht die Rohdaten.
 - **Zweites Supabase-Projekt `oectrvkjunntzsggyhxv`** (Fahrlehrer-Kompass) ist
