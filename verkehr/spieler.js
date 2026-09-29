@@ -383,10 +383,20 @@ export function starte(el, daten, opt){
     $("[data-kapvor]").disabled = letztes && !teaser;
     $$(".vv-chip").forEach((m, i) => {
       m.classList.toggle("aktiv", i === n);
-      if(i === n && m.scrollIntoView && st.laeuft) try{ m.scrollIntoView({ block: "nearest", inline: "center", behavior: ruhig ? "auto" : "smooth" }); }catch(e){}
+      if(i === n && st.laeuft) chipMitte(m);
     });
     frageZeigen(tx.frage, false);
     if(st.autoKam && k.kamera) kameraSetzen(k.kamera, false);
+  }
+
+  // Nur den Chip-Streifen waagerecht verschieben – scrollIntoView würde auch die
+  // ganze Seite senkrecht mitziehen, dann rutscht das Bild beim Abspielen weg
+  function chipMitte(m){
+    const leiste = m.parentNode;
+    if(!leiste || leiste.scrollWidth <= leiste.clientWidth) return;
+    const lr = leiste.getBoundingClientRect(), mr = m.getBoundingClientRect();
+    const ziel = leiste.scrollLeft + (mr.left + mr.width / 2) - (lr.left + lr.width / 2);
+    try{ leiste.scrollTo({ left: ziel, behavior: ruhig ? "auto" : "smooth" }); }catch(e){ leiste.scrollLeft = ziel; }
   }
 
   // Mitdenken ohne Bewertung: keine Antwortknöpfe, kein Rot/Grün, nichts gespeichert
