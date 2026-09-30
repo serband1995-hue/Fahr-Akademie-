@@ -1,0 +1,1368 @@
+{
+ "abfahren": {
+  "kurz": "Na vreme se prestroj, traka za usporavanje, tek tamo koči",
+  "titel": "Izlazak sa autoputa",
+  "kapitel": {
+   "k0": {
+    "text": "Putokaz najavljuje izlaz 1000 m ranije. Sada planiraj: na vreme pređi u desnu traku – ne tek u poslednjoj sekundi iz leve.",
+    "frage": {
+     "text": "Kada prelazim udesno?",
+     "richtig": 1,
+     "optionen": [
+      "Tek kod samog izlaza",
+      "Na vreme, najkasnije pre tabli s kosim prugama",
+      "Svejedno, ako treba i preko šrafirane površine"
+     ],
+     "erklaerung": "Na vreme se prestroj, da promena trake prođe bez žurbe i bez ugrožavanja drugih."
+    },
+    "regel": "Znak 449 · § 7 Abs. 5 StVO",
+    "titel": "Izlaz najavljen"
+   },
+   "k1": {
+    "text": "Desni migavac, unutrašnji i spoljni retrovizor, pogled preko desnog ramena – pa odlučno u desnu traku.",
+    "frage": null,
+    "regel": "§ 7 Abs. 5 StVO",
+    "titel": "Migavac, retrovizor, pogled preko ramena"
+   },
+   "k2": {
+    "text": "Ostani u desnoj traci i zadrži brzinu. Isključi migavac.",
+    "frage": null,
+    "regel": "§ 2 Abs. 2 StVO (obaveza vožnje desnom stranom)",
+    "titel": "Prestroj se desno"
+   },
+   "k3": {
+    "text": "Izlaz se još jednom najavljuje 500 m ranije. Od sada po mogućnosti više ne preticati.",
+    "frage": null,
+    "regel": "Znak 449",
+    "titel": "Putokaz 500 m"
+   },
+   "k4": {
+    "text": "Table sa 3, 2, 1 kosom prugom: još 300, 200, 100 m do početka trake za usporavanje.",
+    "frage": {
+     "text": "Šta znači tabla sa dve kose pruge?",
+     "richtig": 0,
+     "optionen": [
+      "Još 200 m do izlaza",
+      "Brzina 200",
+      "Dve trake slobodne"
+     ],
+     "erklaerung": "Znak 450: 3 pruge = 300 m, 2 = 200 m, 1 = 100 m."
+    },
+    "regel": "Znak 450",
+    "titel": "Table najave izlaza"
+   },
+   "k5": {
+    "text": "Na vreme pre trake za usporavanje uključi desni migavac – vozila iza tebe moraju to rano da vide.",
+    "frage": null,
+    "regel": "§ 7 Abs. 5 StVO",
+    "titel": "Desni migavac"
+   },
+   "k6": {
+    "text": "Retrovizor i pogled preko desnog ramena, pa preko široke isprekidane linije pređi u traku za usporavanje.",
+    "frage": null,
+    "regel": "Znak 340 · § 7 Abs. 5 StVO",
+    "titel": "Retrovizor, pogled preko ramena, prelazak"
+   },
+   "k7": {
+    "text": "Brzinu smanjuj tek u traci za usporavanje, ne ranije na autoputu. Tamo ne smeš voziti brže nego u prolaznim trakama.",
+    "frage": {
+     "text": "Gde smanjujem brzinu?",
+     "richtig": 1,
+     "optionen": [
+      "Već u desnoj traci",
+      "U traci za usporavanje",
+      "Tek u krivini"
+     ],
+     "erklaerung": "Kočenje na autoputu ugrožava vozila iza tebe – usporavaj tek u traci za usporavanje, a pre krivine spusti brzinu na onu sa znaka."
+    },
+    "regel": "§ 7a Abs. 3 StVO",
+    "titel": "Tek sada koči"
+   },
+   "k8": {
+    "text": "Do znaka zakoči na prikazanu najveću dozvoljenu brzinu (ovde 60 km/h), pre nego što krivina postane oštrija. Posle duge vožnje autoputem 60 km/h deluje veoma sporo – proveri brzinomer!",
+    "frage": {
+     "text": "Zašto gledati na brzinomer?",
+     "richtig": 0,
+     "optionen": [
+      "Jer se posle brze vožnje lako pogrešno proceni brzina",
+      "Zbog pokazivača goriva",
+      "Nije potrebno"
+     ],
+     "erklaerung": "Posle vožnje autoputem potcenjuješ sopstvenu brzinu (navikavanje)."
+    },
+    "regel": "Znak 274 · § 3 Abs. 1 StVO",
+    "titel": "Krivina i brzinomer"
+   },
+   "k9": {
+    "text": "Promašio si izlaz? Vozi dalje do sledećeg. Na autoputu nikada ne vozi unazad i ne okreći se – ni na zaustavnoj traci.",
+    "frage": null,
+    "regel": "§ 18 Abs. 7 StVO",
+    "titel": "Zapamti"
+   }
+  }
+ },
+ "auffahren": {
+  "kurz": "Traka za ubrzanje, nađi prazninu, uključi se",
+  "titel": "Uključivanje na autoput",
+  "kapitel": {
+   "k0": {
+    "text": "Priključni put vodi posebnim lukom do autoputa. Već ovde posmatraj saobraćaj na autoputu: koliko brzo se kreće, gde ima praznina?",
+    "frage": {
+     "text": "Ko ima prvenstvo prolaza kad se budem uključivao?",
+     "richtig": 1,
+     "optionen": [
+      "Ja – ja sam u traci za ubrzanje",
+      "Vozila na prolaznom kolovozu",
+      "Ko je brži"
+     ],
+     "erklaerung": "§ 18 Abs. 3 StVO: Vozila na prolaznom kolovozu imaju prvenstvo prolaza."
+    },
+    "regel": "Znak 330.1 · § 18 Abs. 2 StVO",
+    "titel": "Priključak na autoput"
+   },
+   "k1": {
+    "text": "U traci za ubrzanje odlučno ubrzaj do brzine saobraćaja. Ovde smeš da voziš brže nego u prolaznim trakama – to je i cilj.",
+    "frage": {
+     "text": "Šta je sada najvažniji zadatak?",
+     "richtig": 1,
+     "optionen": [
+      "Voziti sporo i čekati",
+      "Odlučno ubrzati do brzine saobraćaja",
+      "Odmah skrenuti ulevo"
+     ],
+     "erklaerung": "Sa sličnom brzinom kao ostali možeš bezbedno da se uključiš. Presporo uključivanje tera druge da koče."
+    },
+    "regel": "§ 7a Abs. 2 StVO",
+    "titel": "Traka za ubrzanje: ubrzaj"
+   },
+   "k2": {
+    "text": "Promenu trake najavi na vreme i jasno – uključi levi migavac.",
+    "frage": {
+     "text": "Kada uključujem migavac?",
+     "richtig": 1,
+     "optionen": [
+      "Tek dok već menjam traku",
+      "Na vreme, unapred",
+      "Nikako, ionako je jasno"
+     ],
+     "erklaerung": "Svaka promena trake mora se najaviti na vreme i jasno (§ 7 Abs. 5 StVO)."
+    },
+    "regel": "§ 7 Abs. 5 StVO",
+    "titel": "Levi migavac"
+   },
+   "k3": {
+    "text": "Kamion vozi desno ispred, crveni automobil ima veliko rastojanje. Praznina iza kamiona odgovara: izjednači brzinu i drži dovoljno rastojanje (pravilo: „pola brzinomera“ u metrima).",
+    "frage": {
+     "text": "Gde se uključujem?",
+     "richtig": 1,
+     "optionen": [
+      "Pored kamiona",
+      "U prazninu iza kamiona",
+      "Ispred kamiona, dodaću gas"
+     ],
+     "erklaerung": "Praznina iza kamiona je dovoljno velika. Ispred njega bi bilo tesno, a on ima prvenstvo prolaza."
+    },
+    "regel": "§ 18 Abs. 3 · § 4 Abs. 1 StVO",
+    "titel": "Izaberi prazninu"
+   },
+   "k4": {
+    "text": "Neposredno pre promene trake: unutrašnji i spoljni retrovizor, pa pogled preko levog ramena – inače mrtvi ugao ostaje nevidljiv.",
+    "frage": {
+     "text": "Šta dolazi neposredno pre promene trake?",
+     "richtig": 1,
+     "optionen": [
+      "Utišati radio",
+      "Retrovizor i pogled preko levog ramena",
+      "Zatrubiti"
+     ],
+     "erklaerung": "Samo pogledom preko ramena vidiš vozilo u mrtvom uglu."
+    },
+    "regel": "§ 7 Abs. 5 StVO: isključiti ugrožavanje",
+    "titel": "Retrovizor i pogled preko ramena"
+   },
+   "k5": {
+    "text": "Pređi preko široke isprekidane linije – ne preko pune linije ili šrafirane površine. Pređi odlučno i ravnomerno, ne čekaj do kraja trake.",
+    "frage": null,
+    "regel": "Znak 340 · Znak 295 · Znak 298 · § 7 Abs. 5 StVO",
+    "titel": "Uključivanje"
+   },
+   "k6": {
+    "text": "Posle promene trake isključi migavac i nastavi desno. Rastojanje do kamiona ispred: najmanje „pola brzinomera“ u metrima.",
+    "frage": {
+     "text": "A sada?",
+     "richtig": 1,
+     "optionen": [
+      "Odmah preticati levo",
+      "Migavac isključiti, voziti desno, držati rastojanje",
+      "Nastaviti zaustavnom trakom"
+     ],
+     "erklaerung": "Obaveza vožnje desnom stranom (§ 2 Abs. 2 StVO) i dovoljno rastojanje (§ 4 Abs. 1 StVO)."
+    },
+    "regel": "§ 2 Abs. 2 · § 4 Abs. 1 StVO",
+    "titel": "Migavac isključi, drži rastojanje"
+   },
+   "k7": {
+    "text": "Pri uključivanju na autoput ne važi pravilo „rajsferšlusa“: ko se uključuje, mora da poštuje prvenstvo prolaza. Ako nema praznine, u krajnjem slučaju stani na kraju trake – nikada ne beži na zaustavnu traku.",
+    "frage": null,
+    "regel": "§ 18 Abs. 3 StVO · § 7 Abs. 4 ovde ne važi",
+    "titel": "Zapamti"
+   }
+  }
+ },
+ "doppel": {
+  "kurz": "Dve trake za skretanje – svako ostaje u svojoj traci",
+  "titel": "Skretanje levo iz dve trake",
+  "kapitel": {
+   "k0": {
+    "text": "Obe saobraćajne trake vode levo (strelice, znak 297), semafor pokazuje zeleno. Na vreme se prestroj, uključi migavac – i zadrži izabranu traku.",
+    "frage": {
+     "text": "Auto-škola je u desnoj od dve trake za skretanje levo. U koju traku skreće?",
+     "richtig": 0,
+     "optionen": [
+      "U desnu traku ulice u koju skreće",
+      "U levu traku",
+      "Svejedno"
+     ],
+     "erklaerung": "Levo ostaje levo, desno ostaje desno – tako nema sukoba sa vozilom pored."
+    },
+    "regel": "Znak 297 · § 9 Abs. 1 StVO",
+    "titel": "Dve trake za skretanje levo"
+   },
+   "k1": {
+    "text": "Skrećite ravnomerno jedan pored drugog. Isprekidane linije u raskrsnici pokazuju put. Bez promene trake u raskrsnici!",
+    "frage": null,
+    "regel": "§ 7 Abs. 5 · § 9 Abs. 1 StVO",
+    "titel": "U luku drži traku"
+   },
+   "k2": {
+    "text": "Tek iza raskrsnice – sa migavcem, retrovizorom i pogledom preko ramena – po potrebi promeni traku.",
+    "frage": null,
+    "regel": "§ 7 Abs. 5 StVO",
+    "titel": "Posle skretanja"
+   }
+  }
+ },
+ "ecke": {
+  "kurz": "Unazad u sporednu ulicu – ravnomerno blizu ivičnjaka",
+  "titel": "Vožnja unazad oko ugla udesno",
+  "kapitel": {
+   "k0": {
+    "text": "Stani desno uz ivicu kolovoza, otprilike dve do tri dužine vozila iza ukrštanja. Pogledaj svuda okolo – saobraćaj ima prednost.",
+    "frage": {
+     "text": "Šta je najvažnije pri vožnji unazad?",
+     "richtig": 1,
+     "optionen": [
+      "Biti što brži",
+      "Voziti polako i posmatrati svuda okolo",
+      "Gledati samo u unutrašnji retrovizor"
+     ],
+     "erklaerung": "Pri vožnji unazad niko ne sme biti ugrožen – polako, sa pogledom unazad i svuda okolo."
+    },
+    "regel": "§ 9 Abs. 5 StVO",
+    "titel": "Stani iza ukrštanja"
+   },
+   "k1": {
+    "text": "Okreni telo, gledaj kroz zadnje staklo i pravo se otkotrljaj unazad – oko 50 cm od ivičnjaka.",
+    "frage": null,
+    "regel": "Osnovni zadatak vožnje: vožnja unazad",
+    "titel": "Pravo unazad"
+   },
+   "k2": {
+    "text": "Kad zadnji točak dođe do ugla: okreni volan udesno, tako da auto ravnomerno prati luk ivičnjaka. Prednji deo pri tome zanosi ulevo na kolovoz – pre toga ponovo pogledaj svuda okolo!",
+    "frage": {
+     "text": "Na koju stranu okrećem volan da bi zadnji deo išao udesno?",
+     "richtig": 0,
+     "optionen": [
+      "Udesno",
+      "Ulevo"
+     ],
+     "erklaerung": "Unazad važi: volan okreni na onu stranu na koju treba da ide zadnji deo."
+    },
+    "regel": "§ 9 Abs. 5 StVO",
+    "titel": "Skretanje oko ugla"
+   },
+   "k3": {
+    "text": "Kad auto stoji paralelno sa ivičnjakom sporedne ulice: ispravi volan i vozi još otprilike jednu dužinu vozila unazad.",
+    "frage": null,
+    "regel": "Pravilnik o ispitu · osnovni zadaci vožnje",
+    "titel": "Dalje pravo"
+   }
+  }
+ },
+ "eng": {
+  "kurz": "Ko mora da obiđe prepreku, propušta vozila iz suprotnog smera",
+  "titel": "Suženje puta: prepreka na mojoj strani",
+  "kapitel": {
+   "k0": {
+    "text": "Kamion stoji sa uključenim svim migavcima na mojoj strani. Ulica je preuska za dva vozila jedno pored drugog.",
+    "frage": {
+     "text": "Ko prvi sme da prođe kroz suženje?",
+     "richtig": 1,
+     "optionen": [
+      "Ja – ja sam stigao prvi",
+      "Vozila iz suprotnog smera – prepreka je na mojoj strani",
+      "Ko je brži"
+     ],
+     "erklaerung": "§ 6 StVO: Ko hoće da obiđe prepreku sleva, mora da propusti vozila koja dolaze iz suprotnog smera."
+    },
+    "regel": "§ 6 StVO",
+    "titel": "Prepreka ispred"
+   },
+   "k1": {
+    "text": "Stani na vreme i na rastojanju od prepreke – tako ostaje mesta za obilaženje, a vozila iz suprotnog smera se bolje vide.",
+    "frage": null,
+    "regel": "§ 6 StVO",
+    "titel": "Čekaj na rastojanju"
+   },
+   "k2": {
+    "text": "Kad je slobodno: retrovizor, pogled preko levog ramena, levi migavac i sa dovoljnim bočnim rastojanjem pored kamiona – pazi na ljude koji izlaze.",
+    "frage": null,
+    "regel": "§ 6 · § 7 Abs. 5 StVO",
+    "titel": "Najavi izlazak iz trake"
+   },
+   "k3": {
+    "text": "Iza prepreke uključi desni migavac i ponovo se vrati desno.",
+    "frage": null,
+    "regel": "§ 6 · § 2 Abs. 2 StVO",
+    "titel": "Vrati se u traku"
+   }
+  }
+ },
+ "gefahr": {
+  "kurz": "Put reagovanja + put kočenja = zaustavni put – sa testom reakcije",
+  "titel": "Kočenje u opasnosti: 30 ili 50?",
+  "kapitel": {
+   "k0": {
+    "text": "Dve vožnje u poređenju u istoj traci: auto-škola sa 50 km/h i – providno – isti auto sa 30 km/h. Uskoro će se između parkiranih automobila na ulicu otkotrljati lopta, a dete trči za njom.",
+    "frage": null,
+    "regel": "§ 3 Abs. 1 · § 3 Abs. 2a StVO",
+    "titel": "Dva auta, ista reakcija"
+   },
+   "k1": {
+    "text": "Prođe oko 1 sekunda dok noga ne stigne na kočnicu. Za to vreme auto vozi dalje bez kočenja: pri 50 km/h skoro 14 m, pri 30 km/h nešto više od 8 m.",
+    "frage": {
+     "text": "Koliki je put reagovanja pri 50 km/h (pravilo za pamćenje)?",
+     "richtig": 1,
+     "optionen": [
+      "5 m",
+      "15 m",
+      "25 m"
+     ],
+     "erklaerung": "(50 ÷ 10) · 3 = 15 m. Tačan račun daje oko 14 m u sekundi."
+    },
+    "regel": "Pravilo za put reagovanja: (km/h ÷ 10) · 3",
+    "titel": "Opasnost! Vreme reakcije"
+   },
+   "k2": {
+    "text": "Kočnicu i kvačilo istovremeno pritisni do kraja i drži pritisak. ABS krčka – tako i treba. Drži volan opušteno, da možeš da izbegneš prepreku.",
+    "frage": {
+     "text": "Koliki je put kočenja pri kočenju u opasnosti sa 50 km/h (pravilo za pamćenje)?",
+     "richtig": 0,
+     "optionen": [
+      "12,5 m",
+      "25 m",
+      "50 m"
+     ],
+     "erklaerung": "(50 ÷ 10)² ÷ 2 = 12,5 m. Normalan put kočenja (bez opasnosti): (50 ÷ 10)² = 25 m."
+    },
+    "regel": "Pravilo za kočenje u opasnosti: (km/h ÷ 10)² ÷ 2",
+    "titel": "Kočenje punom snagom"
+   },
+   "k3": {
+    "text": "Auto sa 30 km/h zaustavi se na vreme. Sa 50 km/h put nije dovoljan – na mestu gde je lopta auto bi još imao oko 35 km/h. Brzina 30 spasava živote.",
+    "frage": {
+     "text": "Zašto je brzina 30 ispred škola tako važna?",
+     "richtig": 1,
+     "optionen": [
+      "Zbog buke",
+      "Zaustavni put je mnogo kraći – sa 50 sam na mestu gde bih sa 30 već stajao još skoro jednako brz kao na početku",
+      "To je samo preporuka"
+     ],
+     "erklaerung": "Put kočenja raste sa kvadratom brzine."
+    },
+    "regel": "§ 3 Abs. 1 · § 3 Abs. 2a StVO",
+    "titel": "Rezultat"
+   }
+  }
+ },
+ "gruenpfeil": {
+  "kurz": "Prvo stani, pa oprezno desno – vozila i pešaci sa zelenim imaju prednost",
+  "titel": "Zelena strelica na crvenom",
+  "kapitel": {
+   "k0": {
+    "text": "Semafor pokazuje crveno. Desno pored njega visi zelena strelica na crnoj limenoj tabli (znak 720) – nije svetleća strelica!",
+    "frage": {
+     "text": "Šta zelena strelica prvo zahteva?",
+     "richtig": 1,
+     "optionen": [
+      "Polako se provući",
+      "Potpuno se zaustaviti na liniji zaustavljanja",
+      "Ništa, ona pokazuje zeleno"
+     ],
+     "erklaerung": "Posle zaustavljanja je skretanje desno na crveno dozvoljeno – zaustavljanje je obavezno."
+    },
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO · Znak 720",
+    "titel": "Crveno – sa tablom zelene strelice"
+   },
+   "k1": {
+    "text": "Potpuno se zaustavi. Ispred mene pešakinja prelazi kolovoz na zeleno.",
+    "frage": {
+     "text": "Ko sme prvi?",
+     "richtig": 1,
+     "optionen": [
+      "Ja, imam strelicu",
+      "Pešaci i poprečni saobraćaj sa zelenim",
+      "Ko je prvi stigao"
+     ],
+     "erklaerung": "Ometanje ili ugrožavanje – naročito pešaka i vozila iz smera koji ima zeleno – mora biti isključeno."
+    },
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "titel": "Stani na liniji zaustavljanja"
+   },
+   "k2": {
+    "text": "Pešački prelaz je slobodan. Polako se primakni do mesta odakle vidiš raskrsnicu i ponovo stani.",
+    "frage": null,
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "titel": "Primakni se do preglednog mesta"
+   },
+   "k3": {
+    "text": "Sleva dolazi auto na zeleno – ne sme biti ni ometen ni ugrožen. Čekaj.",
+    "frage": null,
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "titel": "Poprečni saobraćaj ima zeleno"
+   },
+   "k4": {
+    "text": "Plavi auto je prošao. Pogled preko desnog ramena i polako skreni – samo iz desne saobraćajne trake!",
+    "frage": null,
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "titel": "Skretanje"
+   },
+   "k5": {
+    "text": "Svetleća zelena strelica na semaforu = posebno zeleno svetlo za skretanje. Zelena limena tabla = skretanje tek posle zaustavljanja, uz najveći oprez.",
+    "frage": null,
+    "regel": "§ 37 Abs. 2 StVO",
+    "titel": "Zapamti"
+   }
+  }
+ },
+ "kreisel": {
+  "kurz": "Ulazak bez migavca, u krugu prvenstvo prolaza, pri izlasku migavac",
+  "titel": "Kružni tok",
+  "kapitel": {
+   "k0": {
+    "text": "Kružni tok sa znakom „Ustupi prvenstvo prolaza“: vozila na kružnom kolovozu imaju prvenstvo prolaza. Polako priđi i pogledaj ulevo.",
+    "frage": {
+     "text": "Da li uključujem migavac pri ulasku u kružni tok?",
+     "richtig": 2,
+     "optionen": [
+      "Da, desni",
+      "Da, levi",
+      "Ne – migavac pri ulasku nije dozvoljen"
+     ],
+     "erklaerung": "§ 9a Abs. 1 StVO: Pri ulasku nije dozvoljeno koristiti pokazivač pravca."
+    },
+    "regel": "Znak 215 · Znak 205 · § 9a Abs. 1 StVO",
+    "titel": "Znak 215 ispod znaka 205"
+   },
+   "k1": {
+    "text": "Plavi auto je već u krugu i ima prvenstvo prolaza. Stani na liniji za čekanje i propusti ga.",
+    "frage": null,
+    "regel": "§ 9a Abs. 1 StVO · Znak 341",
+    "titel": "Propusti vozila"
+   },
+   "k2": {
+    "text": "Slobodno – uđi bez migavca. U krugu se vozi suprotno od kazaljke na satu; zaustavljanje na kružnom kolovozu je zabranjeno.",
+    "frage": null,
+    "regel": "§ 9a Abs. 1 StVO",
+    "titel": "Ulazak"
+   },
+   "k3": {
+    "text": "Posle pretposlednjeg izlaza uključi desni migavac, retrovizor i pogled preko desnog ramena – biciklisti i pešaci!",
+    "frage": {
+     "text": "Kada uključujem migavac za izlazak?",
+     "richtig": 1,
+     "optionen": [
+      "Nikako",
+      "Posle izlaza pre mog – na vreme pre izlaska",
+      "Već pri ulasku"
+     ],
+     "erklaerung": "Izlazak se najavljuje: desni migavac čim prođeš izlaz pre svog."
+    },
+    "regel": "§ 9 Abs. 1 StVO",
+    "titel": "Desni migavac za izlazak"
+   },
+   "k4": {
+    "text": "Iza izlaza je pešački prelaz („zebra“). Ko želi da ga koristi, ima prednost – priđi umerenom brzinom i čekaj.",
+    "frage": {
+     "text": "Pešakinja hoće da pređe preko „zebre“. Ko ima prednost?",
+     "richtig": 1,
+     "optionen": [
+      "Ja – izlazim iz kružnog toka",
+      "Pešakinja",
+      "Ko je brži"
+     ],
+     "erklaerung": "§ 26 Abs. 1 StVO: Pešacima koji vidljivo žele da koriste prelaz mora se omogućiti prelazak."
+    },
+    "regel": "§ 26 Abs. 1 StVO",
+    "titel": "Pešaci na prelazu"
+   }
+  }
+ },
+ "laengs": {
+  "kurz": "Bočno na parking mesto uz ivicu kolovoza",
+  "titel": "Parkiranje unazad (paralelno)",
+  "kapitel": {
+   "k0": {
+    "text": "Da li je mesto dovoljno? Pravilo: najmanje jedna dobra dužina vozila plus oko 1,5 m. Na vreme uključi desni migavac, da vozila iza tebe znaju šta radiš.",
+    "frage": {
+     "text": "Kada uključujem migavac?",
+     "richtig": 1,
+     "optionen": [
+      "Tek pri vožnji unazad",
+      "Već dok prilazim parking mestu",
+      "Nikako, samo parkiram"
+     ],
+     "erklaerung": "Rano uključi desni migavac – tako vozila iza tebe razumeju zašto staješ."
+    },
+    "regel": "§ 1 Abs. 2 · § 12 StVO",
+    "titel": "Proveri mesto"
+   },
+   "k1": {
+    "text": "Stani paralelno pored prednjeg auta, na oko 50 cm do 1 m bočnog rastojanja. Tvoj zadnji deo je otprilike u visini njegovog zadnjeg dela.",
+    "frage": {
+     "text": "Šta dolazi pre vožnje unazad?",
+     "richtig": 1,
+     "optionen": [
+      "Odmah krenuti unazad",
+      "Pogled svuda okolo – naročito unazad",
+      "Zatrubiti"
+     ],
+     "erklaerung": "Pre svakog pokreta pogledaj svuda okolo, a pri vožnji unazad okreni telo i gledaj kroz zadnje staklo."
+    },
+    "regel": "Osnovni zadatak vožnje: paralelno parkiranje",
+    "titel": "Stani pored prednjeg auta"
+   },
+   "k2": {
+    "text": "Polako se kotrljaj unazad i okreni volan do kraja udesno. Zadnji deo ulazi u parking mesto. Gledaj unazad, a prednji deo zanosi ulevo na kolovoz – pre toga ponovo pogledaj!",
+    "frage": null,
+    "regel": "§ 9 Abs. 5 · § 1 Abs. 2 StVO",
+    "titel": "Volan do kraja udesno"
+   },
+   "k3": {
+    "text": "Ispravi volan i otkotrljaj se malo pravo unazad – tako auto dolazi bliže ivičnjaku.",
+    "frage": null,
+    "regel": "Osnovni zadatak vožnje: paralelno parkiranje",
+    "titel": "Pravo unazad"
+   },
+   "k4": {
+    "text": "Kad desni prednji ugao prođe zadnji deo auta ispred: okreni volan do kraja ulevo. Auto se okreće paralelno sa ivičnjakom.",
+    "frage": {
+     "text": "Kada okrećem volan ulevo?",
+     "richtig": 1,
+     "optionen": [
+      "Odmah na početku",
+      "Kad prednji deo prođe auto ispred",
+      "Nikako"
+     ],
+     "erklaerung": "Prerano kontriranje volanom znači udarac spreda – prekasno dovodi zadnji deo do ivičnjaka."
+    },
+    "regel": "Osnovni zadatak vožnje: paralelno parkiranje",
+    "titel": "Kontriranje volanom"
+   },
+   "k5": {
+    "text": "Malo napred, dok ispred i iza ne bude slično mnogo mesta. Cilj: paralelno i blizu ivičnjaka (okvirno: do oko 30 cm), bez dodirivanja.",
+    "frage": {
+     "text": "Koliko auto sme biti udaljen od ivičnjaka?",
+     "richtig": 1,
+     "optionen": [
+      "Svejedno",
+      "Blizu – okvirno do oko 30 cm",
+      "Najmanje 1 m"
+     ],
+     "erklaerung": "Dobro parkirano: paralelno i blizu ivičnjaka – ali bez dodira."
+    },
+    "regel": "Osnovni zadatak vožnje: paralelno parkiranje",
+    "titel": "Poravnanje"
+   }
+  }
+ },
+ "links_gegen": {
+  "kurz": "Vozila iz suprotnog smera i oni koji skreću desno iz suprotnog smera imaju prednost",
+  "titel": "Skretanje levo uz vozila iz suprotnog smera",
+  "kapitel": {
+   "k0": {
+    "text": "Retrovizor, levi migavac, prestroj se ka sredini. Pre prestrojavanja pazi na vozila iza sebe.",
+    "frage": {
+     "text": "Gde se prestrojavam za skretanje levo?",
+     "richtig": 1,
+     "optionen": [
+      "Sasvim desno",
+      "Do sredine kolovoza",
+      "Na suprotnu stranu kolovoza"
+     ],
+     "erklaerung": "Skretanje levo: prestroj se do sredine (u jednosmernim ulicama što više levo)."
+    },
+    "regel": "§ 9 Abs. 1 StVO",
+    "titel": "Prestrojavanje"
+   },
+   "k1": {
+    "text": "Uđi u raskrsnicu i čekaj. Točkovi stoje pravo – ako te neko udari otpozadi, nećeš se otkotrljati među vozila iz suprotnog smera.",
+    "frage": {
+     "text": "Kojim redosledom vozila smeju da prođu?",
+     "erklaerung": "Ko skreće levo, propušta vozila iz suprotnog smera – i onoga ko sa suprotne strane skreće desno. Auto-škola prolazi poslednja.",
+     "reihenfolge": [
+      "Plavi (pravo)",
+      "Crveni (skreće desno)",
+      "Kombi (pravo)",
+      "Auto-škola (levo)"
+     ]
+    },
+    "regel": "§ 9 Abs. 3 StVO",
+    "titel": "Čekaj u raskrsnici"
+   },
+   "k2": {
+    "text": "Oni koji iz suprotnog smera idu pravo ili skreću desno imaju prednost. Skreni tek kad je sve slobodno i kad više nijedan pešak ne prelazi.",
+    "frage": null,
+    "regel": "§ 9 Abs. 3 · § 9 Abs. 4 StVO",
+    "titel": "Propusti vozila iz suprotnog smera"
+   },
+   "k3": {
+    "text": "U ulici u koju skrećem pešak prelazi kolovoz. Posebna pažnja – čekaj dok ne pređe.",
+    "frage": {
+     "text": "Pešak je još na kolovozu. Šta da radim?",
+     "richtig": 1,
+     "optionen": [
+      "Zatrubiti",
+      "Čekati dok ne prođe",
+      "Proći tik iza njega"
+     ],
+     "erklaerung": "Pri skretanju budi posebno obziran prema pešacima – ako treba, čekaj."
+    },
+    "regel": "§ 9 Abs. 3 StVO",
+    "titel": "Obrati pažnju na pešake"
+   },
+   "k4": {
+    "text": "Neposredno pre skretanja: pogled preko levog ramena (biciklisti, oni koji preteču), pa odlučno skreni u širokom luku.",
+    "frage": null,
+    "regel": "§ 9 Abs. 1 StVO",
+    "titel": "Pogled preko levog ramena"
+   }
+  }
+ },
+ "quer_rueck": {
+  "kurz": "Unazad na upravno parking mesto – kasnije napred sa dobrom preglednošću",
+  "titel": "Parkiranje unazad (upravno)",
+  "kapitel": {
+   "k0": {
+    "text": "Vozi polako prolazom parkinga, uključi desni migavac i prođi pored parking mesta dok zadnji deo ne bude oko 1–2 m iza njega.",
+    "frage": null,
+    "regel": "§ 1 Abs. 2 StVO",
+    "titel": "Prođi pored mesta"
+   },
+   "k1": {
+    "text": "Pre vožnje unazad pogledaj svuda okolo – pešaci i automobili u prolazu!",
+    "frage": {
+     "text": "Zašto unazad na upravno mesto?",
+     "richtig": 0,
+     "optionen": [
+      "Pri izlasku kasnije dobra preglednost napred",
+      "Tako je propisano",
+      "Jer je brže"
+     ],
+     "erklaerung": "Unazad se lakše uđe uz oštriji luk, a pri izlasku sa parking mesta vidiš poprečni saobraćaj."
+    },
+    "regel": "§ 9 Abs. 5 StVO",
+    "titel": "Pogled svuda okolo"
+   },
+   "k2": {
+    "text": "Polako unazad i okreni volan do kraja udesno. Gledaj unazad i prema uglovima susednih automobila.",
+    "frage": null,
+    "regel": "Osnovni zadatak vožnje: upravno parkiranje",
+    "titel": "Volan do kraja"
+   },
+   "k3": {
+    "text": "Kad auto stoji paralelno sa susednim: ispravi volan i po sredini se otkotrljaj unazad do kraja mesta.",
+    "frage": {
+     "text": "Kada ispravljam volan?",
+     "richtig": 1,
+     "optionen": [
+      "Čim uđem u mesto",
+      "Kad auto stoji paralelno sa susednim automobilima",
+      "Nikada"
+     ],
+     "erklaerung": "Onda pravo dalje – inače auto stoji ukoso."
+    },
+    "regel": "Pravilnik o ispitu · osnovni zadaci vožnje",
+    "titel": "Pravo unazad"
+   }
+  }
+ },
+ "quer_vor": {
+  "kurz": "Unapred na upravno parking mesto – sa zamahom",
+  "titel": "Parkiranje unapred (upravno)",
+  "kapitel": {
+   "k0": {
+    "text": "U prolazu parkinga polako priđi mestu, uključi desni migavac. Malo zamahni ulevo, da luk odgovara parking mestu.",
+    "frage": {
+     "text": "Zašto zamahujem pre parkiranja unapred?",
+     "richtig": 0,
+     "optionen": [
+      "Da luk odgovara uskom parking mestu",
+      "Jer je brže",
+      "Nije potrebno"
+     ],
+     "erklaerung": "Pri vožnji unapred zadnji točkovi seku krivinu ka unutra – zamah sprečava da zadnji deo okrzne susedni auto."
+    },
+    "regel": "§ 1 Abs. 2 StVO",
+    "titel": "Prođi i zamahni"
+   },
+   "k1": {
+    "text": "Kad je sredina mesta otprilike u visini spoljnog retrovizora: okreni volan do kraja udesno. Pazi na uglove susednih automobila (pogled preko desnog ramena).",
+    "frage": null,
+    "regel": "Osnovni zadatak vožnje: upravno parkiranje",
+    "titel": "Volan do kraja"
+   },
+   "k2": {
+    "text": "Ispravi volan i po sredini se otkotrljaj u mesto, dok prednji deo ne stane malo pre kraja. Sa obe strane mora moći da se izađe.",
+    "frage": {
+     "text": "Koja je mana kasnije pri izlasku sa parking mesta?",
+     "richtig": 1,
+     "optionen": [
+      "Nema je",
+      "Izlaziš unazad – loša preglednost saobraćaja",
+      "Troši se više benzina"
+     ],
+     "erklaerung": "Zato se preporučuje parkiranje unazad: napolje se onda izlazi unapred, sa dobrom preglednošću."
+    },
+    "regel": "Pravilnik o ispitu · osnovni zadaci vožnje",
+    "titel": "Pravo unutra"
+   }
+  }
+ },
+ "rechts_rad": {
+  "kurz": "Pogled preko ramena – biciklista koji ide pravo ima prednost",
+  "titel": "Skretanje desno uz biciklističku stazu",
+  "kapitel": {
+   "k0": {
+    "text": "Retrovizor, desni migavac, prestroj se što više desno. Desno pored kolovoza ide biciklistička staza.",
+    "frage": {
+     "text": "Ko ovde ima prednost?",
+     "richtig": 1,
+     "optionen": [
+      "Ja – ja sam brži",
+      "Biciklista koji vozi pravo",
+      "Ko prvi stigne do raskrsnice"
+     ],
+     "erklaerung": "§ 9 Abs. 3 StVO: Ko skreće, mora da propusti bicikliste koji voze pored kolovoza u istom smeru."
+    },
+    "regel": "§ 9 Abs. 1 StVO",
+    "titel": "Prestroj se desno i uključi migavac"
+   },
+   "k1": {
+    "text": "Neposredno pre skretanja: retrovizor i pogled preko desnog ramena – biciklista može biti u mrtvom uglu.",
+    "frage": null,
+    "regel": "§ 9 Abs. 1 · § 9 Abs. 3 StVO",
+    "titel": "Pogled preko desnog ramena"
+   },
+   "k2": {
+    "text": "Biciklista dolazi otpozadi i vozi pravo. Stani i propusti ga – tek onda skreni desno u uskom luku.",
+    "frage": {
+     "text": "Šta sada radim?",
+     "richtig": 1,
+     "optionen": [
+      "Brzo skrenem ispred bicikliste",
+      "Stanem i propustim ga",
+      "Zatrubim da zakoči"
+     ],
+     "erklaerung": "Biciklista ima prednost. Nesreće sa biciklistima pri skretanju desno spadaju među najteže u gradskom saobraćaju."
+    },
+    "regel": "§ 9 Abs. 3 StVO",
+    "titel": "Čekaj"
+   },
+   "k3": {
+    "text": "Skreni tek kad je slobodno. Pri skretanju i dalje gledaj bicikliste i pešake – sledeći biciklista već dolazi.",
+    "frage": null,
+    "regel": "§ 9 Abs. 3 StVO",
+    "titel": "Skretanje – nastavi da posmatraš"
+   }
+  }
+ },
+ "reissverschluss": {
+  "kurz": "Koristi obe trake do suženja, pa naizmenično",
+  "titel": "Rajsferšlus kad se traka završava",
+  "kapitel": {
+   "k0": {
+    "text": "Tabla o suženju najavljuje: desna saobraćajna traka se završava. Obe trake se i dalje koriste sve do suženja.",
+    "frage": {
+     "text": "Kada prelazim ulevo?",
+     "richtig": 1,
+     "optionen": [
+      "Odmah kad vidim znak",
+      "Neposredno pre početka suženja",
+      "Nikako, ostali moraju da čekaju"
+     ],
+     "erklaerung": "§ 7 Abs. 4 StVO: Uključivanje neposredno pre početka suženja, naizmenično."
+    },
+    "regel": "Znak 531 · § 7 Abs. 4 StVO",
+    "titel": "Traka se završava"
+   },
+   "k1": {
+    "text": "Ne prelazi prerano: ko desnom trakom vozi do suženja, pravilno koristi put i pomaže da gužva bude kratka.",
+    "frage": null,
+    "regel": "§ 7 Abs. 4 StVO",
+    "titel": "Vozi do samog suženja"
+   },
+   "k2": {
+    "text": "Uključi levi migavac, prilagodi brzinu levoj koloni i potraži vozilo iza kojeg ćeš se uključiti.",
+    "frage": null,
+    "regel": "§ 7 Abs. 5 StVO",
+    "titel": "Migavac i pogled na prazninu"
+   },
+   "k3": {
+    "text": "Neposredno pre suženja: pogled preko ramena – i naizmenično, posle jednog vozila, uključi se levo. Vozila u levoj traci propuštaju po jedno vozilo.",
+    "frage": {
+     "text": "Ko koga mora da propusti?",
+     "richtig": 1,
+     "optionen": [
+      "Niko, ko prvi dođe",
+      "Vozila u levoj traci propuštaju naizmenično po jedno vozilo",
+      "Vozila u desnoj traci moraju čekati dok sve ne bude slobodno"
+     ],
+     "erklaerung": "Rajsferšlus: naizmenično, jedan sleva, jedan zdesna."
+    },
+    "regel": "§ 7 Abs. 4 · § 7 Abs. 5 StVO",
+    "titel": "Uključi se naizmenično"
+   },
+   "k4": {
+    "text": "Rajsferšlus važi kad se saobraćajna traka završava ili je blokirana. Na traci za ubrzanje kod ulaska na autoput NE važi – tamo vozila na prolaznom kolovozu imaju prvenstvo prolaza.",
+    "frage": null,
+    "regel": "§ 7 Abs. 4 · § 18 Abs. 3 StVO",
+    "titel": "Zapamti"
+   }
+  }
+ },
+ "rettungsgasse": {
+  "kurz": "Već kad saobraćaj zastaje: krajnje levi ulevo, svi ostali udesno",
+  "titel": "Koridor za vozila hitnih službi",
+  "kapitel": {
+   "k0": {
+    "text": "Saobraćaj usporava. Čim se vozi samo brzinom hoda ili svi stoje, mora se napraviti koridor za vozila hitnih službi – ne tek kad stigne plavo svetlo.",
+    "frage": {
+     "text": "Kada se pravi koridor za vozila hitnih službi?",
+     "richtig": 1,
+     "optionen": [
+      "Tek kad čujem sirenu",
+      "Čim se vozi brzinom hoda ili se stoji",
+      "Samo kad je nesreća ispred mene"
+     ],
+     "erklaerung": "§ 11 Abs. 2 StVO: pri brzini hoda ili zastoju – odmah."
+    },
+    "regel": "§ 11 Abs. 2 StVO",
+    "titel": "Saobraćaj zastaje"
+   },
+   "k1": {
+    "text": "Koridor nastaje između krajnje leve trake i trake odmah desno od nje: ko vozi skroz levo, sklanja se ulevo – svi ostali udesno.",
+    "frage": {
+     "text": "Voziš srednjom od tri saobraćajne trake. Kuda?",
+     "richtig": 1,
+     "optionen": [
+      "Ulevo",
+      "Udesno",
+      "Ostajem gde jesam"
+     ],
+     "erklaerung": "Svi osim krajnje leve trake sklanjaju se udesno."
+    },
+    "regel": "§ 11 Abs. 2 StVO",
+    "titel": "Kuda se skloniti?"
+   },
+   "k2": {
+    "text": "Plavo svetlo i sirena: odmah oslobodi put. Stani i ne manevriši više napred-nazad – koridor mora biti prav i slobodan.",
+    "frage": null,
+    "regel": "§ 38 Abs. 1 · § 11 Abs. 2 StVO",
+    "titel": "Dolazi vozilo hitne službe"
+   },
+   "k3": {
+    "text": "Koridor ostaje slobodan i kad je jedno vozilo hitne službe već prošlo – često dolaze još neka. Ne vozi za njim!",
+    "frage": {
+     "text": "Kola hitne pomoći su prošla. A sada?",
+     "richtig": 1,
+     "optionen": [
+      "Voziti za njima, tako je brže",
+      "Ostaviti koridor otvoren, mogu doći još vozila",
+      "Odmah se vratiti u traku"
+     ],
+     "erklaerung": "Koridor za vozila hitnih službi ostaje dok saobraćaj ponovo ne krene."
+    },
+    "regel": "§ 11 Abs. 2 · § 38 Abs. 1 StVO",
+    "titel": "Ostavi koridor otvoren"
+   },
+   "k4": {
+    "text": "Zaustavna traka nije traka za nestrpljive. Ko ne napravi koridor ili se njime sam vozi, rizikuje novčanu kaznu, kaznene poene i zabranu upravljanja vozilom.",
+    "frage": null,
+    "regel": "§ 11 Abs. 2 StVO · BKatV",
+    "titel": "Zapamti"
+   }
+  }
+ },
+ "rvl": {
+  "kurz": "Ko sme prvi? Tri auta na raskrsnici bez znakova",
+  "titel": "Pravilo desne strane (zona 30)",
+  "kapitel": {
+   "k0": {
+    "text": "U zoni 30 skoro nikad nema znakova prvenstva prolaza – ovde važi pravilo desne strane. Priđi polako, da možeš da staneš.",
+    "frage": {
+     "text": "Koje pravilo važi na ovoj raskrsnici?",
+     "richtig": 0,
+     "optionen": [
+      "Desna strana ima prednost",
+      "Šira ulica ima prvenstvo prolaza",
+      "Ko prvi stigne, prvi prolazi"
+     ],
+     "erklaerung": "Bez znakova, semafora ili policije važi § 8 Abs. 1 StVO: ko dolazi zdesna, ima prvenstvo prolaza."
+    },
+    "regel": "Znak 274.1 · § 8 Abs. 1 StVO",
+    "titel": "Raskrsnica bez znakova"
+   },
+   "k1": {
+    "text": "Sva tri auta stoje. Svako gleda udesno: ko tamo nema nikoga, sme prvi da krene.",
+    "frage": {
+     "text": "Kojim redosledom vozila smeju da prođu?",
+     "erklaerung": "Plavi desno nema nikoga i prolazi prvi. Zatim auto-škola (plavi joj je bio zdesna). Crveni prolazi poslednji – desno od crvenog stajala je auto-škola.",
+     "reihenfolge": [
+      "Plavi (zdesna)",
+      "Auto-škola",
+      "Crveni (skreće levo)"
+     ]
+    },
+    "regel": "§ 8 Abs. 1 · § 8 Abs. 2 StVO",
+    "titel": "Ko prolazi prvi?"
+   },
+   "k2": {
+    "text": "Plavi auto nema nikoga zdesna i prolazi prvi.",
+    "frage": null,
+    "regel": "§ 8 Abs. 1 StVO",
+    "titel": "Plavi prolazi"
+   },
+   "k3": {
+    "text": "Sada je desno slobodno – auto-škola prolazi pravo preko raskrsnice.",
+    "frage": null,
+    "regel": "§ 8 Abs. 1 StVO",
+    "titel": "Zatim auto-škola"
+   },
+   "k4": {
+    "text": "Crveni skreće levo. Morao je da čeka, jer je auto-škola dolazila zdesna.",
+    "frage": null,
+    "regel": "§ 8 Abs. 1 · § 9 Abs. 1 StVO",
+    "titel": "Na kraju crveni"
+   },
+   "k5": {
+    "text": "Ko mora da čeka, pokazuje to umerenom brzinom. Ako auta stoje sa sve četiri strane, vozači se dogovore – jedan propusti ostale.",
+    "frage": null,
+    "regel": "§ 8 Abs. 2 · § 11 Abs. 3 StVO",
+    "titel": "Zapamti"
+   }
+  }
+ },
+ "schulbus": {
+  "kurz": "Ne preticati, brzina hoda – i u suprotnom smeru – i računati na decu",
+  "titel": "Školski autobus sa svim migavcima",
+  "kapitel": {
+   "k0": {
+    "text": "Školski autobus se sa uključenim svim migavcima približava stajalištu. Sada ne sme da se pretiče.",
+    "frage": {
+     "text": "Smem li da pretičem autobus dok sa uključenim svim migavcima prilazi stajalištu?",
+     "richtig": 1,
+     "optionen": [
+      "Da, ako je slobodno",
+      "Ne",
+      "Samo uz trubu"
+     ],
+     "erklaerung": "§ 20 Abs. 3 StVO: Gradski i školski autobusi koji se sa uključenim svim migavcima približavaju stajalištu ne smeju se preticati."
+    },
+    "regel": "§ 20 Abs. 3 StVO",
+    "titel": "Školski autobus sa svim migavcima"
+   },
+   "k1": {
+    "text": "Najbolje je da prvo staneš na rastojanju iza autobusa. Deca su nepredvidiva i mogu da istrče na kolovoz iza ili ispred autobusa.",
+    "frage": null,
+    "regel": "§ 20 Abs. 4 · § 3 Abs. 2a StVO",
+    "titel": "Autobus stoji – deca izlaze"
+   },
+   "k2": {
+    "text": "Prolazi pored samo brzinom hoda (oko 4–7 km/h) i sa toliko rastojanja da niko ne bude ugrožen. To važi i za vozila iz suprotnog smera!",
+    "frage": {
+     "text": "Da li brzina hoda važi i za vozila iz suprotnog smera?",
+     "richtig": 1,
+     "optionen": [
+      "Ne, samo za isti smer",
+      "Da – i vozila iz suprotnog smera na istom kolovozu voze samo brzinom hoda",
+      "Samo u školske dane"
+     ],
+     "erklaerung": "§ 20 Abs. 4 StVO: Brzina hoda važi i za vozila iz suprotnog smera na istom kolovozu."
+    },
+    "regel": "§ 20 Abs. 4 StVO",
+    "titel": "Brzina hoda"
+   },
+   "k3": {
+    "text": "Ispred autobusa dete pretrčava kolovoz. Odmah stani – ako treba, mora se čekati.",
+    "frage": {
+     "text": "Šta radim?",
+     "richtig": 1,
+     "optionen": [
+      "Zaobiđem i nastavim",
+      "Stanem i čekam dok dete bezbedno ne pređe",
+      "Zatrubim"
+     ],
+     "erklaerung": "Ako treba, mora se čekati – ugrožavanje putnika mora biti isključeno."
+    },
+    "regel": "§ 20 Abs. 4 StVO",
+    "titel": "Dete istrčava na ulicu!"
+   },
+   "k4": {
+    "text": "Autobus uključuje levi migavac da krene sa stajališta. Autobusu treba omogućiti polazak – ako treba, čekaj.",
+    "frage": null,
+    "regel": "§ 20 Abs. 5 StVO",
+    "titel": "Autobus kreće"
+   }
+  }
+ },
+ "stop": {
+  "kurz": "Uvek se potpuno zaustavi na liniji zaustavljanja – pa se polako primakni",
+  "titel": "Znak „Stop“ (znak 206)",
+  "kapitel": {
+   "k0": {
+    "text": "Znak 206 znači: zaustavi se na liniji zaustavljanja – uvek, čak i kad je slobodno – a zatim propusti vozila.",
+    "frage": {
+     "text": "Moram li da stanem kod znaka „Stop“ i kad vidim da je slobodno?",
+     "richtig": 1,
+     "optionen": [
+      "Ne, dovoljno je da se kotrljam",
+      "Da – uvek se potpuno zaustaviti",
+      "Samo noću"
+     ],
+     "erklaerung": "Znak 206: zaustavljanje je obavezno. Točkovi moraju potpuno da stanu."
+    },
+    "regel": "Znak 206 · Znak 294",
+    "titel": "Stani! Propusti vozila"
+   },
+   "k1": {
+    "text": "Auto stoji na liniji zaustavljanja – točkovi miruju. Odavde se često još ne vidi dovoljno.",
+    "frage": null,
+    "regel": "Znak 206 · Znak 294",
+    "titel": "Zaustavljen na liniji"
+   },
+   "k2": {
+    "text": "Polako se primakni do mesta odakle vidiš raskrsnicu i ponovo stani. Pogledaj levo, desno, levo.",
+    "frage": {
+     "text": "Na liniji zaustavljanja pogled je zaklonjen. Šta sad?",
+     "richtig": 1,
+     "optionen": [
+      "Jednostavno krenuti",
+      "Polako se primaknuti i ponovo pogledati",
+      "Zatrubiti"
+     ],
+     "erklaerung": "Posle zaustavljanja na liniji smeš oprezno da se primakneš do mesta odakle vidiš raskrsnicu."
+    },
+    "regel": "§ 8 Abs. 2 StVO",
+    "titel": "Primakni se polako"
+   },
+   "k3": {
+    "text": "Oba vozila na putu s pravom prvenstva imaju prvenstvo prolaza. Skreni desno tek kad je slobodno.",
+    "frage": null,
+    "regel": "§ 8 Abs. 2 StVO",
+    "titel": "Propusti poprečni saobraćaj"
+   }
+  }
+ },
+ "ueberholen": {
+  "rf": {
+   "falsch": "Upravo gledaš tipičnu grešku. Obrati pažnju gde sve krene naopako: rastojanje, crvena površina, blicanje dugim svetlom. Posle se isplati direktno poređenje sa ispravnom verzijom.",
+   "richtig": "Upravo gledaš kako se to radi ispravno. Ista situacija postoji i sa greškom koja se u praksi najčešće dešava: preblizu prići i izaći iz trake bez slobodnog pogleda."
+  },
+  "kurz": "Proveri preglednost, sačekaj vozila iz suprotnog smera, preteči odlučno, vrati se sa rastojanjem",
+  "titel": "Preticanje na putu van naselja",
+  "worum": "Ispred tebe kamion vozi 60 km/h, a dozvoljeno je 100. Preticanje je jedan od najopasnijih manevara van naselja: voziš u traci namenjenoj vozilima iz suprotnog smera. Moguće je samo ako je put slobodan na dovoljnoj dužini.",
+  "merken": [
+   [
+    "Preticati samo ako je put pregledan i vozila iz suprotnog smera nisu ometena tokom celog preticanja, i samo znatno većom brzinom.",
+    "§ 5 Abs. 2 StVO"
+   ],
+   [
+    "Kad saobraćajna situacija nije jasna, ne preticati. Ako sumnjaš: ostani iza.",
+    "§ 5 Abs. 3 Nr. 1 StVO"
+   ],
+   [
+    "Pre izlaska iz trake: retrovizor, pogled preko ramena, migavac. Pri vraćanju u traku ne ometaj vozilo koje si pretekao.",
+    "§ 5 Abs. 4 · Abs. 4a StVO"
+   ],
+   [
+    "Ko je pretican, ne sme da ubrzava.",
+    "§ 5 Abs. 6 StVO"
+   ],
+   [
+    "Pravilo za pamćenje: pri 100 km/h pored kamiona koji vozi 60 km/h treba ti oko 250 m puta preticanja i oko 500 m slobodnog pogleda.",
+    "Pravilo za pamćenje"
+   ]
+  ],
+  "kapitel": {
+   "lkw": {
+    "text": "Van naselja, dozvoljeno je 100 km/h, ispred vozi kamion sa 60. Drži dovoljno rastojanje, najmanje „pola brzinomera“ u metrima. Tako vidiš pored njega i možeš da uzmeš zalet.",
+    "frage": {
+     "text": "Kada smem da pretičem?",
+     "richtig": 1,
+     "optionen": [
+      "Uvek kad sam brži",
+      "Samo kad je jasno da vozila iz suprotnog smera neće biti ometena tokom celog preticanja i kad sam znatno brži",
+      "Samo sa desne strane"
+     ],
+     "erklaerung": "§ 5 Abs. 2 StVO: Preticati samo ako je ometanje vozila iz suprotnog smera isključeno i znatno većom brzinom."
+    },
+    "regel": "§ 4 Abs. 1 · § 5 Abs. 2 StVO",
+    "titel": "Spor kamion ispred"
+   },
+   "gegen": {
+    "text": "Nailazi auto iz suprotnog smera. Sada ne izlazi iz trake, nego sačekaj. Zelena ili crvena površina pokazuje da li je potrebnih oko 500 m slobodno.",
+    "frage": {
+     "text": "Koliko slobodnog puta mi otprilike treba da pri 100 km/h preteknem kamion koji vozi 60 km/h?",
+     "richtig": 1,
+     "optionen": [
+      "Oko 100 m",
+      "Oko 250 m puta preticanja, a vozila iz suprotnog smera za to vreme pređu još toliko: oko 500 m preglednosti",
+      "Oko 50 m"
+     ],
+     "erklaerung": "Put preticanja ≈ (dužine oba vozila + rastojanje ispred i iza) × v₁ ÷ (v₁ − v₂) ≈ 100 m × 100 ÷ 40 ≈ 250 m. Za isto vreme vozila iz suprotnog smera pređu još otprilike toliko."
+    },
+    "regel": "§ 5 Abs. 2 StVO",
+    "titel": "Vozila iz suprotnog smera"
+   },
+   "f_raus": {
+    "text": "Izašao iz trake odmah posle prvog vozila iz suprotnog smera, bez pogleda preko ramena, bez zaleta i bez znanja šta dolazi iza. Površina je crvena: kombi je već preblizu.",
+    "frage": {
+     "text": "Šta bi ovde pomoglo?",
+     "richtig": 1,
+     "optionen": [
+      "Brže izaći iz trake",
+      "Zaostati, povećati rastojanje i preticati tek kad je put sigurno slobodan",
+      "Zatrubiti"
+     ],
+     "erklaerung": "Kad saobraćajna situacija nije jasna, preticanje je zabranjeno (§ 5 Abs. 3 Nr. 1 StVO). Sa većim rastojanjem vidiš da li je put slobodan."
+    },
+    "regel": "§ 5 Abs. 2 · § 5 Abs. 3 Nr. 1 StVO",
+    "titel": "Izlazak bez slobodnog pogleda"
+   },
+   "verbot": {
+    "text": "Prvo linija upozorenja sa kratkim prekidima najavljuje punu liniju, zatim važi znak 276. Ovde se zdesna uliva poljski put, a traktor tamo hoće na ulicu. Započeto preticanje mora se završiti pre toga.",
+    "frage": {
+     "text": "Smem li da pređem punu razdelnu liniju radi preticanja?",
+     "richtig": 1,
+     "optionen": [
+      "Da, na kratko",
+      "Ne",
+      "Samo kod traktora"
+     ],
+     "erklaerung": "Puna linija koja razdvaja saobraćajne trake (znak 295) ne sme se preći."
+    },
+    "regel": "Znak 276 · Znak 295",
+    "titel": "Zabrana preticanja ispred"
+   },
+   "vorbei": {
+    "text": "Izađi iz trake i odlučno ubrzaj. Najveća dozvoljena brzina ostaje granica. Drži dovoljno bočno rastojanje od kamiona.",
+    "frage": {
+     "text": "Kamion ubrzava dok ga pretičeš. Sme li to?",
+     "richtig": 1,
+     "optionen": [
+      "Da",
+      "Ne, ko je pretican, ne sme da povećava brzinu"
+     ],
+     "erklaerung": "§ 5 Abs. 6 StVO: Ko je pretican, ne sme da povećava brzinu."
+    },
+    "regel": "§ 5 Abs. 2 · § 5 Abs. 4 · § 3 Abs. 3 StVO",
+    "titel": "Odlučno pored"
+   },
+   "f_dicht": {
+    "text": "Samo 12 m rastojanja pri 60 km/h. Kamion zaklanja pogled napred: tako ne vidiš da li dolaze vozila iz suprotnog smera. Ispravno bi bilo najmanje 30 m.",
+    "frage": {
+     "text": "Koliko je rastojanje ispravno pri 60 km/h (pravilo)?",
+     "richtig": 1,
+     "optionen": [
+      "6 m",
+      "„Pola brzinomera“: 30 m",
+      "Jedna dužina auta"
+     ],
+     "erklaerung": "Pravilo van naselja: „pola brzinomera“ u metrima, dakle 30 m pri 60 km/h. To su oko 2 sekunde."
+    },
+    "regel": "§ 4 Abs. 1 StVO",
+    "titel": "Preblizu"
+   },
+   "f_gegen": {
+    "text": "Kombi koči i blica dugim svetlom. Ko ometa vozila iz suprotnog smera, nije smeo da pretiče. Sada ostaje samo opasno vraćanje u traku.",
+    "regel": "§ 5 Abs. 2 StVO",
+    "titel": "Vozilo iz suprotnog smera mora da koči"
+   },
+   "f_knapp": {
+    "text": "Pravo u prazninu, samo nekoliko metara ispred kamiona. Kamion mora da koči. Ko pretiče, ne sme pri vraćanju u traku da ometa vozilo koje je pretekao.",
+    "regel": "§ 5 Abs. 4 StVO",
+    "titel": "Pretesno vraćanje u traku"
+   },
+   "sichern": {
+    "text": "Put je slobodan i pregledan, nema pune linije. Unutrašnji i spoljni retrovizor, pogled preko levog ramena, pa levi migavac. Već sada malo uzmi zalet.",
+    "regel": "§ 5 Abs. 4 · § 5 Abs. 4a StVO",
+    "titel": "Retrovizor, pogled preko ramena, migavac"
+   },
+   "f_besser": {
+    "text": "Drži rastojanje, sačekaj vozila iz suprotnog smera i preteči sa zaletom tek kad je put sigurno slobodan. Ako sumnjaš: ne preticati. Savet: pogledaj verziju „Ovako je ispravno“.",
+    "regel": "§ 5 Abs. 2 · § 5 Abs. 3 StVO",
+    "titel": "Ovako bi bilo ispravno"
+   },
+   "einordnen": {
+    "text": "Unutrašnji retrovizor: tek kad se kamion u njemu vidi ceo, uključi desni migavac i vrati se u traku. Ne vraćaj se tik ispred njega.",
+    "regel": "§ 5 Abs. 4 · § 5 Abs. 4a StVO",
+    "titel": "Desni migavac, vrati se u traku"
+   }
+  },
+  "rfKnopf": {
+   "falsch": "Pogledaj tipičnu grešku",
+   "richtig": "Pogledaj ispravnu verziju"
+  },
+  "varianten": {
+   "falsch": "Tipična greška",
+   "richtig": "Ovako je ispravno"
+  },
+  "worumRegel": "§ 5 StVO"
+ },
+ "voreinander": {
+  "kurz": "Ko stoji jedan naspram drugog i skreće levo, skreće ispred drugog",
+  "titel": "Dva vozila skreću levo: ispred jedno drugog",
+  "kapitel": {
+   "k0": {
+    "text": "Auto-škola i crveni auto žele oboje da skrenu levo i stoje jedno naspram drugog.",
+    "frage": {
+     "text": "Kako njih dvoje skreću?",
+     "richtig": 0,
+     "optionen": [
+      "Ispred jedno drugog – svako skreće ispred onog drugog",
+      "Jedno oko drugog",
+      "Ko je prvi stigao, prvi skreće"
+     ],
+     "erklaerung": "§ 9 Abs. 4 StVO: Vozila koja iz suprotnih smerova skreću levo skreću ispred jedno drugog – osim ako saobraćajna situacija ili raskrsnica zahtevaju nešto drugo."
+    },
+    "regel": "§ 9 Abs. 4 StVO",
+    "titel": "Dva vozila skreću levo"
+   },
+   "k1": {
+    "text": "Oba kreću istovremeno i skreću ispred onog drugog – automobili se mimoilaze desnom stranom uz desnu. To štedi vreme – ali drugo vozilo koje skreće levo zaklanja pogled na vozila iz suprotnog smera iza njega, zato budi posebno pažljiv.",
+    "frage": null,
+    "regel": "§ 9 Abs. 4 StVO",
+    "titel": "Skretanje ispred jedno drugog"
+   },
+   "k2": {
+    "text": "Jedno oko drugog (obilazeći se iza) samo kad to zahtevaju oznake na kolovozu, semafori ili izgled raskrsnice.",
+    "frage": null,
+    "regel": "§ 9 Abs. 4 StVO",
+    "titel": "Zapamti"
+   }
+  }
+ },
+ "wenden": {
+  "kurz": "Okretanje vožnjom napred i unazad u uskoj ulici",
+  "titel": "Okretanje u tri poteza",
+  "kapitel": {
+   "k0": {
+    "text": "Stani uz desnu ivicu. Proveri: da li je okretanje ovde dozvoljeno i pregledno? Uključi levi migavac i pogledaj u oba smera.",
+    "frage": {
+     "text": "Šta je najvažnije proveriti pri okretanju?",
+     "richtig": 1,
+     "optionen": [
+      "Što manje poteza",
+      "Pre svakog poteza posmatrati u oba smera",
+      "Brzo završiti"
+     ],
+     "erklaerung": "Pri okretanju niko ne sme biti ugrožen (§ 9 Abs. 5 StVO) – posmatranje je ključno."
+    },
+    "regel": "§ 9 Abs. 5 StVO",
+    "titel": "Priprema"
+   },
+   "k1": {
+    "text": "Polako kreni i pri tome okreni volan do kraja ulevo – do malo pre ivičnjaka na suprotnoj strani. Malo pre zaustavljanja već okreći volan udesno.",
+    "frage": null,
+    "regel": "Osnovni zadatak vožnje: okretanje",
+    "titel": "1. potez: napred, volan do kraja levo"
+   },
+   "k2": {
+    "text": "Brzina za vožnju unazad, ponovo pogledaj svuda okolo, polako unazad i volan do kraja udesno – do malo pre ivičnjaka iza tebe.",
+    "frage": {
+     "text": "Na koju stranu okrećem volan pri vožnji unazad?",
+     "richtig": 1,
+     "optionen": [
+      "Levo",
+      "Desno – zadnji deo treba da ide udesno",
+      "Nikako"
+     ],
+     "erklaerung": "Unazad: volan okreni na onu stranu na koju treba da ide zadnji deo."
+    },
+    "regel": "§ 9 Abs. 5 StVO",
+    "titel": "2. potez: unazad, volan do kraja desno"
+   },
+   "k3": {
+    "text": "Još jednom posmatraj, okreni volan do kraja ulevo i izađi u novom smeru. Vrati se desno u traku.",
+    "frage": null,
+    "regel": "§ 2 Abs. 2 StVO",
+    "titel": "3. potez: napred, levo napolje"
+   },
+   "k4": {
+    "text": "Ne okreći volan dok auto stoji, nego dok se polako kotrlja. Broj poteza je manje važan – ivičnjak se ne sme dodirnuti.",
+    "frage": null,
+    "regel": "Pravilnik o ispitu · osnovni zadaci vožnje",
+    "titel": "Zapamti"
+   }
+  }
+ },
+ "zebra": {
+  "kurz": "Gledaj unapred, budi spreman za kočenje – ko želi da pređe, ima prednost",
+  "titel": "Pešački prelaz („zebra“)",
+  "kapitel": {
+   "k0": {
+    "text": "Rano skini nogu sa gasa i posmatraj trotoare: da li neko želi da pređe? Deca su mala i teško se vide.",
+    "frage": {
+     "text": "Kako prilazim pešačkom prelazu kad neko vidljivo želi da pređe?",
+     "richtig": 1,
+     "optionen": [
+      "Normalno dalje, on mora da čeka",
+      "Samo umerenom brzinom, ako treba čekam",
+      "Zatrubim i prođem"
+     ],
+     "erklaerung": "§ 26 Abs. 1 StVO: Omogući pešacima prelazak, priđi samo umerenom brzinom, ako treba čekaj."
+    },
+    "regel": "Znak 350 · § 26 Abs. 1 StVO",
+    "titel": "Znak 350 – prelaz ispred"
+   },
+   "k1": {
+    "text": "Pešaci kreću – stani ispred prelaza, ne na njemu. Preticanje i prolazak pored auta koje čeka su zabranjeni.",
+    "frage": {
+     "text": "Auto ispred mene stoji kod „zebre“. Smem li da ga preteknem sleva?",
+     "richtig": 1,
+     "optionen": [
+      "Da, ako sam brz",
+      "Ne – na pešačkim prelazima ne sme se preticati",
+      "Da, uz trubu"
+     ],
+     "erklaerung": "§ 26 Abs. 3 StVO: Na pešačkim prelazima ne sme se preticati."
+    },
+    "regel": "§ 26 Abs. 1 · § 26 Abs. 3 StVO",
+    "titel": "Zaustavljanje"
+   },
+   "k2": {
+    "text": "Nastavi tek kad su svi bezbedno napustili prelaz – i na suprotnoj strani. Kontakt pogledom pomaže.",
+    "frage": null,
+    "regel": "§ 26 Abs. 1 StVO",
+    "titel": "Tek kad je slobodno"
+   },
+   "k3": {
+    "text": "Ako saobraćaj iza prelaza zastaje, ne ulazi na „zebru“ ako bi tamo morao da čekaš.",
+    "frage": null,
+    "regel": "§ 26 Abs. 2 StVO",
+    "titel": "Zapamti"
+   }
+  }
+ }
+}

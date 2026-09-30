@@ -1,0 +1,1368 @@
+{
+ "abfahren": {
+  "kurz": "Vào làn sớm, dùng làn giảm tốc, chỉ phanh ở đó",
+  "titel": "Rời đường cao tốc",
+  "kapitel": {
+   "k0": {
+    "text": "Biển chỉ dẫn báo trước lối ra từ 1000 m. Lên kế hoạch ngay: sớm chuyển sang làn bên phải – đừng đợi đến giây cuối mới cắt từ bên trái sang.",
+    "frage": {
+     "text": "Khi nào tôi chuyển sang phải?",
+     "richtig": 1,
+     "optionen": [
+      "Ngay tại lối ra",
+      "Sớm, muộn nhất là trước các cột mốc báo",
+      "Sao cũng được, cùng lắm thì đi qua vùng cấm"
+     ],
+     "erklaerung": "Vào làn kịp thời để chuyển làn không vội vàng và không gây nguy hiểm."
+    },
+    "regel": "Biển 449 · § 7 Abs. 5 StVO",
+    "titel": "Lối ra được báo trước"
+   },
+   "k1": {
+    "text": "Xi nhan phải, gương chiếu hậu trong và ngoài, quay đầu quan sát qua vai bên phải – rồi dứt khoát chuyển sang làn bên phải.",
+    "frage": null,
+    "regel": "§ 7 Abs. 5 StVO",
+    "titel": "Xi nhan, gương, quay đầu quan sát"
+   },
+   "k2": {
+    "text": "Đi tiếp trên làn bên phải và giữ tốc độ. Tắt xi nhan.",
+    "frage": null,
+    "regel": "§ 2 Abs. 2 StVO (đi bên phải)",
+    "titel": "Vào làn bên phải"
+   },
+   "k3": {
+    "text": "Lối ra được báo lại một lần nữa từ 500 m. Từ đây hạn chế vượt.",
+    "frage": null,
+    "regel": "Biển 449",
+    "titel": "Biển chỉ dẫn 500 m"
+   },
+   "k4": {
+    "text": "Cột mốc có 3, 2, 1 vạch: còn 300, 200, 100 m đến đầu làn giảm tốc.",
+    "frage": {
+     "text": "Cột mốc có hai vạch nghĩa là gì?",
+     "richtig": 0,
+     "optionen": [
+      "Còn 200 m đến lối ra",
+      "Tốc độ 200",
+      "Hai làn đường trống"
+     ],
+     "erklaerung": "Biển 450: 3 vạch = 300 m, 2 = 200 m, 1 = 100 m."
+    },
+    "regel": "Biển 450",
+    "titel": "Cột mốc báo lối ra"
+   },
+   "k5": {
+    "text": "Bật xi nhan phải kịp thời trước làn giảm tốc – xe phía sau bạn phải thấy sớm.",
+    "frage": null,
+    "regel": "§ 7 Abs. 5 StVO",
+    "titel": "Xi nhan phải"
+   },
+   "k6": {
+    "text": "Gương và quay đầu quan sát bên phải, rồi chuyển qua vạch đứt nét rộng vào làn giảm tốc.",
+    "frage": null,
+    "regel": "Vạch 340 · § 7 Abs. 5 StVO",
+    "titel": "Gương, quay đầu, sang làn"
+   },
+   "k7": {
+    "text": "Chỉ giảm tốc độ khi đã vào làn giảm tốc, không giảm trước đó trên đường cao tốc. Trên làn này không được đi nhanh hơn các làn chính.",
+    "frage": {
+     "text": "Tôi giảm tốc độ ở đâu?",
+     "richtig": 1,
+     "optionen": [
+      "Ngay trên làn bên phải",
+      "Trên làn giảm tốc",
+      "Chỉ khi vào khúc cua"
+     ],
+     "erklaerung": "Phanh trên đường cao tốc gây nguy hiểm cho xe phía sau – chỉ giảm tốc trên làn giảm tốc, và trước khúc cua thì xuống đến tốc độ ghi trên biển."
+    },
+    "regel": "§ 7a Abs. 3 StVO",
+    "titel": "Giờ mới phanh"
+   },
+   "k8": {
+    "text": "Phanh xuống tốc độ tối đa ghi trên biển (ở đây 60 km/h) trước khi khúc cua gắt hơn. Sau chặng dài trên cao tốc, 60 km/h có cảm giác rất chậm – hãy nhìn đồng hồ tốc độ!",
+    "frage": {
+     "text": "Tại sao phải nhìn đồng hồ tốc độ?",
+     "richtig": 0,
+     "optionen": [
+      "Vì sau khi chạy nhanh, ta dễ đoán sai tốc độ",
+      "Vì đồng hồ xăng",
+      "Không cần"
+     ],
+     "erklaerung": "Sau khi chạy cao tốc, ta thường đánh giá thấp tốc độ của mình (do quen)."
+    },
+    "regel": "Biển 274 · § 3 Abs. 1 StVO",
+    "titel": "Khúc cua và đồng hồ tốc độ"
+   },
+   "k9": {
+    "text": "Lỡ lối ra? Đi tiếp đến lối ra sau. Trên đường cao tốc không bao giờ được lùi hay quay đầu – kể cả trên làn khẩn cấp.",
+    "frage": null,
+    "regel": "§ 18 Abs. 7 StVO",
+    "titel": "Ghi nhớ"
+   }
+  }
+ },
+ "auffahren": {
+  "kurz": "Làn tăng tốc, tìm khoảng trống, nhập làn",
+  "titel": "Nhập vào đường cao tốc",
+  "kapitel": {
+   "k0": {
+    "text": "Đường nhánh dẫn lên cao tốc theo một khúc cua riêng. Ngay từ đây hãy quan sát xe trên cao tốc: chạy nhanh cỡ nào, khoảng trống ở đâu?",
+    "frage": {
+     "text": "Lát nữa khi nhập làn, ai có quyền ưu tiên?",
+     "richtig": 1,
+     "optionen": [
+      "Tôi – tôi đang ở trên làn tăng tốc",
+      "Xe trên làn đường chính",
+      "Ai nhanh hơn"
+     ],
+     "erklaerung": "§ 18 Abs. 3 StVO: Xe trên làn đường chính có quyền ưu tiên."
+    },
+    "regel": "Biển 330.1 · § 18 Abs. 2 StVO",
+    "titel": "Nút giao lên cao tốc"
+   },
+   "k1": {
+    "text": "Trên làn tăng tốc, tăng tốc dứt khoát lên bằng tốc độ dòng xe. Ở đây được phép chạy nhanh hơn các làn chính – đó là điều mong muốn.",
+    "frage": {
+     "text": "Việc quan trọng nhất lúc này là gì?",
+     "richtig": 1,
+     "optionen": [
+      "Chạy chậm và chờ",
+      "Tăng tốc dứt khoát lên bằng tốc độ dòng xe",
+      "Lập tức cắt sang trái"
+     ],
+     "erklaerung": "Khi tốc độ gần bằng dòng xe thì nhập làn an toàn. Nhập làn quá chậm buộc người khác phải phanh."
+    },
+    "regel": "§ 7a Abs. 2 StVO",
+    "titel": "Làn tăng tốc: tăng tốc"
+   },
+   "k2": {
+    "text": "Báo hiệu chuyển làn kịp thời và rõ ràng – bật xi nhan trái.",
+    "frage": {
+     "text": "Khi nào tôi bật xi nhan?",
+     "richtig": 1,
+     "optionen": [
+      "Chỉ khi đã đang chuyển làn",
+      "Kịp thời, trước đó",
+      "Không cần, ai cũng hiểu"
+     ],
+     "erklaerung": "Mọi lần chuyển làn đều phải báo hiệu kịp thời và rõ ràng (§ 7 Abs. 5 StVO)."
+    },
+    "regel": "§ 7 Abs. 5 StVO",
+    "titel": "Xi nhan trái"
+   },
+   "k3": {
+    "text": "Xe tải chạy phía trước bên phải, ô tô đỏ cách xa phía sau. Khoảng trống sau xe tải là vừa: chỉnh tốc độ cho bằng và giữ đủ khoảng cách (quy tắc nhẩm: một nửa tốc độ tính bằng mét).",
+    "frage": {
+     "text": "Tôi nhập làn ở đâu?",
+     "richtig": 1,
+     "optionen": [
+      "Bên cạnh xe tải",
+      "Vào khoảng trống sau xe tải",
+      "Trước xe tải, tôi đạp ga"
+     ],
+     "erklaerung": "Khoảng trống sau xe tải đủ rộng. Chen trước xe tải thì sẽ sát, và xe tải có quyền ưu tiên."
+    },
+    "regel": "§ 18 Abs. 3 · § 4 Abs. 1 StVO",
+    "titel": "Chọn khoảng trống"
+   },
+   "k4": {
+    "text": "Ngay trước khi chuyển làn: gương chiếu hậu trong và ngoài, rồi quay đầu quan sát qua vai trái – nếu không, điểm mù sẽ không thấy được.",
+    "frage": {
+     "text": "Việc gì ngay trước khi chuyển làn?",
+     "richtig": 1,
+     "optionen": [
+      "Vặn nhỏ radio",
+      "Gương và quay đầu quan sát bên trái",
+      "Bấm còi"
+     ],
+     "erklaerung": "Chỉ khi quay đầu quan sát qua vai, bạn mới thấy xe trong điểm mù."
+    },
+    "regel": "§ 7 Abs. 5 StVO: không được gây nguy hiểm",
+    "titel": "Gương và quay đầu quan sát"
+   },
+   "k5": {
+    "text": "Chuyển qua vạch đứt nét rộng – không qua vạch liền hay vùng cấm. Sang làn dứt khoát và đều, đừng đợi đến cuối làn.",
+    "frage": null,
+    "regel": "Vạch 340 · Vạch 295 · Vạch 298 · § 7 Abs. 5 StVO",
+    "titel": "Nhập làn"
+   },
+   "k6": {
+    "text": "Sau khi chuyển làn, tắt xi nhan và đi tiếp bên phải. Khoảng cách với xe tải phía trước: ít nhất một nửa tốc độ tính bằng mét.",
+    "frage": {
+     "text": "Giờ thì sao?",
+     "richtig": 1,
+     "optionen": [
+      "Vượt ngay bên trái",
+      "Tắt xi nhan, đi bên phải, giữ khoảng cách",
+      "Đi tiếp trên làn khẩn cấp"
+     ],
+     "erklaerung": "Quy định đi bên phải (§ 2 Abs. 2 StVO) và giữ đủ khoảng cách (§ 4 Abs. 1 StVO)."
+    },
+    "regel": "§ 2 Abs. 2 · § 4 Abs. 1 StVO",
+    "titel": "Tắt xi nhan, giữ khoảng cách"
+   },
+   "k7": {
+    "text": "Khi nhập vào cao tốc KHÔNG áp dụng nhập làn kiểu khóa kéo: người nhập làn phải nhường quyền ưu tiên. Nếu không có khoảng trống, cùng lắm thì dừng ở cuối làn – không bao giờ lấn sang làn khẩn cấp.",
+    "frage": null,
+    "regel": "§ 18 Abs. 3 StVO · § 7 Abs. 4 không áp dụng ở đây",
+    "titel": "Ghi nhớ"
+   }
+  }
+ },
+ "doppel": {
+  "kurz": "Hai làn rẽ – mỗi xe giữ đúng làn của mình",
+  "titel": "Rẽ trái trên hai làn song song",
+  "kapitel": {
+   "k0": {
+    "text": "Cả hai làn đều rẽ trái (mũi tên, vạch 297), đèn giao thông xanh. Vào làn kịp thời, bật xi nhan – và giữ nguyên làn đã chọn.",
+    "frage": {
+     "text": "Xe tập lái đang ở làn bên phải trong hai làn rẽ trái. Nó rẽ vào làn nào?",
+     "richtig": 0,
+     "optionen": [
+      "Vào làn bên phải của đường mới",
+      "Vào làn bên trái",
+      "Sao cũng được"
+     ],
+     "erklaerung": "Trái giữ trái, phải giữ phải – như vậy không vướng xe bên cạnh."
+    },
+    "regel": "Vạch 297 · § 9 Abs. 1 StVO",
+    "titel": "Hai làn rẽ trái"
+   },
+   "k1": {
+    "text": "Rẽ đều song song với xe bên cạnh. Vạch đứt nét trong giao lộ chỉ đường. Không chuyển làn trong giao lộ!",
+    "frage": null,
+    "regel": "§ 7 Abs. 5 · § 9 Abs. 1 StVO",
+    "titel": "Giữ làn khi rẽ"
+   },
+   "k2": {
+    "text": "Chỉ sau khi qua giao lộ – với xi nhan, gương và quay đầu quan sát – mới chuyển làn nếu cần.",
+    "frage": null,
+    "regel": "§ 7 Abs. 5 StVO",
+    "titel": "Sau khi rẽ"
+   }
+  }
+ },
+ "ecke": {
+  "kurz": "Lùi vào đường nhánh – cách mép vỉa hè đều và gần",
+  "titel": "Lùi xe qua góc cua bên phải",
+  "kapitel": {
+   "k0": {
+    "text": "Dừng sát mép đường bên phải, cách chỗ đường nhánh khoảng hai đến ba thân xe. Quan sát xung quanh – các xe khác được đi trước.",
+    "frage": {
+     "text": "Khi lùi xe, điều gì quan trọng nhất?",
+     "richtig": 1,
+     "optionen": [
+      "Càng nhanh càng tốt",
+      "Đi chậm và quan sát xung quanh",
+      "Chỉ nhìn gương chiếu hậu trong"
+     ],
+     "erklaerung": "Khi lùi không được gây nguy hiểm cho ai – đi chậm, nhìn ra sau và xung quanh."
+    },
+    "regel": "§ 9 Abs. 5 StVO",
+    "titel": "Dừng sau chỗ đường nhánh"
+   },
+   "k1": {
+    "text": "Xoay người, nhìn qua kính sau và lùi thẳng – cách mép vỉa hè khoảng 50 cm.",
+    "frage": null,
+    "regel": "Bài kỹ năng cơ bản: lùi xe",
+    "titel": "Lùi thẳng"
+   },
+   "k2": {
+    "text": "Khi bánh sau tới góc cua: đánh lái sang phải để xe đi đều theo đường cong của vỉa hè. Lúc đó đầu xe sẽ quét sang trái ra lòng đường – hãy quan sát xung quanh lần nữa trước đó!",
+    "frage": {
+     "text": "Tôi đánh lái về hướng nào để đuôi xe đi sang phải?",
+     "richtig": 0,
+     "optionen": [
+      "Sang phải",
+      "Sang trái"
+     ],
+     "erklaerung": "Khi lùi: xoay vô lăng về phía bạn muốn đuôi xe đi tới."
+    },
+    "regel": "§ 9 Abs. 5 StVO",
+    "titel": "Đánh lái qua góc"
+   },
+   "k3": {
+    "text": "Khi xe đã song song với vỉa hè của đường nhánh: trả thẳng vô lăng và lùi thêm khoảng một thân xe.",
+    "frage": null,
+    "regel": "Quy chế thi · Bài thi kỹ năng cơ bản",
+    "titel": "Lùi thẳng tiếp"
+   }
+  }
+ },
+ "eng": {
+  "kurz": "Ai phải đi vòng qua chướng ngại vật thì nhường xe ngược chiều",
+  "titel": "Đoạn đường hẹp: chướng ngại vật bên tôi",
+  "kapitel": {
+   "k0": {
+    "text": "Một xe tải đỗ bật đèn cảnh báo nguy hiểm ở phía làn của tôi. Đường quá hẹp cho hai xe đi song song.",
+    "frage": {
+     "text": "Ai được đi qua đoạn đường hẹp trước?",
+     "richtig": 1,
+     "optionen": [
+      "Tôi – tôi đến trước",
+      "Xe ngược chiều – chướng ngại vật ở phía tôi",
+      "Ai nhanh hơn"
+     ],
+     "erklaerung": "§ 6 StVO: Ai muốn đi vòng bên trái qua chướng ngại vật phải để xe ngược chiều đi qua trước."
+    },
+    "regel": "§ 6 StVO",
+    "titel": "Chướng ngại vật phía trước"
+   },
+   "k1": {
+    "text": "Dừng kịp thời và cách xa chướng ngại vật – như vậy còn chỗ để đi vòng và nhìn xe ngược chiều rõ hơn.",
+    "frage": null,
+    "regel": "§ 6 StVO",
+    "titel": "Chờ với khoảng cách"
+   },
+   "k2": {
+    "text": "Khi đường trống: gương, quay đầu quan sát bên trái, bật xi nhan trái và đi qua xe tải với đủ khoảng cách hai bên – chú ý người bước ra khỏi xe.",
+    "frage": null,
+    "regel": "§ 6 · § 7 Abs. 5 StVO",
+    "titel": "Báo hiệu khi tách làn"
+   },
+   "k3": {
+    "text": "Qua khỏi chướng ngại vật thì bật xi nhan phải và trở lại bên phải.",
+    "frage": null,
+    "regel": "§ 6 · § 2 Abs. 2 StVO",
+    "titel": "Trở lại làn"
+   }
+  }
+ },
+ "gefahr": {
+  "kurz": "Quãng đường phản xạ + quãng đường phanh = quãng đường dừng xe – kèm bài thử phản xạ",
+  "titel": "Phanh khẩn cấp: 30 hay 50?",
+  "kapitel": {
+   "k0": {
+    "text": "So sánh hai lần chạy trên cùng một làn: xe tập lái chạy 50 km/h và – bán trong suốt – cùng chiếc xe đó chạy 30 km/h. Sắp có một quả bóng lăn ra đường từ giữa các xe đang đỗ, một em bé chạy theo.",
+    "frage": null,
+    "regel": "§ 3 Abs. 1 · § 3 Abs. 2a StVO",
+    "titel": "Hai xe, cùng phản xạ"
+   },
+   "k1": {
+    "text": "Mất khoảng 1 giây cho đến khi chân đặt lên phanh. Trong thời gian đó xe vẫn chạy không phanh: ở 50 km/h gần 14 m, ở 30 km/h hơn 8 m.",
+    "frage": {
+     "text": "Quãng đường phản xạ ở 50 km/h dài bao nhiêu (công thức nhẩm)?",
+     "richtig": 1,
+     "optionen": [
+      "5 m",
+      "15 m",
+      "25 m"
+     ],
+     "erklaerung": "(50 ÷ 10) · 3 = 15 m. Tính chính xác thì khoảng 14 m mỗi giây."
+    },
+    "regel": "Công thức nhẩm quãng đường phản xạ: (km/h ÷ 10) · 3",
+    "titel": "Nguy hiểm! Thời gian phản xạ"
+   },
+   "k2": {
+    "text": "Đạp hết phanh và côn cùng lúc, giữ lực. ABS rung lạch cạch – đó là bình thường. Cầm vô lăng thả lỏng để có thể tránh.",
+    "frage": {
+     "text": "Quãng đường phanh khi phanh khẩn cấp từ 50 km/h dài bao nhiêu (công thức nhẩm)?",
+     "richtig": 0,
+     "optionen": [
+      "12,5 m",
+      "25 m",
+      "50 m"
+     ],
+     "erklaerung": "(50 ÷ 10)² ÷ 2 = 12,5 m. Quãng đường phanh bình thường (không khẩn cấp): (50 ÷ 10)² = 25 m."
+    },
+    "regel": "Công thức nhẩm phanh khẩn cấp: (km/h ÷ 10)² ÷ 2",
+    "titel": "Phanh hết cỡ"
+   },
+   "k3": {
+    "text": "Xe chạy 30 dừng kịp. Với 50 km/h thì không đủ quãng đường – tại chỗ quả bóng, xe vẫn còn chạy khoảng 35 km/h. Tốc độ 30 cứu mạng người.",
+    "frage": {
+     "text": "Tại sao tốc độ 30 trước trường học lại quan trọng như vậy?",
+     "richtig": 1,
+     "optionen": [
+      "Vì tiếng ồn",
+      "Quãng đường dừng xe ngắn hơn nhiều – ở 50, tại chỗ mà với 30 tôi đã dừng hẳn, tôi vẫn còn chạy gần nhanh như lúc bắt đầu",
+      "Đó chỉ là khuyến nghị"
+     ],
+     "erklaerung": "Quãng đường phanh tăng theo bình phương tốc độ."
+    },
+    "regel": "§ 3 Abs. 1 · § 3 Abs. 2a StVO",
+    "titel": "Kết quả"
+   }
+  }
+ },
+ "gruenpfeil": {
+  "kurz": "Dừng trước, rồi rẽ phải cẩn thận – xe và người đang có đèn xanh được đi trước",
+  "titel": "Mũi tên xanh khi đèn đỏ",
+  "kapitel": {
+   "k0": {
+    "text": "Đèn giao thông đỏ. Bên phải có một tấm biển kim loại đen với mũi tên xanh (biển 720) – không phải mũi tên đèn sáng!",
+    "frage": {
+     "text": "Mũi tên xanh yêu cầu gì trước tiên?",
+     "richtig": 1,
+     "optionen": [
+      "Từ từ lăn qua",
+      "Dừng hẳn tại vạch dừng",
+      "Không gì cả, nó màu xanh mà"
+     ],
+     "erklaerung": "Sau khi dừng thì được rẽ phải khi đèn đỏ – dừng là bắt buộc."
+    },
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO · Biển 720",
+    "titel": "Đèn đỏ – có biển mũi tên xanh"
+   },
+   "k1": {
+    "text": "Dừng hẳn. Phía trước tôi, một người đi bộ đang sang đường khi đèn xanh.",
+    "frage": {
+     "text": "Ai được đi trước?",
+     "richtig": 1,
+     "optionen": [
+      "Tôi, tôi có mũi tên",
+      "Người đi bộ và xe ngang đang có đèn xanh",
+      "Ai đến trước"
+     ],
+     "erklaerung": "Không được cản trở hay gây nguy hiểm – nhất là cho người đi bộ và xe cộ của hướng đang có đèn xanh."
+    },
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "titel": "Dừng tại vạch dừng"
+   },
+   "k2": {
+    "text": "Lối sang đường đã trống. Nhích từ từ lên đến chỗ nhìn rõ và dừng lại lần nữa.",
+    "frage": null,
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "titel": "Nhích lên đến chỗ nhìn rõ"
+   },
+   "k3": {
+    "text": "Một ô tô từ bên trái đến khi đèn xanh – không được cản trở hay gây nguy hiểm cho nó. Chờ.",
+    "frage": null,
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "titel": "Xe ngang đang đèn xanh"
+   },
+   "k4": {
+    "text": "Xe xanh dương đã qua. Quay đầu quan sát bên phải và rẽ chậm – chỉ từ làn bên phải!",
+    "frage": null,
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "titel": "Rẽ"
+   },
+   "k5": {
+    "text": "Mũi tên xanh phát sáng trong đèn giao thông = pha đèn xanh riêng để rẽ. Biển kim loại mũi tên xanh = chỉ được rẽ sau khi dừng, hết sức thận trọng.",
+    "frage": null,
+    "regel": "§ 37 Abs. 2 StVO",
+    "titel": "Ghi nhớ"
+   }
+  }
+ },
+ "kreisel": {
+  "kurz": "Vào không bật xi nhan, trong vòng có quyền ưu tiên, ra thì bật xi nhan",
+  "titel": "Vòng xuyến",
+  "kapitel": {
+   "k0": {
+    "text": "Vòng xuyến có biển „Nhường đường“: xe trên làn vòng xuyến có quyền ưu tiên. Đi chậm lại gần và nhìn sang trái.",
+    "frage": {
+     "text": "Tôi có bật xi nhan khi đi vào vòng xuyến không?",
+     "richtig": 2,
+     "optionen": [
+      "Có, bên phải",
+      "Có, bên trái",
+      "Không – bật xi nhan khi vào là không được phép"
+     ],
+     "erklaerung": "§ 9a Abs. 1 StVO: Khi đi vào không được dùng đèn xi nhan."
+    },
+    "regel": "Biển 215 · Biển 205 · § 9a Abs. 1 StVO",
+    "titel": "Biển 215 dưới biển 205"
+   },
+   "k1": {
+    "text": "Xe xanh dương đã ở trong vòng và có quyền ưu tiên. Dừng tại vạch chờ và để nó đi qua.",
+    "frage": null,
+    "regel": "§ 9a Abs. 1 StVO · Vạch 341",
+    "titel": "Nhường đường"
+   },
+   "k2": {
+    "text": "Đường trống – đi vào không bật xi nhan. Trong vòng xuyến đi ngược chiều kim đồng hồ; cấm dừng trên làn vòng xuyến.",
+    "frage": null,
+    "regel": "§ 9a Abs. 1 StVO",
+    "titel": "Đi vào"
+   },
+   "k3": {
+    "text": "Qua lối ra áp chót thì bật xi nhan phải, gương và quay đầu quan sát bên phải – người đi xe đạp và người đi bộ!",
+    "frage": {
+     "text": "Khi nào tôi bật xi nhan để ra?",
+     "richtig": 1,
+     "optionen": [
+      "Không bật",
+      "Sau lối ra trước lối của tôi – kịp thời trước khi ra",
+      "Ngay khi đi vào"
+     ],
+     "erklaerung": "Việc ra khỏi vòng phải được báo hiệu: bật xi nhan phải ngay khi đã qua lối ra nằm trước lối ra của mình."
+    },
+    "regel": "§ 9 Abs. 1 StVO",
+    "titel": "Xi nhan phải để ra"
+   },
+   "k4": {
+    "text": "Sau lối ra có vạch sang đường cho người đi bộ. Ai muốn đi qua thì được đi trước – lại gần với tốc độ vừa phải và chờ.",
+    "frage": {
+     "text": "Người đi bộ muốn qua vạch sang đường. Ai được đi trước?",
+     "richtig": 1,
+     "optionen": [
+      "Tôi – tôi đang từ vòng xuyến ra",
+      "Người đi bộ",
+      "Ai nhanh hơn"
+     ],
+     "erklaerung": "§ 26 Abs. 1 StVO: Phải để người đi bộ rõ ràng muốn sang đường được đi qua."
+    },
+    "regel": "§ 26 Abs. 1 StVO",
+    "titel": "Người đi bộ ở vạch sang đường"
+   }
+  }
+ },
+ "laengs": {
+  "kurz": "Lùi ngang vào chỗ đỗ xe sát mép đường",
+  "titel": "Lùi xe đỗ dọc",
+  "kapitel": {
+   "k0": {
+    "text": "Chỗ đỗ có vừa không? Quy tắc nhẩm: ít nhất dài hơn một thân xe cộng khoảng 1,5 m. Bật xi nhan phải sớm để xe phía sau biết.",
+    "frage": {
+     "text": "Khi nào tôi bật xi nhan?",
+     "richtig": 1,
+     "optionen": [
+      "Chỉ khi bắt đầu lùi",
+      "Ngay khi lại gần chỗ đỗ",
+      "Không cần, tôi chỉ đỗ xe thôi"
+     ],
+     "erklaerung": "Bật xi nhan phải sớm – để xe phía sau hiểu vì sao bạn dừng."
+    },
+    "regel": "§ 1 Abs. 2 · § 12 StVO",
+    "titel": "Kiểm tra chỗ đỗ"
+   },
+   "k1": {
+    "text": "Dừng song song cạnh xe phía trước, cách bên hông khoảng 50 cm đến 1 m. Đuôi xe ngang khoảng đuôi xe kia.",
+    "frage": {
+     "text": "Trước khi lùi phải làm gì?",
+     "richtig": 1,
+     "optionen": [
+      "Lùi ngay",
+      "Quan sát xung quanh – nhất là phía sau",
+      "Bấm còi"
+     ],
+     "erklaerung": "Trước mỗi lần di chuyển hãy nhìn xung quanh; khi lùi thì xoay người và nhìn qua kính sau."
+    },
+    "regel": "Bài kỹ năng cơ bản: đỗ xe dọc",
+    "titel": "Dừng cạnh xe phía trước"
+   },
+   "k2": {
+    "text": "Lùi chậm và đánh hết lái sang phải. Đuôi xe quét vào chỗ đỗ. Nhìn ra sau; đầu xe quét sang trái ra lòng đường – hãy nhìn lại trước đó!",
+    "frage": null,
+    "regel": "§ 9 Abs. 5 · § 1 Abs. 2 StVO",
+    "titel": "Đánh hết lái sang phải"
+   },
+   "k3": {
+    "text": "Trả thẳng vô lăng, lùi thẳng một đoạn – như vậy xe vào gần mép vỉa hè hơn.",
+    "frage": null,
+    "regel": "Bài kỹ năng cơ bản: đỗ xe dọc",
+    "titel": "Lùi thẳng"
+   },
+   "k4": {
+    "text": "Khi góc trước bên phải đã qua khỏi đuôi xe phía trước: đánh hết lái sang trái. Xe xoay song song với mép vỉa hè.",
+    "frage": {
+     "text": "Khi nào tôi đánh lái sang trái?",
+     "richtig": 1,
+     "optionen": [
+      "Ngay từ đầu",
+      "Khi đầu xe đã qua khỏi xe phía trước",
+      "Không đánh"
+     ],
+     "erklaerung": "Trả lái quá sớm thì đầu xe va vào xe trước – quá muộn thì đuôi xe chạm vỉa hè."
+    },
+    "regel": "Bài kỹ năng cơ bản: đỗ xe dọc",
+    "titel": "Trả lái ngược"
+   },
+   "k5": {
+    "text": "Tiến lên một chút đến khi phía trước và phía sau còn chỗ gần bằng nhau. Mục tiêu: song song và gần mép vỉa hè (mức tham khảo: đến khoảng 30 cm), không chạm vào.",
+    "frage": {
+     "text": "Xe được phép cách mép vỉa hè bao xa?",
+     "richtig": 1,
+     "optionen": [
+      "Sao cũng được",
+      "Gần – mức tham khảo đến khoảng 30 cm",
+      "Ít nhất 1 m"
+     ],
+     "erklaerung": "Đỗ tốt: song song và gần mép vỉa hè – nhưng không chạm."
+    },
+    "regel": "Bài kỹ năng cơ bản: đỗ xe dọc",
+    "titel": "Chỉnh xe"
+   }
+  }
+ },
+ "links_gegen": {
+  "kurz": "Xe ngược chiều và xe rẽ phải từ phía đối diện được đi trước",
+  "titel": "Rẽ trái khi có xe ngược chiều",
+  "kapitel": {
+   "k0": {
+    "text": "Gương, xi nhan trái, vào làn sát giữa đường. Trước khi vào làn, chú ý xe phía sau.",
+    "frage": {
+     "text": "Khi rẽ trái, tôi vào làn ở đâu?",
+     "richtig": 1,
+     "optionen": [
+      "Sát bên phải",
+      "Sát giữa lòng đường",
+      "Trên làn ngược chiều"
+     ],
+     "erklaerung": "Rẽ trái: vào làn sát giữa đường (trên đường một chiều thì càng sát trái càng tốt)."
+    },
+    "regel": "§ 9 Abs. 1 StVO",
+    "titel": "Vào đúng làn"
+   },
+   "k1": {
+    "text": "Chạy vào trong giao lộ và chờ. Bánh xe để thẳng – nếu bị xe sau tông, xe sẽ không lăn vào làn ngược chiều.",
+    "frage": {
+     "text": "Các xe được đi theo thứ tự nào?",
+     "erklaerung": "Người rẽ trái để xe ngược chiều đi trước – kể cả xe rẽ phải từ phía đối diện. Xe tập lái đi sau cùng.",
+     "reihenfolge": [
+      "Xanh dương (đi thẳng)",
+      "Đỏ (rẽ phải)",
+      "Xe van (đi thẳng)",
+      "Xe tập lái (rẽ trái)"
+     ]
+    },
+    "regel": "§ 9 Abs. 3 StVO",
+    "titel": "Chờ trong giao lộ"
+   },
+   "k2": {
+    "text": "Xe đi thẳng và xe rẽ phải từ phía đối diện được đi trước. Chỉ rẽ khi mọi thứ đã trống và không còn người đi bộ sang đường.",
+    "frage": null,
+    "regel": "§ 9 Abs. 3 · § 9 Abs. 4 StVO",
+    "titel": "Để xe ngược chiều đi qua"
+   },
+   "k3": {
+    "text": "Trên con đường tôi rẽ vào, một người đi bộ đang sang đường. Đặc biệt nhường nhịn – chờ đến khi người đó sang hết.",
+    "frage": {
+     "text": "Người đi bộ vẫn còn trên lòng đường. Làm gì?",
+     "richtig": 1,
+     "optionen": [
+      "Bấm còi",
+      "Chờ đến khi người đó đi qua",
+      "Lách sát ngay sau lưng người đó"
+     ],
+     "erklaerung": "Khi rẽ, phải đặc biệt chú ý đến người đi bộ – nếu cần thì chờ."
+    },
+    "regel": "§ 9 Abs. 3 StVO",
+    "titel": "Chú ý người đi bộ"
+   },
+   "k4": {
+    "text": "Ngay trước khi rẽ: quay đầu quan sát qua vai trái (người đi xe đạp, xe đang vượt), rồi rẽ dứt khoát theo vòng rộng.",
+    "frage": null,
+    "regel": "§ 9 Abs. 1 StVO",
+    "titel": "Quay đầu quan sát bên trái"
+   }
+  }
+ },
+ "quer_rueck": {
+  "kurz": "Lùi vào chỗ đỗ vuông góc – sau đó tiến ra với tầm nhìn tốt",
+  "titel": "Lùi xe đỗ vuông góc",
+  "kapitel": {
+   "k0": {
+    "text": "Đi chậm trên lối đi trong bãi đỗ, bật xi nhan phải và chạy qua chỗ đỗ cho đến khi đuôi xe cách nó khoảng 1–2 m.",
+    "frage": null,
+    "regel": "§ 1 Abs. 2 StVO",
+    "titel": "Chạy qua chỗ đỗ"
+   },
+   "k1": {
+    "text": "Trước khi lùi, hãy nhìn xung quanh – người đi bộ và ô tô trên lối đi!",
+    "frage": {
+     "text": "Tại sao lùi vào chỗ đỗ vuông góc?",
+     "richtig": 0,
+     "optionen": [
+      "Để lúc ra sau này nhìn phía trước rõ",
+      "Vì luật bắt buộc",
+      "Vì nhanh hơn"
+     ],
+     "erklaerung": "Lùi vào thì đánh lái được gọn hơn, và khi ra khỏi chỗ đỗ bạn nhìn thấy xe đi ngang."
+    },
+    "regel": "§ 9 Abs. 5 StVO",
+    "titel": "Quan sát xung quanh"
+   },
+   "k2": {
+    "text": "Lùi chậm và đánh hết lái sang phải. Nhìn ra sau và về phía góc của các xe bên cạnh.",
+    "frage": null,
+    "regel": "Bài kỹ năng cơ bản: đỗ xe vuông góc",
+    "titel": "Đánh hết lái"
+   },
+   "k3": {
+    "text": "Khi xe đã song song với các xe bên cạnh: trả thẳng vô lăng và lùi vào giữa đến cuối chỗ đỗ.",
+    "frage": {
+     "text": "Khi nào trả thẳng lái?",
+     "richtig": 1,
+     "optionen": [
+      "Ngay khi tôi vào chỗ đỗ",
+      "Khi xe đã song song với các xe bên cạnh",
+      "Không bao giờ"
+     ],
+     "erklaerung": "Lúc đó lùi thẳng tiếp – nếu không xe sẽ đỗ xiên."
+    },
+    "regel": "Quy chế thi · Bài thi kỹ năng cơ bản",
+    "titel": "Lùi thẳng"
+   }
+  }
+ },
+ "quer_vor": {
+  "kurz": "Tiến vào chỗ đỗ vuông góc – có lấy đà sang bên",
+  "titel": "Tiến xe đỗ vuông góc",
+  "kapitel": {
+   "k0": {
+    "text": "Đi chậm trên lối đi trong bãi đỗ lại gần chỗ đỗ, bật xi nhan phải. Lấy đà hơi sang trái để vòng cua vừa vào chỗ đỗ.",
+    "frage": {
+     "text": "Tại sao tôi lấy đà sang bên trước khi tiến vào chỗ đỗ?",
+     "richtig": 0,
+     "optionen": [
+      "Để vòng cua vừa vào chỗ đỗ hẹp",
+      "Vì nhanh hơn",
+      "Không cần"
+     ],
+     "erklaerung": "Khi tiến, bánh sau đi cắt vào phía trong khúc cua – lấy đà sang bên giúp đuôi xe không quệt vào xe bên cạnh."
+    },
+    "regel": "§ 1 Abs. 2 StVO",
+    "titel": "Chạy qua và lấy đà"
+   },
+   "k1": {
+    "text": "Khi giữa chỗ đỗ ngang khoảng gương chiếu hậu ngoài: đánh hết lái sang phải. Chú ý góc của các xe bên cạnh (quay đầu quan sát bên phải).",
+    "frage": null,
+    "regel": "Bài kỹ năng cơ bản: đỗ xe vuông góc",
+    "titel": "Đánh hết lái"
+   },
+   "k2": {
+    "text": "Trả thẳng vô lăng và chạy vào giữa chỗ đỗ đến khi đầu xe gần tới cuối. Hai bên đều phải mở cửa ra được.",
+    "frage": {
+     "text": "Khi ra khỏi chỗ đỗ sau này có bất lợi gì?",
+     "richtig": 1,
+     "optionen": [
+      "Không có",
+      "Phải lùi ra – khó nhìn thấy xe cộ",
+      "Tốn nhiều xăng hơn"
+     ],
+     "erklaerung": "Vì vậy nên lùi vào đỗ: khi ra thì tiến ra với tầm nhìn tốt."
+    },
+    "regel": "Quy chế thi · Bài thi kỹ năng cơ bản",
+    "titel": "Tiến thẳng vào"
+   }
+  }
+ },
+ "rechts_rad": {
+  "kurz": "Quay đầu quan sát – người đi xe đạp đi thẳng được đi trước",
+  "titel": "Rẽ phải khi có làn xe đạp",
+  "kapitel": {
+   "k0": {
+    "text": "Gương, xi nhan phải, vào làn càng sát phải càng tốt. Bên phải lòng đường có một làn xe đạp.",
+    "frage": {
+     "text": "Ở đây ai được đi trước?",
+     "richtig": 1,
+     "optionen": [
+      "Tôi – tôi nhanh hơn",
+      "Người đi xe đạp đang đi thẳng",
+      "Ai đến giao lộ trước"
+     ],
+     "erklaerung": "§ 9 Abs. 3 StVO: Ai rẽ thì phải để người đi xe đạp đi cùng chiều bên cạnh lòng đường đi qua trước."
+    },
+    "regel": "§ 9 Abs. 1 StVO",
+    "titel": "Vào làn phải và bật xi nhan"
+   },
+   "k1": {
+    "text": "Ngay trước khi rẽ: gương và quay đầu quan sát qua vai phải – người đi xe đạp có thể đang ở điểm mù.",
+    "frage": null,
+    "regel": "§ 9 Abs. 1 · § 9 Abs. 3 StVO",
+    "titel": "Quay đầu quan sát bên phải"
+   },
+   "k2": {
+    "text": "Người đi xe đạp từ phía sau tới và đi thẳng. Dừng lại và để họ đi qua – sau đó mới rẽ phải theo vòng hẹp.",
+    "frage": {
+     "text": "Bây giờ tôi làm gì?",
+     "richtig": 1,
+     "optionen": [
+      "Rẽ nhanh trước người đi xe đạp",
+      "Dừng lại và để họ đi qua",
+      "Bấm còi để họ phanh"
+     ],
+     "erklaerung": "Người đi xe đạp được đi trước. Tai nạn với người đi xe đạp khi rẽ phải là một trong những vụ nặng nhất trong thành phố."
+    },
+    "regel": "§ 9 Abs. 3 StVO",
+    "titel": "Chờ"
+   },
+   "k3": {
+    "text": "Chỉ rẽ khi đường đã trống. Trong khi rẽ vẫn tiếp tục để ý xe đạp và người đi bộ – người đi xe đạp tiếp theo đã tới rồi.",
+    "frage": null,
+    "regel": "§ 9 Abs. 3 StVO",
+    "titel": "Rẽ – tiếp tục quan sát"
+   }
+  }
+ },
+ "reissverschluss": {
+  "kurz": "Dùng cả hai làn đến chỗ hẹp, rồi lần lượt từng xe",
+  "titel": "Nhập làn kiểu khóa kéo khi hết làn",
+  "kapitel": {
+   "k0": {
+    "text": "Biển báo thu hẹp làn đường cho biết: làn bên phải sắp hết. Cả hai làn vẫn được dùng tiếp cho đến chỗ hẹp.",
+    "frage": {
+     "text": "Khi nào tôi chuyển sang trái?",
+     "richtig": 1,
+     "optionen": [
+      "Ngay khi thấy biển",
+      "Ngay trước chỗ bắt đầu thu hẹp",
+      "Không chuyển, người khác phải chờ"
+     ],
+     "erklaerung": "§ 7 Abs. 4 StVO: Nhập làn ngay trước chỗ bắt đầu thu hẹp, lần lượt từng xe."
+    },
+    "regel": "Biển 531 · § 7 Abs. 4 StVO",
+    "titel": "Hết làn"
+   },
+   "k1": {
+    "text": "Đừng chuyển quá sớm: Ai đi bên phải đến tận chỗ hẹp là dùng đường đúng cách và giúp đoạn ùn tắc ngắn lại.",
+    "frage": null,
+    "regel": "§ 7 Abs. 4 StVO",
+    "titel": "Đi đến tận chỗ hẹp"
+   },
+   "k2": {
+    "text": "Bật xi nhan trái, chỉnh tốc độ theo hàng xe bên trái và tìm chiếc xe mà mình sẽ nhập vào phía sau.",
+    "frage": null,
+    "regel": "§ 7 Abs. 5 StVO",
+    "titel": "Xi nhan và nhìn khoảng trống"
+   },
+   "k3": {
+    "text": "Ngay trước chỗ hẹp: quay đầu quan sát – và lần lượt nhập vào bên trái sau một xe. Xe bên trái mỗi lần cho một xe vào.",
+    "frage": {
+     "text": "Ai phải cho ai vào?",
+     "richtig": 1,
+     "optionen": [
+      "Không ai, ai đến trước đi trước",
+      "Xe bên trái lần lượt cho mỗi lần một xe vào",
+      "Xe bên phải phải chờ đến khi đường trống hẳn"
+     ],
+     "erklaerung": "Khóa kéo: lần lượt, một xe bên trái, một xe bên phải."
+    },
+    "regel": "§ 7 Abs. 4 · § 7 Abs. 5 StVO",
+    "titel": "Nhập làn lần lượt"
+   },
+   "k4": {
+    "text": "Khóa kéo áp dụng khi một làn đường kết thúc hoặc bị chặn. Ở làn tăng tốc khi nhập vào cao tốc thì KHÔNG áp dụng – ở đó xe trên làn chính có quyền ưu tiên.",
+    "frage": null,
+    "regel": "§ 7 Abs. 4 · § 18 Abs. 3 StVO",
+    "titel": "Ghi nhớ"
+   }
+  }
+ },
+ "rettungsgasse": {
+  "kurz": "Ngay khi xe đi ì ạch: làn ngoài cùng bên trái né sang trái, tất cả làn khác né sang phải",
+  "titel": "Hành lang cứu hộ",
+  "kapitel": {
+   "k0": {
+    "text": "Xe cộ chậm dần. Ngay khi chỉ còn đi với tốc độ đi bộ hoặc tất cả dừng lại, phải tạo hành lang cứu hộ – không đợi đến khi đèn ưu tiên xuất hiện.",
+    "frage": {
+     "text": "Khi nào phải tạo hành lang cứu hộ?",
+     "richtig": 1,
+     "optionen": [
+      "Chỉ khi tôi nghe còi ưu tiên",
+      "Ngay khi xe đi với tốc độ đi bộ hoặc đứng yên",
+      "Chỉ khi có tai nạn phía trước"
+     ],
+     "erklaerung": "§ 11 Abs. 2 StVO: khi đi với tốc độ đi bộ hoặc đứng yên – ngay lập tức."
+    },
+    "regel": "§ 11 Abs. 2 StVO",
+    "titel": "Xe đi ì ạch"
+   },
+   "k1": {
+    "text": "Hành lang nằm giữa làn ngoài cùng bên trái và làn ngay bên phải nó: ai đi làn ngoài cùng bên trái thì né sang trái – tất cả những người khác né sang phải.",
+    "frage": {
+     "text": "Bạn đang đi làn giữa trong ba làn đường. Né về đâu?",
+     "richtig": 1,
+     "optionen": [
+      "Sang trái",
+      "Sang phải",
+      "Đứng yên tại chỗ"
+     ],
+     "erklaerung": "Tất cả các làn, trừ làn ngoài cùng bên trái, đều né sang phải."
+    },
+    "regel": "§ 11 Abs. 2 StVO",
+    "titel": "Né về đâu?"
+   },
+   "k2": {
+    "text": "Đèn ưu tiên và còi ưu tiên: lập tức nhường đường. Đứng yên, không xoay xở tới lui nữa – hành lang phải thẳng và trống.",
+    "frage": null,
+    "regel": "§ 38 Abs. 1 · § 11 Abs. 2 StVO",
+    "titel": "Xe ưu tiên đến"
+   },
+   "k3": {
+    "text": "Hành lang vẫn phải để trống, kể cả khi một xe ưu tiên đã đi qua – thường còn xe khác theo sau. Không được bám theo!",
+    "frage": {
+     "text": "Xe cứu thương đã qua. Giờ thì sao?",
+     "richtig": 1,
+     "optionen": [
+      "Bám theo sau, như vậy nhanh hơn",
+      "Để hành lang trống, còn có thể có xe khác đến",
+      "Lập tức trở lại làn"
+     ],
+     "erklaerung": "Hành lang cứu hộ được giữ cho đến khi xe cộ lưu thông lại bình thường."
+    },
+    "regel": "§ 11 Abs. 2 · § 38 Abs. 1 StVO",
+    "titel": "Để hành lang trống"
+   },
+   "k4": {
+    "text": "Làn khẩn cấp không phải là làn đường cho người thiếu kiên nhẫn. Ai không tạo hành lang cứu hộ hoặc tự chạy vào đó sẽ bị phạt tiền, điểm phạt và cấm lái xe.",
+    "frage": null,
+    "regel": "§ 11 Abs. 2 StVO · BKatV",
+    "titel": "Ghi nhớ"
+   }
+  }
+ },
+ "rvl": {
+  "kurz": "Ai được đi trước? Ba xe ở giao lộ không có biển báo",
+  "titel": "Bên phải được ưu tiên (khu vực tốc độ 30)",
+  "kapitel": {
+   "k0": {
+    "text": "Trong khu vực tốc độ 30 hầu như không có biển ưu tiên – ở đây áp dụng bên phải được ưu tiên (rechts vor links). Đi chậm lại gần để có thể dừng.",
+    "frage": {
+     "text": "Ở giao lộ này áp dụng quy tắc nào?",
+     "richtig": 0,
+     "optionen": [
+      "Bên phải được ưu tiên",
+      "Đường rộng hơn có quyền ưu tiên",
+      "Ai đến trước thì đi trước"
+     ],
+     "erklaerung": "Không có biển báo, đèn giao thông hay cảnh sát thì áp dụng § 8 Abs. 1 StVO: xe đến từ bên phải có quyền ưu tiên."
+    },
+    "regel": "Biển 274.1 · § 8 Abs. 1 StVO",
+    "titel": "Giao lộ không có biển báo"
+   },
+   "k1": {
+    "text": "Cả ba xe đều dừng. Mỗi xe nhìn sang phải: xe nào bên phải không có ai thì được đi trước.",
+    "frage": {
+     "text": "Các xe được đi theo thứ tự nào?",
+     "erklaerung": "Xe xanh dương bên phải không có ai nên đi đầu tiên. Sau đó là xe tập lái (xe xanh dương ở bên phải nó). Xe đỏ đi cuối cùng – bên phải xe đỏ là xe tập lái.",
+     "reihenfolge": [
+      "Xanh dương (từ bên phải)",
+      "Xe tập lái",
+      "Đỏ (rẽ trái)"
+     ]
+    },
+    "regel": "§ 8 Abs. 1 · § 8 Abs. 2 StVO",
+    "titel": "Ai đi trước?"
+   },
+   "k2": {
+    "text": "Xe xanh dương không có ai bên phải và đi đầu tiên.",
+    "frage": null,
+    "regel": "§ 8 Abs. 1 StVO",
+    "titel": "Xanh dương đi"
+   },
+   "k3": {
+    "text": "Giờ bên phải đã trống – xe tập lái đi thẳng qua giao lộ.",
+    "frage": null,
+    "regel": "§ 8 Abs. 1 StVO",
+    "titel": "Rồi đến xe tập lái"
+   },
+   "k4": {
+    "text": "Xe đỏ rẽ trái. Nó phải chờ vì xe tập lái đến từ bên phải.",
+    "frage": null,
+    "regel": "§ 8 Abs. 1 · § 9 Abs. 1 StVO",
+    "titel": "Cuối cùng là xe đỏ"
+   },
+   "k5": {
+    "text": "Ai phải nhường thì thể hiện bằng tốc độ vừa phải. Nếu cả bốn phía đều có xe, các tài xế ra hiệu với nhau – một người nhường.",
+    "frage": null,
+    "regel": "§ 8 Abs. 2 · § 11 Abs. 3 StVO",
+    "titel": "Ghi nhớ"
+   }
+  }
+ },
+ "schulbus": {
+  "kurz": "Không vượt, đi tốc độ đi bộ – cả xe ngược chiều – và lường trước trẻ em",
+  "titel": "Xe buýt học sinh bật đèn cảnh báo",
+  "kapitel": {
+   "k0": {
+    "text": "Xe buýt học sinh bật đèn cảnh báo nguy hiểm và đang tới gần trạm dừng. Lúc này không được vượt nó.",
+    "frage": {
+     "text": "Tôi có được vượt xe buýt khi nó bật đèn cảnh báo và đang tới gần trạm dừng không?",
+     "richtig": 1,
+     "optionen": [
+      "Được, nếu đường trống",
+      "Không",
+      "Chỉ khi bấm còi"
+     ],
+     "erklaerung": "§ 20 Abs. 3 StVO: Xe buýt tuyến và xe buýt học sinh bật đèn cảnh báo khi tới gần trạm dừng thì không được vượt."
+    },
+    "regel": "§ 20 Abs. 3 StVO",
+    "titel": "Xe buýt học sinh bật đèn cảnh báo"
+   },
+   "k1": {
+    "text": "Tốt nhất trước tiên hãy dừng lại cách xa phía sau xe buýt. Trẻ em rất khó đoán và có thể chạy ra đường từ phía sau hoặc phía trước xe buýt.",
+    "frage": null,
+    "regel": "§ 20 Abs. 4 · § 3 Abs. 2a StVO",
+    "titel": "Xe buýt dừng – trẻ em xuống xe"
+   },
+   "k2": {
+    "text": "Chỉ đi qua với tốc độ đi bộ (khoảng 4–7 km/h) và giữ khoảng cách đủ để không gây nguy hiểm cho ai. Điều này áp dụng cả cho xe ngược chiều!",
+    "frage": {
+     "text": "Tốc độ đi bộ có áp dụng cả cho xe ngược chiều không?",
+     "richtig": 1,
+     "optionen": [
+      "Không, chỉ cho xe cùng chiều",
+      "Có – xe ngược chiều trên cùng lòng đường cũng chỉ đi tốc độ đi bộ",
+      "Chỉ vào ngày đi học"
+     ],
+     "erklaerung": "§ 20 Abs. 4 StVO: Tốc độ đi bộ áp dụng cả cho xe ngược chiều trên cùng lòng đường."
+    },
+    "regel": "§ 20 Abs. 4 StVO",
+    "titel": "Tốc độ đi bộ"
+   },
+   "k3": {
+    "text": "Phía trước xe buýt có một em bé chạy qua đường. Dừng ngay – nếu cần thì phải chờ.",
+    "frage": {
+     "text": "Tôi làm gì?",
+     "richtig": 1,
+     "optionen": [
+      "Lách tránh và đi tiếp",
+      "Dừng lại và chờ đến khi em bé sang đường an toàn",
+      "Bấm còi"
+     ],
+     "erklaerung": "Nếu cần thì phải chờ – tuyệt đối không được gây nguy hiểm cho hành khách."
+    },
+    "regel": "§ 20 Abs. 4 StVO",
+    "titel": "Trẻ em chạy ra đường!"
+   },
+   "k4": {
+    "text": "Xe buýt bật xi nhan trái để rời trạm dừng. Phải để xe buýt rời trạm – nếu cần thì chờ.",
+    "frage": null,
+    "regel": "§ 20 Abs. 5 StVO",
+    "titel": "Xe buýt rời trạm"
+   }
+  }
+ },
+ "stop": {
+  "kurz": "Luôn dừng hẳn tại vạch dừng – rồi nhích lên",
+  "titel": "Biển dừng lại STOP (biển 206)",
+  "kapitel": {
+   "k0": {
+    "text": "Biển 206 nghĩa là: dừng tại vạch dừng – luôn luôn, kể cả khi đường trống – rồi nhường đường.",
+    "frage": {
+     "text": "Ở biển STOP, tôi có phải dừng cả khi thấy đường trống không?",
+     "richtig": 1,
+     "optionen": [
+      "Không, lăn chậm là đủ",
+      "Có – luôn dừng hẳn",
+      "Chỉ vào ban đêm"
+     ],
+     "erklaerung": "Biển 206: bắt buộc phải dừng. Bánh xe phải đứng yên hoàn toàn."
+    },
+    "regel": "Biển 206 · Vạch 294",
+    "titel": "Dừng! Nhường đường"
+   },
+   "k1": {
+    "text": "Xe đứng tại vạch dừng – bánh xe đứng yên. Từ đây thường vẫn chưa nhìn đủ rõ.",
+    "frage": null,
+    "regel": "Biển 206 · Vạch 294",
+    "titel": "Đứng yên tại vạch dừng"
+   },
+   "k2": {
+    "text": "Nhích từ từ lên đến chỗ nhìn rõ và dừng lại lần nữa. Nhìn trái, phải, trái.",
+    "frage": {
+     "text": "Tại vạch dừng bị khuất tầm nhìn. Giờ làm gì?",
+     "richtig": 1,
+     "optionen": [
+      "Cứ thế chạy đi",
+      "Nhích từ từ lên và nhìn lại",
+      "Bấm còi"
+     ],
+     "erklaerung": "Sau khi dừng tại vạch dừng, được phép nhích cẩn thận lên đến chỗ nhìn rõ."
+    },
+    "regel": "§ 8 Abs. 2 StVO",
+    "titel": "Nhích lên"
+   },
+   "k3": {
+    "text": "Cả hai xe trên đường ưu tiên đều có quyền ưu tiên. Chỉ rẽ phải khi đường đã trống.",
+    "frage": null,
+    "regel": "§ 8 Abs. 2 StVO",
+    "titel": "Nhường xe đi ngang"
+   }
+  }
+ },
+ "ueberholen": {
+  "rf": {
+   "falsch": "Bạn đang xem lỗi điển hình. Hãy để ý chỗ mọi thứ bắt đầu hỏng: khoảng cách, vùng màu đỏ, cú nháy đèn pha. Sau đó nên so sánh trực tiếp với phiên bản đúng.",
+   "richtig": "Bạn đang xem cách làm đúng. Cùng tình huống này cũng có phiên bản với lỗi hay gặp nhất trong thực tế: bám quá sát và tách làn khi chưa nhìn rõ phía trước."
+  },
+  "kurz": "Kiểm tra tầm nhìn, chờ xe ngược chiều, vượt dứt khoát, trở lại làn với khoảng cách",
+  "titel": "Vượt xe trên đường liên tỉnh",
+  "worum": "Phía trước bạn là một xe tải chạy 60 km/h, tốc độ cho phép là 100. Vượt xe là một trong những thao tác nguy hiểm nhất ngoài khu dân cư: bạn chạy trên làn của xe ngược chiều. Chỉ được vượt khi đoạn đường phía trước trống đủ xa.",
+  "merken": [
+   [
+    "Chỉ vượt khi đoạn đường dễ quan sát và xe ngược chiều không bị cản trở trong suốt quá trình vượt, và chỉ khi tốc độ cao hơn đáng kể.",
+    "§ 5 Abs. 2 StVO"
+   ],
+   [
+    "Khi tình huống giao thông không rõ ràng thì không vượt. Nếu còn nghi ngờ: đi sau.",
+    "§ 5 Abs. 3 Nr. 1 StVO"
+   ],
+   [
+    "Trước khi tách làn: gương, quay đầu quan sát, xi nhan. Khi trở lại làn không được cản trở xe vừa bị vượt.",
+    "§ 5 Abs. 4 · Abs. 4a StVO"
+   ],
+   [
+    "Xe đang bị vượt không được tăng tốc.",
+    "§ 5 Abs. 6 StVO"
+   ],
+   [
+    "Công thức nhẩm: ở 100 km/h vượt một xe tải chạy 60 km/h, bạn cần khoảng 250 m quãng đường vượt và khoảng 500 m tầm nhìn thông thoáng.",
+    "Công thức nhẩm"
+   ]
+  ],
+  "kapitel": {
+   "lkw": {
+    "text": "Ngoài khu dân cư, cho phép 100 km/h, phía trước có một xe tải chạy 60. Giữ đủ khoảng cách, ít nhất một nửa tốc độ tính bằng mét. Như vậy bạn nhìn được qua bên cạnh xe tải và có thể lấy đà.",
+    "frage": {
+     "text": "Khi nào tôi được vượt?",
+     "richtig": 1,
+     "optionen": [
+      "Bất cứ lúc nào tôi nhanh hơn",
+      "Chỉ khi chắc chắn xe ngược chiều không bị cản trở trong suốt quá trình vượt và tôi nhanh hơn đáng kể",
+      "Chỉ bên phải"
+     ],
+     "erklaerung": "§ 5 Abs. 2 StVO: Chỉ vượt khi chắc chắn không cản trở xe ngược chiều và với tốc độ cao hơn đáng kể."
+    },
+    "regel": "§ 4 Abs. 1 · § 5 Abs. 2 StVO",
+    "titel": "Xe tải chậm phía trước"
+   },
+   "gegen": {
+    "text": "Có một xe đang chạy ngược chiều tới. Lúc này đừng tách làn mà hãy chờ. Vùng màu xanh hoặc đỏ cho biết khoảng 500 m cần thiết có trống hay không.",
+    "frage": {
+     "text": "Để vượt một xe tải chạy 60 km/h khi tôi chạy 100 km/h, tôi cần khoảng bao nhiêu đường trống?",
+     "richtig": 1,
+     "optionen": [
+      "Khoảng 100 m",
+      "Khoảng 250 m quãng đường vượt, và trong thời gian đó xe ngược chiều cũng tiến lại gần chừng ấy: khoảng 500 m tầm nhìn",
+      "Khoảng 50 m"
+     ],
+     "erklaerung": "Quãng đường vượt ≈ (chiều dài cả hai xe + khoảng cách trước và sau) × v₁ ÷ (v₁ − v₂) ≈ 100 m × 100 ÷ 40 ≈ 250 m. Trong cùng thời gian đó, xe ngược chiều cũng đi được khoảng chừng ấy."
+    },
+    "regel": "§ 5 Abs. 2 StVO",
+    "titel": "Xe ngược chiều"
+   },
+   "f_raus": {
+    "text": "Tách làn ngay sau xe ngược chiều đầu tiên, không quay đầu quan sát, không lấy đà và không biết phía sau còn gì. Vùng màu đỏ: xe van đã quá gần.",
+    "frage": {
+     "text": "Ở đây điều gì lẽ ra đã giúp ích?",
+     "richtig": 1,
+     "optionen": [
+      "Tách làn nhanh hơn",
+      "Lùi lại, tăng khoảng cách và chỉ vượt khi chắc chắn đường trống",
+      "Bấm còi"
+     ],
+     "erklaerung": "Khi tình huống giao thông không rõ ràng thì không được vượt (§ 5 Abs. 3 Nr. 1 StVO). Với khoảng cách lớn hơn, bạn thấy được đoạn đường có trống hay không."
+    },
+    "regel": "§ 5 Abs. 2 · § 5 Abs. 3 Nr. 1 StVO",
+    "titel": "Tách làn khi chưa nhìn rõ"
+   },
+   "verbot": {
+    "text": "Trước tiên vạch cảnh báo có khoảng hở ngắn báo trước vạch liền, sau đó là biển 276. Ở đây bên phải có một con đường đất nhập vào, chiếc máy kéo ở đó muốn ra đường. Một lần vượt đã bắt đầu phải hoàn tất trước đó.",
+    "frage": {
+     "text": "Tôi có được lấn qua vạch liền giữa đường để vượt không?",
+     "richtig": 1,
+     "optionen": [
+      "Được, một chút thôi",
+      "Không",
+      "Chỉ khi vượt máy kéo"
+     ],
+     "erklaerung": "Không được lấn qua vạch phân làn liền (vạch 295)."
+    },
+    "regel": "Biển 276 · Vạch 295",
+    "titel": "Sắp đến đoạn cấm vượt"
+   },
+   "vorbei": {
+    "text": "Tách làn và tăng tốc dứt khoát. Tốc độ tối đa vẫn là giới hạn. Giữ đủ khoảng cách bên hông với xe tải.",
+    "frage": {
+     "text": "Xe tải tăng tốc khi bị vượt. Nó có được làm vậy không?",
+     "richtig": 1,
+     "optionen": [
+      "Được",
+      "Không, xe đang bị vượt không được tăng tốc độ"
+     ],
+     "erklaerung": "§ 5 Abs. 6 StVO: Xe đang bị vượt không được tăng tốc độ."
+    },
+    "regel": "§ 5 Abs. 2 · § 5 Abs. 4 · § 3 Abs. 3 StVO",
+    "titel": "Vượt qua dứt khoát"
+   },
+   "f_dicht": {
+    "text": "Chỉ cách 12 m khi chạy 60 km/h. Xe tải che khuất tầm nhìn phía trước: như vậy bạn không thấy có xe ngược chiều hay không. Đúng ra phải ít nhất 30 m.",
+    "frage": {
+     "text": "Ở 60 km/h, khoảng cách bao nhiêu là đúng (quy tắc nhẩm)?",
+     "richtig": 1,
+     "optionen": [
+      "6 m",
+      "Một nửa tốc độ: 30 m",
+      "Một thân xe"
+     ],
+     "erklaerung": "Quy tắc nhẩm ngoài khu dân cư: một nửa tốc độ tính bằng mét, tức là 30 m ở 60 km/h. Khoảng 2 giây."
+    },
+    "regel": "§ 4 Abs. 1 StVO",
+    "titel": "Bám quá sát"
+   },
+   "f_gegen": {
+    "text": "Xe van phanh và nháy đèn pha. Ai cản trở xe ngược chiều thì lẽ ra đã không được vượt. Giờ chỉ còn cách chen vào làn đầy nguy hiểm.",
+    "regel": "§ 5 Abs. 2 StVO",
+    "titel": "Xe ngược chiều phải phanh"
+   },
+   "f_knapp": {
+    "text": "Chen vào khoảng trống, chỉ cách xe tải vài mét. Xe tải phải phanh. Người vượt không được cản trở xe vừa bị vượt khi trở lại làn.",
+    "regel": "§ 5 Abs. 4 StVO",
+    "titel": "Trở lại làn quá sát"
+   },
+   "sichern": {
+    "text": "Đoạn đường trống và dễ quan sát, không có vạch liền. Gương chiếu hậu trong và ngoài, quay đầu quan sát bên trái, rồi bật xi nhan trái. Ngay từ bây giờ lấy đà một chút.",
+    "regel": "§ 5 Abs. 4 · § 5 Abs. 4a StVO",
+    "titel": "Gương, quay đầu quan sát, xi nhan"
+   },
+   "f_besser": {
+    "text": "Giữ khoảng cách, chờ xe ngược chiều qua và chỉ vượt có lấy đà khi chắc chắn đường trống. Nếu còn nghi ngờ: đừng vượt. Mẹo: Hãy xem phiên bản „Làm đúng là thế này“.",
+    "regel": "§ 5 Abs. 2 · § 5 Abs. 3 StVO",
+    "titel": "Lẽ ra phải làm thế này"
+   },
+   "einordnen": {
+    "text": "Gương chiếu hậu trong: chỉ khi thấy toàn bộ xe tải trong đó mới bật xi nhan phải và trở lại làn. Đừng chen vào sát ngay trước nó.",
+    "regel": "§ 5 Abs. 4 · § 5 Abs. 4a StVO",
+    "titel": "Xi nhan phải, trở lại làn"
+   }
+  },
+  "rfKnopf": {
+   "falsch": "Xem lỗi điển hình",
+   "richtig": "Xem phiên bản đúng"
+  },
+  "varianten": {
+   "falsch": "Lỗi điển hình",
+   "richtig": "Làm đúng là thế này"
+  },
+  "worumRegel": "§ 5 StVO"
+ },
+ "voreinander": {
+  "kurz": "Hai xe đối diện cùng rẽ trái thì rẽ phía trước nhau",
+  "titel": "Hai xe rẽ trái: rẽ phía trước nhau",
+  "kapitel": {
+   "k0": {
+    "text": "Xe tập lái và ô tô đỏ đều muốn rẽ trái và đang đứng đối diện nhau.",
+    "frage": {
+     "text": "Hai xe rẽ như thế nào?",
+     "richtig": 0,
+     "optionen": [
+      "Phía trước nhau – mỗi xe rẽ trước mặt xe kia",
+      "Vòng qua sau lưng nhau",
+      "Ai đến trước thì rẽ trước"
+     ],
+     "erklaerung": "§ 9 Abs. 4 StVO: Hai xe rẽ trái đi ngược chiều nhau thì rẽ phía trước nhau – trừ khi tình hình giao thông hoặc giao lộ đòi hỏi cách khác."
+    },
+    "regel": "§ 9 Abs. 4 StVO",
+    "titel": "Hai xe rẽ trái"
+   },
+   "k1": {
+    "text": "Cả hai cùng lúc chạy và rẽ trước mặt xe kia – hai xe lướt qua nhau phía bên phải. Cách này tiết kiệm thời gian – nhưng xe rẽ trái kia che khuất tầm nhìn xe ngược chiều phía sau, vì vậy phải đặc biệt chú ý.",
+    "frage": null,
+    "regel": "§ 9 Abs. 4 StVO",
+    "titel": "Rẽ phía trước nhau"
+   },
+   "k2": {
+    "text": "Vòng qua sau lưng nhau chỉ khi vạch kẻ đường, đèn giao thông hoặc thiết kế giao lộ yêu cầu.",
+    "frage": null,
+    "regel": "§ 9 Abs. 4 StVO",
+    "titel": "Ghi nhớ"
+   }
+  }
+ },
+ "wenden": {
+  "kurz": "Quay đầu bằng cách tiến và lùi trên đường hẹp",
+  "titel": "Quay đầu xe (ba lần đánh lái)",
+  "kapitel": {
+   "k0": {
+    "text": "Dừng sát mép phải. Kiểm tra: Ở đây có được phép quay đầu và có dễ quan sát không? Bật xi nhan trái và nhìn cả hai hướng.",
+    "frage": {
+     "text": "Khi quay đầu xe, điểm cần kiểm tra quan trọng nhất là gì?",
+     "richtig": 1,
+     "optionen": [
+      "Càng ít lần đánh lái càng tốt",
+      "Quan sát cả hai hướng trước mỗi lần đánh lái",
+      "Làm xong thật nhanh"
+     ],
+     "erklaerung": "Khi quay đầu không được gây nguy hiểm cho ai (§ 9 Abs. 5 StVO) – quan sát là điểm cốt lõi."
+    },
+    "regel": "§ 9 Abs. 5 StVO",
+    "titel": "Chuẩn bị"
+   },
+   "k1": {
+    "text": "Cho xe lăn chậm và đánh hết lái sang trái – đến gần sát vỉa hè phía đối diện. Ngay trước khi dừng đã trả lái sang phải.",
+    "frage": null,
+    "regel": "Bài kỹ năng cơ bản: quay đầu xe",
+    "titel": "Lần 1: tiến, hết lái trái"
+   },
+   "k2": {
+    "text": "Vào số lùi, quan sát xung quanh lần nữa, lùi chậm và đánh hết lái sang phải – đến gần sát vỉa hè phía sau bạn.",
+    "frage": {
+     "text": "Khi lùi, tôi đánh lái về hướng nào?",
+     "richtig": 1,
+     "optionen": [
+      "Trái",
+      "Phải – đuôi xe cần đi sang phải",
+      "Không đánh lái"
+     ],
+     "erklaerung": "Khi lùi: xoay vô lăng về hướng mà đuôi xe cần đi tới."
+    },
+    "regel": "§ 9 Abs. 5 StVO",
+    "titel": "Lần 2: lùi, hết lái phải"
+   },
+   "k3": {
+    "text": "Quan sát lần nữa, đánh hết lái sang trái và chạy ra theo hướng mới. Vào làn bên phải.",
+    "frage": null,
+    "regel": "§ 2 Abs. 2 StVO",
+    "titel": "Lần 3: tiến, ra bên trái"
+   },
+   "k4": {
+    "text": "Không đánh lái khi xe đứng yên, mà đánh khi xe đang lăn chậm. Số lần đánh lái là thứ yếu – không được chạm vào vỉa hè.",
+    "frage": null,
+    "regel": "Quy chế thi · Bài thi kỹ năng cơ bản",
+    "titel": "Ghi nhớ"
+   }
+  }
+ },
+ "zebra": {
+  "kurz": "Quan sát xa, sẵn sàng phanh – ai muốn sang đường thì được đi trước",
+  "titel": "Vạch sang đường cho người đi bộ",
+  "kapitel": {
+   "k0": {
+    "text": "Nhả ga sớm và quan sát vỉa hè: có ai muốn sang đường không? Trẻ em nhỏ bé và khó nhìn thấy.",
+    "frage": {
+     "text": "Tôi lại gần vạch sang đường thế nào khi có người rõ ràng muốn sang?",
+     "richtig": 1,
+     "optionen": [
+      "Đi bình thường, họ phải chờ",
+      "Chỉ với tốc độ vừa phải, nếu cần thì chờ",
+      "Bấm còi và chạy qua"
+     ],
+     "erklaerung": "§ 26 Abs. 1 StVO: Để người đi bộ sang đường, chỉ lại gần với tốc độ vừa phải, nếu cần thì chờ."
+    },
+    "regel": "Biển 350 · § 26 Abs. 1 StVO",
+    "titel": "Biển 350 – vạch sang đường phía trước"
+   },
+   "k1": {
+    "text": "Người đi bộ bắt đầu sang đường – dừng trước vạch, không dừng trên vạch. Cấm vượt và cấm đi qua bên cạnh xe đang chờ.",
+    "frage": {
+     "text": "Xe phía trước tôi dừng ở vạch sang đường. Tôi có được vượt bên trái không?",
+     "richtig": 1,
+     "optionen": [
+      "Được, nếu tôi nhanh",
+      "Không – ở vạch sang đường không được vượt",
+      "Được, nếu bấm còi"
+     ],
+     "erklaerung": "§ 26 Abs. 3 StVO: Ở vạch sang đường không được vượt."
+    },
+    "regel": "§ 26 Abs. 1 · § 26 Abs. 3 StVO",
+    "titel": "Dừng lại"
+   },
+   "k2": {
+    "text": "Chỉ đi tiếp khi mọi người đã rời vạch sang đường an toàn – kể cả phía bên kia. Giao tiếp bằng ánh mắt sẽ giúp ích.",
+    "frage": null,
+    "regel": "§ 26 Abs. 1 StVO",
+    "titel": "Chỉ khi đường trống"
+   },
+   "k3": {
+    "text": "Nếu xe bị ùn phía sau vạch sang đường, đừng chạy lên vạch nếu sẽ phải chờ ở đó.",
+    "frage": null,
+    "regel": "§ 26 Abs. 2 StVO",
+    "titel": "Ghi nhớ"
+   }
+  }
+ }
+}
