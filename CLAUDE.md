@@ -27,6 +27,67 @@ Knöpfe auf dem Bild, lange Texte (TR/AR) brechen um. Die automatische Prüfung
 dafür (Überstand, Abschneiden, Überdeckung, Knopfgrößen) lief für
 "Verkehr verstehen" über alle Szenen und Sprachen.
 
+## Sprachen (29.09.2026)
+
+Fünf Sprachen: de, tr, en, ar (rtl), **es**. Regel (Serband): **alles, was
+Schüler sehen, in allen Sprachen** – kein fester deutscher Text im Schülerteil,
+immer `t("…")` mit Schlüssel in allen Sprachen (fehlt einer, erscheint Deutsch).
+Nur die Rechtstexte (Impressum, Datenschutz, AGB, Widerruf) und die StVO-PDFs
+bleiben deutsch; die Übersicht sagt das in der jeweiligen Sprache. Inhalte aus
+der Datenbank (Bereiche, Themen, Videotitel/-beschreibungen) in
+`academy_uebersetzungen` – neue Videos brauchen dort alle vier Fremdsprachen.
+Textkarten "Nützliches": `NUETZLICH_UE`. Die Verwaltung bleibt deutsch.
+Neue Sprache = `SPRACHEN`, `I18N`, `PRUEFUNGSTAG`, `NUETZLICH_UE`, `UI` in
+`verkehr/spieler.js`, `SPRACHEN` in der Edge Function `academy-szene`,
+`werkzeuge/szenen-texte/<sprache>.json` und die Beschriftungen im
+Szenen-Export (`szenen-export.js`, `werkzeuge/szenen/*.js`).
+Sprachwahl (30.09.2026): EIN Knopf mit Flagge (Login + Konto), die Auswahl öffnet ein
+Blatt (`spracheWaehlen()`); Flagge steht in `SPRACHEN[].flagge` (Arabisch: Jordanien 🇯🇴, 30.09.2026; vorher
+neutral "ع").
+
+## Untertitel (30.09.2026)
+
+Nur Technik-Videos und Prüfungsstrecken (Entscheidung Serband). Edge Function
+`academy-untertitel` (verify_jwt false; nur Super-Admin-JWT oder intern per pg_net
+mit Header `x-intern` = Vault-Geheimnis `untertitel_intern`). Ablauf: Bunny erkennt
+NUR Deutsch (`start`, 0,10 $/Min) → deutschen Text korrigieren und mit den
+App-Fachbegriffen übersetzen → `hochladen` als Spur mit reinem Sprachcode ("tr") →
+`loeschen` der "-auto"-Spuren. Bunnys eigene Übersetzung hatte Fachfehler
+(Abblendlicht → Fernlicht) und verrutschte Zeiten – nicht verwenden. Sprachen in
+`academy_einstellungen.untertitel_sprachen`. Die App schaltet Untertitel nur bei
+Fremdsprachen automatisch ein (`captions=<sprache>`), Deutsch ohne.
+**Hochladen immer mit `paket`** (mehrere Spuren + Löschen nacheinander in EINEM
+Aufruf): parallele Aufrufe an dasselbe Video überschreiben bei Bunny gegenseitig
+die Spurenliste (Dateien da, Player sieht sie nicht). `start` braucht
+`targetLanguages: ["de"]` – eine leere Liste lehnt Bunny ab. Die automatische
+Erkennung erfindet in Stillen Sätze ("Untertitel im Auftrag des ZDF",
+"Copyright WDR", "Das war's für heute") – beim Korrigieren streichen.
+Fertig (30.09.2026): ALLE 38 Videos in de/en/tr/ar/es (Entscheidung Serband: alles außer
+den Originalprüfungen; kein Video ist stumm). Ausgeschlossen – auch in der Function hart
+gesperrt: Bereich "Prüfung" und die IDs in `academy_einstellungen.untertitel_ausgeschlossen`
+(Bauer, Haier ×2, Siamlidis). Neue Videos brauchen die Bunny-Erkennung nicht mehr:
+`werkzeuge/untertitel/` erkennt den Ton kostenlos, `zeilen_anlegen` legt die ersten
+deutschen Zeilen an (nur wenn das Video noch keine hat), dann Deutsch korrigieren,
+übersetzen, `abgleich.py --setzen`, `paket` mit `untertitel.vtt(...)`.
+
+**Quelle der Untertitel ist die Tabelle `untertitel.zeilen`** (eigenes Schema, von außen
+nicht erreichbar): je Zeile Beginn/Ende, `de` + alle Übersetzungen, `anker` (Wortzeiten).
+Bunny-Dateien werden daraus gebaut: `untertitel.vtt(video, sprache, videolänge_s)` teilt
+lange Sätze fürs Handy (max. 2 Zeilen à ~40 Zeichen, Stücke ≤ 76 Zeichen), verteilt die
+Zeit sprechgenau über die Anker und setzt bei Arabisch das RTL-Zeichen. Neue Sprache =
+Spalte ergänzen + `vtt()` + `untertitel_sprachen`; hochladen per `paket` mit
+`untertitel.vtt(...)` direkt im SQL. Aussehen (weiße Schrift auf schwarzem Balken, 18 px
+am Handy) kommt aus der Bunny-Bibliothek – nichts zu tun.
+**Synchron zum Ton** (`werkzeuge/untertitel/`): `ton-erkennen.py` erkennt jedes Wort mit
+Zeit (faster-whisper), `abgleich.py` richtet die Zeilen daran aus (globale Ausrichtung im
+±6-s-Korridor; gedehnte Wörter vom Ende her gekürzt; Lesezeit max. 17 Zeichen/s; keine
+Überlappung). Zugang nur über einen lokalen Schlüssel, dessen SHA-256 VORÜBERGEHEND im
+Vault als `untertitel_abgleich_hash` liegt – danach löschen (Stand: gelöscht).
+**CDN-Falle:** Bunny liefert Untertitel mit `max-age` 30 Tage aus und ignoriert `?ver=`.
+Überschreibt man eine Spur, sehen Knoten, die sie schon geholt hatten, bis zum Leeren des
+Caches die alte. Nach dem Überschreiben: Pull-Zone-Cache in Bunny leeren (braucht den
+Konto-Schlüssel, den die Functions nicht haben).
+
 ## Vor jedem Bau-Schritt
 
 - Betrifft es die Datenbank: `get_advisors` danach ausführen (security +
@@ -107,7 +168,7 @@ dafür (Überstand, Abschneiden, Überdeckung, Knopfgrößen) lief für
   → ganze Szene, sonst nur Kapitel 1 (`teaser.gesperrt` = Titel der übrigen).
   Erzeugt werden die Daten mit `werkzeuge/szenen-export.js` (tastet die
   Kompass-Lernszenen und `werkzeuge/szenen/*.js` ab; Übersetzungen in
-  `werkzeuge/szenen-texte/{tr,en,ar}.json`, gleiche Struktur wie `texte.de`).
+  `werkzeuge/szenen-texte/{tr,en,ar,es}.json`, gleiche Struktur wie `texte.de`).
   Die Kompass-Szenen stammen aus dem öffentlichen Kompass-Repo – die Sperre
   schützt die Akademie-Oberfläche, nicht die Rohdaten.
 - **Zweites Supabase-Projekt `oectrvkjunntzsggyhxv`** (Fahrlehrer-Kompass) ist

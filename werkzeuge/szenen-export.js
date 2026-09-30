@@ -98,8 +98,8 @@ const DT = 1 / 15;
             if (!f) return;
             const m = a.text.match(/^(Reaktion|Bremsen) ([\d.]+) m$/);
             const zahl = m ? m[2].replace(".", ",") : "";
-            f.text = m ? (m[1] === "Reaktion" ? { de: "Reaktion " + zahl + " m", tr: "Tepki " + zahl + " m", en: "Reaction " + zahl + " m", ar: "رد الفعل " + zahl + " م" }
-              : { de: "Bremsen " + zahl + " m", tr: "Fren " + zahl + " m", en: "Braking " + zahl + " m", ar: "الكبح " + zahl + " م" }) : { de: a.text };
+            f.text = m ? (m[1] === "Reaktion" ? { de: "Reaktion " + zahl + " m", tr: "Tepki " + zahl + " m", en: "Reaction " + zahl + " m", ar: "رد الفعل " + zahl + " م", es: "Reacción " + zahl + " m" }
+              : { de: "Bremsen " + zahl + " m", tr: "Fren " + zahl + " m", en: "Braking " + zahl + " m", ar: "الكبح " + zahl + " م", es: "Frenado " + zahl + " m" }) : { de: a.text };
             f.bei = [r2(a.x), 0.2, r2(a.y + (ti++ % 2 ? 1.6 : -1.6))];
           });
           hilfen.push(fl);
@@ -166,7 +166,7 @@ const DT = 1 / 15;
   }, DT);
 
   // Übersetzungen (werkzeuge/szenen-texte/<sprache>.json, gleiche Struktur wie texte.de)
-  ["tr", "en", "ar"].forEach((sp) => {
+  ["tr", "en", "ar", "es"].forEach((sp) => {
     const datei = path.join(__dirname, "szenen-texte", sp + ".json");
     if (!fs.existsSync(datei)) return;
     const tx = JSON.parse(fs.readFileSync(datei, "utf8"));

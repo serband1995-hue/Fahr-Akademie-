@@ -1,0 +1,1368 @@
+{
+ "abfahren": {
+  "titel": "Salir de la autopista",
+  "kurz": "Colócate a tiempo, carril de deceleración, frena solo allí",
+  "kapitel": {
+   "k0": {
+    "titel": "Salida anunciada",
+    "text": "El cartel de preaviso anuncia la salida 1000 m antes. Planifica ya: pásate pronto al carril derecho – no en el último segundo desde la izquierda.",
+    "regel": "Señal 449 · § 7 Abs. 5 StVO",
+    "frage": {
+     "text": "¿Cuándo me cambio a la derecha?",
+     "optionen": [
+      "Justo en la salida",
+      "Pronto, como tarde antes de las balizas",
+      "Da igual, si hace falta por la zona cebreada"
+     ],
+     "richtig": 1,
+     "erklaerung": "Colócate a tiempo para que el cambio salga sin prisas y sin poner a nadie en peligro."
+    }
+   },
+   "k1": {
+    "titel": "Intermitente, retrovisores, mirada por encima del hombro",
+    "text": "Intermitente derecho, retrovisor interior y exterior, mirada por encima del hombro derecho – y luego pásate con decisión al carril derecho.",
+    "regel": "§ 7 Abs. 5 StVO",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Colocarse a la derecha",
+    "text": "Sigue por el carril derecho y mantén la velocidad. Quita el intermitente.",
+    "regel": "§ 2 Abs. 2 StVO (circular por la derecha)",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Preaviso a 500 m",
+    "text": "La salida se anuncia otra vez 500 m antes. A partir de aquí, mejor no adelantar.",
+    "regel": "Señal 449",
+    "frage": null
+   },
+   "k4": {
+    "titel": "Balizas de aviso",
+    "text": "Balizas con 3, 2 y 1 franjas: faltan 300, 200 y 100 m para el inicio del carril de deceleración.",
+    "regel": "Señal 450",
+    "frage": {
+     "text": "¿Qué significa la baliza con dos franjas?",
+     "optionen": [
+      "Faltan 200 m para la salida",
+      "Velocidad 200",
+      "Dos carriles libres"
+     ],
+     "richtig": 0,
+     "erklaerung": "Señal 450: 3 franjas = 300 m, 2 = 200 m, 1 = 100 m."
+    }
+   },
+   "k5": {
+    "titel": "Intermitente derecho",
+    "text": "Pon el intermitente derecho a tiempo antes del carril de deceleración – el tráfico que va detrás tiene que verlo pronto.",
+    "regel": "§ 7 Abs. 5 StVO",
+    "frage": null
+   },
+   "k6": {
+    "titel": "Retrovisor, mirada por encima del hombro, cambio",
+    "text": "Retrovisor y mirada por encima del hombro derecho, luego pásate al carril de deceleración cruzando la línea discontinua ancha.",
+    "regel": "Señal 340 · § 7 Abs. 5 StVO",
+    "frage": null
+   },
+   "k7": {
+    "titel": "Frena ahora, no antes",
+    "text": "Reduce la velocidad solo en el carril de deceleración, no antes en la autopista. Allí no se puede ir más rápido que en los carriles principales.",
+    "regel": "§ 7a Abs. 3 StVO",
+    "frage": {
+     "text": "¿Dónde reduzco la velocidad?",
+     "optionen": [
+      "Ya en el carril derecho",
+      "En el carril de deceleración",
+      "Solo en la curva"
+     ],
+     "richtig": 1,
+     "erklaerung": "Frenar en la autopista pone en peligro a quien viene detrás – decelera solo en el carril de deceleración y, antes de la curva, hasta la velocidad indicada."
+    }
+   },
+   "k8": {
+    "titel": "Curva y velocímetro",
+    "text": "Hasta la señal, frena hasta la velocidad máxima indicada (aquí 60 km/h) antes de que la curva se cierre. Tras mucho rato en autopista, 60 parece muy lento – ¡mira el velocímetro!",
+    "regel": "Señal 274 · § 3 Abs. 1 StVO",
+    "frage": {
+     "text": "¿Por qué mirar el velocímetro?",
+     "optionen": [
+      "Porque tras ir rápido se calcula mal la velocidad",
+      "Por el indicador de combustible",
+      "No hace falta"
+     ],
+     "richtig": 0,
+     "erklaerung": "Tras ir por autopista, uno subestima su propia velocidad (costumbre)."
+    }
+   },
+   "k9": {
+    "titel": "Recuerda",
+    "text": "¿Te has pasado la salida? Sigue hasta la siguiente. En la autopista nunca marcha atrás ni cambio de sentido – tampoco en el arcén.",
+    "regel": "§ 18 Abs. 7 StVO",
+    "frage": null
+   }
+  }
+ },
+ "auffahren": {
+  "titel": "Incorporarse a la autopista",
+  "kurz": "Carril de aceleración, buscar un hueco, incorporarse",
+  "kapitel": {
+   "k0": {
+    "titel": "Enlace",
+    "text": "El acceso lleva a la autopista por una curva propia. Observa ya aquí el tráfico de la autopista: ¿a qué velocidad va y dónde hay huecos?",
+    "regel": "Señal 330.1 · § 18 Abs. 2 StVO",
+    "frage": {
+     "text": "Al incorporarme, ¿quién tendrá preferencia?",
+     "optionen": [
+      "Yo – estoy en el carril de aceleración",
+      "El tráfico de la calzada principal",
+      "El que vaya más rápido"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 18 Abs. 3 StVO: el tráfico de la calzada principal tiene preferencia."
+    }
+   },
+   "k1": {
+    "titel": "Carril de aceleración: acelerar",
+    "text": "En el carril de aceleración, acelera con decisión hasta la velocidad del tráfico. Aquí se puede ir más rápido que en los carriles principales – es lo que se busca.",
+    "regel": "§ 7a Abs. 2 StVO",
+    "frage": {
+     "text": "¿Qué es ahora lo más importante?",
+     "optionen": [
+      "Ir despacio y esperar",
+      "Acelerar con decisión hasta la velocidad del tráfico",
+      "Pasarse enseguida a la izquierda"
+     ],
+     "richtig": 1,
+     "erklaerung": "Con una velocidad parecida a la del tráfico te incorporas con seguridad. Si entras demasiado despacio, obligas a otros a frenar."
+    }
+   },
+   "k2": {
+    "titel": "Intermitente izquierdo",
+    "text": "Anuncia el cambio de carril a tiempo y con claridad – pon el intermitente izquierdo.",
+    "regel": "§ 7 Abs. 5 StVO",
+    "frage": {
+     "text": "¿Cuándo pongo el intermitente?",
+     "optionen": [
+      "Cuando ya estoy cambiando",
+      "A tiempo, antes",
+      "Nunca, ya está claro"
+     ],
+     "richtig": 1,
+     "erklaerung": "Todo cambio de carril se anuncia a tiempo y con claridad (§ 7 Abs. 5 StVO)."
+    }
+   },
+   "k3": {
+    "titel": "Elegir el hueco",
+    "text": "El camión va delante a la derecha; el turismo rojo lleva mucha distancia. El hueco de detrás sirve: iguala la velocidad y deja distancia suficiente (regla: la mitad del velocímetro en metros).",
+    "regel": "§ 18 Abs. 3 · § 4 Abs. 1 StVO",
+    "frage": {
+     "text": "¿Dónde me incorporo?",
+     "optionen": [
+      "Al lado del camión",
+      "En el hueco detrás del camión",
+      "Delante del camión, acelerando"
+     ],
+     "richtig": 1,
+     "erklaerung": "El hueco detrás del camión es suficiente. Delante iría muy justo, y él tiene preferencia."
+    }
+   },
+   "k4": {
+    "titel": "Retrovisor y mirada por encima del hombro",
+    "text": "Justo antes del cambio: retrovisor interior y exterior, luego mirada por encima del hombro izquierdo – si no, el ángulo muerto no se ve.",
+    "regel": "§ 7 Abs. 5 StVO: excluir todo peligro",
+    "frage": {
+     "text": "¿Qué va justo antes del cambio de carril?",
+     "optionen": [
+      "Bajar la radio",
+      "Retrovisor y mirada por encima del hombro izquierdo",
+      "Tocar el claxon"
+     ],
+     "richtig": 1,
+     "erklaerung": "Solo mirando por encima del hombro ves un vehículo en el ángulo muerto."
+    }
+   },
+   "k5": {
+    "titel": "Incorporarse",
+    "text": "Cambia por la línea discontinua ancha – no por la línea continua ni por la zona cebreada. Pásate con decisión y suavidad, sin esperar al final del carril.",
+    "regel": "Señal 340 · Señal 295 · Señal 298 · § 7 Abs. 5 StVO",
+    "frage": null
+   },
+   "k6": {
+    "titel": "Quita el intermitente, guarda distancia",
+    "text": "Tras el cambio, quita el intermitente y sigue por la derecha. Distancia al camión de delante: como mínimo la mitad del velocímetro en metros.",
+    "regel": "§ 2 Abs. 2 · § 4 Abs. 1 StVO",
+    "frage": {
+     "text": "¿Y ahora?",
+     "optionen": [
+      "Adelantar enseguida por la izquierda",
+      "Quitar el intermitente, ir por la derecha, guardar distancia",
+      "Seguir por el arcén"
+     ],
+     "richtig": 1,
+     "erklaerung": "Obligación de circular por la derecha (§ 2 Abs. 2 StVO) y distancia suficiente (§ 4 Abs. 1 StVO)."
+    }
+   },
+   "k7": {
+    "titel": "Recuerda",
+    "text": "Al incorporarte no vale la cremallera: quien entra debe respetar la preferencia. Si no hay hueco, en caso necesario detente al final del carril – nunca te desvíes al arcén.",
+    "regel": "§ 18 Abs. 3 StVO · § 7 Abs. 4 no se aplica aquí",
+    "frage": null
+   }
+  }
+ },
+ "doppel": {
+  "titel": "Giro a la izquierda con doble carril",
+  "kurz": "Dos carriles de giro – cada uno se queda en el suyo",
+  "kapitel": {
+   "k0": {
+    "titel": "Dos carriles de giro a la izquierda",
+    "text": "Los dos carriles giran a la izquierda (flechas, Señal 297) y el semáforo está en verde. Colócate a tiempo, pon el intermitente – y mantén el carril elegido.",
+    "regel": "Señal 297 · § 9 Abs. 1 StVO",
+    "frage": {
+     "text": "El coche de autoescuela va por el derecho de los dos carriles de giro a la izquierda. ¿A qué carril gira?",
+     "optionen": [
+      "Al carril derecho de la calle de destino",
+      "Al carril izquierdo",
+      "Da igual"
+     ],
+     "richtig": 0,
+     "erklaerung": "El de la izquierda sigue a la izquierda, el de la derecha a la derecha – así no hay conflicto con el de al lado."
+    }
+   },
+   "k1": {
+    "titel": "Mantén el carril en la curva",
+    "text": "Gira de forma uniforme, uno al lado del otro. Las líneas discontinuas del cruce marcan el camino. ¡No cambies de carril dentro del cruce!",
+    "regel": "§ 7 Abs. 5 · § 9 Abs. 1 StVO",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Después del giro",
+    "text": "Cambia de carril, si hace falta, solo pasado el cruce – con intermitente, retrovisor y mirada por encima del hombro.",
+    "regel": "§ 7 Abs. 5 StVO",
+    "frage": null
+   }
+  }
+ },
+ "ecke": {
+  "titel": "Marcha atrás en esquina a la derecha",
+  "kurz": "Marcha atrás hacia una calle lateral – siempre cerca del bordillo",
+  "kapitel": {
+   "k0": {
+    "titel": "Parar pasada la bocacalle",
+    "text": "Para a la derecha, junto al borde, unas dos o tres longitudes de coche pasada la bocacalle. Mira alrededor – el tráfico tiene prioridad.",
+    "regel": "§ 9 Abs. 5 StVO",
+    "frage": {
+     "text": "¿Qué es lo más importante al ir marcha atrás?",
+     "optionen": [
+      "Ser lo más rápido posible",
+      "Ir despacio y vigilar alrededor",
+      "Mirar solo el retrovisor interior"
+     ],
+     "richtig": 1,
+     "erklaerung": "Marcha atrás no se puede poner en peligro a nadie – despacio, mirando hacia atrás y alrededor."
+    }
+   },
+   "k1": {
+    "titel": "Recto hacia atrás",
+    "text": "Gira el cuerpo, mira por la luna trasera y retrocede en línea recta – a unos 50 cm del bordillo.",
+    "regel": "Maniobra básica marcha atrás",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Girar en la esquina",
+    "text": "Cuando la rueda trasera llega a la esquina: gira a la derecha para que el coche siga la curva del bordillo de forma uniforme. El morro se abre a la izquierda hacia la calzada – ¡mira otra vez alrededor antes!",
+    "regel": "§ 9 Abs. 5 StVO",
+    "frage": {
+     "text": "¿Hacia dónde giro para que la parte trasera vaya a la derecha?",
+     "optionen": [
+      "A la derecha",
+      "A la izquierda"
+     ],
+     "richtig": 0,
+     "erklaerung": "Marcha atrás: gira el volante hacia donde quieres que vaya la parte trasera."
+    }
+   },
+   "k3": {
+    "titel": "Sigue recto",
+    "text": "Cuando el coche esté paralelo al bordillo de la calle lateral: volante recto y retrocede aún una longitud de coche, más o menos.",
+    "regel": "Directriz de examen · maniobras básicas",
+    "frage": null
+   }
+  }
+ },
+ "eng": {
+  "titel": "Estrechamiento: obstáculo en mi lado",
+  "kurz": "Quien tiene que rodear el obstáculo deja pasar al tráfico en sentido contrario",
+  "kapitel": {
+   "k0": {
+    "titel": "Obstáculo delante",
+    "text": "Un camión está parado con las luces de emergencia en mi lado. La calle es demasiado estrecha para dos vehículos a la vez.",
+    "regel": "§ 6 StVO",
+    "frage": {
+     "text": "¿Quién pasa primero por el estrechamiento?",
+     "optionen": [
+      "Yo – he llegado antes",
+      "El tráfico en sentido contrario – el obstáculo está en mi lado",
+      "El que vaya más rápido"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 6 StVO: quien quiere rodear un obstáculo por la izquierda debe dejar pasar a los vehículos que vienen de frente."
+    }
+   },
+   "k1": {
+    "titel": "Esperar con distancia",
+    "text": "Para a tiempo y con distancia al obstáculo – así queda sitio para rodearlo y ves mejor el tráfico en sentido contrario.",
+    "regel": "§ 6 StVO",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Anunciar el desvío",
+    "text": "Cuando esté libre: retrovisor, mirada por encima del hombro izquierdo, intermitente izquierdo y pasa el camión con suficiente distancia lateral – atento a personas que bajen.",
+    "regel": "§ 6 · § 7 Abs. 5 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Volver a la derecha",
+    "text": "Pasado el obstáculo, intermitente derecho y vuelve a colocarte a la derecha.",
+    "regel": "§ 6 · § 2 Abs. 2 StVO",
+    "frage": null
+   }
+  }
+ },
+ "gefahr": {
+  "titel": "Frenada de emergencia: ¿30 o 50?",
+  "kurz": "Distancia de reacción + frenado = detención – con test de reacción",
+  "kapitel": {
+   "k0": {
+    "titel": "Dos coches, misma reacción",
+    "text": "Dos trayectos comparados en el mismo carril: el coche de autoescuela a 50 km/h y – semitransparente – el mismo coche a 30 km/h. Entre los coches aparcados va a salir un balón a la calle, y un niño detrás.",
+    "regel": "§ 3 Abs. 1 · § 3 Abs. 2a StVO",
+    "frage": null
+   },
+   "k1": {
+    "titel": "¡Peligro! Tiempo de reacción",
+    "text": "Pasa aprox. 1 segundo hasta que el pie está en el freno. En ese tiempo el coche sigue sin frenar: a 50 km/h casi 14 m, a 30 km/h algo más de 8 m.",
+    "regel": "Regla distancia de reacción: (km/h ÷ 10) · 3",
+    "frage": {
+     "text": "¿Cuánto mide la distancia de reacción a 50 km/h (regla)?",
+     "optionen": [
+      "5 m",
+      "15 m",
+      "25 m"
+     ],
+     "richtig": 1,
+     "erklaerung": "(50 ÷ 10) · 3 = 15 m. El cálculo exacto da unos 14 m por segundo."
+    }
+   },
+   "k2": {
+    "titel": "Frenada a fondo",
+    "text": "Pisa a fondo freno y embrague a la vez y mantén la presión. El ABS vibra – es normal. Sujeta el volante sin tensión para poder esquivar.",
+    "regel": "Regla frenada de emergencia: (km/h ÷ 10)² ÷ 2",
+    "frage": {
+     "text": "¿Cuánto mide la distancia de frenado en una frenada de emergencia a 50 km/h (regla)?",
+     "optionen": [
+      "12,5 m",
+      "25 m",
+      "50 m"
+     ],
+     "richtig": 0,
+     "erklaerung": "(50 ÷ 10)² ÷ 2 = 12,5 m. Frenado normal (sin peligro): (50 ÷ 10)² = 25 m."
+    }
+   },
+   "k3": {
+    "titel": "El resultado",
+    "text": "El coche a 30 se detiene a tiempo. A 50 km/h no llega – en el lugar del balón el coche aún iría a unos 35 km/h. Ir a 30 salva vidas.",
+    "regel": "§ 3 Abs. 1 · § 3 Abs. 2a StVO",
+    "frage": {
+     "text": "¿Por qué es tan importante ir a 30 delante de los colegios?",
+     "optionen": [
+      "Por el ruido",
+      "La distancia de detención es mucho más corta – a 50, donde a 30 ya estoy parado, aún voy casi igual de rápido que al empezar",
+      "Solo es una recomendación"
+     ],
+     "richtig": 1,
+     "erklaerung": "La distancia de frenado crece con el cuadrado de la velocidad."
+    }
+   }
+  }
+ },
+ "gruenpfeil": {
+  "titel": "Flecha verde con rojo",
+  "kurz": "Primero parar, luego girar a la derecha con cuidado – el tráfico con verde va primero",
+  "kapitel": {
+   "k0": {
+    "titel": "Rojo – con placa de flecha verde",
+    "text": "El semáforo está en rojo. A su derecha hay una flecha verde sobre una placa metálica negra (Señal 720) – ¡no es una flecha luminosa!",
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO · Señal 720",
+    "frage": {
+     "text": "¿Qué exige primero la flecha verde?",
+     "optionen": [
+      "Pasar rodando despacio",
+      "Detenerse por completo en la línea de detención",
+      "Nada, está en verde"
+     ],
+     "richtig": 1,
+     "erklaerung": "Tras detenerte, puedes girar a la derecha con rojo – detenerse es obligatorio."
+    }
+   },
+   "k1": {
+    "titel": "Parar en la línea de detención",
+    "text": "Detente por completo. Delante de mí, una peatona cruza la calzada con verde.",
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "frage": {
+     "text": "¿Quién pasa primero?",
+     "optionen": [
+      "Yo, tengo la flecha",
+      "Peatones y tráfico transversal con verde",
+      "El que llegó antes"
+     ],
+     "richtig": 1,
+     "erklaerung": "Hay que excluir estorbar o poner en peligro – sobre todo a peatones y vehículos de la dirección con verde."
+    }
+   },
+   "k2": {
+    "titel": "Avanzar hasta ver bien",
+    "text": "El paso está libre. Avanza despacio hasta tener visibilidad y vuelve a parar.",
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "El tráfico transversal tiene verde",
+    "text": "Por la izquierda viene un coche con verde – no se le puede estorbar ni poner en peligro. Espera.",
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "frage": null
+   },
+   "k4": {
+    "titel": "Girar",
+    "text": "El coche azul ya ha pasado. Mirada por encima del hombro derecho y gira despacio – ¡solo desde el carril derecho!",
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "frage": null
+   },
+   "k5": {
+    "titel": "Recuerda",
+    "text": "Flecha verde luminosa en el semáforo = fase verde propia para girar. Placa metálica verde = girar solo tras detenerse, con la máxima precaución.",
+    "regel": "§ 37 Abs. 2 StVO",
+    "frage": null
+   }
+  }
+ },
+ "kreisel": {
+  "titel": "Rotonda",
+  "kurz": "Entrar sin intermitente, dentro hay preferencia, intermitente al salir",
+  "kapitel": {
+   "k0": {
+    "titel": "Señal 215 bajo Señal 205",
+    "text": "Rotonda con «Ceda el paso»: el tráfico que circula por la rotonda tiene preferencia. Acércate despacio y mira a la izquierda.",
+    "regel": "Señal 215 · Señal 205 · § 9a Abs. 1 StVO",
+    "frage": {
+     "text": "¿Pongo el intermitente al entrar en la rotonda?",
+     "optionen": [
+      "Sí, el derecho",
+      "Sí, el izquierdo",
+      "No – al entrar está prohibido poner el intermitente"
+     ],
+     "richtig": 2,
+     "erklaerung": "§ 9a Abs. 1 StVO: al entrar no está permitido usar el intermitente."
+    }
+   },
+   "k1": {
+    "titel": "Ceder el paso",
+    "text": "El coche azul ya está en la rotonda y tiene preferencia. Para en la línea de espera y déjalo pasar.",
+    "regel": "§ 9a Abs. 1 StVO · Señal 341",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Entrar",
+    "text": "Libre – entra sin intermitente. En la rotonda se circula en sentido antihorario; está prohibido detenerse en ella.",
+    "regel": "§ 9a Abs. 1 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Intermitente derecho para salir",
+    "text": "Tras la penúltima salida, intermitente derecho, retrovisor y mirada por encima del hombro derecho – ¡ciclistas y peatones!",
+    "regel": "§ 9 Abs. 1 StVO",
+    "frage": {
+     "text": "¿Cuándo pongo el intermitente para salir?",
+     "optionen": [
+      "Nunca",
+      "Tras la salida anterior a la mía – a tiempo antes de salir",
+      "Ya al entrar"
+     ],
+     "richtig": 1,
+     "erklaerung": "La salida se anuncia: intermitente derecho en cuanto pasas la salida anterior a la tuya."
+    }
+   },
+   "k4": {
+    "titel": "Peatones en el paso",
+    "text": "Pasada la salida hay un paso de peatones. Quien quiera usarlo tiene prioridad – acércate despacio y espera.",
+    "regel": "§ 26 Abs. 1 StVO",
+    "frage": {
+     "text": "La peatona quiere cruzar por el paso de peatones. ¿Quién tiene prioridad?",
+     "optionen": [
+      "Yo – salgo de la rotonda",
+      "La peatona",
+      "El que vaya más rápido"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 26 Abs. 1 StVO: a los peatones que muestran que quieren usar el paso hay que dejarles cruzar."
+    }
+   }
+  }
+ },
+ "laengs": {
+  "titel": "Aparcar marcha atrás (en línea)",
+  "kurz": "De lado en un hueco junto al borde de la calzada",
+  "kapitel": {
+   "k0": {
+    "titel": "Comprobar el hueco",
+    "text": "¿Cabe en el hueco? Regla: como mínimo una longitud de coche larga más aprox. 1,5 m. Pon pronto el intermitente derecho para que el tráfico de detrás lo sepa.",
+    "regel": "§ 1 Abs. 2 · § 12 StVO",
+    "frage": {
+     "text": "¿Cuándo pongo el intermitente?",
+     "optionen": [
+      "Solo al ir marcha atrás",
+      "Ya al acercarme al hueco",
+      "Nunca, solo estoy aparcando"
+     ],
+     "richtig": 1,
+     "erklaerung": "Intermitente derecho pronto – así el tráfico de detrás entiende por qué te detienes."
+    }
+   },
+   "k1": {
+    "titel": "Parar junto al coche de delante",
+    "text": "Para en paralelo al coche de delante, con unos 50 cm a 1 m de distancia lateral. Tu parte trasera queda más o menos a la altura de la suya.",
+    "regel": "Maniobra básica aparcar en línea",
+    "frage": {
+     "text": "¿Qué va antes de ir marcha atrás?",
+     "optionen": [
+      "Retroceder enseguida",
+      "Mirar alrededor – sobre todo hacia atrás",
+      "Tocar el claxon"
+     ],
+     "richtig": 1,
+     "erklaerung": "Antes de cada movimiento mira alrededor; marcha atrás, gira el cuerpo y mira por la luna trasera."
+    }
+   },
+   "k2": {
+    "titel": "Todo a la derecha",
+    "text": "Retrocede despacio girando todo a la derecha. La parte trasera entra en el hueco. Mira hacia atrás; el morro se abre a la izquierda hacia la calzada – ¡mira otra vez antes!",
+    "regel": "§ 9 Abs. 5 · § 1 Abs. 2 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Recto hacia atrás",
+    "text": "Volante recto y retrocede un poco en línea recta – así el coche se acerca al bordillo.",
+    "regel": "Maniobra básica aparcar en línea",
+    "frage": null
+   },
+   "k4": {
+    "titel": "Contravolantear",
+    "text": "Cuando la esquina delantera derecha haya pasado la trasera del coche de delante: gira todo a la izquierda. El coche se pone paralelo al bordillo.",
+    "regel": "Maniobra básica aparcar en línea",
+    "frage": {
+     "text": "¿Cuándo giro a la izquierda?",
+     "optionen": [
+      "Nada más empezar",
+      "Cuando el morro haya pasado el coche de delante",
+      "Nunca"
+     ],
+     "richtig": 1,
+     "erklaerung": "Contravolantear demasiado pronto choca delante – demasiado tarde lleva la parte trasera al bordillo."
+    }
+   },
+   "k5": {
+    "titel": "Ajustar",
+    "text": "Avanza un poco hasta que haya un espacio parecido delante y detrás. Objetivo: paralelo y cerca del bordillo (referencia: hasta unos 30 cm), sin tocarlo.",
+    "regel": "Maniobra básica aparcar en línea",
+    "frage": {
+     "text": "¿A qué distancia del bordillo puede quedar el coche?",
+     "optionen": [
+      "Da igual",
+      "Cerca – referencia: hasta unos 30 cm",
+      "Como mínimo 1 m"
+     ],
+     "richtig": 1,
+     "erklaerung": "Bien aparcado: paralelo y cerca del bordillo – pero sin tocarlo."
+    }
+   }
+  }
+ },
+ "links_gegen": {
+  "titel": "Girar a la izquierda con tráfico en sentido contrario",
+  "kurz": "El tráfico en sentido contrario y quien gira a la derecha de frente tienen prioridad",
+  "kapitel": {
+   "k0": {
+    "titel": "Colocarse",
+    "text": "Retrovisor, intermitente izquierdo, colócate hacia el centro. Antes de colocarte, fíjate en el tráfico de detrás.",
+    "regel": "§ 9 Abs. 1 StVO",
+    "frage": {
+     "text": "¿Dónde me coloco para girar a la izquierda?",
+     "optionen": [
+      "Todo a la derecha",
+      "Hasta el centro de la calzada",
+      "En el carril contrario"
+     ],
+     "richtig": 1,
+     "erklaerung": "Para girar a la izquierda: colócate hasta el centro (en calles de sentido único, lo más a la izquierda posible)."
+    }
+   },
+   "k1": {
+    "titel": "Esperar en el cruce",
+    "text": "Avanza hasta el cruce y espera. Las ruedas rectas – si te golpean por detrás, no acabas en el tráfico en sentido contrario.",
+    "regel": "§ 9 Abs. 3 StVO",
+    "frage": {
+     "text": "¿En qué orden pueden pasar los vehículos?",
+     "reihenfolge": [
+      "Azul (recto)",
+      "Rojo (gira a la derecha)",
+      "Furgoneta (recto)",
+      "Coche de autoescuela (izquierda)"
+     ],
+     "erklaerung": "Quien gira a la izquierda deja pasar al tráfico en sentido contrario – también a quien gira a la derecha de frente. El coche de autoescuela pasa el último."
+    }
+   },
+   "k2": {
+    "titel": "Dejar pasar el tráfico en sentido contrario",
+    "text": "Los que van recto y los que giran a la derecha de frente tienen prioridad. Gira solo cuando todo esté libre y ya no crucen peatones.",
+    "regel": "§ 9 Abs. 3 · § 9 Abs. 4 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Atención a los peatones",
+    "text": "En la calle a la que giro, un peatón cruza la calzada. Máxima consideración – espera a que haya cruzado.",
+    "regel": "§ 9 Abs. 3 StVO",
+    "frage": {
+     "text": "El peatón sigue en la calzada. ¿Qué hago?",
+     "optionen": [
+      "Tocar el claxon",
+      "Esperar a que haya pasado",
+      "Pasar justo por detrás de él"
+     ],
+     "richtig": 1,
+     "erklaerung": "Al girar, máxima consideración con los peatones – si hace falta, espera."
+    }
+   },
+   "k4": {
+    "titel": "Mirada por encima del hombro izquierdo",
+    "text": "Justo antes de girar: mirada por encima del hombro izquierdo (ciclistas, quien adelanta), luego gira con decisión en una curva amplia.",
+    "regel": "§ 9 Abs. 1 StVO",
+    "frage": null
+   }
+  }
+ },
+ "quer_rueck": {
+  "titel": "Aparcar marcha atrás (en batería)",
+  "kurz": "Marcha atrás en una plaza en batería – luego sales de frente con buena visibilidad",
+  "kapitel": {
+   "k0": {
+    "titel": "Pasar la plaza",
+    "text": "Avanza despacio por el pasillo, intermitente derecho, y pasa de largo la plaza hasta que tu parte trasera la haya rebasado aprox. 1–2 m.",
+    "regel": "§ 1 Abs. 2 StVO",
+    "frage": null
+   },
+   "k1": {
+    "titel": "Mirar alrededor",
+    "text": "Antes de ir marcha atrás, mira alrededor – ¡peatones y coches en el pasillo!",
+    "regel": "§ 9 Abs. 5 StVO",
+    "frage": {
+     "text": "¿Por qué entrar marcha atrás en la plaza en batería?",
+     "optionen": [
+      "Al salir luego hay buena visibilidad hacia delante",
+      "Es obligatorio",
+      "Porque es más rápido"
+     ],
+     "richtig": 0,
+     "erklaerung": "Marcha atrás el coche gira más cerrado al entrar y, al salir, ves el tráfico transversal."
+    }
+   },
+   "k2": {
+    "titel": "Girar a tope",
+    "text": "Retrocede despacio y gira todo a la derecha. Mira hacia atrás y a las esquinas de los coches vecinos.",
+    "regel": "Maniobra básica aparcar en batería",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Recto hacia atrás",
+    "text": "Cuando el coche esté paralelo a los vecinos: volante recto y retrocede centrado hasta el fondo de la plaza.",
+    "regel": "Directriz de examen · maniobras básicas",
+    "frage": {
+     "text": "¿Cuándo pongo el volante recto?",
+     "optionen": [
+      "En cuanto estoy en la plaza",
+      "Cuando el coche está paralelo a los coches vecinos",
+      "Nunca"
+     ],
+     "richtig": 1,
+     "erklaerung": "Entonces sigue recto – si no, el coche queda torcido."
+    }
+   }
+  }
+ },
+ "quer_vor": {
+  "titel": "Aparcar de frente (en batería)",
+  "kurz": "De frente en un hueco en batería – abriéndote antes",
+  "kapitel": {
+   "k0": {
+    "titel": "Pasar junto al hueco y abrirse",
+    "text": "Acércate despacio al hueco por el pasillo y pon el intermitente derecho. Ábrete un poco a la izquierda para que la curva entre en el hueco.",
+    "regel": "§ 1 Abs. 2 StVO",
+    "frage": {
+     "text": "¿Por qué me abro antes de aparcar de frente?",
+     "optionen": [
+      "Para que la curva entre en el hueco estrecho",
+      "Porque es más rápido",
+      "No hace falta"
+     ],
+     "richtig": 0,
+     "erklaerung": "Al ir hacia delante, las ruedas traseras recortan la curva por dentro – abrirse evita que la parte trasera roce el coche de al lado."
+    }
+   },
+   "k1": {
+    "titel": "Girar a tope",
+    "text": "Cuando el centro del hueco esté más o menos a la altura del retrovisor exterior: gira el volante a tope a la derecha. Vigila las esquinas de los coches de al lado (mirada por encima del hombro derecho).",
+    "regel": "Maniobra básica: aparcar en batería",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Entrar recto",
+    "text": "Endereza el volante y avanza centrado en el hueco hasta que el frontal quede justo antes del final. Se tiene que poder salir del coche por ambos lados.",
+    "regel": "Normativa del examen · maniobras básicas",
+    "frage": {
+     "text": "¿Qué desventaja tiene luego al salir?",
+     "optionen": [
+      "Ninguna",
+      "Hay que salir marcha atrás – con mala visibilidad del tráfico",
+      "Se gasta más gasolina"
+     ],
+     "richtig": 1,
+     "erklaerung": "Por eso se recomienda aparcar marcha atrás: así se sale hacia delante con buena visibilidad."
+    }
+   }
+  }
+ },
+ "rechts_rad": {
+  "titel": "Girar a la derecha con carril bici",
+  "kurz": "Mirada por encima del hombro – el ciclista que sigue recto tiene prioridad",
+  "kapitel": {
+   "k0": {
+    "titel": "Situarse a la derecha e intermitente",
+    "text": "Retrovisor, intermitente derecho y situarse lo más a la derecha posible. A la derecha de la calzada hay un carril bici.",
+    "regel": "§ 9 Abs. 1 StVO",
+    "frage": {
+     "text": "¿Quién tiene prioridad aquí?",
+     "optionen": [
+      "Yo – soy más rápido",
+      "El ciclista que sigue recto",
+      "Quien llegue primero al cruce"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 9 Abs. 3 StVO: Quien gira debe dejar pasar a los ciclistas que circulan junto a la calzada en el mismo sentido."
+    }
+   },
+   "k1": {
+    "titel": "Mirada por encima del hombro derecho",
+    "text": "Justo antes de girar: retrovisor y mirada por encima del hombro derecho – el ciclista puede estar en el ángulo muerto.",
+    "regel": "§ 9 Abs. 1 · § 9 Abs. 3 StVO",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Esperar",
+    "text": "El ciclista viene por detrás y sigue recto. Detente y déjalo pasar – solo entonces gira a la derecha en una curva cerrada.",
+    "regel": "§ 9 Abs. 3 StVO",
+    "frage": {
+     "text": "¿Qué hago ahora?",
+     "optionen": [
+      "Girar rápido por delante del ciclista",
+      "Detenerme y dejarlo pasar",
+      "Tocar el claxon para que frene"
+     ],
+     "richtig": 1,
+     "erklaerung": "El ciclista tiene prioridad. Los accidentes con ciclistas al girar a la derecha están entre los más graves del tráfico urbano."
+    }
+   },
+   "k3": {
+    "titel": "Girar – sin dejar de observar",
+    "text": "Gira solo cuando esté libre. Mientras giras, sigue atento a ciclistas y peatones – ya viene el siguiente ciclista.",
+    "regel": "§ 9 Abs. 3 StVO",
+    "frage": null
+   }
+  }
+ },
+ "reissverschluss": {
+  "titel": "Cremallera al terminar un carril",
+  "kurz": "Usar ambos carriles hasta el estrechamiento y luego alternar",
+  "kapitel": {
+   "k0": {
+    "titel": "El carril termina",
+    "text": "El panel de estrechamiento avisa: el carril derecho termina. Se siguen usando ambos carriles hasta el estrechamiento.",
+    "regel": "Señal 531 · § 7 Abs. 4 StVO",
+    "frage": {
+     "text": "¿Cuándo me cambio a la izquierda?",
+     "optionen": [
+      "En cuanto veo la señal",
+      "Justo antes de que empiece el estrechamiento",
+      "Nunca, los demás tienen que esperar"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 7 Abs. 4 StVO: Incorporarse justo antes de que empiece el estrechamiento, alternando."
+    }
+   },
+   "k1": {
+    "titel": "Llegar hasta delante",
+    "text": "No cambies demasiado pronto: quien circula por la derecha hasta el estrechamiento usa bien la vía y ayuda a que el atasco sea corto.",
+    "regel": "§ 7 Abs. 4 StVO",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Intermitente y buscar hueco",
+    "text": "Pon el intermitente izquierdo, adapta la velocidad a la fila de la izquierda y busca el vehículo detrás del que te vas a incorporar.",
+    "regel": "§ 7 Abs. 5 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Incorporarse alternando",
+    "text": "Justo antes del estrechamiento: mirada por encima del hombro – e incorpórate a la izquierda alternando, detrás de un vehículo. Quienes van por la izquierda dejan entrar a un vehículo cada vez.",
+    "regel": "§ 7 Abs. 4 · § 7 Abs. 5 StVO",
+    "frage": {
+     "text": "¿Quién tiene que dejar entrar a quién?",
+     "optionen": [
+      "Nadie, el primero que llega",
+      "Quienes van por la izquierda dejan entrar a un vehículo cada vez, alternando",
+      "Quienes van por la derecha esperan hasta que todo esté libre"
+     ],
+     "richtig": 1,
+     "erklaerung": "Cremallera: alternando, uno de la izquierda, uno de la derecha."
+    }
+   },
+   "k4": {
+    "titel": "Recuerda",
+    "text": "La cremallera se aplica cuando un carril termina o está bloqueado. En el carril de aceleración de una entrada a la autopista NO se aplica – allí el tráfico que circula por la autopista tiene preferencia.",
+    "regel": "§ 7 Abs. 4 · § 18 Abs. 3 StVO",
+    "frage": null
+   }
+  }
+ },
+ "rettungsgasse": {
+  "titel": "Corredor de emergencia",
+  "kurz": "Ya con tráfico lento: el carril izquierdo a la izquierda, todos los demás a la derecha",
+  "kapitel": {
+   "k0": {
+    "titel": "El tráfico se atasca",
+    "text": "El tráfico va más lento. En cuanto se circula solo a velocidad de paso o todos están parados, hay que formar el corredor de emergencia – no esperar a que lleguen las luces azules.",
+    "regel": "§ 11 Abs. 2 StVO",
+    "frage": {
+     "text": "¿Cuándo se forma el corredor de emergencia?",
+     "optionen": [
+      "Solo cuando oigo la sirena",
+      "En cuanto se va a velocidad de paso o hay retención",
+      "Solo si hay un accidente delante de mí"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 11 Abs. 2 StVO: a velocidad de paso o con retención – de inmediato."
+    }
+   },
+   "k1": {
+    "titel": "¿Hacia dónde apartarse?",
+    "text": "El corredor se forma entre el carril de más a la izquierda y el que está justo a su derecha: quien va por el de más a la izquierda se aparta a la izquierda – todos los demás a la derecha.",
+    "regel": "§ 11 Abs. 2 StVO",
+    "frage": {
+     "text": "Vas por el carril central de tres. ¿Hacia dónde?",
+     "optionen": [
+      "A la izquierda",
+      "A la derecha",
+      "Me quedo donde estoy"
+     ],
+     "richtig": 1,
+     "erklaerung": "Todos menos el carril de más a la izquierda se apartan a la derecha."
+    }
+   },
+   "k2": {
+    "titel": "Llega un vehículo de emergencia",
+    "text": "Luces azules y sirena: deja paso libre de inmediato. Quédate parado y no maniobres más – el corredor tiene que ser recto y estar libre.",
+    "regel": "§ 38 Abs. 1 · § 11 Abs. 2 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Dejar el corredor abierto",
+    "text": "El corredor sigue libre aunque ya haya pasado un vehículo de emergencia – a menudo vienen más. ¡No lo sigas!",
+    "regel": "§ 11 Abs. 2 · § 38 Abs. 1 StVO",
+    "frage": {
+     "text": "La ambulancia ya ha pasado. ¿Y ahora?",
+     "optionen": [
+      "Ir detrás, así se avanza más rápido",
+      "Dejar el corredor abierto, pueden venir más",
+      "Volver enseguida al carril"
+     ],
+     "richtig": 1,
+     "erklaerung": "El corredor de emergencia se mantiene hasta que el tráfico vuelva a fluir."
+    }
+   },
+   "k4": {
+    "titel": "Recuerda",
+    "text": "El arcén no es un carril para impacientes. Quien no forma el corredor de emergencia o circula por él se arriesga a multa, puntos y prohibición temporal de conducir.",
+    "regel": "§ 11 Abs. 2 StVO · BKatV",
+    "frage": null
+   }
+  }
+ },
+ "rvl": {
+  "titel": "Prioridad a la derecha (zona 30)",
+  "kurz": "¿Quién pasa primero? Tres coches en un cruce sin señales",
+  "kapitel": {
+   "k0": {
+    "titel": "Cruce sin señales",
+    "text": "En la zona 30 casi nunca hay señales de preferencia – aquí rige la prioridad a la derecha. Acércate despacio para poder detenerte.",
+    "regel": "Señal 274.1 · § 8 Abs. 1 StVO",
+    "frage": {
+     "text": "¿Qué regla rige en este cruce?",
+     "optionen": [
+      "Prioridad a la derecha",
+      "La calle más ancha tiene preferencia",
+      "Pasa quien llega primero"
+     ],
+     "richtig": 0,
+     "erklaerung": "Sin señales, semáforo ni policía rige el § 8 Abs. 1 StVO: quien viene por la derecha tiene preferencia."
+    }
+   },
+   "k1": {
+    "titel": "¿Quién pasa primero?",
+    "text": "Los tres están parados. Cada uno mira a su derecha: quien no tiene a nadie ahí puede pasar primero.",
+    "regel": "§ 8 Abs. 1 · § 8 Abs. 2 StVO",
+    "frage": {
+     "text": "¿En qué orden pueden pasar los vehículos?",
+     "reihenfolge": [
+      "Azul (por la derecha)",
+      "Coche de autoescuela",
+      "Rojo (gira a la izquierda)"
+     ],
+     "erklaerung": "El azul no tiene a nadie a su derecha y pasa primero. Luego el coche de autoescuela (el azul estaba a su derecha). El rojo va el último – a su derecha estaba el coche de autoescuela."
+    }
+   },
+   "k2": {
+    "titel": "Pasa el azul",
+    "text": "El coche azul no tiene a nadie por la derecha y pasa el primero.",
+    "regel": "§ 8 Abs. 1 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Luego el coche de autoescuela",
+    "text": "Ahora la derecha está libre – el coche de autoescuela cruza recto.",
+    "regel": "§ 8 Abs. 1 StVO",
+    "frage": null
+   },
+   "k4": {
+    "titel": "Por último el rojo",
+    "text": "El rojo gira a la izquierda. Tuvo que esperar porque el coche de autoescuela venía por su derecha.",
+    "regel": "§ 8 Abs. 1 · § 9 Abs. 1 StVO",
+    "frage": null
+   },
+   "k5": {
+    "titel": "Recuerda",
+    "text": "Quien tiene que esperar lo indica con una velocidad moderada. Si hay coches en los cuatro lados, los conductores se ponen de acuerdo – uno cede.",
+    "regel": "§ 8 Abs. 2 · § 11 Abs. 3 StVO",
+    "frage": null
+   }
+  }
+ },
+ "schulbus": {
+  "titel": "Autobús escolar con luces de emergencia",
+  "kurz": "No adelantar, velocidad de paso – también en sentido contrario – y contar con niños",
+  "kapitel": {
+   "k0": {
+    "titel": "Autobús escolar con luces de emergencia",
+    "text": "El autobús escolar se acerca a la parada con las luces de emergencia encendidas. Ahora no se le puede adelantar.",
+    "regel": "§ 20 Abs. 3 StVO",
+    "frage": {
+     "text": "¿Puedo adelantar al autobús mientras se acerca a la parada con las luces de emergencia?",
+     "optionen": [
+      "Sí, si está libre",
+      "No",
+      "Solo tocando el claxon"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 20 Abs. 3 StVO: No se puede adelantar a autobuses de línea ni escolares que se acercan a una parada con las luces de emergencia."
+    }
+   },
+   "k1": {
+    "titel": "El autobús para – bajan niños",
+    "text": "Lo mejor es parar primero detrás del autobús, a cierta distancia. Los niños son imprevisibles y pueden salir a la calzada por detrás o por delante del autobús.",
+    "regel": "§ 20 Abs. 4 · § 3 Abs. 2a StVO",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Velocidad de paso",
+    "text": "Pasa solo a velocidad de paso (unos 4–7 km/h) y con tanta distancia que no pongas en peligro a nadie. ¡Esto vale también para el tráfico en sentido contrario!",
+    "regel": "§ 20 Abs. 4 StVO",
+    "frage": {
+     "text": "¿La velocidad de paso vale también para el tráfico en sentido contrario?",
+     "optionen": [
+      "No, solo para el mismo sentido",
+      "Sí – el tráfico en sentido contrario en la misma calzada también va a paso",
+      "Solo los días de colegio"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 20 Abs. 4 StVO: La velocidad de paso vale también para el tráfico en sentido contrario en la misma calzada."
+    }
+   },
+   "k3": {
+    "titel": "¡Un niño cruza la calle!",
+    "text": "Delante del autobús un niño cruza la calzada. Detente de inmediato – si hace falta, hay que esperar.",
+    "regel": "§ 20 Abs. 4 StVO",
+    "frage": {
+     "text": "¿Qué hago?",
+     "optionen": [
+      "Esquivarlo y seguir",
+      "Detenerme y esperar a que el niño esté seguro al otro lado",
+      "Tocar el claxon"
+     ],
+     "richtig": 1,
+     "erklaerung": "Si hace falta, hay que esperar – no se puede poner en peligro a los pasajeros."
+    }
+   },
+   "k4": {
+    "titel": "El autobús arranca",
+    "text": "El autobús pone el intermitente izquierdo para salir de la parada. Hay que dejarle salir – si hace falta, espera.",
+    "regel": "§ 20 Abs. 5 StVO",
+    "frage": null
+   }
+  }
+ },
+ "stop": {
+  "titel": "Señal de stop (Señal 206)",
+  "kurz": "Detenerse siempre del todo en la línea de detención – luego avanzar poco a poco",
+  "kapitel": {
+   "k0": {
+    "titel": "¡Stop! Ceder el paso",
+    "text": "La señal 206 significa: detenerse en la línea de detención – siempre, aunque esté libre – y después ceder el paso.",
+    "regel": "Señal 206 · Señal 294",
+    "frage": {
+     "text": "¿Tengo que detenerme en la señal de stop aunque vea que está libre?",
+     "optionen": [
+      "No, basta con ir rodando",
+      "Sí – detenerse siempre del todo",
+      "Solo de noche"
+     ],
+     "richtig": 1,
+     "erklaerung": "Señal 206: Detenerse es obligatorio. Las ruedas tienen que quedar paradas."
+    }
+   },
+   "k1": {
+    "titel": "Parado en la línea de detención",
+    "text": "El coche está en la línea de detención – las ruedas están paradas. Desde aquí a menudo aún no se ve lo suficiente.",
+    "regel": "Señal 206 · Señal 294",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Avanzar poco a poco",
+    "text": "Avanza despacio hasta donde tengas visibilidad y vuelve a parar. Mira a la izquierda, a la derecha y otra vez a la izquierda.",
+    "regel": "§ 8 Abs. 2 StVO",
+    "frage": {
+     "text": "En la línea de detención no hay visibilidad. ¿Y ahora?",
+     "optionen": [
+      "Arrancar sin más",
+      "Avanzar despacio y volver a mirar",
+      "Tocar el claxon"
+     ],
+     "richtig": 1,
+     "erklaerung": "Tras detenerte en la línea de detención, puedes avanzar con cuidado hasta donde tengas visibilidad."
+    }
+   },
+   "k3": {
+    "titel": "Dejar pasar el tráfico transversal",
+    "text": "Los dos vehículos de la vía con preferencia tienen preferencia. Gira a la derecha solo cuando esté libre.",
+    "regel": "§ 8 Abs. 2 StVO",
+    "frage": null
+   }
+  }
+ },
+ "ueberholen": {
+  "titel": "Adelantar en carretera",
+  "kurz": "Comprobar la visibilidad, esperar al tráfico en sentido contrario, adelantar con decisión y volver con distancia",
+  "worum": "Delante de ti va un camión a 60 km/h y el límite es 100. Adelantar es una de las maniobras más peligrosas fuera de poblado: circulas por el carril del tráfico en sentido contrario. Solo se puede si el tramo está libre en una distancia suficiente.",
+  "worumRegel": "§ 5 StVO",
+  "varianten": {
+   "richtig": "Así es correcto",
+   "falsch": "Error típico"
+  },
+  "rf": {
+   "richtig": "Estás viendo cómo se hace bien. La misma situación existe también con el error más frecuente en la práctica: ir demasiado pegado y salir sin visibilidad libre.",
+   "falsch": "Estás viendo el error típico. Fíjate en dónde se tuerce: la distancia, la zona roja, las ráfagas de luz. Después merece la pena compararlo con la versión correcta."
+  },
+  "rfKnopf": {
+   "richtig": "Ver la versión correcta",
+   "falsch": "Ver el error típico"
+  },
+  "kapitel": {
+   "lkw": {
+    "titel": "Camión lento delante",
+    "text": "Fuera de poblado, límite de 100 km/h, delante va un camión a 60. Mantén distancia suficiente, al menos la mitad del velocímetro en metros. Así ves más allá de él y puedes coger impulso.",
+    "regel": "§ 4 Abs. 1 · § 5 Abs. 2 StVO",
+    "frage": {
+     "text": "¿Cuándo puedo adelantar?",
+     "optionen": [
+      "Siempre que sea más rápido",
+      "Solo si está claro que no se obstaculiza al tráfico en sentido contrario durante todo el adelantamiento y voy bastante más rápido",
+      "Solo por la derecha"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 5 Abs. 2 StVO: Adelantar solo si se descarta obstaculizar al tráfico en sentido contrario y a una velocidad bastante mayor."
+    }
+   },
+   "gegen": {
+    "titel": "Tráfico en sentido contrario",
+    "text": "Viene un coche de frente. No salgas ahora, espera. La zona verde o roja muestra si están libres los unos 500 m necesarios.",
+    "regel": "§ 5 Abs. 2 StVO",
+    "frage": {
+     "text": "¿Cuánto tramo libre necesito más o menos para adelantar a 100 km/h a un camión que va a 60 km/h?",
+     "optionen": [
+      "Unos 100 m",
+      "Unos 250 m de adelantamiento, y el tráfico en sentido contrario recorre otro tanto en ese tiempo: unos 500 m de visibilidad",
+      "Unos 50 m"
+     ],
+     "richtig": 1,
+     "erklaerung": "Distancia de adelantamiento ≈ (longitud de ambos vehículos + distancia antes y después) × v₁ ÷ (v₁ − v₂) ≈ 100 m × 100 ÷ 40 ≈ 250 m. En ese mismo tiempo, el tráfico en sentido contrario recorre otro tanto."
+    }
+   },
+   "sichern": {
+    "titel": "Retrovisor, mirada por encima del hombro, intermitente",
+    "text": "El tramo está libre y con buena visibilidad, sin línea continua. Retrovisor interior y exterior, mirada por encima del hombro izquierdo y luego intermitente izquierdo. Ya ahora coge un poco de impulso.",
+    "regel": "§ 5 Abs. 4 · § 5 Abs. 4a StVO"
+   },
+   "vorbei": {
+    "titel": "Pasar con decisión",
+    "text": "Sal y acelera con decisión. La velocidad máxima sigue siendo el límite. Mantén suficiente distancia lateral con el camión.",
+    "regel": "§ 5 Abs. 2 · § 5 Abs. 4 · § 3 Abs. 3 StVO",
+    "frage": {
+     "text": "El camión acelera mientras lo adelantas. ¿Puede hacerlo?",
+     "optionen": [
+      "Sí",
+      "No, quien es adelantado no puede aumentar su velocidad"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 5 Abs. 6 StVO: Quien es adelantado no puede aumentar su velocidad."
+    }
+   },
+   "einordnen": {
+    "titel": "Intermitente derecho, volver al carril",
+    "text": "Retrovisor interior: solo cuando veas el camión entero en él, pon el intermitente derecho y vuelve al carril. No te metas justo delante de él.",
+    "regel": "§ 5 Abs. 4 · § 5 Abs. 4a StVO"
+   },
+   "verbot": {
+    "titel": "Prohibido adelantar más adelante",
+    "text": "Primero la línea de aviso con huecos cortos anuncia la línea continua, luego rige la señal 276. Aquí desemboca un camino rural por la derecha y el tractor quiere entrar en la carretera. Un adelantamiento ya empezado tiene que terminar antes.",
+    "regel": "Señal 276 · Señal 295",
+    "frage": {
+     "text": "¿Puedo pisar la línea central continua para adelantar?",
+     "optionen": [
+      "Sí, un momento",
+      "No",
+      "Solo con tractores"
+     ],
+     "richtig": 1,
+     "erklaerung": "La línea de separación de carriles (señal 295) no se puede pisar ni cruzar."
+    }
+   },
+   "f_dicht": {
+    "titel": "Demasiado pegado",
+    "text": "Solo 12 m de distancia a 60 km/h. El camión tapa la vista hacia delante: así no ves si viene tráfico en sentido contrario. Lo correcto serían al menos 30 m.",
+    "regel": "§ 4 Abs. 1 StVO",
+    "frage": {
+     "text": "¿Qué distancia es correcta a 60 km/h (regla práctica)?",
+     "optionen": [
+      "6 m",
+      "Medio velocímetro: 30 m",
+      "Un coche de largo"
+     ],
+     "richtig": 1,
+     "erklaerung": "Regla práctica fuera de poblado: la mitad del velocímetro en metros, o sea, 30 m a 60 km/h. Son unos 2 segundos."
+    }
+   },
+   "f_raus": {
+    "titel": "Salir sin visibilidad libre",
+    "text": "Salió justo después del primer vehículo en sentido contrario, sin mirada por encima del hombro, sin impulso y sin saber qué viene detrás. La zona está en rojo: la furgoneta ya está demasiado cerca.",
+    "regel": "§ 5 Abs. 2 · § 5 Abs. 3 Nr. 1 StVO",
+    "frage": {
+     "text": "¿Qué habría ayudado aquí?",
+     "optionen": [
+      "Salir más rápido",
+      "Quedarse atrás, aumentar la distancia y adelantar solo con el tramo claramente libre",
+      "Tocar el claxon"
+     ],
+     "richtig": 1,
+     "erklaerung": "Con una situación de tráfico poco clara no se puede adelantar (§ 5 Abs. 3 Nr. 1 StVO). Con más distancia ves si el tramo está libre."
+    }
+   },
+   "f_gegen": {
+    "titel": "El tráfico en sentido contrario tiene que frenar",
+    "text": "La furgoneta frena y da ráfagas de luz. Quien obstaculiza al tráfico en sentido contrario no debería haber adelantado. Ahora solo queda volver al carril de forma peligrosa.",
+    "regel": "§ 5 Abs. 2 StVO"
+   },
+   "f_knapp": {
+    "titel": "Vuelta al carril demasiado justa",
+    "text": "Se mete en el hueco a pocos metros por delante del camión. El camión tiene que frenar. Quien adelanta no puede obstaculizar al adelantado al volver al carril.",
+    "regel": "§ 5 Abs. 4 StVO"
+   },
+   "f_besser": {
+    "titel": "Así habría sido correcto",
+    "text": "Mantener la distancia, esperar al tráfico en sentido contrario y adelantar con impulso solo con el tramo claramente libre. En caso de duda: no adelantar. Consejo: mira la versión «Así es correcto».",
+    "regel": "§ 5 Abs. 2 · § 5 Abs. 3 StVO"
+   }
+  },
+  "merken": [
+   [
+    "Adelantar solo si el tramo tiene buena visibilidad y no se obstaculiza al tráfico en sentido contrario durante todo el adelantamiento, y solo a una velocidad bastante mayor.",
+    "§ 5 Abs. 2 StVO"
+   ],
+   [
+    "Con una situación de tráfico poco clara, no adelantes. En caso de duda: quédate detrás.",
+    "§ 5 Abs. 3 Nr. 1 StVO"
+   ],
+   [
+    "Antes de salir: retrovisor, mirada por encima del hombro, intermitente. Al volver al carril, no obstaculices al adelantado.",
+    "§ 5 Abs. 4 · Abs. 4a StVO"
+   ],
+   [
+    "Quien es adelantado no puede acelerar.",
+    "§ 5 Abs. 6 StVO"
+   ],
+   [
+    "Regla práctica: a 100 km/h, para pasar a un camión que va a 60 km/h necesitas unos 250 m de adelantamiento y unos 500 m de visibilidad libre.",
+    "Regla práctica"
+   ]
+  ]
+ },
+ "voreinander": {
+  "titel": "Dos giros a la izquierda: por delante",
+  "kurz": "Quienes están frente a frente y giran a la izquierda giran por delante uno del otro",
+  "kapitel": {
+   "k0": {
+    "titel": "Dos giros a la izquierda",
+    "text": "El coche de autoescuela y el coche rojo quieren girar a la izquierda y están uno frente al otro.",
+    "regel": "§ 9 Abs. 4 StVO",
+    "frage": {
+     "text": "¿Cómo giran los dos?",
+     "optionen": [
+      "Por delante – cada uno gira por delante del otro",
+      "Rodeándose por detrás",
+      "Primero el que llegó antes"
+     ],
+     "richtig": 0,
+     "erklaerung": "§ 9 Abs. 4 StVO: Los que giran a la izquierda viniendo en sentidos opuestos giran por delante uno del otro – salvo que el tráfico o el cruce exijan otra cosa."
+    }
+   },
+   "k1": {
+    "titel": "Girar por delante",
+    "text": "Ambos arrancan a la vez y giran por delante del otro – los coches se cruzan derecha con derecha. Ahorra tiempo – pero el otro coche que gira tapa la vista del tráfico en sentido contrario que viene detrás, así que presta especial atención.",
+    "regel": "§ 9 Abs. 4 StVO",
+    "frage": null
+   },
+   "k2": {
+    "titel": "Recuerda",
+    "text": "Rodeándose (uno por detrás del otro) solo si lo exigen las marcas viales, los semáforos o el diseño del cruce.",
+    "regel": "§ 9 Abs. 4 StVO",
+    "frage": null
+   }
+  }
+ },
+ "wenden": {
+  "titel": "Cambio de sentido en tres maniobras",
+  "kurz": "Dar la vuelta hacia delante y marcha atrás en una calle estrecha",
+  "kapitel": {
+   "k0": {
+    "titel": "Prepararse",
+    "text": "Para en el borde derecho. Comprueba: ¿se permite aquí el cambio de sentido y hay buena visibilidad? Pon el intermitente izquierdo y mira en ambas direcciones.",
+    "regel": "§ 9 Abs. 5 StVO",
+    "frage": {
+     "text": "¿Qué es lo más importante al cambiar de sentido?",
+     "optionen": [
+      "Hacer las menos maniobras posibles",
+      "Observar en ambas direcciones antes de cada maniobra",
+      "Terminar rápido"
+     ],
+     "richtig": 1,
+     "erklaerung": "Al cambiar de sentido no se puede poner en peligro a nadie (§ 9 Abs. 5 StVO) – observar es lo esencial."
+    }
+   },
+   "k1": {
+    "titel": "1.ª maniobra: adelante, todo a la izquierda",
+    "text": "Arranca despacio girando el volante a tope a la izquierda – hasta justo antes del bordillo de enfrente. Justo antes de parar, empieza ya a girar a la derecha.",
+    "regel": "Maniobra básica: dar la vuelta",
+    "frage": null
+   },
+   "k2": {
+    "titel": "2.ª maniobra: atrás, todo a la derecha",
+    "text": "Marcha atrás, vuelve a mirar alrededor, retrocede despacio y gira a tope a la derecha – hasta justo antes del bordillo detrás de ti.",
+    "regel": "§ 9 Abs. 5 StVO",
+    "frage": {
+     "text": "¿Hacia dónde giro el volante al ir marcha atrás?",
+     "optionen": [
+      "A la izquierda",
+      "A la derecha – la parte trasera debe ir a la derecha",
+      "No lo giro"
+     ],
+     "richtig": 1,
+     "erklaerung": "Marcha atrás: gira el volante hacia donde debe ir la parte trasera."
+    }
+   },
+   "k3": {
+    "titel": "3.ª maniobra: adelante, salir a la izquierda",
+    "text": "Vuelve a observar, gira a tope a la izquierda y sal en el nuevo sentido. Sitúate a la derecha.",
+    "regel": "§ 2 Abs. 2 StVO",
+    "frage": null
+   },
+   "k4": {
+    "titel": "Recuerda",
+    "text": "No gires el volante con el coche parado, sino mientras rueda despacio. El número de maniobras es secundario – no se puede tocar el bordillo.",
+    "regel": "Normativa del examen · maniobras básicas",
+    "frage": null
+   }
+  }
+ },
+ "zebra": {
+  "titel": "Paso de peatones (paso de cebra)",
+  "kurz": "Mirar con antelación y listo para frenar – quien quiere cruzar tiene prioridad",
+  "kapitel": {
+   "k0": {
+    "titel": "Señal 350 – paso de peatones",
+    "text": "Levanta pronto el pie del acelerador y observa las aceras: ¿alguien quiere cruzar? Los niños son pequeños y cuesta verlos.",
+    "regel": "Señal 350 · § 26 Abs. 1 StVO",
+    "frage": {
+     "text": "¿Cómo me acerco a un paso de peatones si alguien claramente quiere cruzar?",
+     "optionen": [
+      "Sigo normal, él tiene que esperar",
+      "Solo a velocidad moderada y, si hace falta, espero",
+      "Toco el claxon y paso"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 26 Abs. 1 StVO: Permitir cruzar a los peatones, acercarse solo a velocidad moderada y, si hace falta, esperar."
+    }
+   },
+   "k1": {
+    "titel": "Detenerse",
+    "text": "Los peatones empiezan a cruzar – detente antes del paso, no encima. Está prohibido adelantar o pasar junto al coche que espera.",
+    "regel": "§ 26 Abs. 1 · § 26 Abs. 3 StVO",
+    "frage": {
+     "text": "El coche de delante para en el paso de peatones. ¿Puedo adelantarlo por la izquierda?",
+     "optionen": [
+      "Sí, si soy rápido",
+      "No – en los pasos de peatones no se puede adelantar",
+      "Sí, tocando el claxon"
+     ],
+     "richtig": 1,
+     "erklaerung": "§ 26 Abs. 3 StVO: En los pasos de peatones no se puede adelantar."
+    }
+   },
+   "k2": {
+    "titel": "Solo cuando esté libre",
+    "text": "Sigue solo cuando todos hayan salido del paso con seguridad – también por el otro lado. El contacto visual ayuda.",
+    "regel": "§ 26 Abs. 1 StVO",
+    "frage": null
+   },
+   "k3": {
+    "titel": "Recuerda",
+    "text": "Si hay retención después del paso, no entres en el paso de peatones si tendrías que esperar encima.",
+    "regel": "§ 26 Abs. 2 StVO",
+    "frage": null
+   }
+  }
+ }
+}

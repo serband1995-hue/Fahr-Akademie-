@@ -156,13 +156,13 @@ function hilfenFuer(t, stand, v){
   if(art === "abstand" && fs.z > 0.5){
     const a = fs.x + L_FS / 2, b = lkw.x - L_LKW / 2, m = Math.max(0, b - a);
     out.push({ id: "abstand", x0: a, x1: b, z0: ZR - 1.0, z1: ZR + 1.0, farbe: m >= 28 ? "#e0a13a" : "#d2452e",
-      text: { de: Math.round(m) + " m Abstand", tr: Math.round(m) + " m mesafe", en: Math.round(m) + " m gap", ar: Math.round(m) + " م مسافة" }, bei: [(a + b) / 2, 0.2, ZR + 2.6] });
+      text: { de: Math.round(m) + " m Abstand", tr: Math.round(m) + " m mesafe", en: Math.round(m) + " m gap", ar: Math.round(m) + " م مسافة", es: Math.round(m) + " m de distancia" }, bei: [(a + b) / 2, 0.2, ZR + 2.6] });
   }
   if(art === "sicht"){
     const x0 = fs.x + L_FS / 2, x1 = x0 + 500;
     const belegt = Object.keys(stand).some(function(id){ const s = stand[id]; return s.z < 0 && id !== "fs" && s.x > x0 && s.x < x1 && id !== "tr"; });
     out.push({ id: "sicht", x0: x0, x1: x1, z0: ZL - 1.55, z1: ZL + 1.55, farbe: belegt ? "#d2452e" : "#2e9e5a",
-      text: belegt ? { de: "Gegenverkehr – nicht frei", tr: "Karşı trafik – boş değil", en: "Oncoming traffic – not clear", ar: "سير معاكس – الطريق غير خالٍ" } : { de: "500 m frei", tr: "500 m boş", en: "500 m clear", ar: "500 م خالية" },
+      text: belegt ? { de: "Gegenverkehr – nicht frei", tr: "Karşı trafik – boş değil", en: "Oncoming traffic – not clear", ar: "سير معاكس – الطريق غير خالٍ", es: "Tráfico contrario – no está libre" } : { de: "500 m frei", tr: "500 m boş", en: "500 m clear", ar: "500 م خالية", es: "500 m libres" },
       bei: [x0 + 60, 0.2, ZL] });
   }
   // Beim Einordnen: grün ab 20 m, vorher gelb ("noch warten"); rot nur, wenn wirklich
@@ -170,9 +170,9 @@ function hilfenFuer(t, stand, v){
   if(art === "einscheren" && fs.x > lkw.x){
     const a = lkw.x + L_LKW / 2, b = fs.x - L_FS / 2, m = Math.max(0, b - a), zurueck = fs.z > 0.6;
     const n = Math.round(m);
-    const text = m >= 20 ? { de: n + " m: jetzt einordnen", tr: n + " m: şimdi şeride geç", en: n + " m: now move back", ar: n + " م: عُد الآن إلى المسار" }
-      : zurueck ? { de: n + " m: viel zu knapp", tr: n + " m: çok yakın", en: n + " m: far too close", ar: n + " م: قريب جدًا" }
-      : { de: n + " m: noch warten", tr: n + " m: biraz bekle", en: n + " m: wait a little", ar: n + " م: انتظر قليلًا" };
+    const text = m >= 20 ? { de: n + " m: jetzt einordnen", tr: n + " m: şimdi şeride geç", en: n + " m: now move back", ar: n + " م: عُد الآن إلى المسار", es: n + " m: vuelve ahora al carril" }
+      : zurueck ? { de: n + " m: viel zu knapp", tr: n + " m: çok yakın", en: n + " m: far too close", ar: n + " م: قريب جدًا", es: n + " m: demasiado cerca" }
+      : { de: n + " m: noch warten", tr: n + " m: biraz bekle", en: n + " m: wait a little", ar: n + " م: انتظر قليلًا", es: n + " m: espera un poco" };
     if(b > a) out.push({ id: "einscheren", x0: a, x1: b, z0: ZR - 1.0, z1: ZR + 1.0, farbe: m >= 20 ? "#2e9e5a" : zurueck ? "#d2452e" : "#e0a13a",
       text: text, bei: [(a + b) / 2, 0.2, ZR + 2.6] });
   }

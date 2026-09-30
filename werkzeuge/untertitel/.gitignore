@@ -1,0 +1,4 @@
+schluessel
+*.mp4
+*.json
+__pycache__/
