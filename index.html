@@ -6060,6 +6060,9 @@ function renderAdmin(){
    ========================================================= */
 let adminBewertungen = [];
 async function renderAdminBewertungen(){
+  // Nach Speichern/Umschalten kommt dieser Aufruf verzögert -- inzwischen kann ein anderer
+  // Reiter offen sein, dessen Inhalt hier nicht überschrieben werden darf.
+  if(adminTab !== "bewertungen") return;
   const el = document.getElementById("admin-content");
   el.innerHTML = '<div class="leer-hinweis">Bewertungen werden geladen …</div>';
   if(DEMO_MODE){ el.innerHTML = '<div class="leer-hinweis">Im Demo-Modus nicht verfügbar.</div>'; return; }
@@ -6103,18 +6106,20 @@ async function renderAdminBewertungen(){
   });
 }
 
-// Neu (id = null) oder bearbeiten
-async function bewertungBearbeiten(id){
+// Neu (id = null) oder bearbeiten. vorgabe: Eingaben nach einem Fehler wieder einsetzen,
+// damit ein langer eingefügter Text nicht verloren geht.
+async function bewertungBearbeiten(id, vorgabe){
   const b = id ? adminBewertungen.find(function(x){ return x.id === id; }) : null;
   if(id && !b) return;
-  const sterne = b ? b.sterne : 5;
+  const v = vorgabe || { name: b ? b.name : "", text: b ? b.text : "", sterne: b ? b.sterne : 5, sichtbar: b ? b.sichtbar : true };
+  const sterne = v.sterne;
   const html =
-    '<label>Name (Vorname und Anfangsbuchstabe, z. B. Lea B.)</label><input id="bw-name" class="blatt-feld" maxlength="40" autocomplete="off" value="' + esc(b ? b.name : "") + '">' +
-    '<label>Text (wortgetreu von Google einfügen)</label><textarea id="bw-text" class="blatt-feld" rows="9" maxlength="4000">' + esc(b ? b.text : "") + "</textarea>" +
+    '<label>Name (Vorname und Anfangsbuchstabe, z. B. Lea B.)</label><input id="bw-name" class="blatt-feld" maxlength="40" autocomplete="off" value="' + esc(v.name) + '">' +
+    '<label>Text (wortgetreu von Google einfügen)</label><textarea id="bw-text" class="blatt-feld" rows="9" maxlength="4000">' + esc(v.text) + "</textarea>" +
     '<label>Sterne</label><select id="bw-sterne" class="blatt-feld">' + [5,4,3,2,1].map(function(n){
       return '<option value="' + n + '"' + (n === sterne ? " selected" : "") + ">" + "★".repeat(n) + " (" + n + ")</option>";
     }).join("") + "</select>" +
-    (b ? "" : '<label class="sz-schalter"><input type="checkbox" id="bw-sichtbar" checked> Gleich auf der Webseite zeigen</label>');
+    (b ? "" : '<label class="sz-schalter"><input type="checkbox" id="bw-sichtbar"' + (v.sichtbar ? " checked" : "") + '> Gleich auf der Webseite zeigen</label>');
   const werte = await blattFormular({
     titel: b ? "Bewertung bearbeiten" : "Neue Bewertung", html: html, okText: "Speichern",
     lesen: function(o){
@@ -6127,8 +6132,8 @@ async function bewertungBearbeiten(id){
     }
   });
   if(!werte) return;
-  if(!werte.name){ showToast("Bitte einen Namen eintragen"); return; }
-  if(!werte.text){ showToast("Bitte den Text der Bewertung einfügen"); return; }
+  if(!werte.name){ showToast("Bitte einen Namen eintragen"); return bewertungBearbeiten(id, werte); }
+  if(!werte.text){ showToast("Bitte den Text der Bewertung einfügen"); return bewertungBearbeiten(id, werte); }
   const felder = { name: werte.name, text: werte.text, sterne: werte.sterne, sichtbar: werte.sichtbar, aktualisiert_am: new Date().toISOString() };
   const res = b
     ? await supa.from("website_bewertungen").update(felder).eq("id", b.id).select("id")

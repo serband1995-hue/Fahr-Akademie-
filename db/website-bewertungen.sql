@@ -53,7 +53,8 @@ as $function$
 $function$;
 revoke all on function public.website_bewertungen_liste() from public;
 grant execute on function public.website_bewertungen_liste() to anon;
--- (Migration website_bewertungen_liste_nur_anon: angemeldete Konten brauchen die Liste nicht)
+-- Migration website_bewertungen_liste_nur_anon: angemeldete Konten brauchen die Liste nicht
+revoke execute on function public.website_bewertungen_liste() from authenticated;
 
 -- Startbestand: die 37 Bewertungen vom 29.09.2026 (Reihenfolge wie auf der Seite).
 -- Eingespielt am 30.09.2026, Wortlaut per md5 gegen die Webseite geprüft.
