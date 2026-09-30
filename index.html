@@ -1991,13 +1991,13 @@ function geraeteId(){
    Fehlt ein Schlüssel in einer Sprache, fällt t() auf Deutsch
    zurück -- es bleibt also nie ein leerer Knopf stehen.
    ========================================================= */
-// flagge: Emoji-Flagge oder ein kurzes Zeichen (Arabisch: vorerst neutral "ع", weil die
-// Sprache nicht zu EINEM Land gehört). Neue Sprache = neue Zeile hier + Texte in I18N.
+// flagge: Emoji-Flagge oder ein kurzes Zeichen (flaggeHtml erkennt beides). Arabisch:
+// Flagge Jordaniens (Entscheidung Serband, 30.09.2026). Neue Sprache = neue Zeile hier + Texte in I18N.
 const SPRACHEN = [
   { code:"de", name:"Deutsch", flagge:"🇩🇪" },
   { code:"tr", name:"Türkçe", flagge:"🇹🇷" },
   { code:"en", name:"English", flagge:"🇬🇧" },
-  { code:"ar", name:"العربية", flagge:"ع", rtl:true },
+  { code:"ar", name:"العربية", flagge:"🇯🇴", rtl:true },
   { code:"es", name:"Español", flagge:"🇪🇸" }
 ];
 

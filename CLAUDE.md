@@ -42,7 +42,7 @@ Neue Sprache = `SPRACHEN`, `I18N`, `PRUEFUNGSTAG`, `NUETZLICH_UE`, `UI` in
 `werkzeuge/szenen-texte/<sprache>.json` und die Beschriftungen im
 Szenen-Export (`szenen-export.js`, `werkzeuge/szenen/*.js`).
 Sprachwahl (30.09.2026): EIN Knopf mit Flagge (Login + Konto), die Auswahl öffnet ein
-Blatt (`spracheWaehlen()`); Flagge steht in `SPRACHEN[].flagge` (Arabisch vorerst
+Blatt (`spracheWaehlen()`); Flagge steht in `SPRACHEN[].flagge` (Arabisch: Jordanien 🇯🇴, 30.09.2026; vorher
 neutral "ع").
 
 ## Untertitel (30.09.2026)
