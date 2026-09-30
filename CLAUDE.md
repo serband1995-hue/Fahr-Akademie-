@@ -62,8 +62,13 @@ die Spurenliste (Dateien da, Player sieht sie nicht). `start` braucht
 `targetLanguages: ["de"]` – eine leere Liste lehnt Bunny ab. Die automatische
 Erkennung erfindet in Stillen Sätze ("Untertitel im Auftrag des ZDF",
 "Copyright WDR", "Das war's für heute") – beim Korrigieren streichen.
-Fertig (30.09.2026): alle 19 Technik-Videos und Prüfungsstrecken in de/en/tr/ar/es,
-außer der Originalprüfung (`v1789687546940`, bewusst ohne).
+Fertig (30.09.2026): ALLE 38 Videos in de/en/tr/ar/es (Entscheidung Serband: alles außer
+den Originalprüfungen; kein Video ist stumm). Ausgeschlossen – auch in der Function hart
+gesperrt: Bereich "Prüfung" und die IDs in `academy_einstellungen.untertitel_ausgeschlossen`
+(Bauer, Haier ×2, Siamlidis). Neue Videos brauchen die Bunny-Erkennung nicht mehr:
+`werkzeuge/untertitel/` erkennt den Ton kostenlos, `zeilen_anlegen` legt die ersten
+deutschen Zeilen an (nur wenn das Video noch keine hat), dann Deutsch korrigieren,
+übersetzen, `abgleich.py --setzen`, `paket` mit `untertitel.vtt(...)`.
 
 **Quelle der Untertitel ist die Tabelle `untertitel.zeilen`** (eigenes Schema, von außen
 nicht erreichbar): je Zeile Beginn/Ende, `de` + alle Übersetzungen, `anker` (Wortzeiten).
