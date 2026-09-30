@@ -1074,6 +1074,10 @@
   .sz-schalter{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-weight:600;cursor:pointer;}
   .sz-schalter input{width:20px;height:20px;accent-color:var(--gruen);}
   .sz-knopf{width:auto;}
+  .bw-neu{width:auto;padding:12px 20px;}
+  .bw-sterne{color:var(--gold-text);letter-spacing:1px;font-weight:400;margin-left:4px;}
+  .bw-auszug{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;white-space:pre-line;overflow-wrap:anywhere;}
+  .bw-aus{opacity:.6;}
   .pdf-karte .pdf-ic{width:38px;height:38px;border-radius:var(--r-s);background:var(--gold-schwach);
     color:var(--gold-text);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
   .pdf-karte .pdf-titel{font-size:var(--fs-body);font-weight:var(--fw-karte);}
@@ -5985,7 +5989,7 @@ function renderAdmin(){
   // Pruefer/Fahrlehrer/Schulen als Umschalter im Partner-Tab. Dashboard wird zur
   // Kopfleiste des Schueler-Tabs (renderAdminDashboard) statt eigenem Tab.
   const tabs = isSuperAdmin
-    ? [["schueler","Schüler"],["videos","Videos"],["szenen","3D-Szenen"],["partner","Partner & Rollen"],["abrechnung","Abrechnung"],["protokoll","Protokoll"]]
+    ? [["schueler","Schüler"],["videos","Videos"],["szenen","3D-Szenen"],["bewertungen","Bewertungen"],["partner","Partner & Rollen"],["abrechnung","Abrechnung"],["protokoll","Protokoll"]]
     : [["schueler","Schüler"],["videos","Videos"],["partner","Partner & Rollen"],["abrechnung","Abrechnung"]];
 
   // Schutz gegen einen stehengebliebenen Tab-Zustand: waere adminTab noch auf einem
@@ -6035,7 +6039,7 @@ function renderAdmin(){
   // beide Rollen sehen -- die Sichtbarkeitspruefung sitzt jetzt in genau diesen
   // Umschalter-Funktionen (renderAdminSchuelerPillen, renderAdminPartnerPillen),
   // nicht mehr hier auf Tab-Ebene.
-  const nurSuper = ["protokoll", "szenen"];
+  const nurSuper = ["protokoll", "szenen", "bewertungen"];
   if(myRole !== "super_admin" && nurSuper.indexOf(adminTab) !== -1) adminTab = "schueler";
 
   if(adminTab === "schueler") renderAdminSchuelerTab();
@@ -6044,6 +6048,114 @@ function renderAdmin(){
   if(adminTab === "abrechnung") renderAdminAbrechnung();
   if(adminTab === "protokoll") renderAdminProtokoll();
   if(adminTab === "szenen") renderAdminSzenen();
+  if(adminTab === "bewertungen") renderAdminBewertungen();
+}
+
+/* =========================================================
+   BEWERTUNGEN FÜR DIE WEBSEITE (30.09.2026) -- nur Super-Admin
+   Tabelle website_bewertungen (db/website-bewertungen.sql). Die Webseite
+   www.fahrlehrer-serband.de liest nur die sichtbaren Einträge über die Funktion
+   website_bewertungen_liste(). Neu angelegte stehen im Laufband ganz vorne.
+   Ausblenden statt Löschen; endgültig löschen nur mit Eingabe des Namens.
+   ========================================================= */
+let adminBewertungen = [];
+async function renderAdminBewertungen(){
+  const el = document.getElementById("admin-content");
+  el.innerHTML = '<div class="leer-hinweis">Bewertungen werden geladen …</div>';
+  if(DEMO_MODE){ el.innerHTML = '<div class="leer-hinweis">Im Demo-Modus nicht verfügbar.</div>'; return; }
+  const { data, error } = await supa.from("website_bewertungen").select("id, name, text, sterne, sichtbar, erstellt_am").order("erstellt_am", { ascending: false });
+  if(adminTab !== "bewertungen") return;
+  if(error){ el.innerHTML = '<div class="leer-hinweis">Bewertungen konnten nicht geladen werden.</div>'; return; }
+  adminBewertungen = data || [];
+  const sichtbar = adminBewertungen.filter(function(b){ return b.sichtbar; }).length;
+  el.innerHTML =
+    '<div class="admin-sub" style="margin:var(--sp-m) 0;">' + adminBewertungen.length + " Bewertungen · " + sichtbar + " auf der Webseite. " +
+      "Neue Bewertungen stehen im Laufband ganz vorne. Text bitte wortgetreu von Google übernehmen, beim Namen nur Vorname und Anfangsbuchstabe (z. B. Lea B.).</div>" +
+    '<button type="button" class="btn-gold druck-1 bw-neu" data-haptik id="bw-neu">+ Neue Bewertung</button>' +
+    '<div class="sz-liste" style="margin-top:var(--sp-m);">' + adminBewertungen.map(function(b){
+      return '<div class="karte sz-zeile' + (b.sichtbar ? "" : " bw-aus") + '">' +
+        '<div class="sz-text"><div class="sz-titel">' + esc(b.name) + ' <span class="bw-sterne" aria-label="' + b.sterne + ' von 5 Sternen">' + "★".repeat(b.sterne) + "</span></div>" +
+          '<div class="admin-sub bw-auszug">' + esc(b.text) + "</div></div>" +
+        '<label class="sz-schalter"><input type="checkbox" data-bw-sichtbar="' + esc(b.id) + '"' + (b.sichtbar ? " checked" : "") + "> Auf der Seite</label>" +
+        '<button type="button" class="btn-sekundaer sz-knopf" data-bw-bearbeiten="' + esc(b.id) + '">Bearbeiten</button>' +
+        (b.sichtbar ? "" : '<button type="button" class="btn-still druck-2 sz-knopf" data-bw-loeschen="' + esc(b.id) + '">Endgültig löschen</button>') +
+      "</div>";
+    }).join("") + "</div>";
+  document.getElementById("bw-neu").addEventListener("click", function(){ bewertungBearbeiten(null); });
+  el.querySelectorAll("[data-bw-sichtbar]").forEach(function(cb){
+    cb.addEventListener("change", async function(){
+      const b = adminBewertungen.find(function(x){ return x.id === cb.dataset.bwSichtbar; });
+      const wert = cb.checked;
+      cb.disabled = true;
+      const res = await supa.from("website_bewertungen").update({ sichtbar: wert, aktualisiert_am: new Date().toISOString() }).eq("id", cb.dataset.bwSichtbar).select("id");
+      cb.disabled = false;
+      if(!aenderungOk(res)){ cb.checked = !wert; showToast("Speichern hat nicht geklappt"); return; }
+      await protokolliere(wert ? "bewertung_eingeblendet" : "bewertung_ausgeblendet", "bewertung", cb.dataset.bwSichtbar, b ? b.name : null, null);
+      showToast(wert ? "Auf der Webseite sichtbar" : "Auf der Webseite ausgeblendet");
+      renderAdminBewertungen();
+    });
+  });
+  el.querySelectorAll("[data-bw-bearbeiten]").forEach(function(k){
+    k.addEventListener("click", function(){ bewertungBearbeiten(k.dataset.bwBearbeiten); });
+  });
+  el.querySelectorAll("[data-bw-loeschen]").forEach(function(k){
+    k.addEventListener("click", function(){ bewertungLoeschen(k.dataset.bwLoeschen); });
+  });
+}
+
+// Neu (id = null) oder bearbeiten
+async function bewertungBearbeiten(id){
+  const b = id ? adminBewertungen.find(function(x){ return x.id === id; }) : null;
+  if(id && !b) return;
+  const sterne = b ? b.sterne : 5;
+  const html =
+    '<label>Name (Vorname und Anfangsbuchstabe, z. B. Lea B.)</label><input id="bw-name" class="blatt-feld" maxlength="40" autocomplete="off" value="' + esc(b ? b.name : "") + '">' +
+    '<label>Text (wortgetreu von Google einfügen)</label><textarea id="bw-text" class="blatt-feld" rows="9" maxlength="4000">' + esc(b ? b.text : "") + "</textarea>" +
+    '<label>Sterne</label><select id="bw-sterne" class="blatt-feld">' + [5,4,3,2,1].map(function(n){
+      return '<option value="' + n + '"' + (n === sterne ? " selected" : "") + ">" + "★".repeat(n) + " (" + n + ")</option>";
+    }).join("") + "</select>" +
+    (b ? "" : '<label class="sz-schalter"><input type="checkbox" id="bw-sichtbar" checked> Gleich auf der Webseite zeigen</label>');
+  const werte = await blattFormular({
+    titel: b ? "Bewertung bearbeiten" : "Neue Bewertung", html: html, okText: "Speichern",
+    lesen: function(o){
+      return {
+        name: o.querySelector("#bw-name").value.replace(/\s+/g, " ").trim(),
+        text: o.querySelector("#bw-text").value.replace(/\r\n?/g, "\n").trim(),
+        sterne: parseInt(o.querySelector("#bw-sterne").value, 10) || 5,
+        sichtbar: b ? b.sichtbar : o.querySelector("#bw-sichtbar").checked
+      };
+    }
+  });
+  if(!werte) return;
+  if(!werte.name){ showToast("Bitte einen Namen eintragen"); return; }
+  if(!werte.text){ showToast("Bitte den Text der Bewertung einfügen"); return; }
+  const felder = { name: werte.name, text: werte.text, sterne: werte.sterne, sichtbar: werte.sichtbar, aktualisiert_am: new Date().toISOString() };
+  const res = b
+    ? await supa.from("website_bewertungen").update(felder).eq("id", b.id).select("id")
+    : await supa.from("website_bewertungen").insert(felder).select("id");
+  if(!aenderungOk(res)){ showToast("Konnte nicht gespeichert werden — keine Berechtigung oder keine Verbindung"); return; }
+  await protokolliere(b ? "bewertung_bearbeitet" : "bewertung_angelegt", "bewertung", b ? b.id : (res.data && res.data[0] ? res.data[0].id : null), werte.name, null);
+  showToast(b ? "Gespeichert" : (werte.sichtbar ? "Gespeichert — steht jetzt vorne im Laufband" : "Gespeichert (noch ausgeblendet)"));
+  renderAdminBewertungen();
+}
+
+// Endgueltig loeschen nur fuer ausgeblendete Bewertungen und nur mit Eingabe des Namens.
+async function bewertungLoeschen(id){
+  const b = adminBewertungen.find(function(x){ return x.id === id; });
+  if(!b) return;
+  if(b.sichtbar){ showToast("Bitte die Bewertung zuerst ausblenden"); return; }
+  const eingabe = await blattEingabe({
+    titel: "Endgültig löschen?",
+    text: "Die Bewertung verschwindet dauerhaft. Das lässt sich nicht rückgängig machen.\n\nZur Bestätigung den Namen eintippen:\n" + b.name,
+    wert: "", platzhalter: b.name, okText: "Endgültig löschen"
+  });
+  if(eingabe === null) return;
+  if(String(eingabe).trim().toLowerCase() !== String(b.name || "").trim().toLowerCase()){ showToast("Name stimmt nicht überein — nichts gelöscht"); return; }
+  const res = await supa.from("website_bewertungen").delete().eq("id", id).select("id");
+  if(!aenderungOk(res)){ showToast("Konnte nicht gelöscht werden — keine Berechtigung oder keine Verbindung"); return; }
+  await protokolliere("bewertung_geloescht", "bewertung", id, b.name, null);
+  showToast("Gelöscht");
+  renderAdminBewertungen();
 }
 
 /* =========================================================
@@ -9031,7 +9143,7 @@ async function renderAdminProtokoll(){
 }
 
 // 26.09.2026 (Admin-Struktur): lesbare Namen fuer die Aktionen im Protokoll
-const PROTOKOLL_ARTEN = { schueler: "Schüler", video: "Videos", verkauf: "Abrechnung", schule: "Schulen", paket: "Pakete", gebiet: "Gebiete", pruefer: "Prüfer", fahrlehrer: "Fahrlehrer" };
+const PROTOKOLL_ARTEN = { schueler: "Schüler", video: "Videos", bewertung: "Bewertungen", verkauf: "Abrechnung", schule: "Schulen", paket: "Pakete", gebiet: "Gebiete", pruefer: "Prüfer", fahrlehrer: "Fahrlehrer" };
 function protokollText(aktion){
   const a = String(aktion || "");
   return (a.charAt(0).toUpperCase() + a.slice(1)).replace(/_/g, " ").replace(/ae/g, "ä").replace(/oe/g, "ö").replace(/ue/g, "ü").replace(/Ae/g, "Ä").replace(/Ue/g, "Ü").replace(/Oe/g, "Ö");
