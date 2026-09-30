@@ -55,8 +55,16 @@ App-Fachbegriffen übersetzen → `hochladen` als Spur mit reinem Sprachcode ("t
 `loeschen` der "-auto"-Spuren. Bunnys eigene Übersetzung hatte Fachfehler
 (Abblendlicht → Fernlicht) und verrutschte Zeiten – nicht verwenden. Sprachen in
 `academy_einstellungen.untertitel_sprachen`. Die App schaltet Untertitel nur bei
-Fremdsprachen automatisch ein (`captions=<sprache>`), Deutsch ohne. Fertig:
-`v_kontrollleuchten` (de/tr/en/ar/es).
+Fremdsprachen automatisch ein (`captions=<sprache>`), Deutsch ohne.
+**Hochladen immer mit `paket`** (mehrere Spuren + Löschen nacheinander in EINEM
+Aufruf): parallele Aufrufe an dasselbe Video überschreiben bei Bunny gegenseitig
+die Spurenliste (Dateien da, Player sieht sie nicht). `start` braucht
+`targetLanguages: ["de"]` – eine leere Liste lehnt Bunny ab. Die automatische
+Erkennung erfindet in Stillen Sätze ("Untertitel im Auftrag des ZDF",
+"Copyright WDR", "Das war's für heute") – beim Korrigieren streichen.
+Fertig: `v_kontrollleuchten` (de/tr/en/ar/es); de/en für alle übrigen Technik-Videos
+und Prüfungsstrecken (18 Videos, 30.09.2026) außer der Originalprüfung
+(`v1789687546940`, bewusst ohne). tr/ar/es für diese 18 fehlen noch.
 
 ## Vor jedem Bau-Schritt
 
