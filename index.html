@@ -413,6 +413,26 @@
   .neu-klein{font-size:13px;color:var(--muted);margin-top:9px;line-height:1.45;text-align:center;}
   .login-sprachen{justify-content:center;margin:0 0 14px;}
   .login-sprachen .sprach-btn{padding:8px 12px;font-size:13px;}
+  /* 30.09.2026: Sprachwahl als EIN Knopf mit Flagge; die Auswahl öffnet ein Blatt. */
+  .sprach-waehler{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:8px 16px;
+    border:1px solid var(--border);border-radius:var(--r-pill);background:var(--surface);color:var(--text);
+    font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;max-width:100%;}
+  .sprach-waehler .sw-pfeil{color:var(--muted);font-size:13px;}
+  .sprach-waehler .sw-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .sw-flagge{flex:none;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;
+    font-size:21px;line-height:1;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;}
+  .sw-flagge.zeichen{border-radius:50%;background:var(--gruen);color:var(--auf-tief);font-size:15px;font-weight:700;
+    font-family:inherit;}
+  .login-sprache-zeile{display:flex;justify-content:center;margin:12px 0 16px;}
+  .konto-sprache{width:100%;justify-content:flex-start;border-radius:var(--r-m);}
+  .konto-sprache .sw-pfeil{margin-inline-start:auto;}
+  .blatt-liste{display:flex;flex-direction:column;gap:8px;margin-top:12px;max-height:60vh;overflow-y:auto;}
+  .blatt-liste button{display:flex;align-items:center;gap:14px;min-height:54px;padding:10px 16px;
+    border:1px solid var(--border);border-radius:var(--r-m);background:var(--surface);color:var(--text);
+    font-family:inherit;font-size:16px;font-weight:600;text-align:start;cursor:pointer;}
+  .blatt-liste button.aktiv{border-color:var(--gruen-text);background:var(--surface-tint);}
+  .blatt-liste .bl-haken{margin-inline-start:auto;color:var(--gruen-text);display:inline-flex;}
+  .blatt-liste .bl-haken .ic{width:20px;height:20px;}
   .reg-label{display:block;font-size:13px;font-weight:700;color:var(--muted);margin:12px 0 5px;}
   .reg-hinweis{font-size:13px;color:var(--faint);margin-top:-4px;margin-bottom:2px;}
   .reg-code{margin-top:12px;padding:9px 12px;border-radius:10px;background:var(--surface-tint);
@@ -1971,12 +1991,14 @@ function geraeteId(){
    Fehlt ein Schlüssel in einer Sprache, fällt t() auf Deutsch
    zurück -- es bleibt also nie ein leerer Knopf stehen.
    ========================================================= */
+// flagge: Emoji-Flagge oder ein kurzes Zeichen (Arabisch: vorerst neutral "ع", weil die
+// Sprache nicht zu EINEM Land gehört). Neue Sprache = neue Zeile hier + Texte in I18N.
 const SPRACHEN = [
-  { code:"de", name:"Deutsch" },
-  { code:"tr", name:"Türkçe" },
-  { code:"en", name:"English" },
-  { code:"ar", name:"العربية", rtl:true },
-  { code:"es", name:"Español" }
+  { code:"de", name:"Deutsch", flagge:"🇩🇪" },
+  { code:"tr", name:"Türkçe", flagge:"🇹🇷" },
+  { code:"en", name:"English", flagge:"🇬🇧" },
+  { code:"ar", name:"العربية", flagge:"ع", rtl:true },
+  { code:"es", name:"Español", flagge:"🇪🇸" }
 ];
 
 const I18N = {
@@ -2593,12 +2615,12 @@ Object.assign(I18N.de, {
   anfrageGesendet:"Anfrage gesendet", anfrageDanke:"Danke! Deine Anfrage ist raus.",
   anfrageSchritte:"So geht es weiter:\n\n1. Dein Fahrlehrer meldet sich mit den Zahlungsinfos\n2. Nach Zahlung wird dein Zugang freigeschaltet\n3. Alle Bereiche sind dann sofort offen — ohne neu anzumelden",
   schonVoll:"Du hast bereits den vollen Zugang.", videoLaedt:"Video wird geladen …",
-  adminLink:"Admin-Bereich"
+  adminLink:"Admin-Bereich", spracheWaehlen:"Sprache wählen"
 });
-Object.assign(I18N.tr, { adminLink:"Yönetici girişi" });
-Object.assign(I18N.en, { adminLink:"Admin area" });
-Object.assign(I18N.ar, { adminLink:"منطقة الإدارة" });
-Object.assign(I18N.es, { adminLink:"Área de administración" });
+Object.assign(I18N.tr, { adminLink:"Yönetici girişi", spracheWaehlen:"Dil seç" });
+Object.assign(I18N.en, { adminLink:"Admin area", spracheWaehlen:"Choose language" });
+Object.assign(I18N.ar, { adminLink:"منطقة الإدارة", spracheWaehlen:"اختر اللغة" });
+Object.assign(I18N.es, { adminLink:"Área de administración", spracheWaehlen:"Elegir idioma" });
 /* 29.09.2026: Übersetzungen der neuen Texte (TR/EN/AR) und Spanisch komplett. */
 Object.assign(I18N.tr, {
   bereichLeer:"Bu bölüm henüz boş.",
@@ -3509,19 +3531,34 @@ function setzeSprache(code){
 // Sprachwahl VOR dem Login (15.09.2026). setzeSprache() oben laedt den Katalog neu --
 // ohne Sitzung geht das nicht. Hier nur Sprache setzen und den aktuellen Bildschirm
 // neu zeichnen. Bereits getippte Eingaben werden mitgenommen, sonst waeren sie weg.
+// 30.09.2026: Sprachwahl als EIN Knopf ("🇩🇪 Deutsch ▾"), die Auswahl öffnet ein Blatt mit
+// allen Sprachen aus SPRACHEN. So bleibt es auch mit vielen Sprachen übersichtlich.
+function flaggeHtml(s){
+  const zeichen = !/^[\u{1F1E6}-\u{1F1FF}]/u.test(s.flagge || "");
+  return '<span class="sw-flagge' + (zeichen ? " zeichen" : "") + '" aria-hidden="true">' + esc(s.flagge || s.code.toUpperCase()) + "</span>";
+}
+function sprachKnopfHtml(klasse){
+  const s = SPRACHEN.find(function(x){ return x.code === sprache; }) || SPRACHEN[0];
+  return '<button type="button" class="sprach-waehler druck-2 ' + klasse + '" data-sprachwahl aria-haspopup="dialog" ' +
+    'aria-label="' + esc(t("spracheWaehlen") + ": " + s.name) + '">' +
+    flaggeHtml(s) + '<span class="sw-name" lang="' + esc(s.code) + '">' + esc(s.name) + '</span><span class="sw-pfeil" aria-hidden="true">▾</span></button>';
+}
+function spracheWaehlen(){
+  return blattZeigen({
+    titel: t("spracheWaehlen"),
+    liste: SPRACHEN.map(function(s){
+      return { wert: s.code, text: s.name, lang: s.code, vorne: flaggeHtml(s), aktiv: s.code === sprache };
+    })
+  });
+}
 function sprachReiheVorLogin(){
-  return '<div class="sprach-reihe login-sprachen">' +
-    SPRACHEN.map(function(s){
-      return '<button type="button" class="sprach-btn' + (s.code === sprache ? " aktiv" : "") + '" data-sprachevor="' + esc(s.code) + '">' +
-        esc(s.name) + "</button>";
-    }).join("") +
-  "</div>";
+  return '<div class="login-sprache-zeile">' + sprachKnopfHtml("login-sprache") + "</div>";
 }
 function bindeSprachReiheVorLogin(neuZeichnen){
-  document.querySelectorAll("[data-sprachevor]").forEach(function(b){
-    b.addEventListener("click", function(){
-      const code = b.dataset.sprachevor;
-      if(!I18N[code] || code === sprache) return;
+  document.querySelectorAll("[data-sprachwahl]").forEach(function(b){
+    b.addEventListener("click", async function(){
+      const code = await spracheWaehlen();
+      if(!code || !I18N[code] || code === sprache) return;
       const gemerkt = {};
       document.querySelectorAll(".login-screen input, .login-screen select").forEach(function(f){
         if(f.id) gemerkt[f.id] = f.value;
@@ -4799,10 +4836,7 @@ function renderKontoHtml(){
   const ablauf = (session && session.ablauf_am) ? fmtDate(session.ablauf_am) : "—";
   // Bereich 10.5: Sprachauswahl. Bewusst im Konto und nicht im Hauptmenü --
   // man stellt sie einmal ein, nicht täglich.
-  const sprachKnoepfe = SPRACHEN.map(function(s){
-    return '<button class="sprach-btn' + (s.code === sprache ? " aktiv" : "") + '" data-sprache="' + esc(s.code) + '">' +
-      esc(s.name) + "</button>";
-  }).join("");
+  const sprachKnoepfe = sprachKnopfHtml("konto-sprache");
   // Weiterempfehlung (12.09.2026). Nur für Schüler mit Vollzugang sichtbar: wer selbst
   // gratis nutzt, hat nichts zu empfehlen -- ein Knopf, der jedem Zweiten "geht nicht"
   // sagt, ärgert mehr als er bringt. Der beste Verkäufer ist der zufriedene Kunde,
@@ -4825,7 +4859,7 @@ function renderKontoHtml(){
     werbeKarte +
     '<div class="admin-card glass" style="margin-top:16px;">' +
       '<div class="section-label" style="margin:0 0 10px;">' + esc(t("sprache")) + "</div>" +
-      '<div class="sprach-reihe">' + sprachKnoepfe + "</div>" +
+      sprachKnoepfe +
       '<div class="admin-sub" style="margin-top:10px;">' + esc(t("spracheHinweis")) + "</div>" +
     "</div>" +
     '<button id="konto-logout-btn" class="btn-primary" style="width:100%;margin-top:16px;">' + esc(t("abmelden")) + "</button>"
@@ -5655,8 +5689,11 @@ function renderCatalog(){
   const kontoLogout = document.getElementById("konto-logout-btn");
   if(kontoLogout) kontoLogout.addEventListener("click", doLogout);
   // Bereich 10.5: Sprachwechsel -- setzeSprache rendert selbst neu
-  document.querySelectorAll("[data-sprache]").forEach(function(b){
-    b.addEventListener("click", function(){ setzeSprache(b.dataset.sprache); });
+  document.querySelectorAll("[data-sprachwahl]").forEach(function(b){
+    b.addEventListener("click", async function(){
+      const code = await spracheWaehlen();
+      if(code && code !== sprache) setzeSprache(code);
+    });
   });
 }
 
@@ -6006,7 +6043,10 @@ async function openVideo(videoId){
     }
 
     // Bereich 10.4 (27.08.2026): Untertitel im Player aktivieren.
-    // captions=de zeigt die deutsche Untertitelspur automatisch an, wenn zu diesem
+    // 30.09.2026 (Serband): automatisch NUR bei Fremdsprachen -- deutsche Schüler sehen
+    // standardmäßig keine Untertitel (im Player-Menü bleiben sie wählbar). Die Spuren
+    // heißen wie die App-Sprache ("tr", "es" …), hochgeladen über academy-untertitel.
+    // captions=tr zeigt die türkische Untertitelspur automatisch an, wenn zu diesem
     // Video eine hinterlegt ist. Fehlt die Spur, ignoriert Bunny den Parameter --
     // es geht also nichts kaputt bei Videos ohne Untertitel.
     // WICHTIG: Die Untertiteldateien selbst müssen in Bunny Stream je Video
@@ -6015,7 +6055,8 @@ async function openVideo(videoId){
     // eine manipulierte Video-ID kann so kein Attribut ins iframe schmuggeln.
     const embedUrl = "https://iframe.mediadelivery.net/embed/" + encodeURIComponent(data.library_id) + "/" +
       encodeURIComponent(data.bunny_video_id) + "?token=" + encodeURIComponent(data.token) +
-      "&expires=" + encodeURIComponent(data.expires) + "&captions=" + encodeURIComponent(sprache);
+      "&expires=" + encodeURIComponent(data.expires) +
+      (sprache !== "de" ? "&captions=" + encodeURIComponent(sprache) : "");
 
     // Server hat den Fortschritt schon gespeichert — lokal sofort mitziehen,
     // damit Häkchen/Verlauf auch ohne Neu-Login sofort aktuell sind.
@@ -6330,12 +6371,21 @@ function blattBauen(opts){
         ? '<label class="blatt-haken"><input type="checkbox" id="blatt-haken"><span>' +
           esc(opts.haken) + "</span></label>"
         : "") +
-      '<div class="blatt-knoepfe">' +
+      // Liste zum Antippen (30.09.2026, Sprachwahl): ein Tipp wählt und schließt, keine Knöpfe.
+      (opts.liste
+        ? '<div class="blatt-liste">' + opts.liste.map(function(e){
+            return '<button type="button" class="druck-2' + (e.aktiv ? " aktiv" : "") + '" data-listwahl="' + esc(e.wert) + '"' +
+              (e.aktiv ? ' aria-current="true"' : "") + (e.lang ? ' lang="' + esc(e.lang) + '"' : "") + ">" +
+              (e.vorne || "") + "<span>" + esc(e.text) + "</span>" +
+              (e.aktiv ? '<span class="bl-haken">' + icon("check") + "</span>" : "") + "</button>";
+          }).join("") + "</div>"
+        : "") +
+      (opts.liste ? "" : '<div class="blatt-knoepfe">' +
         (opts.abbruchText === null ? ""
           : '<button class="btn-still druck-2" id="blatt-abbruch">' + esc(opts.abbruchText || "Abbrechen") + "</button>") +
         '<button class="' + (opts.gefaehrlich ? "blatt-warn" : "btn-gold") + ' druck-1" data-haptik id="blatt-ok">' +
           esc(opts.okText || "Speichern") + "</button>" +
-      "</div>" +
+      "</div>") +
     "</div>";
   document.body.appendChild(overlay);
   // Einfahren erst im naechsten Frame anstossen, sonst gibt es nichts zu animieren.
@@ -6365,7 +6415,11 @@ function blattZeigen(opts){
     }
     blattSchliessen = beenden;
 
-    overlay.querySelector("#blatt-ok").addEventListener("click", function(){
+    overlay.querySelectorAll("[data-listwahl]").forEach(function(b){
+      b.addEventListener("click", function(){ beenden(b.dataset.listwahl); });
+    });
+    const okKnopf = overlay.querySelector("#blatt-ok");
+    if(okKnopf) okKnopf.addEventListener("click", function(){
       const haken = overlay.querySelector("#blatt-haken");
       const auswahl = overlay.querySelector("#blatt-auswahl");
       if(haken || auswahl){

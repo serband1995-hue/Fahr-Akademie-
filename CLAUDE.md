@@ -41,6 +41,22 @@ Neue Sprache = `SPRACHEN`, `I18N`, `PRUEFUNGSTAG`, `NUETZLICH_UE`, `UI` in
 `verkehr/spieler.js`, `SPRACHEN` in der Edge Function `academy-szene`,
 `werkzeuge/szenen-texte/<sprache>.json` und die Beschriftungen im
 Szenen-Export (`szenen-export.js`, `werkzeuge/szenen/*.js`).
+Sprachwahl (30.09.2026): EIN Knopf mit Flagge (Login + Konto), die Auswahl öffnet ein
+Blatt (`spracheWaehlen()`); Flagge steht in `SPRACHEN[].flagge` (Arabisch vorerst
+neutral "ع").
+
+## Untertitel (30.09.2026)
+
+Nur Technik-Videos und Prüfungsstrecken (Entscheidung Serband). Edge Function
+`academy-untertitel` (verify_jwt false; nur Super-Admin-JWT oder intern per pg_net
+mit Header `x-intern` = Vault-Geheimnis `untertitel_intern`). Ablauf: Bunny erkennt
+NUR Deutsch (`start`, 0,10 $/Min) → deutschen Text korrigieren und mit den
+App-Fachbegriffen übersetzen → `hochladen` als Spur mit reinem Sprachcode ("tr") →
+`loeschen` der "-auto"-Spuren. Bunnys eigene Übersetzung hatte Fachfehler
+(Abblendlicht → Fernlicht) und verrutschte Zeiten – nicht verwenden. Sprachen in
+`academy_einstellungen.untertitel_sprachen`. Die App schaltet Untertitel nur bei
+Fremdsprachen automatisch ein (`captions=<sprache>`), Deutsch ohne. Fertig:
+`v_kontrollleuchten` (de/tr/en/ar/es).
 
 ## Vor jedem Bau-Schritt
 
