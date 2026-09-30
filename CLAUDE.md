@@ -62,9 +62,26 @@ die Spurenliste (Dateien da, Player sieht sie nicht). `start` braucht
 `targetLanguages: ["de"]` – eine leere Liste lehnt Bunny ab. Die automatische
 Erkennung erfindet in Stillen Sätze ("Untertitel im Auftrag des ZDF",
 "Copyright WDR", "Das war's für heute") – beim Korrigieren streichen.
-Fertig: `v_kontrollleuchten` (de/tr/en/ar/es); de/en für alle übrigen Technik-Videos
-und Prüfungsstrecken (18 Videos, 30.09.2026) außer der Originalprüfung
-(`v1789687546940`, bewusst ohne). tr/ar/es für diese 18 fehlen noch.
+Fertig (30.09.2026): alle 19 Technik-Videos und Prüfungsstrecken in de/en/tr/ar/es,
+außer der Originalprüfung (`v1789687546940`, bewusst ohne).
+
+**Quelle der Untertitel ist die Tabelle `untertitel.zeilen`** (eigenes Schema, von außen
+nicht erreichbar): je Zeile Beginn/Ende, `de` + alle Übersetzungen, `anker` (Wortzeiten).
+Bunny-Dateien werden daraus gebaut: `untertitel.vtt(video, sprache, videolänge_s)` teilt
+lange Sätze fürs Handy (max. 2 Zeilen à ~40 Zeichen, Stücke ≤ 76 Zeichen), verteilt die
+Zeit sprechgenau über die Anker und setzt bei Arabisch das RTL-Zeichen. Neue Sprache =
+Spalte ergänzen + `vtt()` + `untertitel_sprachen`; hochladen per `paket` mit
+`untertitel.vtt(...)` direkt im SQL. Aussehen (weiße Schrift auf schwarzem Balken, 18 px
+am Handy) kommt aus der Bunny-Bibliothek – nichts zu tun.
+**Synchron zum Ton** (`werkzeuge/untertitel/`): `ton-erkennen.py` erkennt jedes Wort mit
+Zeit (faster-whisper), `abgleich.py` richtet die Zeilen daran aus (globale Ausrichtung im
+±6-s-Korridor; gedehnte Wörter vom Ende her gekürzt; Lesezeit max. 17 Zeichen/s; keine
+Überlappung). Zugang nur über einen lokalen Schlüssel, dessen SHA-256 VORÜBERGEHEND im
+Vault als `untertitel_abgleich_hash` liegt – danach löschen (Stand: gelöscht).
+**CDN-Falle:** Bunny liefert Untertitel mit `max-age` 30 Tage aus und ignoriert `?ver=`.
+Überschreibt man eine Spur, sehen Knoten, die sie schon geholt hatten, bis zum Leeren des
+Caches die alte. Nach dem Überschreiben: Pull-Zone-Cache in Bunny leeren (braucht den
+Konto-Schlüssel, den die Functions nicht haben).
 
 ## Vor jedem Bau-Schritt
 
