@@ -7,7 +7,7 @@
    die Szene danach an und zeigt den Hinweis auf den Vollzugang.
 
    starte(el, daten, opt) -> { zerstoeren, zustand }
-     opt.sprache      "de" | "tr" | "en" | "ar"
+     opt.sprache      "de" | "tr" | "en" | "ar" | "es" | "ru" | "sr" | "ckb" | "kmr" | "hi" | "ur" | "vi" | "rif"
      opt.kopf         false = Titel/Kurztext nicht anzeigen
      opt.onVollzugang Knopf "Vollzugang anfragen" in der Kostprobe
    ===================================================================== */
@@ -20,28 +20,43 @@ const UI = {
     richtigIst: "Richtig ist", reihenfolge: "Die Reihenfolge", kein3d: "Dein Gerät kann die 3D-Darstellung leider nicht anzeigen. Die Erklärungen findest du unten.",
     worum: "Worum geht's?", merken: "Die Regel zum Merken", rf: "Richtig und falsch", zeit: "Zeitleiste", kapitel: "Kapitel", blick: "Blickwinkel", tageszeit: "Tageszeit wechseln", fassung: "Fassung",
     teaserTitel: "Weiter geht's mit dem Vollzugang", teaserText: "Das war die Kostprobe. Mit dem Vollzugang siehst du die ganze Szene mit allen Kapiteln und Fragen:", teaserKnopf: "Zugang anfragen", nochmal: "Kostprobe nochmal", gesperrt: "Mit Vollzugang", buehne: "Animierte 3D-Szene",
-    kapZurueck: "Zurück", kapWeiter: "Weiter", alleKap: "Alle Kapitel", ende: "Ende der Szene", aufbau: "Szene wird aufgebaut …", zurFrage: "Zur Frage" },
+    kapZurueck: "Zurück", kapWeiter: "Weiter", alleKap: "Alle Kapitel", ende: "Ende der Szene", aufbau: "Szene wird aufgebaut …", zurFrage: "Zur Frage", schliessen: "Schließen" },
   en: { abspielen: "Play", anhalten: "Pause", uebersicht: "Overview", schraeg: "Follow", oben: "Top", fahrer: "Driver", tag: "Day", daemmerung: "Dusk", nacht: "Night",
     halb: "½ speed", vonVorn: "Restart", kamFolgt: "Camera follows the explanation", mitdenken: "Think along: scene pauses at questions", md: "Think along", aufl: "Show answer", weiter: "Continue",
     richtigIst: "Correct is", reihenfolge: "The order", kein3d: "Your device cannot show the 3D view. You'll find the explanations below.",
     worum: "What is it about?", merken: "Rules to remember", rf: "Right and wrong", zeit: "Timeline", kapitel: "Chapters", blick: "View", tageszeit: "Change time of day", fassung: "Version",
     teaserTitel: "Continue with full access", teaserText: "That was the preview. With full access you get the whole scene with all chapters and questions:", teaserKnopf: "Request access", nochmal: "Preview again", gesperrt: "Full access", buehne: "Animated 3D scene",
-    kapZurueck: "Back", kapWeiter: "Next", alleKap: "All chapters", ende: "End of scene", aufbau: "Building the scene …", zurFrage: "To the question" },
+    kapZurueck: "Back", kapWeiter: "Next", alleKap: "All chapters", ende: "End of scene", aufbau: "Building the scene …", zurFrage: "To the question", schliessen: "Close" },
   tr: { abspielen: "Oynat", anhalten: "Durdur", uebersicht: "Genel bakış", schraeg: "Takip", oben: "Üstten", fahrer: "Sürücü", tag: "Gündüz", daemmerung: "Alacakaranlık", nacht: "Gece",
     halb: "½ hız", vonVorn: "Baştan", kamFolgt: "Kamera açıklamayı takip eder", mitdenken: "Birlikte düşün: sahne sorularda durur", md: "Birlikte düşün", aufl: "Cevabı göster", weiter: "Devam",
     richtigIst: "Doğru cevap", reihenfolge: "Sıralama", kein3d: "Cihazın 3D görünümü gösteremiyor. Açıklamaları aşağıda bulabilirsin.",
     worum: "Konu ne?", merken: "Akılda tutulacak kurallar", rf: "Doğru ve yanlış", zeit: "Zaman çizelgesi", kapitel: "Bölümler", blick: "Bakış açısı", tageszeit: "Günün saatini değiştir", fassung: "Sürüm",
     teaserTitel: "Tam erişimle devam et", teaserText: "Bu bir tadımlıktı. Tam erişimle sahnenin tamamını tüm bölümler ve sorularla görürsün:", teaserKnopf: "Erişim iste", nochmal: "Tadımlığı tekrar izle", gesperrt: "Tam erişim", buehne: "Hareketli 3D sahne",
-    kapZurueck: "Geri", kapWeiter: "İleri", alleKap: "Tüm bölümler", ende: "Sahnenin sonu", aufbau: "Sahne hazırlanıyor …", zurFrage: "Soruya git" },
+    kapZurueck: "Geri", kapWeiter: "İleri", alleKap: "Tüm bölümler", ende: "Sahnenin sonu", aufbau: "Sahne hazırlanıyor …", zurFrage: "Soruya git", schliessen: "Kapat" },
   ar: { abspielen: "تشغيل", anhalten: "إيقاف مؤقت", uebersicht: "نظرة عامة", schraeg: "متابعة", oben: "من الأعلى", fahrer: "السائق", tag: "نهار", daemmerung: "غسق", nacht: "ليل",
     halb: "½ السرعة", vonVorn: "من البداية", kamFolgt: "الكاميرا تتبع الشرح", mitdenken: "فكّر معنا: يتوقف المشهد عند الأسئلة", md: "فكّر معنا", aufl: "أظهر الإجابة", weiter: "متابعة",
     richtigIst: "الإجابة الصحيحة", reihenfolge: "الترتيب", kein3d: "جهازك لا يستطيع عرض المشهد ثلاثي الأبعاد. تجد الشرح في الأسفل.",
     worum: "عمّ يدور الأمر؟", merken: "قواعد للحفظ", rf: "الصحيح والخطأ", zeit: "الخط الزمني", kapitel: "الفصول", blick: "زاوية الرؤية", tageszeit: "تغيير وقت اليوم", fassung: "النسخة",
     teaserTitel: "تابع مع الوصول الكامل", teaserText: "كان هذا عرضًا تجريبيًا. مع الوصول الكامل ترى المشهد كاملًا بكل الفصول والأسئلة:", teaserKnopf: "اطلب الوصول", nochmal: "شاهد العرض مرة أخرى", gesperrt: "وصول كامل", buehne: "مشهد متحرك ثلاثي الأبعاد",
-    kapZurueck: "رجوع", kapWeiter: "التالي", alleKap: "كل الفصول", ende: "نهاية المشهد", aufbau: "جارٍ تجهيز المشهد …", zurFrage: "إلى السؤال" },
-  es: {"abspielen":"Reproducir","anhalten":"Pausa","uebersicht":"Vista general","schraeg":"Seguir","oben":"Arriba","fahrer":"Conductor","tag":"Día","daemmerung":"Anochecer","nacht":"Noche","halb":"½ velocidad","vonVorn":"Desde el inicio","kamFolgt":"La cámara sigue la explicación","mitdenken":"Piensa conmigo: la escena se detiene en las preguntas","md":"Piensa conmigo","aufl":"Ver solución","weiter":"Seguir","richtigIst":"Lo correcto es","reihenfolge":"El orden","kein3d":"Tu dispositivo no puede mostrar la vista 3D. Encontrarás las explicaciones abajo.","worum":"¿De qué se trata?","merken":"La regla para recordar","rf":"Correcto e incorrecto","zeit":"Línea de tiempo","kapitel":"Capítulos","blick":"Punto de vista","tageszeit":"Cambiar hora del día","fassung":"Versión","teaserTitel":"Continúa con el acceso completo","teaserText":"Esa era la muestra. Con el acceso completo ves la escena entera con todos los capítulos y preguntas:","teaserKnopf":"Solicitar acceso","nochmal":"Ver muestra otra vez","gesperrt":"Con acceso completo","buehne":"Escena 3D animada","kapZurueck":"Atrás","kapWeiter":"Siguiente","alleKap":"Todos los capítulos","ende":"Fin de la escena","aufbau":"Preparando la escena …","zurFrage":"Ir a la pregunta"}
+    kapZurueck: "رجوع", kapWeiter: "التالي", alleKap: "كل الفصول", ende: "نهاية المشهد", aufbau: "جارٍ تجهيز المشهد …", zurFrage: "إلى السؤال", schliessen: "إغلاق" },
+  es: {"abspielen":"Reproducir","anhalten":"Pausa","uebersicht":"Vista general","schraeg":"Seguir","oben":"Arriba","fahrer":"Conductor","tag":"Día","daemmerung":"Anochecer","nacht":"Noche","halb":"½ velocidad","vonVorn":"Desde el inicio","kamFolgt":"La cámara sigue la explicación","mitdenken":"Piensa conmigo: la escena se detiene en las preguntas","md":"Piensa conmigo","aufl":"Ver solución","weiter":"Seguir","richtigIst":"Lo correcto es","reihenfolge":"El orden","kein3d":"Tu dispositivo no puede mostrar la vista 3D. Encontrarás las explicaciones abajo.","worum":"¿De qué se trata?","merken":"La regla para recordar","rf":"Correcto e incorrecto","zeit":"Línea de tiempo","kapitel":"Capítulos","blick":"Punto de vista","tageszeit":"Cambiar hora del día","fassung":"Versión","teaserTitel":"Continúa con el acceso completo","teaserText":"Esa era la muestra. Con el acceso completo ves la escena entera con todos los capítulos y preguntas:","teaserKnopf":"Solicitar acceso","nochmal":"Ver muestra otra vez","gesperrt":"Con acceso completo","buehne":"Escena 3D animada","kapZurueck":"Atrás","kapWeiter":"Siguiente","alleKap":"Todos los capítulos","ende":"Fin de la escena","aufbau":"Preparando la escena …","zurFrage":"Ir a la pregunta","schliessen":"Cerrar"}
 };
+// === SPRACHPAKETE-ANFANG (01.10.2026): ru, sr, ckb, kmr, hi, ur, vi, rif
+UI.ru = {"abspielen":"Воспроизвести","anhalten":"Пауза","uebersicht":"Обзор","schraeg":"Следовать","oben":"Сверху","fahrer":"Водитель","tag":"День","daemmerung":"Сумерки","nacht":"Ночь","halb":"½ скорости","vonVorn":"Сначала","kamFolgt":"Камера следует за объяснением","mitdenken":"Думай сам: сцена останавливается на вопросах","md":"Думай сам","aufl":"Показать ответ","weiter":"Дальше","richtigIst":"Правильно так","reihenfolge":"Очерёдность","kein3d":"К сожалению, твоё устройство не может показать 3D-изображение. Объяснения ты найдёшь ниже.","worum":"О чём речь?","merken":"Правило, которое нужно запомнить","rf":"Правильно и неправильно","zeit":"Шкала времени","kapitel":"Главы","blick":"Угол обзора","tageszeit":"Сменить время суток","fassung":"Версия","teaserTitel":"Продолжение — с полным доступом","teaserText":"Это был пробный фрагмент. С полным доступом ты увидишь всю сцену со всеми главами и вопросами:","teaserKnopf":"Запросить доступ","nochmal":"Пробный фрагмент ещё раз","gesperrt":"С полным доступом","buehne":"Анимированная 3D-сцена","kapZurueck":"Назад","kapWeiter":"Дальше","alleKap":"Все главы","ende":"Конец сцены","aufbau":"Сцена строится…","zurFrage":"К вопросу","schliessen":"Закрыть"};
+UI.sr = {"abspielen":"Pusti","anhalten":"Pauza","uebersicht":"Pregled","schraeg":"Praćenje","oben":"Odozgo","fahrer":"Vozač","tag":"Dan","daemmerung":"Sumrak","nacht":"Noć","halb":"½ brzine","vonVorn":"Ispočetka","kamFolgt":"Kamera prati objašnjenje","mitdenken":"Razmišljaj: scena staje kod pitanja","md":"Razmišljaj","aufl":"Prikaži rešenje","weiter":"Dalje","richtigIst":"Tačno je","reihenfolge":"Redosled","kein3d":"Tvoj uređaj nažalost ne može da prikaže 3D prikaz. Objašnjenja ćeš naći ispod.","worum":"O čemu se radi?","merken":"Pravilo za pamćenje","rf":"Tačno i pogrešno","zeit":"Vremenska linija","kapitel":"Poglavlja","blick":"Ugao gledanja","tageszeit":"Promeni doba dana","fassung":"Verzija","teaserTitel":"Nastavak uz pun pristup","teaserText":"To je bila besplatna proba. Uz pun pristup vidiš celu scenu sa svim poglavljima i pitanjima:","teaserKnopf":"Zatraži pristup","nochmal":"Ponovi probu","gesperrt":"Uz pun pristup","buehne":"Animirana 3D scena","kapZurueck":"Nazad","kapWeiter":"Dalje","alleKap":"Sva poglavlja","ende":"Kraj scene","aufbau":"Scena se priprema …","zurFrage":"Na pitanje","schliessen":"Zatvori"};
+UI.ckb = {"abspielen":"لێدان","anhalten":"ڕاگرتن","uebersicht":"دیمەنی گشتی","schraeg":"شوێنکەوتن","oben":"لە سەرەوە","fahrer":"شۆفێر","tag":"ڕۆژ","daemmerung":"تاریک و ڕوون","nacht":"شەو","halb":"½ خێرایی","vonVorn":"لە سەرەتاوە","kamFolgt":"کامێرا شوێن ڕوونکردنەوەکە دەکەوێت","mitdenken":"خۆت بیر بکەرەوە: دیمەنەکە لە کاتی پرسیاردا ڕادەوەستێت","md":"بیر بکەرەوە","aufl":"وەڵام پیشان بدە","weiter":"دواتر","richtigIst":"دروستەکەی ئەمەیە","reihenfolge":"ڕیزبەندییەکە","kein3d":"بەداخەوە ئامێرەکەت ناتوانێت وێنەی 3D پیشان بدات. ڕوونکردنەوەکان لە خوارەوە دەبینیت.","worum":"باسی چییە؟","merken":"یاساکە بۆ لەبەرکردن","rf":"دروست و هەڵە","zeit":"هێڵی کات","kapitel":"بڕگە","blick":"گۆشەی بینین","tageszeit":"گۆڕینی کاتی ڕۆژ","fassung":"وەشان","teaserTitel":"بە دەستگەیشتنی تەواو بەردەوام بە","teaserText":"ئەوە نموونە بەخۆڕاییەکە بوو. بە دەستگەیشتنی تەواو هەموو دیمەنەکە لەگەڵ هەموو بڕگە و پرسیارەکان دەبینیت:","teaserKnopf":"داوای دەستگەیشتن بکە","nochmal":"دووبارە نموونەکە","gesperrt":"بە دەستگەیشتنی تەواو","buehne":"دیمەنی جووڵاوی 3D","kapZurueck":"گەڕانەوە","kapWeiter":"دواتر","alleKap":"هەموو بڕگەکان","ende":"کۆتایی دیمەنەکە","aufbau":"دیمەنەکە ئامادە دەکرێت …","zurFrage":"بۆ پرسیارەکە","schliessen":"داخستن"};
+UI.kmr = {"abspielen":"Lê bide","anhalten":"Rawestîne","uebersicht":"Nêrîna giştî","schraeg":"Bişopîne","oben":"Ji jor","fahrer":"Ajokar","tag":"Roj","daemmerung":"Berêvar","nacht":"Şev","halb":"½ lez","vonVorn":"Ji serî ve","kamFolgt":"Kamera ravekirinê dişopîne","mitdenken":"Bi me re bifikire: dîmen li ber pirsan radiweste","md":"Bifikire","aufl":"Bersivê nîşan bide","weiter":"Bidomîne","richtigIst":"Ya rast ev e","reihenfolge":"Rêz","kein3d":"Mixabin amûra te nikare dîmena 3D nîşan bide. Ravekirin li jêr in.","worum":"Mijar çi ye?","merken":"Qaîdeya ji bo bîrê","rf":"Rast û çewt","zeit":"Xeta demê","kapitel":"Beş","blick":"Goşeya dîtinê","tageszeit":"Dema rojê biguherîne","fassung":"Guherto","teaserTitel":"Bi gihîştina tevahî berdewam bike","teaserText":"Nimûne ev bû. Bi gihîştina tevahî tu dîmena tevahî bi hemû beş û pirsan dibînî:","teaserKnopf":"Gihîştinê bixwaze","nochmal":"Nimûneyê dîsa bibîne","gesperrt":"Bi gihîştina tevahî","buehne":"Dîmena 3D ya zindî","kapZurueck":"Vegere","kapWeiter":"Bidomîne","alleKap":"Hemû beş","ende":"Dawiya dîmenê","aufbau":"Dîmen tê avakirin …","zurFrage":"Ber bi pirsê","schliessen":"Bigire"};
+UI.hi = {"abspielen":"चलाएँ","anhalten":"रोकें","uebersicht":"पूरा दृश्य","schraeg":"फ़ॉलो","oben":"ऊपर","fahrer":"ड्राइवर","tag":"दिन","daemmerung":"धुंधलका","nacht":"रात","halb":"½ स्पीड","vonVorn":"शुरू से","kamFolgt":"कैमरा समझाने के साथ चलता है","mitdenken":"साथ में सोचें: सवालों पर सीन रुकता है","md":"साथ में सोचें","aufl":"जवाब दिखाएँ","weiter":"आगे","richtigIst":"सही है","reihenfolge":"क्रम","kein3d":"माफ़ कीजिए, आपका डिवाइस 3D नहीं दिखा सकता। समझाने वाली बातें आपको नीचे मिलेंगी।","worum":"बात किस बारे में है?","merken":"याद रखने का नियम","rf":"सही और गलत","zeit":"टाइमलाइन","kapitel":"अध्याय","blick":"नज़रिया","tageszeit":"दिन का समय बदलें","fassung":"संस्करण","teaserTitel":"पूरे एक्सेस के साथ आगे देखें","teaserText":"यह मुफ़्त झलक थी। पूरे एक्सेस के साथ आप पूरा सीन सभी अध्यायों और सवालों के साथ देख सकते हैं:","teaserKnopf":"एक्सेस का अनुरोध करें","nochmal":"झलक फिर से","gesperrt":"पूरे एक्सेस के साथ","buehne":"एनिमेटेड 3D सीन","kapZurueck":"पीछे","kapWeiter":"आगे","alleKap":"सभी अध्याय","ende":"सीन समाप्त","aufbau":"सीन तैयार हो रहा है …","zurFrage":"सवाल पर जाएँ","schliessen":"बंद करें"};
+UI.ur = {"abspielen":"چلائیں","anhalten":"روکیں","uebersicht":"مکمل منظر","schraeg":"فالو","oben":"اوپر سے","fahrer":"ڈرائیور","tag":"دن","daemmerung":"شام","nacht":"رات","halb":"½ رفتار","vonVorn":"شروع سے","kamFolgt":"کیمرہ وضاحت کے ساتھ چلتا ہے","mitdenken":"ساتھ سوچیں: سوالات پر منظر رک جاتا ہے","md":"ساتھ سوچیں","aufl":"جواب دکھائیں","weiter":"آگے","richtigIst":"درست یہ ہے","reihenfolge":"ترتیب","kein3d":"افسوس، آپ کا آلہ 3D منظر نہیں دکھا سکتا۔ وضاحتیں نیچے موجود ہیں۔","worum":"بات کس بارے میں ہے؟","merken":"یاد رکھنے کا قاعدہ","rf":"درست اور غلط","zeit":"ٹائم لائن","kapitel":"باب","blick":"زاویہ","tageszeit":"دن کا وقت بدلیں","fassung":"ورژن","teaserTitel":"مکمل رسائی کے ساتھ آگے دیکھیں","teaserText":"یہ مفت جھلک تھی۔ مکمل رسائی کے ساتھ آپ پورا منظر تمام ابواب اور سوالات کے ساتھ دیکھ سکتے ہیں:","teaserKnopf":"رسائی کی درخواست کریں","nochmal":"مفت جھلک دوبارہ","gesperrt":"مکمل رسائی کے ساتھ","buehne":"متحرک 3D منظر","kapZurueck":"واپس","kapWeiter":"آگے","alleKap":"تمام ابواب","ende":"منظر ختم","aufbau":"منظر تیار ہو رہا ہے …","zurFrage":"سوال پر جائیں","schliessen":"بند کریں"};
+UI.vi = {"abspielen":"Phát","anhalten":"Tạm dừng","uebersicht":"Toàn cảnh","schraeg":"Đi theo","oben":"Từ trên","fahrer":"Người lái","tag":"Ngày","daemmerung":"Chạng vạng","nacht":"Đêm","halb":"½ tốc độ","vonVorn":"Từ đầu","kamFolgt":"Camera đi theo phần giải thích","mitdenken":"Cùng suy nghĩ: cảnh dừng lại khi có câu hỏi","md":"Cùng suy nghĩ","aufl":"Xem đáp án","weiter":"Tiếp","richtigIst":"Đúng là","reihenfolge":"Thứ tự","kein3d":"Rất tiếc, thiết bị của bạn không hiển thị được hình 3D. Phần giải thích nằm ở bên dưới.","worum":"Nội dung là gì?","merken":"Quy tắc cần nhớ","rf":"Đúng và sai","zeit":"Dòng thời gian","kapitel":"Chương","blick":"Góc nhìn","tageszeit":"Đổi thời điểm trong ngày","fassung":"Phiên bản","teaserTitel":"Xem tiếp với gói truy cập đầy đủ","teaserText":"Đó là bản dùng thử. Với gói truy cập đầy đủ, bạn xem được toàn bộ cảnh với tất cả các chương và câu hỏi:","teaserKnopf":"Yêu cầu quyền truy cập","nochmal":"Xem lại bản dùng thử","gesperrt":"Có trong gói đầy đủ","buehne":"Cảnh 3D động","kapZurueck":"Quay lại","kapWeiter":"Tiếp","alleKap":"Tất cả các chương","ende":"Hết cảnh","aufbau":"Đang dựng cảnh …","zurFrage":"Đến câu hỏi","schliessen":"Đóng"};
+UI.rif = {"abspielen":"Ssekker","anhalten":"Bedd","uebersicht":"Kulci","schraeg":"Ḍfeṛ","oben":"Zi ennej","fahrer":"Anehhaṛ","tag":"Nnehaṛ","daemmerung":"Tameddit","nacht":"Iḍ","halb":"½ n ssuṛɛa","vonVorn":"Zi tazwara","kamFolgt":"Lkamira teḍfeṛ asefhem","mitdenken":"Xemmem aked-s: lmecheḍ ibedd ɣef isteqsiyen","md":"Xemmem","aufl":"Sken ajawab","weiter":"Kemmel","richtigIst":"Min iṣeḥḥan","reihenfolge":"Ttertib","kein3d":"Ssef, tilifun-nnec war yezmmer ca ad d-yesken 3D. Asefhem yella ddaw.","worum":"Ɣef min i tella?","merken":"Lqaɛida i ixeṣṣa ad tecfuḍ ɣef-s","rf":"Iṣeḥḥa d ixeṭṭa","zeit":"Axeṭṭ n lweqt","kapitel":"Iḥricen","blick":"Tama n uxẓaṛ","tageszeit":"Beddel lweqt n wass","fassung":"Nnusxa","teaserTitel":"Kemmel s lkunt kamel","teaserText":"Aya d ajeṛṛeb. S lkunt kamel ad tẓaṛeḍ lmecheḍ kamel s maṛṛa iḥricen d isteqsiyen:","teaserKnopf":"Ṭṭleb lkunt","nochmal":"Ɛawed ajeṛṛeb","gesperrt":"S lkunt kamel","buehne":"Lmecheḍ s 3D itteḥṛak","kapZurueck":"Uɣal","kapWeiter":"Kemmel","alleKap":"Maṛṛa iḥricen","ende":"Taggara n lmecheḍ","aufbau":"Lmecheḍ itteggi …","zurFrage":"Ɣer usteqsi","schliessen":"Ɣleq"};
+// === SPRACHPAKETE-ENDE ===
 const BUCHST = ["A", "B", "C", "D"];
+
+// Tacho der Fahrersicht: 0-160 km/h auf 240 Grad (wie im echten Auto)
+// Schulterblick-Zeichen: Auge mit Pfeil nach außen (ohne Text, gilt für alle Sprachen)
+const AUGE_SVG = '<svg viewBox="0 0 48 24"><path d="M2 12C7 4 17 2 24 2s17 2 22 10c-5 8-15 10-22 10S7 20 2 12z" fill="#fff"/><circle cx="24" cy="12" r="6.5" fill="#1d261f"/><circle cx="26" cy="10" r="2" fill="#fff"/></svg>';
+const TACHO_SVG = '<svg class="vv-tacho-svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="47"/><line x1="11.9" y1="72.0" x2="17.1" y2="69.0" class="gross"/><line x1="7.5" y1="61.4" x2="10.4" y2="60.6"/><line x1="6.0" y1="50.0" x2="12.0" y2="50.0" class="gross"/><line x1="7.5" y1="38.6" x2="10.4" y2="39.4"/><line x1="11.9" y1="28.0" x2="17.1" y2="31.0" class="gross"/><line x1="18.9" y1="18.9" x2="21.0" y2="21.0"/><line x1="28.0" y1="11.9" x2="31.0" y2="17.1" class="gross"/><line x1="38.6" y1="7.5" x2="39.4" y2="10.4"/><line x1="50.0" y1="6.0" x2="50.0" y2="12.0" class="gross"/><line x1="61.4" y1="7.5" x2="60.6" y2="10.4"/><line x1="72.0" y1="11.9" x2="69.0" y2="17.1" class="gross"/><line x1="81.1" y1="18.9" x2="79.0" y2="21.0"/><line x1="88.1" y1="28.0" x2="82.9" y2="31.0" class="gross"/><line x1="92.5" y1="38.6" x2="89.6" y2="39.4"/><line x1="94.0" y1="50.0" x2="88.0" y2="50.0" class="gross"/><line x1="92.5" y1="61.4" x2="89.6" y2="60.6"/><line x1="88.1" y1="72.0" x2="82.9" y2="69.0" class="gross"/><text x="24.9" y="67.5">0</text><text x="21.0" y="53.0">20</text><text x="24.9" y="38.5">40</text><text x="35.5" y="27.9">60</text><text x="50.0" y="24.0">80</text><text x="64.5" y="27.9">100</text><text x="75.1" y="38.5">120</text><text x="79.0" y="53.0">140</text><text x="75.1" y="67.5">160</text><text x="50" y="41" class="einheit">km/h</text><g class="vv-tacho-nadel"><line x1="50" y1="56" x2="50" y2="12"/></g><circle cx="50" cy="50" r="5" class="mitte"/></svg>';
 
 const CSS = `
 .vv{--vv-bg:var(--bg,#FAF6EC);--vv-surface:var(--surface,#EEE6D3);--vv-strong:var(--surface-strong,#EAE3D2);--vv-tint:var(--surface-tint,#E3EADD);--vv-border:var(--border,rgba(43,40,30,.16));--vv-hair:var(--hairline,rgba(43,40,30,.24));
@@ -159,6 +174,35 @@ const CSS = `
   .vv .vv-reihe .vv-knopf{flex:1 1 auto;}
 }
 @media (prefers-color-scheme: dark){.vv .vv-buehne{background:#3a4650;}}
+/* Cockpit (Fahrersicht, 01.10.2026) */
+.vv .vv-cockpit{display:none;position:absolute;left:50%;bottom:0;transform:translateX(-50%);align-items:center;justify-content:center;gap:4%;width:46%;pointer-events:none;direction:ltr;}
+.vv .vv-buehne.cockpit .vv-cockpit{display:flex;}
+.vv .vv-buehne.cockpit .vv-tempo{display:none;}
+.vv .vv-buehne.cockpit .vv-anz{bottom:calc(clamp(56px,24%,120px) + 8px);}
+.vv .vv-tacho{position:relative;height:88%;aspect-ratio:1;}
+.vv .vv-tacho-svg{width:100%;height:100%;display:block;}
+.vv .vv-tacho-svg circle{fill:#0b0e11;stroke:#f2f4f6;stroke-width:2.5;}
+.vv .vv-tacho-svg line{stroke:#f2f4f6;stroke-width:1.2;}
+.vv .vv-tacho-svg line.gross{stroke-width:2;}
+.vv .vv-tacho-svg text{fill:#f2f4f6;font:700 8px system-ui,sans-serif;text-anchor:middle;}
+.vv .vv-tacho-svg text.einheit{font-size:6.5px;font-weight:600;opacity:.8;}
+.vv .vv-tacho-nadel line{stroke:#e5322d;stroke-width:3;stroke-linecap:round;}
+.vv .vv-tacho-svg circle.mitte{fill:#9aa3ab;stroke:none;}
+.vv .vv-tacho-zahl{position:absolute;left:0;right:0;top:66%;text-align:center;color:#fff;font:800 clamp(8px,2.2vmin,13px)/1 system-ui,sans-serif;font-variant-numeric:tabular-nums;}
+.vv .vv-pfeil{width:clamp(18px,11%,34px);aspect-ratio:1;display:block;}
+.vv .vv-pfeil svg{width:100%;height:100%;fill:#2f3a33;}
+.vv .vv-pfeil.an svg{fill:#27d05a;filter:drop-shadow(0 0 4px #27d05a);}
+.vv .vv-schulter{position:absolute;display:none;justify-content:center;pointer-events:none;}
+.vv .vv-schulter.l{left:6px;} .vv .vv-schulter.r{right:6px;}
+.vv .vv-buehne.cockpit .vv-schulter.an{display:flex;}
+.vv .vv-schulter svg{width:44px;height:22px;padding:4px 7px;border-radius:999px;background:#ffc21a;box-sizing:content-box;box-shadow:0 2px 8px rgba(0,0,0,.35);}
+.vv .vv-voll{display:none;}
+/* Handy quer: Fahrersicht als Vollbild (Knöpfe nur Abspielen und Schließen, oben rechts) */
+@media (orientation:landscape) and (max-height:520px){
+  .vv .vv-buehne.cockpit{position:fixed;inset:0;z-index:10000;aspect-ratio:auto;max-height:none;border-radius:0;background:#000;}
+  .vv .vv-buehne.cockpit .vv-or{display:none;}
+  .vv .vv-buehne.cockpit .vv-voll{display:flex;position:absolute;top:8px;right:8px;gap:8px;}
+}
 `;
 
 // Eine 3D-Welt (WebGL) für alle Szenen: Anlegen kostet auf dem Handy bis 1 s, Verwerfen
@@ -227,7 +271,7 @@ export function starte(el, daten, opt){
 
   if(!document.getElementById("vv-stil")){ const s = document.createElement("style"); s.id = "vv-stil"; s.textContent = CSS; document.head.appendChild(s); }
   const wurzel = document.createElement("div");
-  wurzel.className = "vv"; wurzel.dir = sprache === "ar" ? "rtl" : "ltr"; wurzel.lang = sprache;
+  wurzel.className = "vv"; wurzel.dir = ["ar", "ckb", "ur"].indexOf(sprache) !== -1 ? "rtl" : "ltr"; wurzel.lang = sprache;
   const mehrere = daten.varianten.length > 1;
   const merken = T.merken || TD.merken;
   wurzel.innerHTML =
@@ -238,6 +282,11 @@ export function starte(el, daten, opt){
       '<div class="vv-ol" role="group" aria-label="' + esc(U.blick) + '"></div>' +
       '<div class="vv-or"><button type="button" class="vv-pille" data-tz aria-label="' + esc(U.tageszeit) + '">' + esc(U.tag) + "</button></div>" +
       '<div class="vv-anz" aria-live="polite"></div><div class="vv-tempo" aria-hidden="true"></div>' +
+      '<div class="vv-cockpit" aria-hidden="true"><span class="vv-pfeil l"><svg viewBox="0 0 24 24"><path d="M3 12l8-7v4.5h10v5H11V19z"/></svg></span>' +
+        '<div class="vv-tacho">' + TACHO_SVG + '<b class="vv-tacho-zahl"></b></div>' +
+        '<span class="vv-pfeil r"><svg viewBox="0 0 24 24"><path d="M21 12l-8-7v4.5H3v5h10V19z"/></svg></span></div>' +
+      '<span class="vv-schulter l" aria-hidden="true">' + AUGE_SVG + '</span><span class="vv-schulter r" aria-hidden="true">' + AUGE_SVG + '</span>' +
+      '<div class="vv-voll"><button type="button" class="vv-pille" data-vollspiel aria-label="' + esc(U.abspielen) + '"></button><button type="button" class="vv-pille" data-vollzu aria-label="' + esc(U.schliessen) + '"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M6.4 5L5 6.4 10.6 12 5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6L19 6.4 17.6 5 12 10.6z"/></svg></button></div>' +
       '<div class="vv-bau" aria-live="polite"><span>' + esc(U.aufbau) + '</span></div>' +
       '<div class="vv-fehler" hidden><p>' + esc(U.kein3d) + '</p></div></div>' +
     '<div class="vv-kamreihe" role="group" aria-label="' + esc(U.blick) + '"></div>' +
@@ -513,7 +562,9 @@ export function starte(el, daten, opt){
     welt.stellen(st.t);
     const stand = {}; welt.fahrzeuge.forEach((f) => { stand[f.id] = f.stand; });
     const fs = stand[V.fokus];
-    $(".vv-tempo").innerHTML = Math.round((fs ? fs.v : 0) * 3.6) + " <small>km/h</small>";
+    const kmh = Math.round((fs ? fs.v : 0) * 3.6);
+    $(".vv-tempo").innerHTML = kmh + " <small>km/h</small>";
+    cockpitStellen(kmh);
     const hil = VB.hilfen(st.t), sichtbar = {};
     hil.forEach((h) => { welt.hilfe(h.id, true, h.x0, h.x1, h.z0, h.z1, h.farbe, h.deckkraft); sichtbar[h.id] = h; });
     Object.keys(sichtbarAlt).forEach((id) => { if(!sichtbar[id]){ welt.hilfe(id, false); delete sichtbarAlt[id]; } });
@@ -534,6 +585,31 @@ export function starte(el, daten, opt){
       m.style.top = Math.max(hoch, Math.min(bh - 52, p.y)) + "px";
     });
   }
+
+  // Cockpit der Fahrersicht (01.10.2026): Tacho mit Nadel und Blinkerpfeile auf der Leiste,
+  // die der Motor zeichnet (welt.cockpitMasse liefert die Höhe). Quer am Handy: Vollbild.
+  const buehne = $(".vv-buehne"), tachoNadel = $(".vv-tacho-nadel"), tachoZahl = $(".vv-tacho-zahl");
+  function cockpitStellen(kmh){
+    const an = !!welt && welt.kameraArt() === "fahrer" && !!welt.setzeCockpit;
+    if(welt && welt.setzeCockpit) welt.setzeCockpit(true);
+    buehne.classList.toggle("cockpit", an);
+    if(!an) return;
+    const m = welt.cockpitMasse(), c = $(".vv-cockpit");
+    c.style.height = m.leiste + "px";
+    tachoNadel.setAttribute("transform", "rotate(" + (-120 + Math.min(170, kmh) / 160 * 240).toFixed(1) + " 50 50)");
+    tachoZahl.textContent = kmh;
+    const f = welt.fahrzeuge.find((x) => x.id === V.fokus), s = (f && f.sig) || {}, takt = Math.floor(st.t * 3) % 2 === 0;
+    $(".vv-pfeil.l").classList.toggle("an", takt && (s.blinker === "links" || s.warnblink));
+    $(".vv-pfeil.r").classList.toggle("an", takt && (s.blinker === "rechts" || s.warnblink));
+    // Schulterblick: Auge über dem Außenspiegel der Seite, über die geschaut wird
+    $(".vv-schulter.l").classList.toggle("an", s.schulter === "links");
+    $(".vv-schulter.r").classList.toggle("an", s.schulter === "rechts");
+    $$(".vv-schulter").forEach((x) => { x.style.bottom = (m.leiste + 4) + "px"; x.style.width = m.links.w + "px"; });
+    $("[data-vollspiel]").innerHTML = st.laeuft ? '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>' : '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
+    $("[data-vollspiel]").setAttribute("aria-label", st.laeuft ? U.anhalten : U.abspielen);
+  }
+  $("[data-vollspiel]").addEventListener("click", () => { spielen(!st.laeuft); st.bedarf = Math.max(st.bedarf, 2); });
+  $("[data-vollzu]").addEventListener("click", () => kameraSetzen("schraeg", true));
 
   // Schleife: zeichnet nur, wenn sich etwas bewegt (Akku schonen)
   let letzte = performance.now(), messung = [], stufe = opt.qualitaet || "hoch", raf = 0, imBild = true;
