@@ -79,7 +79,7 @@
     "titel": "Giờ mới phanh"
    },
    "k8": {
-    "text": "Phanh xuống tốc độ tối đa ghi trên biển (ở đây 60 km/h) trước khi khúc cua gắt hơn. Sau chặng dài trên cao tốc, 60 km/h có cảm giác rất chậm – hãy nhìn đồng hồ tốc độ!",
+    "text": "Khi tới biển phải phanh xuống tốc độ tối đa ghi trên đó (ở đây 60 km/h), trước khi khúc cua gắt hơn. Sau chặng dài trên cao tốc, 60 km/h có cảm giác rất chậm – hãy nhìn đồng hồ tốc độ!",
     "frage": {
      "text": "Tại sao phải nhìn đồng hồ tốc độ?",
      "richtig": 0,
@@ -202,7 +202,7 @@
     "titel": "Tắt xi nhan, giữ khoảng cách"
    },
    "k7": {
-    "text": "Khi nhập vào cao tốc KHÔNG áp dụng nhập làn kiểu khóa kéo: người nhập làn phải nhường quyền ưu tiên. Nếu không có khoảng trống, cùng lắm thì dừng ở cuối làn – không bao giờ lấn sang làn khẩn cấp.",
+    "text": "Khi nhập vào cao tốc KHÔNG áp dụng nhập làn kiểu khóa kéo: người nhập làn phải nhường đường. Nếu không có khoảng trống, cùng lắm thì dừng ở cuối làn – không bao giờ lấn sang làn khẩn cấp.",
     "frage": null,
     "regel": "§ 18 Abs. 3 StVO · § 7 Abs. 4 không áp dụng ở đây",
     "titel": "Ghi nhớ"
@@ -247,7 +247,7 @@
   "titel": "Lùi xe qua góc cua bên phải",
   "kapitel": {
    "k0": {
-    "text": "Dừng sát mép đường bên phải, cách chỗ đường nhánh khoảng hai đến ba thân xe. Quan sát xung quanh – các xe khác được đi trước.",
+    "text": "Dừng sát mép đường bên phải, đã chạy qua chỗ đường nhánh khoảng hai đến ba thân xe. Quan sát xung quanh – các xe khác được đi trước.",
     "frage": {
      "text": "Khi lùi xe, điều gì quan trọng nhất?",
      "richtig": 1,
@@ -264,7 +264,7 @@
    "k1": {
     "text": "Xoay người, nhìn qua kính sau và lùi thẳng – cách mép vỉa hè khoảng 50 cm.",
     "frage": null,
-    "regel": "Bài kỹ năng cơ bản: lùi xe",
+    "regel": "Bài thi kỹ năng cơ bản: lùi xe",
     "titel": "Lùi thẳng"
    },
    "k2": {
@@ -315,7 +315,7 @@
     "titel": "Chờ với khoảng cách"
    },
    "k2": {
-    "text": "Khi đường trống: gương, quay đầu quan sát bên trái, bật xi nhan trái và đi qua xe tải với đủ khoảng cách hai bên – chú ý người bước ra khỏi xe.",
+    "text": "Khi đường trống: gương, quay đầu quan sát bên trái, bật xi nhan trái và đi qua xe tải với đủ khoảng cách bên hông – chú ý người bước ra khỏi xe.",
     "frage": null,
     "regel": "§ 6 · § 7 Abs. 5 StVO",
     "titel": "Báo hiệu khi tách làn"
@@ -509,11 +509,11 @@
   }
  },
  "laengs": {
-  "kurz": "Lùi ngang vào chỗ đỗ xe sát mép đường",
+  "kurz": "Lùi song song vào chỗ đỗ xe sát mép đường",
   "titel": "Lùi xe đỗ dọc",
   "kapitel": {
    "k0": {
-    "text": "Chỗ đỗ có vừa không? Quy tắc nhẩm: ít nhất dài hơn một thân xe cộng khoảng 1,5 m. Bật xi nhan phải sớm để xe phía sau biết.",
+    "text": "Chỗ đỗ có vừa không? Quy tắc nhẩm: ít nhất trọn một thân xe cộng thêm khoảng 1,5 m. Bật xi nhan phải sớm để xe phía sau biết.",
     "frage": {
      "text": "Khi nào tôi bật xi nhan?",
      "richtig": 1,
@@ -539,7 +539,7 @@
      ],
      "erklaerung": "Trước mỗi lần di chuyển hãy nhìn xung quanh; khi lùi thì xoay người và nhìn qua kính sau."
     },
-    "regel": "Bài kỹ năng cơ bản: đỗ xe dọc",
+    "regel": "Bài thi kỹ năng cơ bản: đỗ xe dọc",
     "titel": "Dừng cạnh xe phía trước"
    },
    "k2": {
@@ -551,7 +551,7 @@
    "k3": {
     "text": "Trả thẳng vô lăng, lùi thẳng một đoạn – như vậy xe vào gần mép vỉa hè hơn.",
     "frage": null,
-    "regel": "Bài kỹ năng cơ bản: đỗ xe dọc",
+    "regel": "Bài thi kỹ năng cơ bản: đỗ xe dọc",
     "titel": "Lùi thẳng"
    },
    "k4": {
@@ -566,7 +566,7 @@
      ],
      "erklaerung": "Trả lái quá sớm thì đầu xe va vào xe trước – quá muộn thì đuôi xe chạm vỉa hè."
     },
-    "regel": "Bài kỹ năng cơ bản: đỗ xe dọc",
+    "regel": "Bài thi kỹ năng cơ bản: đỗ xe dọc",
     "titel": "Trả lái ngược"
    },
    "k5": {
@@ -581,7 +581,7 @@
      ],
      "erklaerung": "Đỗ tốt: song song và gần mép vỉa hè – nhưng không chạm."
     },
-    "regel": "Bài kỹ năng cơ bản: đỗ xe dọc",
+    "regel": "Bài thi kỹ năng cơ bản: đỗ xe dọc",
     "titel": "Chỉnh xe"
    }
   }
@@ -627,7 +627,7 @@
     "titel": "Để xe ngược chiều đi qua"
    },
    "k3": {
-    "text": "Trên con đường tôi rẽ vào, một người đi bộ đang sang đường. Đặc biệt nhường nhịn – chờ đến khi người đó sang hết.",
+    "text": "Trên con đường tôi rẽ vào, một người đi bộ đang sang đường. Phải đặc biệt chú ý – chờ đến khi người đó sang hết.",
     "frage": {
      "text": "Người đi bộ vẫn còn trên lòng đường. Làm gì?",
      "richtig": 1,
@@ -654,7 +654,7 @@
   "titel": "Lùi xe đỗ vuông góc",
   "kapitel": {
    "k0": {
-    "text": "Đi chậm trên lối đi trong bãi đỗ, bật xi nhan phải và chạy qua chỗ đỗ cho đến khi đuôi xe cách nó khoảng 1–2 m.",
+    "text": "Đi chậm trên lối đi trong bãi đỗ, bật xi nhan phải và chạy qua chỗ đỗ cho đến khi đuôi xe vượt qua nó khoảng 1–2 m.",
     "frage": null,
     "regel": "§ 1 Abs. 2 StVO",
     "titel": "Chạy qua chỗ đỗ"
@@ -677,7 +677,7 @@
    "k2": {
     "text": "Lùi chậm và đánh hết lái sang phải. Nhìn ra sau và về phía góc của các xe bên cạnh.",
     "frage": null,
-    "regel": "Bài kỹ năng cơ bản: đỗ xe vuông góc",
+    "regel": "Bài thi kỹ năng cơ bản: đỗ xe vuông góc",
     "titel": "Đánh hết lái"
    },
    "k3": {
@@ -698,28 +698,28 @@
   }
  },
  "quer_vor": {
-  "kurz": "Tiến vào chỗ đỗ vuông góc – có lấy đà sang bên",
+  "kurz": "Tiến vào chỗ đỗ vuông góc – có đánh vòng rộng",
   "titel": "Tiến xe đỗ vuông góc",
   "kapitel": {
    "k0": {
-    "text": "Đi chậm trên lối đi trong bãi đỗ lại gần chỗ đỗ, bật xi nhan phải. Lấy đà hơi sang trái để vòng cua vừa vào chỗ đỗ.",
+    "text": "Đi chậm trên lối đi trong bãi đỗ lại gần chỗ đỗ, bật xi nhan phải. Đánh vòng hơi sang trái để vòng cua vừa vào chỗ đỗ.",
     "frage": {
-     "text": "Tại sao tôi lấy đà sang bên trước khi tiến vào chỗ đỗ?",
+     "text": "Tại sao tôi đánh vòng rộng trước khi tiến vào chỗ đỗ?",
      "richtig": 0,
      "optionen": [
       "Để vòng cua vừa vào chỗ đỗ hẹp",
       "Vì nhanh hơn",
       "Không cần"
      ],
-     "erklaerung": "Khi tiến, bánh sau đi cắt vào phía trong khúc cua – lấy đà sang bên giúp đuôi xe không quệt vào xe bên cạnh."
+     "erklaerung": "Khi tiến, bánh sau đi cắt vào phía trong khúc cua – đánh vòng rộng giúp đuôi xe không quệt vào xe bên cạnh."
     },
     "regel": "§ 1 Abs. 2 StVO",
-    "titel": "Chạy qua và lấy đà"
+    "titel": "Chạy qua và đánh vòng rộng"
    },
    "k1": {
     "text": "Khi giữa chỗ đỗ ngang khoảng gương chiếu hậu ngoài: đánh hết lái sang phải. Chú ý góc của các xe bên cạnh (quay đầu quan sát bên phải).",
     "frage": null,
-    "regel": "Bài kỹ năng cơ bản: đỗ xe vuông góc",
+    "regel": "Bài thi kỹ năng cơ bản: đỗ xe vuông góc",
     "titel": "Đánh hết lái"
    },
    "k2": {
@@ -897,7 +897,7 @@
     "titel": "Để hành lang trống"
    },
    "k4": {
-    "text": "Làn khẩn cấp không phải là làn đường cho người thiếu kiên nhẫn. Ai không tạo hành lang cứu hộ hoặc tự chạy vào đó sẽ bị phạt tiền, điểm phạt và cấm lái xe.",
+    "text": "Làn khẩn cấp không phải là làn đường cho người thiếu kiên nhẫn. Ai không tạo hành lang cứu hộ hoặc tự chạy vào đó có nguy cơ bị phạt tiền, điểm phạt và cấm lái xe.",
     "frage": null,
     "regel": "§ 11 Abs. 2 StVO · BKatV",
     "titel": "Ghi nhớ"
@@ -1142,7 +1142,7 @@
      "richtig": 1,
      "optionen": [
       "Tách làn nhanh hơn",
-      "Lùi lại, tăng khoảng cách và chỉ vượt khi chắc chắn đường trống",
+      "Tụt lại phía sau, tăng khoảng cách và chỉ vượt khi chắc chắn đường trống",
       "Bấm còi"
      ],
      "erklaerung": "Khi tình huống giao thông không rõ ràng thì không được vượt (§ 5 Abs. 3 Nr. 1 StVO). Với khoảng cách lớn hơn, bạn thấy được đoạn đường có trống hay không."
@@ -1250,7 +1250,7 @@
     "titel": "Hai xe rẽ trái"
    },
    "k1": {
-    "text": "Cả hai cùng lúc chạy và rẽ trước mặt xe kia – hai xe lướt qua nhau phía bên phải. Cách này tiết kiệm thời gian – nhưng xe rẽ trái kia che khuất tầm nhìn xe ngược chiều phía sau, vì vậy phải đặc biệt chú ý.",
+    "text": "Cả hai cùng lúc xuất phát và rẽ trước mặt xe kia – hai xe lướt qua nhau bên phải đối bên phải. Cách này tiết kiệm thời gian – nhưng xe rẽ trái kia che khuất tầm nhìn xe ngược chiều phía sau, vì vậy phải đặc biệt chú ý.",
     "frage": null,
     "regel": "§ 9 Abs. 4 StVO",
     "titel": "Rẽ phía trước nhau"
@@ -1285,7 +1285,7 @@
    "k1": {
     "text": "Cho xe lăn chậm và đánh hết lái sang trái – đến gần sát vỉa hè phía đối diện. Ngay trước khi dừng đã trả lái sang phải.",
     "frage": null,
-    "regel": "Bài kỹ năng cơ bản: quay đầu xe",
+    "regel": "Bài thi kỹ năng cơ bản: quay đầu xe",
     "titel": "Lần 1: tiến, hết lái trái"
    },
    "k2": {
@@ -1358,7 +1358,7 @@
     "titel": "Chỉ khi đường trống"
    },
    "k3": {
-    "text": "Nếu xe bị ùn phía sau vạch sang đường, đừng chạy lên vạch nếu sẽ phải chờ ở đó.",
+    "text": "Nếu xe bị ùn ở phía bên kia vạch sang đường, đừng chạy lên vạch nếu sẽ phải chờ ở đó.",
     "frage": null,
     "regel": "§ 26 Abs. 2 StVO",
     "titel": "Ghi nhớ"

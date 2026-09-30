@@ -28,7 +28,7 @@
     "text": "Li ser şerîda rastê bimîne û lezê biparêze. Sînyalê dîsa vemirîne.",
     "frage": null,
     "regel": "§ 2 Abs. 2 StVO (mecbûriya ajotina li rastê)",
-    "titel": "Li rastê bimîne"
+    "titel": "Bikeve şerîda rastê"
    },
    "k3": {
     "text": "Derketin 500 m berê carek din tê ragihandin. Ji niha ve heta ku dibe êdî pêşve derbas neke.",
@@ -130,7 +130,7 @@
       "Bi lez xwe bigihîne leza trafîkê",
       "Tavilê derbasî çepê bibe"
      ],
-     "erklaerung": "Bi lezeke nêzî ya trafîkê tu bi ewlehî tevlî dibî. Tevlîbûna pir hêdî yên din mecbûrî fren kirinê dike."
+     "erklaerung": "Bi lezeke nêzî ya trafîkê tu bi ewlehî tevlî dibî. Tevlîbûna pir hêdî yên din neçar dike ku fren bikin."
     },
     "regel": "§ 7a Abs. 2 StVO",
     "titel": "Xeta lezkirinê: lez bike"
@@ -151,7 +151,7 @@
     "titel": "Sînyala çepê"
    },
    "k3": {
-    "text": "Kamyon li rastê li pêş diçe, otomobîla sor dûrahiyeke mezin dihêle. Valahiya li pişt wê baş e: lezê li gorî wê bike û têra xwe dûrahiyê biparêze (qaîdeya hêsan: nîvê lezpîvê bi metreyan).",
+    "text": "Kamyon li rastê li pêş diçe, otomobîla sor dûrahiyeke mezin dihêle. Valahiya li pişt kamyonê baş e: lezê li gorî wê bike û têra xwe dûrahiyê biparêze (qaîdeya hêsan: nîvê lezpîvê bi metreyan).",
     "frage": {
      "text": "Ez li ku tevlî bibim?",
      "richtig": 1,
@@ -386,7 +386,7 @@
   }
  },
  "gruenpfeil": {
-  "kurz": "Pêşî raweste, paşê bi baldarî rastê – pêşîniya trafîka bi kesk heye",
+  "kurz": "Pêşî raweste, paşê bi baldarî bizivire rastê – pêşîniya trafîka bi kesk heye",
   "titel": "Tîra kesk li ber ronahiya sor",
   "kapitel": {
    "k0": {
@@ -397,7 +397,7 @@
      "optionen": [
       "Hêdî derbas bibe",
       "Li ser xeta rawestanê bi tevahî raweste",
-      "Tiştek, ew kesk nîşan dide"
+      "Tiştekî naxwaze, ew kesk nîşan dide"
      ],
      "erklaerung": "Piştî rawestanê zivirîna rastê li ber ronahiya sor destûrdayî ye – rawestan mecbûrî ye."
     },
@@ -438,7 +438,7 @@
     "titel": "Zivirîn"
    },
    "k5": {
-    "text": "Tîra kesk a ku di çiraya trafîkê de dibiriqe = dema kesk a taybet ji bo zivirînê. Tabloya metal a kesk = zivirîn tenê piştî rawestanê, bi baldariya herî mezin.",
+    "text": "Tîra kesk a ku di çiraya trafîkê de ronî dide = dema kesk a taybet ji bo zivirînê. Tabloya metal a kesk = zivirîn tenê piştî rawestanê, bi baldariya herî mezin.",
     "frage": null,
     "regel": "§ 37 Abs. 2 StVO",
     "titel": "Ji bîr neke"
@@ -698,23 +698,23 @@
   }
  },
  "quer_vor": {
-  "kurz": "Bi pêş ve bikeve cihê parkê yê berahî – bi vekirina berê",
+  "kurz": "Bi pêş ve bikeve cihê parkê yê berahî – pêşî hinekî ber bi çepê ve here",
   "titel": "Bi pêş ve park kirin (berahî)",
   "kapitel": {
    "k0": {
-    "text": "Li ser rêya navbera parkê hêdî nêzîkî cihê parkê bibe, sînyala rastê bide. Hinekî ber bi çepê ve veke, da ku kevan têkeve cihê parkê.",
+    "text": "Li ser rêya navbera parkê hêdî nêzîkî cihê parkê bibe, sînyala rastê bide. Hinekî ber bi çepê ve here, da ku kevan têkeve cihê parkê.",
     "frage": {
-     "text": "Çima berî bi pêş ve park kirinê ez vedikim?",
+     "text": "Çima berî bi pêş ve park kirinê ez pêşî hinekî ber bi çepê ve diçim?",
      "richtig": 0,
      "optionen": [
       "Da ku kevan têkeve cihê parkê yê teng",
       "Ji ber ku zûtir e",
       "Ne pêwîst e"
      ],
-     "erklaerung": "Dema bi pêş ve ajotinê tekerên paşîn kevanê ji hundir ve dibirin – vekirin nahêle ku paşiya erebeyê li erebeya cîran bikeve."
+     "erklaerung": "Dema bi pêş ve ajotinê tekerên paşîn kevanê ji hundir ve dibirin – ev çûyîna ber bi çepê nahêle ku paşiya erebeyê li erebeya cîran bikeve."
     },
     "regel": "§ 1 Abs. 2 StVO",
-    "titel": "Derbas bibe û veke"
+    "titel": "Derbas bibe û hinekî çepê here"
    },
    "k1": {
     "text": "Dema navîna cihê parkê nêzîkî li hemberî neynika derve be: direksiyonê bi tevahî ber bi rastê bizivirîne. Hay ji quncikên erebeyên cîran hebe (li ser milê rastê binêre).",
@@ -723,7 +723,7 @@
     "titel": "Bi tevahî bizivirîne"
    },
    "k2": {
-    "text": "Direksiyonê rast bike û di navîna cihê parkê de pêşve here, heta ku pêşiya erebeyê hema li dawiyê be. Divê mirov ji her du aliyan dakeve.",
+    "text": "Direksiyonê rast bike û di navîna cihê parkê de pêşve here, heta ku pêşiya erebeyê hema li dawiyê be. Divê mirov bikaribe ji her du aliyan dakeve.",
     "frage": {
      "text": "Paşê dema ji parkê derketinê kêmasî çi ye?",
      "richtig": 1,
@@ -842,7 +842,7 @@
   }
  },
  "rettungsgasse": {
-  "kurz": "Hê dema trafîk diqerime: yên herî çep diçin çepê, hemû yên din diçin rastê",
+  "kurz": "Hê dema trafîk asê dibe: yên herî çep diçin çepê, hemû yên din diçin rastê",
   "titel": "Koridora rizgarkirinê",
   "kapitel": {
    "k0": {
@@ -858,7 +858,7 @@
      "erklaerung": "§ 11 Abs. 2 StVO: bi leza meşê an rawestanê – tavilê."
     },
     "regel": "§ 11 Abs. 2 StVO",
-    "titel": "Trafîk diqerime"
+    "titel": "Trafîk asê dibe"
    },
    "k1": {
     "text": "Koridor di navbera şerîda herî çep û şerîda rasterast li rastê wê de çêdibe: yê ku li şerîda herî çep e diçe çepê – hemû yên din diçin rastê.",
@@ -876,7 +876,7 @@
     "titel": "Ber bi ku ve biçim?"
    },
    "k2": {
-    "text": "Ronahiya şîn û sîrena: tavilê rê veke. Raweste, êdî bi pêş û paş ve manevra neke – divê koridor rast û vala be.",
+    "text": "Ronahiya şîn û sîren: tavilê rê veke. Raweste, êdî bi pêş û paş ve manevra neke – divê koridor rast û vala be.",
     "frage": null,
     "regel": "§ 38 Abs. 1 · § 11 Abs. 2 StVO",
     "titel": "Wesayîta acîl tê"
@@ -938,7 +938,7 @@
     "titel": "Kî pêşî diçe?"
    },
    "k2": {
-    "text": "Erebeya şîn kes ji rastê tune û ew pêşî diçe.",
+    "text": "Li rastê erebeya şîn kes tune û ew pêşî diçe.",
     "frage": null,
     "regel": "§ 8 Abs. 1 StVO",
     "titel": "Şîn diçe"
@@ -956,7 +956,7 @@
     "titel": "Herî dawî Sor"
    },
    "k5": {
-    "text": "Yê ku divê li bendê bimîne, vê yekê bi leza nerm nîşan dide. Heke li her çar aliyan erebe hebin, ajokar bi hev re li hev dikin – yek dev ji mafê xwe berdide.",
+    "text": "Yê ku divê li bendê bimîne, vê yekê bi leza nerm nîşan dide. Heke li her çar aliyan erebe hebin, ajokar li hev tên – yek dev ji mafê xwe berdide.",
     "frage": null,
     "regel": "§ 8 Abs. 2 · § 11 Abs. 3 StVO",
     "titel": "Ji bîr neke"
@@ -964,7 +964,7 @@
   }
  },
  "schulbus": {
-  "kurz": "Pêşve derbas neke, leza meşê – ji bo trafîka hember jî – û li hêviya zarokan be",
+  "kurz": "Pêşve derbas neke, leza meşê – ji bo trafîka hember jî – û hesabê zarokan bike",
   "titel": "Otobusa dibistanê bi sînyalên hişyariyê",
   "kapitel": {
    "k0": {
@@ -1057,7 +1057,7 @@
      "text": "Li ser xeta rawestanê dîtin girtî ye. Niha çi?",
      "richtig": 1,
      "optionen": [
-      "Bi hêsanî bi rê bikeve",
+      "Rasterast bi rê bikeve",
       "Hêdîka pêşve here û dîsa binêre",
       "Qorne lêxe"
      ],
@@ -1077,7 +1077,7 @@
  "ueberholen": {
   "rf": {
    "falsch": "Tu niha xeletiya asayî dibînî. Binêre ka li ku xera dibe: dûrahî, qada sor, îşareta ronahiyê. Paşê hêjayî berhevkirina rasterast bi guhertoya rast e.",
-   "richtig": "Tu niha dibînî ka rast çawa ye. Heman rewş bi xeletiya ku di jiyana rojane de herî zêde çêdibe jî heye: pir nêzî pêş ketin û bê dîtina vekirî derketina ji şerîdê."
+   "richtig": "Tu niha dibînî ka rast çawa ye. Heman rewş bi xeletiya ku di jiyana rojane de herî zêde çêdibe jî heye: pir nêzîkî wesayîta pêşîn ajotin û bê dîtina vekirî derketina ji şerîdê."
   },
   "kurz": "Dîtinê kontrol bike, li bendê trafîka hember bimîne, bi lez pêşve derbas bike, bi dûrahî vegere şerîdê",
   "titel": "Pêşvederbaskirin li ser rêya navbajaran",
@@ -1192,7 +1192,7 @@
      "erklaerung": "Qaîdeya hêsan li derveyî bajêr: nîvê lezpîvê bi metreyan, yanî bi 60 km/h 30 m. Ev nêzîkî 2 çirkeyan e."
     },
     "regel": "§ 4 Abs. 1 StVO",
-    "titel": "Pir nêzî pêş ketiye"
+    "titel": "Pir nêzîk ajotiye"
    },
    "f_gegen": {
     "text": "Kamyonet fren dike û îşareta ronahiyê dide. Yê ku trafîka hember asteng dike, nabûya pêşve derbas bikira. Niha tenê vegereke xeternak a şerîdê dimîne.",
@@ -1358,7 +1358,7 @@
     "titel": "Tenê dema vala be"
    },
    "k3": {
-    "text": "Heke trafîk li pişt derbasgehê diqerime, nekeve ser xetên zebrayê, heke tu dê li wir li bendê bimînî.",
+    "text": "Heke trafîk li pişt derbasgehê asê dibe, nekeve ser xetên zebrayê, heke tu dê li wir li bendê bimînî.",
     "frage": null,
     "regel": "§ 26 Abs. 2 StVO",
     "titel": "Ji bîr neke"

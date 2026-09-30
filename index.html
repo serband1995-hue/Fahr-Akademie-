@@ -2093,7 +2093,7 @@ const I18N = {
     telefon:"Telefon numarası", pin:"PIN", anmelden:"Giriş yap",
     loginFehler:"Telefon numarası veya PIN hatalı", keineVerbindung:"Bağlantı yok — birazdan tekrar dene",
     abgehakt:"İşaretlendi",
-    abhaken:"Benim için işaretle",
+    abhaken:"Kendim için işaretle",
     abschnitte:"Bölümler",
     anfrageUnterwegs:"Talep gönderildi",
     bereichVon:"BÖLÜM {n} / {g}",
@@ -2105,19 +2105,19 @@ const I18N = {
     einOffen:"bir video açık",
     freierBereich:"Ücretsiz bölüm",
     hier:"burada",
-    keinKauf:"Uygulamada satın alma yok. Sürüş hocan açar.",
+    keinKauf:"Uygulamada satın alma yok. Direksiyon hocan açar.",
     kopieren:"Kopyala",
     kopiert:"Kopyalandı",
-    nichtsAbgehakt:"Henüz işaretlenmedi",
+    nichtsAbgehakt:"Henüz hiçbir şey işaretlenmedi",
     noch:"kaldı",
     nurDu:"Bunu sadece sen görürsün. Kendin işaretlersin — kimse seni değerlendirmez.",
     offenFuerAlle:"herkese açık",
-    offenOhne:"kilit olmadan açık",
+    offenOhne:"kilit açmaya gerek kalmadan açık",
     pinAnzeigen:"PIN'i göster",
     pinEingabe:"Dört haneli PIN'ini gir.",
     pinWarnung:"Uygulamaya dönmenin tek yolu budur. Şimdi bir fotoğrafını çek.",
     quittung:"{a} içinden {g} izledin.",
-    siegelSatz:"Bu bölüm mühürlü. Sürüş hocan senin için açar — genellikle aynı gün.",
+    siegelSatz:"Bu bölüm mühürlü. Direksiyon hocan senin için açar — genellikle aynı gün.",
     strecke:"Güzergâh",
     versiegelt:"mühürlü",
     videos:"Videolar",
@@ -2131,7 +2131,7 @@ const I18N = {
     start:"Home", lernpfad:"Overview", pruefung:"Examiners", verlauf:"Watched", konto:"Account",
     willkommen:"Welcome back", weiterSchauen:"CONTINUE WATCHING", alsNaechstes:"Up next",
     deineBereiche:"Your areas", videosGesehen:"of {gesamt} videos watched",
-    allesGesehen:"All watched — great!", allesGesehenSub:"Have another look at the exam routes.",
+    allesGesehen:"All watched — great!", allesGesehenSub:"Have another look at the test routes.",
     empfohlen:"RECOMMENDED FOR YOU", empfohlenSub:"Your next topic — tap to open",
     deinePruefung:"Your test", heute:"today", morgen:"tomorrow", inTagen:"in {n} days",
     deinZugang:"Your access", name:"Name", gueltigBis:"Access valid until", abmelden:"Sign out",
@@ -2182,14 +2182,14 @@ const I18N = {
     deineBereiche:"مجالاتك", videosGesehen:"من {gesamt} فيديو تمت مشاهدته",
     allesGesehen:"شاهدت كل شيء — ممتاز!", allesGesehenSub:"ألقِ نظرة أخرى على مسارات الامتحان.",
     empfohlen:"موصى به لك", empfohlenSub:"موضوعك التالي — اضغط للفتح",
-    deinePruefung:"امتحانك", heute:"اليوم", morgen:"غداً", inTagen:"خلال {n} أيام",
+    deinePruefung:"امتحانك", heute:"اليوم", morgen:"غداً", inTagen:"بعد {n} أيام",
     deinZugang:"حسابك", name:"الاسم", gueltigBis:"صالح حتى", abmelden:"تسجيل الخروج",
     sprache:"اللغة", spracheHinweis:"تبقى مقاطع الفيديو وأسماء المواضيع بالألمانية.",
     zurueck:"رجوع", zumStart:"الرئيسية", laedt:"جارٍ التحميل …",
     gesperrtKlasse:"الفئة {klasse} فقط — اطلب من مدرسة القيادة تفعيلها",
     gesperrtVollzugang:"يتطلب الوصول الكامل", vollzugangBanner:"{anzahl} فيديو في {bereich} بانتظارك. تحدث مع مدرسة القيادة لتفعيل الوصول الكامل.",
-    telefon:"رقم الهاتف", pin:"رقم التعريف", anmelden:"تسجيل الدخول",
-    loginFehler:"رقم الهاتف أو رقم التعريف غير صحيح", keineVerbindung:"لا يوجد اتصال — حاول مرة أخرى قريباً",
+    telefon:"رقم الهاتف", pin:"رمز PIN", anmelden:"تسجيل الدخول",
+    loginFehler:"رقم الهاتف أو رمز PIN غير صحيح", keineVerbindung:"لا يوجد اتصال — حاول مرة أخرى قريباً",
     abgehakt:"معلّمة",
     abhaken:"علّمها لنفسي",
     abschnitte:"المقاطع",
@@ -2203,7 +2203,7 @@ const I18N = {
     einOffen:"فيديو واحد متاح",
     freierBereich:"القسم المجاني",
     hier:"هنا",
-    keinKauf:"لا شراء داخل التطبيق. مدرّبك هو من يفتح.",
+    keinKauf:"لا شراء داخل التطبيق. مدرّبك هو من يفعّل الوصول.",
     kopieren:"نسخ",
     kopiert:"تم النسخ",
     nichtsAbgehakt:"لا شيء معلّم بعد",
@@ -2275,7 +2275,7 @@ Object.assign(I18N.tr, {
   regErrNetz:"Bağlantı yok — lütfen internetini kontrol et.",
   regFertig:"Tamam, {name}!", regMailGesendet:"Ayrıca e-postayla da gönderdik.",
   regAnmeldenMit:"{tel} + PIN ile giriş yap",
-  regPinKasten:"Şifre gerekmez. PIN'ini kaybedersen sürüş hocan yardımcı olur — kendi listesinde görebilir.",
+  regPinKasten:"Şifre gerekmez. PIN'ini kaybedersen direksiyon hocan yardımcı olur — kendi listesinde görebilir.",
   regLoslegen:"Hemen başla", regZumAnmelden:"Girişe git"
 });
 Object.assign(I18N.en, {
@@ -2284,7 +2284,7 @@ Object.assign(I18N.en, {
   startzugangVorteile:"✓ Vehicle & technology complete ✓ 1 test route to try",
   regTitel:"Your starter access", regTagline:"Ready in 30 seconds",
   regName:"Your name", regNamePh:"First and last name",
-  regTel:"Mobile number", regTelHinweis:"You'll use this to log in later.",
+  regTel:"Mobile number", regTelHinweis:"You'll use this to sign in later.",
   regMail:"Email", regMailHinweis:"We'll send your PIN there.",
   regKlasse:"Licence class",
   klB:"B (car)", klBE:"BE (car with trailer)", klA:"A (motorcycle)", klAM:"AM (scooter)", klC:"C (truck)", klCE:"CE (truck with trailer)",
@@ -2295,9 +2295,9 @@ Object.assign(I18N.en, {
   regErrMail:"That email doesn't look right.", regErrAllg:"That didn't work. Please try again.",
   regErrNetz:"No connection — please check your internet.",
   regFertig:"Done, {name}!", regMailGesendet:"We've also sent it to you by email.",
-  regAnmeldenMit:"Log in with {tel} + PIN",
+  regAnmeldenMit:"Sign in with {tel} + PIN",
   regPinKasten:"No password needed. If you lose your PIN, your instructor can help — they can see it in their overview.",
-  regLoslegen:"Get started", regZumAnmelden:"Go to login"
+  regLoslegen:"Get started", regZumAnmelden:"Go to sign-in"
 });
 Object.assign(I18N.ar, {
   tagline:"طريقك إلى الامتحان", pinVerbergen:"إخفاء الرمز",
@@ -2393,7 +2393,7 @@ Object.assign(I18N.ar, {
   videoFehler:"تعذّر تحميل الفيديو الآن. حاول مرة أخرى بعد قليل.",
   zuVieleVersuche:"محاولات خاطئة كثيرة. يرجى المحاولة بعد بضع دقائق.",
   geraeteSperre:"استُخدم هذا الحساب للتو على جهاز آخر. يرجى المحاولة بعد بضع دقائق.",
-  bitteBeidesEingeben:"يرجى إدخال رقم الهاتف والرمز السري",
+  bitteBeidesEingeben:"يرجى إدخال رقم الهاتف ورمز PIN",
   loginFehlgeschlagen:"فشل تسجيل الدخول. يرجى المحاولة مرة أخرى."
 });
 
@@ -2431,10 +2431,10 @@ Object.assign(I18N.tr, {
   zMoment:"Bir dakika …", zFehler:"Maalesef olmadı — lütfen tekrar dene.",
   pushFrage:"Yeni videolar açıldığında bildirim almak ister misin?", pushAn:"Etkinleştir", pushSpaeter:"Sonra",
   pushOk:"Bildirimler etkinleştirildi", pushNein:"İzin verilmedi",
-  suchPlatzhalter:"Ara, örn. döner kavşak", fAlle:"Tümü", fOffen:"Açık", fFertig:"Bitti",
+  suchPlatzhalter:"Ara, örn. dönel kavşak", fAlle:"Tümü", fOffen:"Açık", fFertig:"Bitti",
   nichtsGefunden:"„{q}“ için sonuç bulunamadı.", nichtsImFilter:"Bu filtrede bir şey yok.",
   vonVideos:"{n} videodan {g}", vonGesehen:"{n} videodan {g} izlendi", enthaelt:"İçerik:",
-  zahlungsinfo:"Ödeme bilgilerini sonra alırsın. Ödemeden sonra açılır.",
+  zahlungsinfo:"Ödeme bilgilerini sonra alırsın. Erişim ancak ödemeden sonra açılır.",
   themenIntro:"Bir videonun birden fazla konusu olabilir — uygun tüm videoları görmek için birine dokun.",
   keineThemen:"Henüz konu yok.", keineVideos:"Video bulunamadı.",
   mDashboard:"Genel bakış", mThemen:"# Konular", mNuetzliches:"Faydalı bilgiler", mRechtliches:"Yasal bilgiler", mVerkehr:"Trafiği anlamak",
@@ -2474,7 +2474,7 @@ Object.assign(I18N.ar, {
   zTitel:"قبل أن تبدأ", zSub:"يرجى التأكيد مرة واحدة، ثم يمكنك المتابعة.",
   zP1:"فيديوهات Fahr-Akademie هي <b>وسيلة تعلّم اختيارية ومكمّلة</b> لتدريبك على القيادة و<b>لا تحلّ محلّ</b> الدروس في مدرسة القيادة.",
   zP2:"<b>لا يوجد ضمان</b> بأنك ستنجح في امتحان رخصة القيادة بهذه الفيديوهات — فالنجاح يعتمد على عوامل كثيرة خارج سيطرتنا.",
-  zP3:"وصولك (رقم الهاتف + الرمز السري) <b>شخصي وغير قابل للتحويل</b>. إعطاؤه للآخرين يخالف شروط الاستخدام وقد يؤدي إلى <b>إيقاف وصولك فورًا</b> دون إشعار ودون استرداد.",
+  zP3:"وصولك (رقم الهاتف + رمز PIN) <b>شخصي وغير قابل للتحويل</b>. إعطاؤه للآخرين يخالف شروط الاستخدام وقد يؤدي إلى <b>إيقاف وصولك فورًا</b> دون إشعار ودون استرداد.",
   zCheck:"قرأت ذلك وأوافق.", zVerbindlich:"النص الألماني هو الملزم قانونيًا",
   zMoment:"لحظة …", zFehler:"للأسف لم ينجح ذلك — يرجى المحاولة مرة أخرى.",
   pushFrage:"هل تريد إشعارًا عند فتح فيديوهات جديدة؟", pushAn:"تفعيل", pushSpaeter:"لاحقًا",
@@ -2482,7 +2482,7 @@ Object.assign(I18N.ar, {
   suchPlatzhalter:"بحث، مثلًا دوّار", fAlle:"الكل", fOffen:"مفتوح", fFertig:"منتهٍ",
   nichtsGefunden:"لا نتائج لـ «{q}».", nichtsImFilter:"لا شيء في هذا الفلتر.",
   vonVideos:"{g} من {n} فيديو", vonGesehen:"شوهد {g} من {n}", enthaelt:"يتضمن:",
-  zahlungsinfo:"ستحصل بعدها على معلومات الدفع. يتم الفتح بعد الدفع.",
+  zahlungsinfo:"ستحصل بعدها على معلومات الدفع. لا يُفعَّل الوصول إلا بعد الدفع.",
   themenIntro:"قد يكون للفيديو عدة مواضيع — اضغط على موضوع لرؤية كل الفيديوهات المناسبة.",
   keineThemen:"لا توجد مواضيع بعد.", keineVideos:"لم يتم العثور على فيديوهات.",
   mDashboard:"نظرة عامة", mThemen:"# المواضيع", mNuetzliches:"معلومات مفيدة", mRechtliches:"معلومات قانونية", mVerkehr:"فهم حركة المرور",
@@ -2533,14 +2533,14 @@ const PRUEFUNGSTAG = {
       { titel:"Yanına alacakların", punkte:["Kimlik kartı veya pasaport — geçerli kimlik olmadan sınav yapılmaz.","Sürüş için gerekiyorsa gözlük veya lens.",
         "Rahat, düz ayakkabı — terlik veya yüksek topuk olmasın.","Gerisini (sınav talebi, eğitim belgesi) sürücü kursun getirir."] },
       { titel:"Sınav böyle geçer", punkte:["Buluşma yeri çoğunlukla sürücü kursu veya sınav merkezidir. 15 dakika erken gel.",
-        "Görevli kimliğini kontrol eder. Eğitmenin yanında, görevli arkada oturur.",
+        "Sınav görevlisi kimliğini kontrol eder. Direksiyon hocan yanında, sınav görevlisi arkada oturur.",
         "Hareketten önce: koltuk, aynalar, direksiyon ve kemer ayarı. Sık sık teknik sorular gelir; örneğin lastikler, aydınlatma veya sıvılar.",
-        "Sonra sürüş: şehir içi, şehir dışı ve çoğu zaman otoyol. Görevli nereye gideceğini zamanında söyler.",
+        "Sonra sürüş: şehir içi, şehir dışı ve çoğu zaman otoyol veya ekspres yol. Sınav görevlisi nereye gideceğini zamanında söyler.",
         "Arada genellikle iki temel sürüş görevi olur; örneğin park etme, geri dönme veya acil fren.",
         "Sonunda sonucu hemen araçta öğrenirsin. Geçtiysen ehliyetini veya BF17'de sınav belgesini alırsın."] },
       { titel:"Bir hata olursa", punkte:["Her hata „kaldın“ demek değildir. Genel izlenim değerlendirilir.",
         "Sakin kal ve odaklanarak devam et. Son hatayı değil, bir sonraki kavşağı düşün.",
-        "Hata görevlinin müdahale etmesini gerektirecek kadar tehlikeliyse sınav biter. Sürücü kursun yeni tarihi seninle planlar.",
+        "Hata, sınav görevlisinin müdahale etmesini gerektirecek kadar tehlikeliyse sınav biter. Sürücü kursun yeni tarihi seninle planlar.",
         "Birçok kişi ikinci denemede geçer — tam da ilkinde öğrendikleriyle."] },
       { titel:"Heyecana karşı", punkte:["Bir önceki akşam erken uyu. Sabah bir şeyler ye ve iç, önceden tuvalete git.",
         "Binmeden önce nefes egzersizi: 4 saniye nefes al, 4 saniye tut, 6 saniye ver. Üç ila beş kez tekrarla.",
@@ -2554,7 +2554,7 @@ const PRUEFUNGSTAG = {
       { titel:"How the test works", punkte:["You usually meet at the driving school or the test centre. Arrive 15 minutes early.",
         "The examiner checks your ID. Your instructor sits next to you, the examiner in the back.",
         "Before you set off: adjust seat, mirrors, steering wheel and seat belt. You are often asked about the car, e.g. tyres, lights or fluids.",
-        "Then the drive: in town, outside town and often on the motorway. The examiner tells you in good time where to go.",
+        "Then the drive: in town, outside town and often on the motorway or an expressway. The examiner tells you in good time where to go.",
         "In between there are usually two basic manoeuvres, e.g. parking, turning round or an emergency stop.",
         "At the end you get the result right away in the car. Passed? Then you receive your licence or, for BF17, the test certificate."] },
       { titel:"If you make a mistake", punkte:["Not every mistake means a fail. Your overall driving is assessed.",
@@ -2573,8 +2573,8 @@ const PRUEFUNGSTAG = {
       { titel:"هكذا يسير الامتحان", punkte:["مكان اللقاء غالبًا مدرسة القيادة أو مركز الامتحان. تعال قبل الموعد بـ15 دقيقة.",
         "يتحقق الممتحن من هويتك. يجلس المدرب بجانبك والممتحن في الخلف.",
         "قبل الانطلاق: اضبط المقعد والمرايا والمقود والحزام. غالبًا تُطرح أسئلة عن السيارة، مثل الإطارات أو الإضاءة أو السوائل.",
-        "ثم القيادة: داخل المدينة وخارجها وغالبًا على الطريق السريع. يخبرك الممتحن مسبقًا إلى أين تتجه.",
-        "بين ذلك توجد عادةً مهمتان أساسيتان، مثل الركن أو الالتفاف أو الكبح الطارئ.",
+        "ثم القيادة: داخل المدينة وخارجها وغالبًا على الطريق السريع أو طريق السيارات السريع. يخبرك الممتحن مسبقًا إلى أين تتجه.",
+        "بين ذلك تأتي عادةً مهمتان من مهام القيادة الأساسية، مثل الركن أو الالتفاف أو الفرملة الطارئة.",
         "في النهاية تعرف النتيجة فورًا في السيارة. نجحت؟ تحصل على رخصتك أو على شهادة الامتحان في BF17."] },
       { titel:"إذا حدث خطأ", punkte:["ليس كل خطأ يعني الرسوب. يُقيَّم انطباعك العام.",
         "ابقَ هادئًا وتابع القيادة بتركيز. لا تفكر في الخطأ الأخير بل في التقاطع التالي.",
@@ -2600,7 +2600,7 @@ function renderPruefungstagHtml(){
 /* 26.09.2026 (Stufe 4): Player-Texte fuer Vorschau, Kapitel, Weiterschauen, Fehlerstellen. */
 Object.assign(I18N.de, { vorschauHinweis:"Vorschau: die ersten {n} Sekunden", vorschauEnde:"Das war die Vorschau. Das ganze Video gibt's mit dem Vollzugang.",
   weiterBei:"Weiter bei {zeit}", kapitelTitel:"Kapitel", fehlerTitel:"Hier lag der Fehler", fehlerNormal:"Durchfallen gehört dazu — genau aus diesen Stellen lernst du am meisten." });
-Object.assign(I18N.tr, { vorschauHinweis:"Önizleme: ilk {n} saniye", vorschauEnde:"Önizleme bu kadar. Videonun tamamı tam erişimle.",
+Object.assign(I18N.tr, { vorschauHinweis:"Önizleme: ilk {n} saniye", vorschauEnde:"Önizleme bu kadar. Videonun tamamını tam erişimle izleyebilirsin.",
   weiterBei:"{zeit} noktasından devam et", kapitelTitel:"Bölümler", fehlerTitel:"Hata burada yapıldı", fehlerNormal:"Kalmak da işin parçası — en çok bu anlardan öğrenirsin." });
 Object.assign(I18N.en, { vorschauHinweis:"Preview: the first {n} seconds", vorschauEnde:"That was the preview. The full video comes with full access.",
   weiterBei:"Continue at {zeit}", kapitelTitel:"Chapters", fehlerTitel:"This is where it went wrong", fehlerNormal:"Failing is part of it — these moments teach you the most." });
@@ -2714,14 +2714,14 @@ Object.assign(I18N.en, {
   fNichtBestanden:"Not passed",
   bereichKeineVideos:"No videos in this area yet.",
   verlaufLeer:"Nothing watched yet — start with the overview!",
-  streckenLeer:"No exam routes added yet.",
+  streckenLeer:"No test routes added yet.",
   videoAnzahl1:"1 video",
   videoAnzahl:"{n} videos",
   werbeTitel:"Invite friends",
   werbeText:"Know someone who has their test coming up soon? Share your code — you both get a discount.",
   werbeKnopf:"Show my code",
   werbeTeilen:"Share link",
-  werbeNachricht:"I'm learning my exam routes with Fahr-Akademie — the real routes the examiner drives. With my code you get a discount: {link}",
+  werbeNachricht:"I'm learning my test routes with Fahr-Akademie — the real routes the examiner drives. With my code you get a discount: {link}",
   textKopiert:"Text copied — now paste it",
   textZumKopieren:"Text to copy",
   abbrechen:"Cancel",
@@ -2980,7 +2980,7 @@ Object.assign(I18N.es, {
   mRechtliches:"Información legal",
   mVerkehr:"Entender el tráfico",
   vvIntro:"Situaciones típicas como escena 3D: mírala, detenla y cámbiale el punto de vista. Cada escena explica paso a paso qué norma se aplica y por qué.",
-  vvKachel:"Nuevo: {n} situaciones de tráfico en 3D – mira, detén, entiende.",
+  vvKachel:"Nuevo: {n} situaciones de tráfico en 3D – mirar, pausar, entender.",
   vvKachelKnopf:"Ver escenas",
   vvKatInnerorts:"En ciudad",
   vvKatUeberland:"Carretera",
@@ -3003,7 +3003,7 @@ Object.assign(I18N.es, {
   vorschauHinweis:"Vista previa: los primeros {n} segundos",
   vorschauEnde:"Esa era la vista previa. El vídeo completo está en el acceso completo.",
   kapitelTitel:"Capítulos",
-  fehlerTitel:"Aquí estuvo el fallo",
+  fehlerTitel:"Aquí estaba el fallo",
   fehlerNormal:"Suspender forma parte del proceso — justo de estos momentos es de donde más aprendes.",
   bereichLeer:"Esta área aún está vacía.",
   fBestanden:"Aprobado",
@@ -3111,15 +3111,15 @@ const NUETZLICH_UE = {
  "tr": {
   "buko_punkte": {
    "titel": "Trafik cezaları kataloğu — ceza puanı sistemi",
-   "html": "<p>Reformdan bu yana Fahreignungsregister'da (Flensburg sürücü sicili) üç kademe var:</p><p><b>1 puan</b> — ağır ihlaller, ör. direksiyonda cep telefonu, basit geçiş üstünlüğü ihlali.<br><b>2 puan</b> — standart sürüş yasağı getiren çok ağır ihlaller, ör. tehlike yaratarak kırmızı ışıkta geçmek.<br><b>3 puan</b> — mahkemenin ehliyete el koyduğu suçlar, ör. 1,1 promilden itibaren alkollü araç kullanmak ya da ehliyete el konulan kaza yerinden kaçma.</p><p>Kabahat olarak 0,5 promilden itibaren alkol 2 puan getirir. 4–5 puanda uyarı yazısı, 6–7 puanda resmi ihtar gelir, <b>8 puandan</b> itibaren ehliyet gider.</p>"
+   "html": "<p>Reformdan bu yana Fahreignungsregister'da (Flensburg sürücü sicili) üç kademe var:</p><p><b>1 puan</b> — ağır ihlaller, ör. direksiyonda cep telefonu, basit ilk geçiş hakkı ihlali.<br><b>2 puan</b> — standart sürüş yasağı getiren çok ağır ihlaller, ör. tehlike yaratarak kırmızı ışıkta geçmek.<br><b>3 puan</b> — mahkemenin ehliyeti iptal ettiği suçlar, ör. 1,1 promilden itibaren alkollü araç kullanmak ya da ehliyet iptaliyle sonuçlanan kaza yerinden kaçma.</p><p>Kabahat olarak 0,5 promilden itibaren alkol 2 puan getirir. 4–5 puanda uyarı yazısı, 6–7 puanda resmi ihtar gelir, <b>8 puandan</b> itibaren ehliyet gider.</p>"
   },
   "buko_handy": {
    "titel": "Direksiyonda telefon yasağı — § 23 Abs. 1a StVO",
    "html": "<p>Sadece telefonla konuşmayı değil, elde tutularak kullanılan her elektronik cihazı kapsar — mahkeme kararlarına göre powerbank, hesap makinesi veya dokunmatik ekranlı elektronik sigara da buna dahildir.</p><p>Normal durumda <b>100 € + 1 puan</b>.<br>Başkalarını tehlikeye atarsan <b>150 € + 2 puan + 1 ay sürüş yasağı</b>.<br>Maddi hasar olursa <b>200 € + 2 puan + 1 ay sürüş yasağı</b>.</p><p>Cihazı elde tutmadan eller serbest sistemle kullanmak serbesttir.</p>"
   },
   "buko_rettungsgasse": {
-   "titel": "Emniyet şeridi — § 11 Abs. 2 StVO",
-   "html": "<p>Otoyollarda ve yerleşim yeri dışındaki çok şeritli yollarda trafik yürüme hızına düştüğü ya da durduğu anda zorunludur — polis geçmek istediğinde değil.</p><p>Şerit <b>en soldaki şerit ile hemen yanındaki şerit arasında</b> açılır. Yani kural olarak en soldakiler mümkün olduğunca sola, diğer herkes mümkün olduğunca sağa gider.</p><p>Emniyet şeridi açmayana: <b>200 € + 2 puan</b>. Bu yüzden acil durum araçları engellenir, tehlikeye atılır ya da maddi hasar oluşursa: <b>240 € ile 320 € arası, 2 puan ve 1 ay sürüş yasağı</b>.</p><p>Daha hızlı ilerlemek için şeridi yetkisiz kullanana: <b>240 €'dan başlayan ceza, 2 puan ve 1 ay sürüş yasağı</b>.</p>"
+   "titel": "Kurtarma koridoru — § 11 Abs. 2 StVO",
+   "html": "<p>Otoyollarda ve yerleşim yeri dışındaki çok şeritli yollarda trafik yürüme hızına düştüğü ya da durduğu anda zorunludur — polisin geçmek istemesini beklemeden.</p><p>Koridor <b>en soldaki şerit ile hemen yanındaki şerit arasında</b> açılır. Yani kural olarak en soldakiler mümkün olduğunca sola, diğer herkes mümkün olduğunca sağa gider.</p><p>Kurtarma koridoru açmayana: <b>200 € + 2 puan</b>. Bu nedenle acil durum araçları engellenir veya tehlikeye atılırsa ya da maddi hasar oluşursa: <b>240 € ile 320 € arası, 2 puan ve 1 ay sürüş yasağı</b>.</p><p>Daha hızlı ilerlemek için koridoru yetkisiz kullanana: <b>240 €'dan başlayan ceza, 2 puan ve 1 ay sürüş yasağı</b>.</p>"
   },
   "probezeit": {
    "titel": "Deneme süresi — temel kurallar",
@@ -3146,8 +3146,8 @@ const NUETZLICH_UE = {
    "html": "<p>3,5 t üzerindeki kamyonlar için otoyollarda ve yönleri ayrılmış ekspres yollarda tek tip <b>80 km/h</b> geçerlidir (§ 18 Abs. 5 StVO) — tam ağırlıktan bağımsız olarak ve bir tabela daha yüksek hıza izin verse bile.</p><p>Yerleşim yeri dışındaki normal şehirlerarası yollarda ise kademeli kural geçerlidir: 7,5 t'ye kadar 80 km/h serbesttir, üzerinde sadece <b>60 km/h</b> — bu, orada çok şeritli yollarda da geçerlidir.</p>"
   },
   "Vorfahrt_Paragraph8_StVO.pdf": {
-   "titel": "Geçiş üstünlüğü — § 8 StVO",
-   "meta": "Sağdan gelen önceliği, öncelik levhaları, dönel kavşak · 30.01.2026 itibarıyla"
+   "titel": "İlk geçiş hakkı — § 8 StVO",
+   "meta": "Sağdan gelenin önceliği, ilk geçiş hakkı levhaları, dönel kavşak · 30.01.2026 itibarıyla"
   },
   "Geschwindigkeit_Paragraph3_StVO.pdf": {
    "titel": "Hız — § 3 StVO",
@@ -3167,7 +3167,7 @@ const NUETZLICH_UE = {
   },
   "Autobahn_Paragraph18_StVO.pdf": {
    "titel": "Otoyollar ve ekspres yollar — § 18 StVO",
-   "meta": "Trafiğe katılma, çıkış, ana yolun önceliği · 30.01.2026 itibarıyla"
+   "meta": "Trafiğe katılma, çıkış, ana yolun ilk geçiş hakkı · 30.01.2026 itibarıyla"
   },
   "Beleuchtung_Paragraph17_StVO.pdf": {
    "titel": "Aydınlatma — § 17 StVO",
@@ -3205,7 +3205,7 @@ const NUETZLICH_UE = {
   },
   "lkw_lenkzeiten": {
    "titel": "Driving and rest times — the key truck rule",
-   "html": "<p>Governed by EU Regulation (EG) Nr. 561/2006, checked via the digital tachograph. The key values:</p><p><b>Daily driving time:</b> max. 9 hours, can be extended to 10 hours twice a week.<br><b>Break:</b> after 4.5 hours of driving at the latest, a 45-minute break, can be split into 15 + 30 minutes (in this order).<br><b>Daily rest period:</b> at least 11 hours, can be reduced to 9 hours three times a week.<br><b>Weekly driving time:</b> max. 56 hours, max. 90 hours over two weeks combined.<br><b>Weekly rest period:</b> at least 45 hours, can be reduced to 24 hours every second week with compensation within 3 weeks.</p>"
+   "html": "<p>Governed by EU Regulation (EC) No 561/2006, checked via the digital tachograph. The key values:</p><p><b>Daily driving time:</b> max. 9 hours, can be extended to 10 hours twice a week.<br><b>Break:</b> after 4.5 hours of driving at the latest, a 45-minute break, can be split into 15 + 30 minutes (in this order).<br><b>Daily rest period:</b> at least 11 hours, can be reduced to 9 hours three times a week.<br><b>Weekly driving time:</b> max. 56 hours, max. 90 hours over two weeks combined.<br><b>Weekly rest period:</b> at least 45 hours, can be reduced to 24 hours every second week with compensation within 3 weeks.</p>"
   },
   "lkw_ladung": {
    "titel": "Load securing — the basic duty",
@@ -3333,19 +3333,19 @@ const NUETZLICH_UE = {
  "es": {
   "buko_punkte": {
    "titel": "Catálogo de multas — el sistema de puntos",
-   "html": "<p>Desde la reforma hay tres niveles en el Fahreignungsregister (registro de conductores de Flensburg):</p><p><b>1 punto</b> — infracciones graves, p. ej. el móvil al volante, una infracción simple de prioridad.<br><b>2 puntos</b> — infracciones muy graves con prohibición de conducir estándar, p. ej. saltarse un semáforo en rojo poniendo en peligro a otros.<br><b>3 puntos</b> — delitos en los que el tribunal retira el permiso de conducir, p. ej. conducir ebrio a partir de 1,1 por mil o darse a la fuga tras un accidente con retirada del permiso.</p><p>El alcohol a partir de 0,5 por mil como infracción administrativa supone 2 puntos. Con 4–5 puntos recibes un aviso, con 6–7 puntos una advertencia, y a partir de <b>8 puntos</b> pierdes el permiso de conducir.</p>"
+   "html": "<p>Desde la reforma hay tres niveles en el Fahreignungsregister (registro de conductores de Flensburg):</p><p><b>1 punto</b> — infracciones graves, p. ej. el móvil al volante, una infracción simple de preferencia.<br><b>2 puntos</b> — infracciones muy graves con prohibición de conducir estándar, p. ej. saltarse un semáforo en rojo poniendo en peligro a otros.<br><b>3 puntos</b> — delitos en los que el tribunal retira el permiso de conducir, p. ej. conducir ebrio a partir de 1,1 por mil o darse a la fuga tras un accidente con retirada del permiso.</p><p>El alcohol a partir de 0,5 por mil como infracción administrativa supone 2 puntos. Con 4–5 puntos recibes un aviso, con 6–7 puntos una advertencia, y a partir de <b>8 puntos</b> pierdes el permiso de conducir.</p>"
   },
   "buko_handy": {
    "titel": "Prohibición del móvil al volante — § 23 Abs. 1a StVO",
    "html": "<p>No solo afecta a las llamadas, sino a cualquier aparato electrónico que se sostenga en la mano y se utilice — según la jurisprudencia, también cuentan las baterías externas, las calculadoras o un cigarrillo electrónico con pantalla táctil.</p><p><b>100 € + 1 punto</b> en el caso normal.<br><b>150 € + 2 puntos + 1 mes de prohibición de conducir</b> si pones en peligro a otros.<br><b>200 € + 2 puntos + 1 mes de prohibición de conducir</b> si hay daños materiales.</p><p>Sigue estando permitido usarlo con un sistema manos libres, sin sostener el aparato en la mano.</p>"
   },
   "buko_rettungsgasse": {
-   "titel": "Carril de emergencia — § 11 Abs. 2 StVO",
-   "html": "<p>Obligatorio en autopistas y carreteras de varios carriles fuera de poblado en cuanto el tráfico baja a paso de peatón o se detiene — no solo cuando la policía quiere pasar.</p><p>Se forma <b>entre el carril situado más a la izquierda y el carril contiguo</b>. Es decir, por norma los del carril de más a la izquierda se apartan lo más posible a la izquierda, y todos los demás lo más posible a la derecha.</p><p>Quien no forma el carril de emergencia: <b>200 € + 2 puntos</b>. Si por ello se obstaculiza o pone en peligro a los vehículos de emergencia, o hay daños materiales: <b>de 240 € a 320 €, 2 puntos y 1 mes de prohibición de conducir</b>.</p><p>Quien circula por el carril sin autorización para avanzar más rápido: <b>desde 240 €, 2 puntos y 1 mes de prohibición de conducir</b>.</p>"
+   "titel": "Corredor de emergencia — § 11 Abs. 2 StVO",
+   "html": "<p>Obligatorio en autopistas y carreteras de varios carriles fuera de poblado en cuanto el tráfico baja a paso de peatón o se detiene — no solo cuando la policía quiere pasar.</p><p>Se forma <b>entre el carril situado más a la izquierda y el carril contiguo</b>. Es decir, por norma los del carril de más a la izquierda se apartan lo más posible a la izquierda, y todos los demás lo más posible a la derecha.</p><p>Quien no forma el corredor de emergencia: <b>200 € + 2 puntos</b>. Si por ello se obstaculiza o pone en peligro a los vehículos de emergencia, o hay daños materiales: <b>de 240 € a 320 €, 2 puntos y 1 mes de prohibición de conducir</b>.</p><p>Quien circula por el corredor sin autorización para avanzar más rápido: <b>desde 240 €, 2 puntos y 1 mes de prohibición de conducir</b>.</p>"
   },
   "probezeit": {
    "titel": "Período de prueba — las reglas básicas",
-   "html": "<p>El período de prueba dura normalmente <b>2 años</b> desde que apruebas el examen, para todas las clases de permiso salvo clases especiales como T/L.</p><p>Con una <b>infracción A</b> (grave, p. ej. semáforo en rojo, alcohol) o <b>dos infracciones B</b> (menos graves): el período de prueba se amplía una sola vez a <b>4 años</b>, más un curso de reciclaje obligatorio (ASF, normalmente 300–600 €).</p><p>Siguiente infracción A o dos infracciones B más después: advertencia por escrito + recomendación de asesoramiento voluntario en psicología del tráfico. Si después se suma otra infracción A (o dos B): <b>pierdes el permiso de conducir.</b></p>"
+   "html": "<p>El período de prueba dura normalmente <b>2 años</b> desde que apruebas el examen, para todas las clases de permiso salvo clases especiales como T/L.</p><p>Con una <b>infracción A</b> (grave, p. ej. semáforo en rojo, alcohol) o <b>dos infracciones B</b> (menos graves): el período de prueba se amplía una sola vez a <b>4 años</b>, más un curso de reciclaje obligatorio (ASF, normalmente 300–600 €).</p><p>Otra infracción A o dos infracciones B más después: advertencia por escrito + recomendación de asesoramiento voluntario en psicología del tráfico. Si después se suma otra infracción A (o dos B): <b>pierdes el permiso de conducir.</b></p>"
   },
   "probezeit_alkohol": {
    "titel": "Prohibición de alcohol en el período de prueba — § 24c StVG",
@@ -3368,8 +3368,8 @@ const NUETZLICH_UE = {
    "html": "<p>Para camiones de más de 3,5 t rige en autopistas y autovías con calzadas separadas un límite uniforme de <b>80 km/h</b> (§ 18 Abs. 5 StVO) — sin importar el peso exacto, ni si una señal permite una velocidad mayor.</p><p>En cambio, en las carreteras convencionales fuera de poblado rige la regla escalonada: hasta 7,5 t se permiten 80 km/h, por encima solo <b>60 km/h</b> — y esto también vale allí en tramos de varios carriles.</p>"
   },
   "Vorfahrt_Paragraph8_StVO.pdf": {
-   "titel": "Prioridad de paso — § 8 StVO",
-   "meta": "Prioridad a la derecha, señales de prioridad, rotondas · Versión 30.01.2026"
+   "titel": "Preferencia de paso — § 8 StVO",
+   "meta": "Prioridad a la derecha, señales de preferencia, rotondas · Versión 30.01.2026"
   },
   "Geschwindigkeit_Paragraph3_StVO.pdf": {
    "titel": "Velocidad — § 3 StVO",
@@ -3389,7 +3389,7 @@ const NUETZLICH_UE = {
   },
   "Autobahn_Paragraph18_StVO.pdf": {
    "titel": "Autopistas y vías rápidas — § 18 StVO",
-   "meta": "Incorporación, salida, prioridad de la calzada principal · Versión 30.01.2026"
+   "meta": "Incorporación, salida, preferencia de la calzada principal · Versión 30.01.2026"
   },
   "Beleuchtung_Paragraph17_StVO.pdf": {
    "titel": "Alumbrado — § 17 StVO",
@@ -3584,7 +3584,7 @@ I18N.ru = Object.assign(I18N.ru || {}, {
   "mPruefungstag":"День экзамена",
   "iosHinweis":"Совет для iPhone: всегда открывай академию через значок на главном экране. Safari и значок считаются двумя разными устройствами — при переключении произойдёт выход из аккаунта.",
   "vorschauHinweis":"Предпросмотр: первые {n} секунд",
-  "vorschauEnde":"Это был предпросмотр. Всё видео доступно с полным доступом.",
+  "vorschauEnde":"Это был предпросмотр. Всё видео целиком — с полным доступом.",
   "kapitelTitel":"Главы",
   "fehlerTitel":"Вот где была ошибка",
   "fehlerNormal":"Провалы бывают у всех — именно на таких моментах учишься больше всего.",
@@ -3653,18 +3653,18 @@ NUETZLICH_UE.ru = {
   "buko_punkte":{"titel":"Каталог штрафов — система баллов","html":"<p>После реформы в реестре пригодности к вождению (Фленсбург) есть три ступени:</p><p><b>1 балл</b> — серьёзные нарушения, напр. телефон за рулём, простое нарушение правил преимущества.<br><b>2 балла</b> — очень серьёзные нарушения, за которые обычно назначают запрет на вождение, напр. проезд на красный с созданием опасности.<br><b>3 балла</b> — уголовные преступления, за которые суд лишает прав, напр. вождение в состоянии опьянения от 1,1 промилле или бегство с места ДТП с лишением прав.</p><p>Алкоголь от 0,5 промилле как административное правонарушение — это 2 балла. При 4–5 баллах выносится напоминание, при 6–7 баллах — предупреждение, а с <b>8 баллов</b> права отбирают.</p>"},
   "buko_handy":{"titel":"Запрет на телефон за рулём — § 23 абз. 1a StVO","html":"<p>Касается не только телефонных разговоров, а любого электронного устройства, которое держат в руке и которым пользуются, — по судебной практике сюда относятся и пауэрбанки, калькуляторы или электронная сигарета с сенсорным экраном.</p><p><b>100 € + 1 балл</b> в обычном случае.<br><b>150 € + 2 балла + 1 месяц запрета на вождение</b>, если создана опасность для других.<br><b>200 € + 2 балла + 1 месяц запрета на вождение</b>, если причинён материальный ущерб.</p><p>Разрешено пользоваться устройством через громкую связь, не держа его в руке.</p>"},
   "buko_rettungsgasse":{"titel":"Коридор для экстренных служб — § 11 абз. 2 StVO","html":"<p>Обязателен на автобанах и многополосных дорогах вне населённых пунктов, как только поток замедляется до скорости пешехода или останавливается, — а не только тогда, когда полиция хочет проехать.</p><p>Коридор образуется <b>между крайней левой полосой и полосой рядом с ней</b>. То есть те, кто едет по крайней левой полосе, смещаются как можно левее, а все остальные — как можно правее.</p><p>Кто не освобождает коридор: <b>200 € + 2 балла</b>. Если из-за этого спецтранспорту создана помеха или опасность либо причинён материальный ущерб: <b>от 240 € до 320 €, 2 балла и 1 месяц запрета на вождение</b>.</p><p>Кто без права едет по коридору, чтобы быстрее продвинуться: <b>от 240 €, 2 балла и 1 месяц запрета на вождение</b>.</p>"},
-  "probezeit":{"titel":"Испытательный срок — основные правила","html":"<p>Испытательный срок обычно длится <b>2 года</b> с момента сдачи экзамена — для всех категорий прав, кроме особых, таких как T/L.</p><p>При <b>нарушении категории A</b> (грубое, напр. проезд на красный, алкоголь) или <b>двух нарушениях категории B</b> (менее грубых) испытательный срок однократно продлевается до <b>4 лет</b>, плюс обязательный курс повышения квалификации (ASF, обычно 300–600 €).</p><p>Следующее нарушение категории A или ещё два нарушения категории B: письменное предупреждение + рекомендация пройти добровольную консультацию у транспортного психолога. Если после этого добавится ещё одно нарушение A (или два B): <b>права отбирают.</b></p>"},
-  "probezeit_alkohol":{"titel":"Запрет алкоголя в испытательный срок — § 24c StVG","html":"<p>Для начинающих водителей на испытательном сроке действует <b>0,0 промилле</b> без исключений — в отличие от предела 0,5 промилле для водителей вне испытательного срока.</p><p>Нарушение сразу считается грубым нарушением категории A: продление испытательного срока и курс повышения квалификации обязательны, независимо от измеренного количества.</p><p>Это правило действует также для всех водителей младше 21 года, даже после окончания испытательного срока.</p>"},
+  "probezeit":{"titel":"Испытательный срок — основные правила","html":"<p>Испытательный срок обычно длится <b>2 года</b> с момента сдачи экзамена — для всех категорий прав, кроме особых, таких как T/L.</p><p>При <b>нарушении категории A</b> (грубое, напр. проезд на красный, алкоголь) или <b>двух нарушениях категории B</b> (менее грубых) испытательный срок однократно продлевается до <b>4 лет</b>, плюс обязательный корректирующий семинар (ASF, обычно 300–600 €).</p><p>Следующее нарушение категории A или ещё два нарушения категории B: письменное предупреждение + рекомендация пройти добровольную консультацию у транспортного психолога. Если после этого добавится ещё одно нарушение A (или два B): <b>права отбирают.</b></p>"},
+  "probezeit_alkohol":{"titel":"Запрет алкоголя в испытательный срок — § 24c StVG","html":"<p>Для начинающих водителей на испытательном сроке действует <b>0,0 промилле</b> без исключений — в отличие от предела 0,5 промилле для водителей вне испытательного срока.</p><p>Нарушение сразу считается грубым нарушением категории A: продление испытательного срока и корректирующий семинар обязательны, независимо от измеренного количества.</p><p>Это правило действует также для всех водителей младше 21 года, даже после окончания испытательного срока.</p>"},
   "lkw_lenkzeiten":{"titel":"Время управления и отдыха — главное правило для грузовиков","html":"<p>Регулируется Регламентом ЕС (EG) № 561/2006, контроль — через цифровой тахограф. Основные значения:</p><p><b>Ежедневное время управления:</b> макс. 9 часов, два раза в неделю можно продлить до 10 часов.<br><b>Перерыв:</b> не позднее чем через 4,5 часа управления — перерыв 45 минут, можно разделить на 15 + 30 минут (именно в этом порядке).<br><b>Ежедневный отдых:</b> минимум 11 часов, три раза в неделю можно сократить до 9 часов.<br><b>Еженедельное время управления:</b> макс. 56 часов, за две недели вместе — макс. 90 часов.<br><b>Еженедельный отдых:</b> минимум 45 часов, каждую вторую неделю можно сократить до 24 часов с компенсацией в течение 3 недель.</p>"},
   "lkw_ladung":{"titel":"Крепление груза — основная обязанность","html":"<p>§ 22 StVO требует, чтобы груз был уложен и закреплён так, чтобы даже при экстренном торможении, резком манёвре объезда или на плохой дороге он <b>не мог сдвинуться, опрокинуться или упасть</b>.</p><p>Ответственность несут и водитель, и грузоотправитель — при плохом креплении наказать могут обоих. Обычные средства — стяжные ремни, распорные балки и противоскользящие коврики.</p>"},
   "lkw_tacho":{"titel":"Цифровой тахограф","html":"<p>Автоматически записывает время управления, работы и отдыха через личную карту водителя. Обязателен практически во всех новых грузовиках свыше 3,5 т в коммерческих перевозках.</p><p>С 31.12.2024 при проверках нужно предъявлять записи за текущий день и за <b>предыдущие 56 дней</b> (раньше 28 дней) — Федеральное ведомство логистики и мобильности (BALM, раньше BAG) и полиция получают к ним прямой доступ.</p>"},
-  "lkw_tempo80":{"titel":"Особое ограничение 80 на автобане","html":"<p>Для грузовиков свыше 3,5 т на автобанах и автомагистралях с разделёнными направлениями действует единое ограничение <b>80 км/ч</b> (§ 18 абз. 5 StVO) — независимо от точной массы и независимо от того, разрешает ли знак более высокую скорость.</p><p>На обычных загородных дорогах вне населённых пунктов действует ступенчатое правило: до 7,5 т разрешено 80 км/ч, свыше — только <b>60 км/ч</b>, и это действует там даже на многополосных участках.</p>"},
+  "lkw_tempo80":{"titel":"Особое ограничение 80 на автобане","html":"<p>Для грузовиков свыше 3,5 т на автобанах и дорогах для автомобилей с разделёнными направлениями действует единое ограничение <b>80 км/ч</b> (§ 18 абз. 5 StVO) — независимо от точной массы и независимо от того, разрешает ли знак более высокую скорость.</p><p>На обычных загородных дорогах вне населённых пунктов действует ступенчатое правило: до 7,5 т разрешено 80 км/ч, свыше — только <b>60 км/ч</b>, и это действует там даже на многополосных участках.</p>"},
   "Vorfahrt_Paragraph8_StVO.pdf":{"titel":"Преимущество — § 8 StVO","meta":"Помеха справа, знаки приоритета, круговое движение · по состоянию на 30.01.2026"},
   "Geschwindigkeit_Paragraph3_StVO.pdf":{"titel":"Скорость — § 3 StVO","meta":"Скорость по обстановке, видимость в тумане · по состоянию на 30.01.2026"},
   "Abstand_Paragraph4_StVO.pdf":{"titel":"Дистанция — § 4 StVO","meta":"«Половина спидометра», безопасная дистанция · по состоянию на 30.01.2026"},
   "Ueberholen_Paragraph5_StVO.pdf":{"titel":"Обгон — § 5 StVO","meta":"Боковой интервал, предупреждение, возвращение в полосу · по состоянию на 30.01.2026"},
   "Abbiegen_Paragraph9_StVO.pdf":{"titel":"Поворот, разворот, движение задним ходом — § 9 StVO","meta":"Выбор полосы, взгляд через плечо, правило для поворачивающих налево · по состоянию на 30.01.2026"},
-  "Autobahn_Paragraph18_StVO.pdf":{"titel":"Автобаны и автомагистрали — § 18 StVO","meta":"Перестроение в поток, съезд, преимущество основной дороги · по состоянию на 30.01.2026"},
+  "Autobahn_Paragraph18_StVO.pdf":{"titel":"Автобаны и дороги для автомобилей — § 18 StVO","meta":"Перестроение в поток, съезд, преимущество основной дороги · по состоянию на 30.01.2026"},
   "Beleuchtung_Paragraph17_StVO.pdf":{"titel":"Освещение — § 17 StVO","meta":"Ближний свет, дальний свет, когда какой свет обязателен · по состоянию на 30.01.2026"},
   "Pflichten_Fahrzeugfuehrer_Paragraph23_StVO.pdf":{"titel":"Обязанности водителя — § 23 StVO","meta":"Обзор, состояние, номерной знак, освещение днём · по состоянию на 30.01.2026"},
   "Fussgaengerueberwege_Paragraph26_StVO.pdf":{"titel":"Пешеходные переходы — § 26 StVO","meta":"«Зебра», обязанность уступить дорогу, запрет обгона · по состоянию на 30.01.2026"}
@@ -3908,7 +3908,7 @@ I18N.sr = Object.assign(I18N.sr || {}, {
   "adminLink":"Administracija",
   "spracheWaehlen":"Izaberi jezik"
 });
-PRUEFUNGSTAG.sr = {"einleitung":"Trema je normalna. Ko zna šta ga čeka, vozi mirnije. Ovde piše korak po korak kako dan izgleda.","abschnitte":[{"titel":"Šta nosiš sa sobom","punkte":["Ličnu kartu ili pasoš — bez važećeg dokumenta ispit se ne održava.","Naočare ili kontaktna sočiva, ako su ti potrebni za vožnju.","Udobne, ravne cipele — bez japanki ili visokih potpetica.","Ostalo (nalog za ispit, potvrdu o obuci) ima tvoja auto-škola."]},{"titel":"Ovako teče ispit","punkte":["Mesto sastanka je obično auto-škola ili ispitni centar. Dođi 15 minuta ranije.","Ispitivač proverava tvoj lični dokument. Tvoj instruktor sedi pored tebe, ispitivač pozadi.","Pre polaska: podesi sedište, retrovizore, volan i pojas. Često dolaze pitanja o tehnici, na primer o gumama, svetlima ili tečnostima.","Zatim vožnja: u naselju, van naselja i često autoputem ili brzim putem. Ispitivač ti na vreme kaže kuda ideš.","Usput obično dolaze dva osnovna zadatka vožnje, na primer parkiranje, polukružno okretanje ili kočenje u opasnosti.","Na kraju rezultat dobijaš odmah u autu. Položio si? Onda dobijaš vozačku dozvolu, a kod BF17 potvrdu o položenom ispitu."]},{"titel":"Kad napraviš grešku","punkte":["Nije svaka greška „nije položio“. Ocenjuje se tvoj ukupni utisak.","Ostani miran i nastavi skoncentrisano. Ne razmišljaj o poslednjoj grešci, već o sledećoj raskrsnici.","Ako je greška toliko opasna da ispitivač mora da interveniše, ispit se prekida. Onda auto-škola s tobom zakazuje sledeći termin.","Mnogi polože iz drugog pokušaja — upravo sa onim što su naučili u prvom."]},{"titel":"Protiv treme","punkte":["Veče pre: lezi rano. Ujutru: pojedi i popij nešto, pre toga idi u toalet.","Vežba disanja pre nego što sedneš u auto: 4 sekunde udahni, 4 sekunde zadrži, 6 sekundi izdahni. Ponovi tri do pet puta.","Dan pre ispita još jednom pogledaj rute svog ispitnog područja — ne sve, samo teška mesta.","To si već mnogo puta radio na časovima vožnje. Ispit je vožnja kao i svaka druga."]}]};
+PRUEFUNGSTAG.sr = {"einleitung":"Trema je normalna. Ko zna šta ga čeka, vozi mirnije. Ovde piše korak po korak kako dan izgleda.","abschnitte":[{"titel":"Šta nosiš sa sobom","punkte":["Ličnu kartu ili pasoš — bez važećeg dokumenta ispit se ne održava.","Naočare ili kontaktna sočiva, ako su ti potrebni za vožnju.","Udobne, ravne cipele — bez japanki ili visokih potpetica.","Ostalo (nalog za ispit, potvrdu o obuci) ima tvoja auto-škola."]},{"titel":"Ovako teče ispit","punkte":["Mesto sastanka je obično auto-škola ili ispitni centar. Dođi 15 minuta ranije.","Ispitivač proverava tvoj lični dokument. Tvoj instruktor sedi pored tebe, ispitivač pozadi.","Pre polaska: podesi sedište, retrovizore, volan i pojas. Često dolaze pitanja o tehnici, na primer o gumama, svetlima ili tečnostima.","Zatim vožnja: u naselju, van naselja i često autoputem ili brzim putem. Ispitivač ti na vreme kaže kuda ideš.","Usput obično dolaze dva osnovna zadatka vožnje, na primer parkiranje, polukružno okretanje ili kočenje u opasnosti.","Na kraju rezultat dobijaš odmah u autu. Položio si? Onda dobijaš vozačku dozvolu, a kod BF17 potvrdu o položenom ispitu."]},{"titel":"Kad napraviš grešku","punkte":["Ne znači svaka greška „nije položio“. Ocenjuje se ukupan utisak tvoje vožnje.","Ostani miran i nastavi skoncentrisano. Ne razmišljaj o poslednjoj grešci, već o sledećoj raskrsnici.","Ako je greška toliko opasna da ispitivač mora da interveniše, ispit se prekida. Onda auto-škola s tobom zakazuje sledeći termin.","Mnogi polože iz drugog pokušaja — upravo sa onim što su naučili u prvom."]},{"titel":"Protiv treme","punkte":["Veče pre: lezi rano. Ujutru: pojedi i popij nešto, pre toga idi u toalet.","Vežba disanja pre nego što sedneš u auto: 4 sekunde udahni, 4 sekunde zadrži, 6 sekundi izdahni. Ponovi tri do pet puta.","Dan pre ispita još jednom pogledaj rute svog ispitnog područja — ne sve, samo teška mesta.","To si već mnogo puta radio na časovima vožnje. Ispit je vožnja kao i svaka druga."]}]};
 NUETZLICH_UE.sr = {
   "buko_punkte":{"titel":"Katalog kazni — sistem kaznenih poena","html":"<p>Od reforme postoje tri stepena u registru podobnosti za vožnju (Flensburg):</p><p><b>1 poen</b> — teški prekršaji, npr. mobilni telefon za volanom, običan prekršaj prvenstva prolaza.<br><b>2 poena</b> — veoma teški prekršaji uz redovnu zabranu upravljanja vozilom, npr. prolazak na crveno uz ugrožavanje.<br><b>3 poena</b> — krivična dela kod kojih sud oduzima vozačku dozvolu, npr. vožnja u pijanom stanju od 1,1 promila ili bekstvo s mesta nesreće uz oduzimanje dozvole.</p><p>Alkohol od 0,5 promila kao prekršaj donosi 2 poena. Sa 4–5 poena dobijaš opomenu, sa 6–7 poena upozorenje, a od <b>8 poena</b> vozačka dozvola se oduzima.</p>"},
   "buko_handy":{"titel":"Zabrana mobilnog telefona za volanom — § 23 st. 1a StVO","html":"<p>Ne odnosi se samo na telefoniranje, već na svaki elektronski uređaj koji se drži u ruci i koristi — prema sudskoj praksi tu spadaju i punjive baterije (powerbank), digitroni ili elektronska cigareta sa ekranom na dodir.</p><p><b>100 € + 1 poen</b> u običnom slučaju.<br><b>150 € + 2 poena + 1 mesec zabrane upravljanja vozilom</b> ako ugroziš druge.<br><b>200 € + 2 poena + 1 mesec zabrane upravljanja vozilom</b> ako dođe do materijalne štete.</p><p>Dozvoljeno je korišćenje preko uređaja za slobodne ruke (hands-free), bez držanja uređaja u ruci.</p>"},
@@ -4103,8 +4103,8 @@ I18N.ckb = Object.assign(I18N.ckb || {}, {
   "navLabel":"مێنیوی سەرەکی",
   "mPruefungstag":"ڕۆژی تاقیکردنەوە",
   "iosHinweis":"ئامۆژگاری بۆ iPhone: هەمیشە ئەکادیمییەکە لە ڕێگەی ئایکۆنەکەی سەر شاشەی سەرەکییەوە بکەرەوە. Safari و ئایکۆنەکە وەک دوو ئامێری جیاواز هەژمار دەکرێن — ئەگەر لە نێوانیاندا بگۆڕیت، لە هەژمارەکەت دەردەکرێیت.",
-  "vorschauHinweis":"پێشبینین: یەکەم {n} چرکە",
-  "vorschauEnde":"ئەوە پێشبینینەکە بوو. هەموو ڤیدیۆکە لەگەڵ دەستگەیشتنی تەواودا هەیە.",
+  "vorschauHinweis":"پێشاندانی کورت: یەکەم {n} چرکە",
+  "vorschauEnde":"ئەوە پێشاندانە کورتەکە بوو. هەموو ڤیدیۆکە لەگەڵ دەستگەیشتنی تەواودا هەیە.",
   "kapitelTitel":"بڕگەکان",
   "fehlerTitel":"هەڵەکە لێرە بوو",
   "fehlerNormal":"دەرنەچوون بەشێکە لە ڕێگاکە — ڕێک لەم شوێنانەوە زۆرترین شت فێر دەبیت.",
@@ -4245,7 +4245,7 @@ I18N.kmr = Object.assign(I18N.kmr || {}, {
   "noch":"hîn",
   "nurDu":"Tenê tu vê dibînî. Tu bi xwe nîşan dikî — kes te nanirxîne.",
   "offenFuerAlle":"ji bo herkesî vekirî",
-  "offenOhne":"bê vekirinê vekirî ye",
+  "offenOhne":"bê pêwîstiya vekirinê vekirî ye",
   "pinAnzeigen":"PIN nîşan bide",
   "pinEingabe":"PIN-a xwe ya çar reqemî binivîse.",
   "pinWarnung":"Ev riya tenê ye ku tu vegerî sepanê. Niha wêneyekî jê bikişîne.",
@@ -4314,7 +4314,7 @@ I18N.kmr = Object.assign(I18N.kmr || {}, {
   "zSub":"Ji kerema xwe carekê piştrast bike, paşê em berdewam dikin.",
   "zP1":"Vîdyoyên Fahr-Akademie ji bo perwerdeya te ya ajotinê <b>alîkariyeke fêrbûnê ya dilxwazî û zêde</b> ne û dersên dibistana te ya ajotinê <b>naguherînin</b>.",
   "zP2":"<b>Garantî tune</b> ku tu bi van vîdyoyan azmûna ehliyetê derbas bikî — serkeftina fêrbûnê bi gelek faktoran ve girêdayî ye ku ne di destê me de ne.",
-  "zP3":"Gihîştina te (hejmara telefonê + PIN) <b>şexsî ye û nayê veguhastin</b>. Dayîna wê bi kesên din re li dijî şertên bikaranînê ye û dikare bê hişyariya pêşîn bibe sedema <b>girtina tavilê</b> ya gihîştina te, bê mafê vegerandina pereyan.",
+  "zP3":"Gihîştina te (hejmara telefonê + PIN) <b>şexsî ye û nayê veguhastin</b>. Dayîna wê ji kesên din re li dijî şertên bikaranînê ye û dikare bê hişyariya pêşîn bibe sedema <b>girtina tavilê</b> ya gihîştina te, bê mafê vegerandina pereyan.",
   "zCheck":"Min ev xwend û ez razî me.",
   "zVerbindlich":"Ji hêla hiqûqî ve guhertoya almanî derbasdar e",
   "zMoment":"Hinekî bisekine …",
@@ -4334,7 +4334,7 @@ I18N.kmr = Object.assign(I18N.kmr || {}, {
   "vonGesehen":"{g} ji {n} hatin dîtin",
   "enthaelt":"Tê de hene:",
   "zahlungsinfo":"Wê demê tu ê agahiyên dayînê bistînî. Tenê piştî dayînê tê vekirin.",
-  "themenIntro":"Vîdyoyek dikare çend mijaran hebe — li yekê bixe da ku hemû vîdyoyên têkildar bibînî.",
+  "themenIntro":"Vîdyoyek dikare çend mijaran bigire nav xwe — li yekê bixe da ku hemû vîdyoyên têkildar bibînî.",
   "keineThemen":"Hîn mijar nehatine diyarkirin.",
   "keineVideos":"Vîdyo nehatin dîtin.",
   "mDashboard":"Dashboard",
@@ -4362,7 +4362,7 @@ I18N.kmr = Object.assign(I18N.kmr || {}, {
   "navStrecken":"Rê",
   "navLabel":"Navîgasyona sereke",
   "mPruefungstag":"Roja azmûnê",
-  "iosHinweis":"Şîret ji bo iPhone: Akademiyê her tim bi sembola li ser ekrana xwe ya sereke veke. Safari û sembol wek du amûrên cuda têne hesibandin — guhertin te derdixe.",
+  "iosHinweis":"Şîret ji bo iPhone: Akademiyê her tim bi sembola li ser ekrana xwe ya sereke veke. Safari û sembol wek du amûrên cuda têne hesibandin — guhertin te ji hesabê derdixe.",
   "vorschauHinweis":"Pêşdîtin: {n} çirkeyên pêşîn",
   "vorschauEnde":"Pêşdîtin ev bû. Vîdyoya tevahî bi gihîştina tevahî heye.",
   "kapitelTitel":"Beş",
@@ -4415,7 +4415,7 @@ I18N.kmr = Object.assign(I18N.kmr || {}, {
   "rAgb":"Şertên giştî yên bazirganiyê",
   "rAgbSub":"Şertên bikaranînê yên Fahr-Akademie",
   "rWiderruf":"Agahdariya mafê poşmanbûnê",
-  "rWiderrufSub":"Mafê te yê poşmanbûnê di dema girêbesta peymanê de",
+  "rWiderrufSub":"Mafê te yê poşmanbûnê di dema girêdana peymanê de",
   "drawerFuss":"Fahr-Akademie — temamker ji bo perwerdeya fermî ya ajotinê",
   "anfrageSendet":"Tê şandin …",
   "anfrageLaeuft":"Daxwaz jixwe di rê de ye",
@@ -4428,9 +4428,9 @@ I18N.kmr = Object.assign(I18N.kmr || {}, {
   "adminLink":"Beşa rêveberiyê",
   "spracheWaehlen":"Ziman hilbijêre"
 });
-PRUEFUNGSTAG.kmr = {"einleitung":"Heyecan normal e. Yê ku dizane çi tê, bi aramî diajo. Li vir gav bi gav tê nivîsandin ka roj çawa derbas dibe.","abschnitte":[{"titel":"Tu çi bi xwe re tînî","punkte":["Nasname an pasaport — bê belgeya nasnameyê ya derbasdar azmûn pêk nayê.","Berçavk an lensên çavan, heke ji bo ajotinê hewcedariya te pê hebe.","Pêlavên rehet û nizm — ne şimik û ne pêlavên bi pehniya bilind.","Yên din (fermana azmûnê, belgeya perwerdeyê) li cem dibistana te ya ajotinê ne."]},{"titel":"Azmûn wiha derbas dibe","punkte":["Cihê hevdîtinê bi gelemperî dibistana ajotinê an navenda azmûnê ye. 15 deqe zûtir li wir be.","Azmûnvan nasnameya te kontrol dike. Mamosteyê te yê ajotinê li kêleka te rûdine, azmûnvan li paş.","Berî ku bi rê bikevî: kursî, neynik, direksiyon û kemberê eyar bike. Pir caran pirs li ser teknîkê tên, mînak li ser teker, ronahî an şilavan.","Paşê ajotin: di nav bajêr de, li derveyî bajêr û pir caran li ser otobanê an rêya bilez. Azmûnvan di wextê xwe de ji te re dibêje ka tu yê biçî ku derê.","Di navberê de bi gelemperî du erkên bingehîn ên ajotinê tên, mînak park kirin, zivirîna paş an frena awarte.","Di dawiyê de tu encamê rasterast di erebeyê de distînî. Derbas bû? Wê demê tu ehliyeta xwe an jî di BF17 de belgeya azmûnê distînî."]},{"titel":"Heke xeletiyek çêbibe","punkte":["Ne her xeletî tê wateya „derbas nebû“. Wêneya giştî ya ajotina te tê nirxandin.","Aram bimîne û bi baldarî ajotinê bidomîne. Li ser xeletiya dawî nefikire, li xaçerêya din bifikire.","Heke xeletiyek ewqas xeternak be ku azmûnvan neçar bimîne destwerdanê bike, azmûn diqede. Wê demê dibistana te ya ajotinê bi te re dema din plan dike.","Gelek kes di hewldana duyem de derbas dibin — bi tam tiştê ku di ya yekem de fêr bûne."]},{"titel":"Li dijî heyecanê","punkte":["Êvara berê: zû razê. Sibehê: tiştekî bixwe û vexwe, berê biçe tuwaletê.","Rahêneka bêhnê berî siwarbûnê: 4 çirkeyan bêhnê bikişîne, 4 çirkeyan bigire, 6 çirkeyan berde. Sê heta pênc caran dubare bike.","Roja berê dîsa li rêyên herêma xwe ya azmûnê binêre — ne hemûyan, tenê cihên dijwar.","Te ev di dersên ajotinê de gelek caran kiriye. Azmûn jî ajotinek e wek hemû yên din."]}]};
+PRUEFUNGSTAG.kmr = {"einleitung":"Heyecan normal e. Yê ku dizane çi tê, bi aramî diajo. Li vir gav bi gav tê nivîsandin ka roj çawa derbas dibe.","abschnitte":[{"titel":"Tu çi bi xwe re tînî","punkte":["Nasname an pasaport — bê belgeya nasnameyê ya derbasdar azmûn pêk nayê.","Berçavk an lensên çavan, heke ji bo ajotinê hewcedariya te pê hebe.","Pêlavên rehet û nizm — ne şimik û ne pêlavên bi pehniya bilind.","Yên din (fermana azmûnê, belgeya perwerdeyê) li cem dibistana te ya ajotinê ne."]},{"titel":"Azmûn wiha derbas dibe","punkte":["Cihê hevdîtinê bi gelemperî dibistana ajotinê an navenda azmûnê ye. 15 deqe zûtir li wir be.","Azmûnvan nasnameya te kontrol dike. Mamosteyê te yê ajotinê li kêleka te rûdine, azmûnvan li paş.","Berî ku bi rê bikevî: kursî, neynik, direksiyon û kemberê eyar bike. Pir caran pirs li ser teknîkê tên, mînak li ser teker, ronahî an şilavan.","Paşê ajotin: di nav bajêr de, li derveyî bajêr û pir caran li ser otobanê an rêya bilez. Azmûnvan di wextê xwe de ji te re dibêje ka tu yê biçî ku derê.","Di navberê de bi gelemperî du erkên bingehîn ên ajotinê tên, mînak park kirin, zivirîna paş an frena awarte.","Di dawiyê de tu encamê rasterast di erebeyê de distînî. Tu derbas bûyî? Wê demê tu ehliyeta xwe an jî di BF17 de belgeya azmûnê distînî."]},{"titel":"Heke xeletiyek çêbibe","punkte":["Ne her xeletî tê wateya „derbas nebû“. Wêneya giştî ya ajotina te tê nirxandin.","Aram bimîne û bi baldarî ajotinê bidomîne. Li ser xeletiya dawî nefikire, li xaçerêya din bifikire.","Heke xeletiyek ewqas xeternak be ku azmûnvan neçar bimîne destwerdanê bike, azmûn diqede. Wê demê dibistana te ya ajotinê bi te re dema din plan dike.","Gelek kes di hewldana duyem de derbas dibin — bi tam tiştê ku di ya yekem de fêr bûne."]},{"titel":"Li dijî heyecanê","punkte":["Êvara berê: zû razê. Sibehê: tiştekî bixwe û vexwe, berê biçe tuwaletê.","Rahêneka bêhnê berî siwarbûnê: 4 çirkeyan bêhnê bikişîne, 4 çirkeyan bigire, 6 çirkeyan berde. Sê heta pênc caran dubare bike.","Roja berê dîsa li rêyên herêma xwe ya azmûnê binêre — ne hemûyan, tenê cihên dijwar.","Te ev di dersên ajotinê de gelek caran kiriye. Azmûn jî ajotinek e wek hemû yên din."]}]};
 NUETZLICH_UE.kmr = {
-  "buko_punkte":{"titel":"Kataloga cezayan — sîstema xalan","html":"<p>Ji reformê vir ve di tomara jêhatiya ajotinê (Flensburg) de sê pile hene:</p><p><b>1 xal</b> — binpêkirinên giran, mînak telefon di destê ajokar de, binpêkirina hêsan a mafê pêşîyê.<br><b>2 xal</b> — binpêkirinên pir giran bi qedexeya ajotinê ya asayî, mînak derbasbûna ji ronahiya sor bi xetereyê.<br><b>3 xal</b> — sûc, ku dadgeh destûra ajotinê jê distîne, mînak ajotina serxweş ji 1,1 promîlan û pê ve an revîna ji cihê qezayê bi standina destûrê.</p><p>Alkol ji 0,5 promîlan û pê ve wek binpêkirina rêzikan 2 xalan tîne. Bi 4–5 xalan şîretek tê, bi 6–7 xalan hişyariyek, ji <b>8 xalan</b> û pê ve destûra ajotinê diçe.</p>"},
+  "buko_punkte":{"titel":"Kataloga cezayan — sîstema xalan","html":"<p>Ji reformê vir ve di tomara jêhatiya ajotinê (Flensburg) de sê pile hene:</p><p><b>1 xal</b> — binpêkirinên giran, mînak telefon di destê ajokar de, binpêkirina hêsan a mafê pêşîyê.<br><b>2 xal</b> — binpêkirinên pir giran bi qedexeya ajotinê ya asayî, mînak derbasbûna ji ronahiya sor bi xetereyê.<br><b>3 xal</b> — sûcên ku dadgeh ji ber wan destûra ajotinê distîne, mînak ajotina serxweş ji 1,1 promîlan û pê ve an revîna ji cihê qezayê bi standina destûrê.</p><p>Alkol ji 0,5 promîlan û pê ve wek binpêkirina rêzikan 2 xalan tîne. Bi 4–5 xalan şîretek tê, bi 6–7 xalan hişyariyek, ji <b>8 xalan</b> û pê ve destûra ajotinê diçe.</p>"},
   "buko_handy":{"titel":"Qedexeya telefonê di dema ajotinê de — § 23 Abs. 1a StVO","html":"<p>Ev ne tenê axaftina bi telefonê ye, her amûreke elektronîk e ku di destan de tê girtin û bikaranîn — li gorî dadgehan powerbank, hesabker an cixareya elektronîk bi ekrana destlêdanê jî tê de ne.</p><p><b>100 € + 1 xal</b> di rewşa asayî de.<br><b>150 € + 2 xal + 1 meh qedexeya ajotinê</b> heke yên din bikevin xeterê.<br><b>200 € + 2 xal + 1 meh qedexeya ajotinê</b> heke zirar bigihîje tiştan.</p><p>Bikaranîn bi amûreke bê-dest (hands-free) destûrdayî dimîne, bê ku amûr di destan de were girtin.</p>"},
   "buko_rettungsgasse":{"titel":"Koridora rizgarkirinê — § 11 Abs. 2 StVO","html":"<p>Li ser otobanan û rêyên pir-şerîd ên li derveyî bajêr mecbûrî ye, gava ku trafîk heta leza meşê hêdî dibe an radiweste — ne tenê gava polîs dixwaze derbas bibe.</p><p>Ew <b>di navbera şerîda herî çep û şerîda rasterast li kêleka wê</b> de tê çêkirin. Yanî yên li şerîda herî çep bi qasî ku dibe diçin aliyê çepê, hemû yên din bi qasî ku dibe diçin aliyê rastê.</p><p>Yê ku koridora rizgarkirinê çênake: <b>200 € + 2 xal</b>. Heke ji ber vê yekê wesayîtên acîl werin astengkirin, bikevin xeterê an zirar bigihîje tiştan: <b>240 € heta 320 €, 2 xal û 1 meh qedexeya ajotinê</b>.</p><p>Yê ku bê destûr di koridorê de diajo da ku zûtir pêş ve biçe: <b>ji 240 € û pê ve, 2 xal û 1 meh qedexeya ajotinê</b>.</p>"},
   "probezeit":{"titel":"Dema ceribandinê — qaîdeyên bingehîn","html":"<p>Dema ceribandinê bi asayî ji azmûna derbasbûyî ve <b>2 sal</b> dom dike, ji bo hemû çînên ehliyetê ji bilî çînên taybet ên wek T/L.</p><p>Bi <b>binpêkirineke A</b> (giran, mînak ronahiya sor, alkol) an <b>du binpêkirinên B</b> (kêmtir giran): dema ceribandinê carekê heta <b>4 salan</b> dirêj dibe, û semînera avakirinê ya mecbûrî (ASF, bi gelemperî 300–600 €) jî tê ser.</p><p>Binpêkirina A ya din an du binpêkirinên B yên din piştî wê: hişyariya nivîskî + pêşniyara şêwirdariya derûnî ya trafîkê ya dilxwazî. Heke piştî wê binpêkirineke A ya din (an du B) jî çêbibe: <b>destûra ajotinê diçe.</b></p>"},
@@ -4438,7 +4438,7 @@ NUETZLICH_UE.kmr = {
   "lkw_lenkzeiten":{"titel":"Demên ajotin û bêhnvedanê — qaîdeya sereke ya kamyonan","html":"<p>Rêziknameya YE (EG) Nr. 561/2006 wê rêk dixe, û bi taxografa dîjîtal tê kontrolkirin. Nirxên sereke:</p><p><b>Dema ajotinê ya rojane:</b> herî zêde 9 saet, du caran di hefteyê de dikare heta 10 saetan dirêj bibe.<br><b>Navber:</b> herî dereng piştî 4,5 saet ajotinê 45 deqe navber, dikare bibe 15 + 30 deqe (bi vê rêzê).<br><b>Dema bêhnvedanê ya rojane:</b> herî kêm 11 saet, sê caran di hefteyê de dikare heta 9 saetan kurt bibe.<br><b>Dema ajotinê ya heftane:</b> herî zêde 56 saet, di du hefteyan de bi hev re herî zêde 90 saet.<br><b>Dema bêhnvedanê ya heftane:</b> herî kêm 45 saet, her hefteya duyem dikare heta 24 saetan kurt bibe, bi telafîkirinê di nav 3 hefteyan de.</p>"},
   "lkw_ladung":{"titel":"Ewlekirina barê — erka bingehîn","html":"<p>§ 22 StVO dixwaze ku bar wiha were danîn û ewlekirin ku di frena tam de, di revîna ji nişkê ve an li ser rêya xirab de jî <b>neşemite, wernegere û nekeve</b>.</p><p>Hem ajokar hem jî barker berpirsyar in — her du jî dikarin ji ber ewlekirina kêm werin cezakirin. Amûrên asayî kemberên girêdanê, darên astengkirinê û xalîçeyên dijî-şemitînê ne.</p>"},
   "lkw_tacho":{"titel":"Taxografa dîjîtal","html":"<p>Demên ajotin, xebat û bêhnvedanê bixweber bi karta ajokar a şexsî tomar dike. Hema hema di hemû kamyonên nûtir ên ser 3,5 t de di trafîka bazirganî de mecbûrî ye.</p><p>Ji 31.12.2024 û pê ve divê tomarên roja heyî û <b>56 rojên berê</b> di kontrolan de bêne nîşandan (berê 28 roj) — kontrolên Daîreya Federal a Lojîstîk û Tevgerê (BALM, berê BAG) û polîs rasterast digihîjin wan.</p>"},
-  "lkw_tempo80":{"titel":"Leza taybet 80 li ser otobanê","html":"<p>Ji bo kamyonên ser 3,5 t li ser otobanan û rêyên otomobîlan ên bi alîyên cuda bi yekrengî <b>80 km/h</b> derbasdar e (§ 18 Abs. 5 StVO) — çi qas giran bin jî, û çi nîşanek leza bilindtir destûr bide jî.</p><p>Li ser rêyên navbajaran ên asayî li derveyî gundan û bajaran lê qaîdeya pilekirî derbasdar e: heta 7,5 t 80 km/h destûrdayî ye, ji wê zêdetir tenê <b>60 km/h</b> — ev li wir di rêyên pir-şerîd de jî derbasdar e.</p>"},
+  "lkw_tempo80":{"titel":"Leza taybet 80 li ser otobanê","html":"<p>Ji bo kamyonên ser 3,5 t li ser otobanan û rêyên otomobîlan ên ku rêgezên wan ji hev veqetandî ne bi yekrengî <b>80 km/h</b> derbasdar e (§ 18 Abs. 5 StVO) — çi qas giran bin jî, û çi nîşanek leza bilindtir destûr bide jî.</p><p>Li ser rêyên navbajaran ên asayî li derveyî gundan û bajaran lê qaîdeya pilekirî derbasdar e: heta 7,5 t 80 km/h destûrdayî ye, ji wê zêdetir tenê <b>60 km/h</b> — ev li wir di rêyên pir-şerîd de jî derbasdar e.</p>"},
   "Vorfahrt_Paragraph8_StVO.pdf":{"titel":"Mafê pêşîyê — § 8 StVO","meta":"Rast berî çep, nîşanên mafê pêşîyê, xaçerêya dorhêlî · Rewş 30.01.2026"},
   "Geschwindigkeit_Paragraph3_StVO.pdf":{"titel":"Lez — § 3 StVO","meta":"Leza li gorî rewşê, dûrahiya dîtinê di mijê de · Rewş 30.01.2026"},
   "Abstand_Paragraph4_StVO.pdf":{"titel":"Dûrahî — § 4 StVO","meta":"Nîvê lezpîvê, dûrahiya ewlehiyê · Rewş 30.01.2026"},
@@ -4542,7 +4542,7 @@ I18N.hi = Object.assign(I18N.hi || {}, {
   "regCode":"रेफ़रल कोड मिला:",
   "regBtn":"स्टार्टर एक्सेस बनाएँ",
   "regLaeuft":"बनाया जा रहा है …",
-  "regRecht":"बनाते समय आप उपयोग की शर्तों से सहमत होते हैं। Fahr-Akademie एक अतिरिक्त सीखने का साधन है और ड्राइविंग स्कूल की ट्रेनिंग की जगह नहीं लेती। 18 साल से कम उम्र? तो आपको अपने माता-पिता की सहमति चाहिए।",
+  "regRecht":"एक्सेस बनाकर आप उपयोग की शर्तों से सहमत होते हैं। Fahr-Akademie एक अतिरिक्त सीखने का साधन है और ड्राइविंग स्कूल की ट्रेनिंग की जगह नहीं लेती। 18 साल से कम उम्र? तो आपको अपने माता-पिता की सहमति चाहिए।",
   "regSchonZugang":"मेरे पास पहले से एक्सेस है",
   "regErrName":"कृपया अपना नाम डालें।",
   "regErrTel":"कृपया अपना मोबाइल नंबर डालें।",
@@ -4688,7 +4688,7 @@ I18N.hi = Object.assign(I18N.hi || {}, {
   "adminLink":"एडमिन सेक्शन",
   "spracheWaehlen":"भाषा चुनें"
 });
-PRUEFUNGSTAG.hi = {"einleitung":"घबराहट होना आम बात है। जिसे पता हो कि क्या होने वाला है, वह ज़्यादा शांति से गाड़ी चलाता है। यहाँ क़दम-दर-क़दम लिखा है कि दिन कैसे बीतता है।","abschnitte":[{"titel":"क्या साथ लाएँ","punkte":["पहचान पत्र (Personalausweis) या पासपोर्ट — मान्य पहचान पत्र के बिना टेस्ट नहीं होगा।","चश्मा या कॉन्टैक्ट लेंस, अगर गाड़ी चलाने के लिए आपको उनकी ज़रूरत है।","आरामदायक, सपाट जूते — फ़्लिप-फ़्लॉप या ऊँची एड़ी वाले नहीं।","बाकी काग़ज़ (टेस्ट का आदेश, ट्रेनिंग का प्रमाण) आपके ड्राइविंग स्कूल के पास होते हैं।"]},{"titel":"टेस्ट ऐसे होता है","punkte":["मिलने की जगह आमतौर पर ड्राइविंग स्कूल या टेस्ट सेंटर होती है। 15 मिनट पहले पहुँचें।","परीक्षक आपका पहचान पत्र जाँचते हैं। आपके ड्राइविंग इंस्ट्रक्टर आपके बगल में बैठते हैं, परीक्षक पीछे।","चलने से पहले: सीट, शीशे, स्टीयरिंग व्हील और सीट बेल्ट ठीक करें। अक्सर तकनीक के बारे में सवाल आते हैं, जैसे टायर, लाइटें या फ़्लूइड।","फिर ड्राइव: शहर/गाँव के अंदर, बाहर और अक्सर ऑटोबान या एक्सप्रेसवे पर। परीक्षक आपको समय पर बताते हैं कि कहाँ जाना है।","बीच में आमतौर पर दो बुनियादी ड्राइविंग अभ्यास होते हैं, जैसे पार्किंग, गाड़ी मोड़ना या आपातकालीन ब्रेकिंग।","आख़िर में आपको नतीजा सीधे गाड़ी में ही मिलता है। पास? तो आपको आपका ड्राइविंग लाइसेंस मिलता है, या BF17 में टेस्ट प्रमाणपत्र।"]},{"titel":"अगर कोई गलती हो जाए","punkte":["हर गलती का मतलब „फ़ेल“ नहीं होता। आपकी पूरी ड्राइविंग को देखकर फ़ैसला होता है।","शांत रहें और ध्यान से गाड़ी चलाते रहें। पिछली गलती के बारे में न सोचें, अगले चौराहे के बारे में सोचें।","अगर गलती इतनी ख़तरनाक हो कि परीक्षक को दख़ल देना पड़े, तो टेस्ट ख़त्म हो जाता है। फिर आपका ड्राइविंग स्कूल आपके साथ अगली तारीख़ तय करता है।","बहुत से लोग दूसरी बार में पास होते हैं — ठीक उसी से, जो उन्होंने पहली बार में सीखा।"]},{"titel":"घबराहट से बचने के लिए","punkte":["एक रात पहले: जल्दी सो जाएँ। सुबह: कुछ खाएँ-पिएँ, और पहले टॉयलेट हो आएँ।","गाड़ी में बैठने से पहले साँस का अभ्यास: 4 सेकंड साँस अंदर लें, 4 सेकंड रोकें, 6 सेकंड में छोड़ें। तीन से पाँच बार दोहराएँ।","एक दिन पहले अपने टेस्ट क्षेत्र के रूट एक बार फिर देख लें — सब नहीं, सिर्फ़ मुश्किल जगहें।","आप ड्राइविंग क्लास में यह कई बार कर चुके हैं। टेस्ट भी बाकी ड्राइव जैसी ही एक ड्राइव है।"]}]};
+PRUEFUNGSTAG.hi = {"einleitung":"घबराहट होना आम बात है। जिसे पता हो कि क्या होने वाला है, वह ज़्यादा शांति से गाड़ी चलाता है। यहाँ क़दम-दर-क़दम लिखा है कि दिन कैसे बीतता है।","abschnitte":[{"titel":"क्या साथ लाएँ","punkte":["पहचान पत्र (Personalausweis) या पासपोर्ट — मान्य पहचान पत्र के बिना टेस्ट नहीं होगा।","चश्मा या कॉन्टैक्ट लेंस, अगर गाड़ी चलाने के लिए आपको उनकी ज़रूरत है।","आरामदायक, सपाट जूते — फ़्लिप-फ़्लॉप या ऊँची एड़ी वाले नहीं।","बाकी काग़ज़ (टेस्ट का आदेश, ट्रेनिंग का प्रमाण) आपके ड्राइविंग स्कूल के पास होते हैं।"]},{"titel":"टेस्ट ऐसे होता है","punkte":["मिलने की जगह आमतौर पर ड्राइविंग स्कूल या टेस्ट सेंटर होती है। 15 मिनट पहले पहुँचें।","परीक्षक आपका पहचान पत्र जाँचते हैं। आपके ड्राइविंग इंस्ट्रक्टर आपके बगल में बैठते हैं, परीक्षक पीछे।","चलने से पहले: सीट, शीशे, स्टीयरिंग व्हील और सीट बेल्ट ठीक करें। अक्सर तकनीक के बारे में सवाल आते हैं, जैसे टायर, लाइटें या फ़्लूइड।","फिर ड्राइव: शहर/गाँव के अंदर, बाहर और अक्सर ऑटोबान या एक्सप्रेसवे पर। परीक्षक आपको समय पर बताते हैं कि कहाँ जाना है।","बीच में आमतौर पर दो बुनियादी ड्राइविंग अभ्यास होते हैं, जैसे पार्किंग, गाड़ी मोड़ना या आपातकालीन ब्रेकिंग।","आख़िर में आपको नतीजा सीधे गाड़ी में ही मिलता है। पास? तो आपको अपना ड्राइविंग लाइसेंस मिलता है, या BF17 में टेस्ट प्रमाणपत्र।"]},{"titel":"अगर कोई गलती हो जाए","punkte":["हर गलती का मतलब „फ़ेल“ नहीं होता। आपकी पूरी ड्राइविंग को देखकर फ़ैसला होता है।","शांत रहें और ध्यान से गाड़ी चलाते रहें। पिछली गलती के बारे में न सोचें, अगले चौराहे के बारे में सोचें।","अगर गलती इतनी ख़तरनाक हो कि परीक्षक को दख़ल देना पड़े, तो टेस्ट ख़त्म हो जाता है। फिर आपका ड्राइविंग स्कूल आपके साथ अगली तारीख़ तय करता है।","बहुत से लोग दूसरी बार में पास होते हैं — ठीक उसी से, जो उन्होंने पहली बार में सीखा।"]},{"titel":"घबराहट से बचने के लिए","punkte":["एक रात पहले: जल्दी सो जाएँ। सुबह: कुछ खाएँ-पिएँ, और पहले टॉयलेट हो आएँ।","गाड़ी में बैठने से पहले साँस का अभ्यास: 4 सेकंड साँस अंदर लें, 4 सेकंड रोकें, 6 सेकंड में छोड़ें। तीन से पाँच बार दोहराएँ।","एक दिन पहले अपने टेस्ट क्षेत्र के रूट एक बार फिर देख लें — सब नहीं, सिर्फ़ मुश्किल जगहें।","आप ड्राइविंग क्लास में यह कई बार कर चुके हैं। टेस्ट भी बाकी ड्राइव जैसी ही एक ड्राइव है।"]}]};
 NUETZLICH_UE.hi = {
   "buko_punkte":{"titel":"जुर्माना सूची — पॉइंट्स सिस्टम","html":"<p>सुधार के बाद से फ़्लेन्सबर्ग के ड्राइविंग योग्यता रजिस्टर (Fahreignungsregister) में तीन स्तर हैं:</p><p><b>1 पॉइंट</b> — गंभीर उल्लंघन, जैसे गाड़ी चलाते समय हाथ में मोबाइल, राइट ऑफ़ वे का साधारण उल्लंघन।<br><b>2 पॉइंट्स</b> — बहुत गंभीर उल्लंघन, जिन पर आमतौर पर ड्राइविंग पर रोक लगती है, जैसे ख़तरा पैदा करते हुए लाल बत्ती पार करना।<br><b>3 पॉइंट्स</b> — अपराध, जिनमें अदालत ड्राइविंग लाइसेंस छीन लेती है, जैसे 1.1 प्रोमिल या उससे ज़्यादा पर नशे में गाड़ी चलाना, या दुर्घटना के बाद भाग जाना (लाइसेंस छिनने के साथ)।</p><p>0.5 प्रोमिल से अल्कोहल, नियम उल्लंघन (Ordnungswidrigkeit) के रूप में, 2 पॉइंट्स देता है। 4–5 पॉइंट्स पर चेतावनी-सूचना मिलती है, 6–7 पॉइंट्स पर औपचारिक चेतावनी, और <b>8 पॉइंट्स</b> से ड्राइविंग लाइसेंस चला जाता है।</p>"},
   "buko_handy":{"titel":"गाड़ी चलाते समय मोबाइल पर रोक — § 23 Abs. 1a StVO","html":"<p>यह सिर्फ़ फ़ोन पर बात करने पर नहीं, बल्कि हर उस इलेक्ट्रॉनिक डिवाइस पर लागू है जिसे हाथ में पकड़कर चलाया जाए — अदालतों के फ़ैसलों के अनुसार पावर बैंक, कैलकुलेटर या टच डिस्प्ले वाली ई-सिगरेट भी इसमें आते हैं।</p><p>आम मामले में <b>100 € + 1 पॉइंट</b>।<br>दूसरों को ख़तरे में डालने पर <b>150 € + 2 पॉइंट्स + 1 महीने ड्राइविंग पर रोक</b>।<br>किसी चीज़ का नुकसान होने पर <b>200 € + 2 पॉइंट्स + 1 महीने ड्राइविंग पर रोक</b>।</p><p>हैंड्स-फ़्री सिस्टम से इस्तेमाल करना, डिवाइस को हाथ में पकड़े बिना, अब भी अनुमत है।</p>"},
@@ -4711,7 +4711,7 @@ NUETZLICH_UE.hi = {
 };
 I18N.ur = Object.assign(I18N.ur || {}, {
   "start":"ہوم",
-  "lernpfad":"خلاصہ",
+  "lernpfad":"جائزہ",
   "pruefung":"ایگزامنر",
   "verlauf":"دیکھی ہوئی",
   "konto":"اکاؤنٹ",
@@ -4727,7 +4727,7 @@ I18N.ur = Object.assign(I18N.ur || {}, {
   "deinePruefung":"آپ کا ٹیسٹ",
   "heute":"آج",
   "morgen":"کل",
-  "inTagen":"{n} دن میں",
+  "inTagen":"{n} دن بعد",
   "deinZugang":"آپ کی رسائی",
   "name":"نام",
   "gueltigBis":"رسائی کی آخری تاریخ",
@@ -4820,7 +4820,7 @@ I18N.ur = Object.assign(I18N.ur || {}, {
   "abmAbgelaufen":"آپ کی رسائی کی مدت ختم ہو گئی ہے۔ مدت بڑھانے کے لیے اپنے ڈرائیونگ اسکول سے رابطہ کریں۔",
   "abmGesperrt":"آپ کی رسائی بند کر دی گئی ہے۔ براہ کرم اپنے ڈرائیونگ اسکول سے رابطہ کریں۔",
   "abmPausiert":"آپ کے ڈرائیونگ اسکول کی رسائی فی الحال روکی ہوئی ہے۔ براہ کرم اپنے ڈرائیونگ اسکول سے رابطہ کریں۔",
-  "verstanden":"سمجھ گیا",
+  "verstanden":"سمجھ آ گیا",
   "offlineTitel":"کنکشن نہیں",
   "offlineText":"مواد لوڈ نہیں ہو سکا۔ اپنا انٹرنیٹ چیک کریں اور دوبارہ کوشش کریں۔",
   "neuLaden":"دوبارہ لوڈ کریں",
@@ -4892,7 +4892,7 @@ I18N.ur = Object.assign(I18N.ur || {}, {
   "fBestanden":"پاس",
   "fNichtBestanden":"فیل",
   "bereichKeineVideos":"اس حصے میں ابھی کوئی ویڈیو نہیں۔",
-  "verlaufLeer":"ابھی کچھ نہیں دیکھا — خلاصے سے شروع کریں!",
+  "verlaufLeer":"ابھی کچھ نہیں دیکھا — جائزے سے شروع کریں!",
   "streckenLeer":"ابھی کوئی ٹیسٹ روٹ شامل نہیں۔",
   "videoAnzahl1":"1 ویڈیو",
   "videoAnzahl":"{n} ویڈیوز",
@@ -4950,13 +4950,13 @@ I18N.ur = Object.assign(I18N.ur || {}, {
 });
 PRUEFUNGSTAG.ur = {"einleitung":"گھبراہٹ ہونا عام بات ہے۔ جو جانتا ہے کہ کیا ہونے والا ہے، وہ زیادہ سکون سے گاڑی چلاتا ہے۔ یہاں قدم بہ قدم لکھا ہے کہ دن کیسے گزرتا ہے۔","abschnitte":[{"titel":"ساتھ کیا لائیں","punkte":["شناختی کارڈ یا پاسپورٹ — درست شناختی دستاویز کے بغیر ٹیسٹ نہیں ہوگا۔","عینک یا کانٹیکٹ لینز، اگر آپ کو ڈرائیونگ کے لیے ان کی ضرورت ہے۔","آرام دہ، چپٹے جوتے — چپل یا اونچی ایڑی والے جوتے نہیں۔","باقی کاغذات (ٹیسٹ کا حکم نامہ، تربیت کا ثبوت) آپ کے ڈرائیونگ اسکول کے پاس ہوتے ہیں۔"]},{"titel":"ٹیسٹ اس طرح ہوتا ہے","punkte":["ملنے کی جگہ عموماً ڈرائیونگ اسکول یا ٹیسٹ سینٹر ہوتی ہے۔ 15 منٹ پہلے پہنچیں۔","ایگزامنر آپ کا شناختی کارڈ چیک کرتا ہے۔ آپ کا ڈرائیونگ انسٹرکٹر آپ کے ساتھ بیٹھتا ہے اور ایگزامنر پیچھے۔","چلنے سے پہلے: سیٹ، شیشے، اسٹیئرنگ اور سیٹ بیلٹ ٹھیک کریں۔ اکثر گاڑی کی تکنیک کے بارے میں سوال آتے ہیں، مثلاً ٹائر، لائٹس یا گاڑی کے مائعات کے بارے میں۔","پھر ڈرائیو: شہر کے اندر، شہر سے باہر اور اکثر موٹروے یا ایکسپریس وے پر۔ ایگزامنر آپ کو بروقت بتاتا ہے کہ کہاں جانا ہے۔","درمیان میں عموماً دو بنیادی ڈرائیونگ مشقیں ہوتی ہیں، مثلاً پارک کرنا، گاڑی واپس موڑنا یا ایمرجنسی بریک۔","آخر میں نتیجہ آپ کو گاڑی میں ہی بتا دیا جاتا ہے۔ پاس؟ تو آپ کو ڈرائیونگ لائسنس ملتا ہے، یا BF17 میں ٹیسٹ کا سرٹیفکیٹ۔"]},{"titel":"اگر غلطی ہو جائے","punkte":["ہر غلطی کا مطلب „فیل“ نہیں ہوتا۔ آپ کی مجموعی کارکردگی دیکھی جاتی ہے۔","پرسکون رہیں اور توجہ سے گاڑی چلاتے رہیں۔ پچھلی غلطی کے بارے میں نہ سوچیں بلکہ اگلے چوراہے کے بارے میں سوچیں۔","اگر غلطی اتنی خطرناک ہو کہ ایگزامنر کو مداخلت کرنی پڑے تو ٹیسٹ ختم کر دیا جاتا ہے۔ پھر آپ کا ڈرائیونگ اسکول آپ کے ساتھ اگلی تاریخ طے کرتا ہے۔","بہت سے لوگ دوسری کوشش میں پاس ہو جاتے ہیں — بالکل انہی باتوں سے جو انہوں نے پہلی بار سیکھیں۔"]},{"titel":"گھبراہٹ کے خلاف","punkte":["ایک رات پہلے: جلدی سو جائیں۔ صبح: کچھ کھا پی لیں، اور ٹیسٹ سے پہلے واش روم ہو آئیں۔","گاڑی میں بیٹھنے سے پہلے سانس کی مشق: 4 سیکنڈ سانس اندر لیں، 4 سیکنڈ روکیں، 6 سیکنڈ میں باہر نکالیں۔ تین سے پانچ بار دہرائیں۔","ایک دن پہلے اپنے ٹیسٹ کے علاقے کے روٹس ایک بار پھر دیکھ لیں — سب کچھ نہیں، صرف مشکل جگہیں۔","آپ یہ ڈرائیونگ کلاسوں میں کئی بار کر چکے ہیں۔ ٹیسٹ بھی باقی ڈرائیوز جیسی ایک ڈرائیو ہے۔"]}]};
 NUETZLICH_UE.ur = {
-  "buko_punkte":{"titel":"جرمانوں کی فہرست — پوائنٹس کا نظام","html":"<p>اصلاحات کے بعد سے ڈرائیونگ اہلیت رجسٹر (Flensburg) میں تین درجے ہیں:</p><p><b>1 پوائنٹ</b> — سنگین خلاف ورزیاں، مثلاً ڈرائیونگ کے دوران موبائل فون، پہلے گزرنے کے حق کی عام خلاف ورزی۔<br><b>2 پوائنٹس</b> — بہت سنگین خلاف ورزیاں جن پر عام طور پر ڈرائیونگ پر پابندی لگتی ہے، مثلاً سرخ بتی توڑنا اور دوسروں کو خطرے میں ڈالنا۔<br><b>3 پوائنٹس</b> — جرائم جن میں عدالت ڈرائیونگ لائسنس ضبط کر لیتی ہے، مثلاً 1.1 پرومل یا اس سے زیادہ نشے میں ڈرائیونگ، یا حادثے کے بعد فرار جس پر لائسنس ضبط ہو۔</p><p>0.5 پرومل سے الکحل، بطور قانونی خلاف ورزی، 2 پوائنٹس کا باعث بنتی ہے۔ 4–5 پوائنٹس پر یاد دہانی، 6–7 پوائنٹس پر تنبیہ، اور <b>8 پوائنٹس</b> پر ڈرائیونگ لائسنس ختم۔</p>"},
+  "buko_punkte":{"titel":"جرمانوں کی فہرست — پوائنٹس کا نظام","html":"<p>اصلاحات کے بعد سے ڈرائیونگ اہلیت رجسٹر (Flensburg) میں تین درجے ہیں:</p><p><b>1 پوائنٹ</b> — سنگین خلاف ورزیاں، مثلاً ڈرائیونگ کے دوران موبائل فون، پہلے گزرنے کے حق کی عام خلاف ورزی۔<br><b>2 پوائنٹس</b> — بہت سنگین خلاف ورزیاں جن پر عام طور پر ڈرائیونگ پر پابندی لگتی ہے، مثلاً سرخ بتی توڑنا اور دوسروں کو خطرے میں ڈالنا۔<br><b>3 پوائنٹس</b> — جرائم جن میں عدالت ڈرائیونگ لائسنس ضبط کر لیتی ہے، مثلاً 1.1 پرومل یا اس سے زیادہ نشے میں ڈرائیونگ، یا حادثے کے بعد فرار جس پر لائسنس ضبط ہو۔</p><p>0.5 پرومل سے الکحل، بطور ضابطے کی خلاف ورزی، 2 پوائنٹس کا باعث بنتی ہے۔ 4–5 پوائنٹس پر یاد دہانی، 6–7 پوائنٹس پر تنبیہ، اور <b>8 پوائنٹس</b> پر ڈرائیونگ لائسنس ختم۔</p>"},
   "buko_handy":{"titel":"ڈرائیونگ کے دوران موبائل فون کی ممانعت — § 23 Abs. 1a StVO","html":"<p>یہ صرف فون پر بات کرنے پر لاگو نہیں ہوتی بلکہ ہر اس الیکٹرانک آلے پر جو ہاتھ میں پکڑ کر چلایا جائے — عدالتی فیصلوں کے مطابق پاور بینک، کیلکولیٹر یا ٹچ اسکرین والی ای سگریٹ بھی اس میں شامل ہیں۔</p><p><b>100 € + 1 پوائنٹ</b> عام صورت میں۔<br><b>150 € + 2 پوائنٹس + 1 ماہ ڈرائیونگ پر پابندی</b> اگر دوسروں کو خطرہ ہو۔<br><b>200 € + 2 پوائنٹس + 1 ماہ ڈرائیونگ پر پابندی</b> اگر کسی چیز کو نقصان پہنچے۔</p><p>ہینڈز فری سسٹم کے ذریعے استعمال کی اجازت ہے، بشرطیکہ آلہ ہاتھ میں نہ پکڑا جائے۔</p>"},
   "buko_rettungsgasse":{"titel":"ایمرجنسی راستہ — § 11 Abs. 2 StVO","html":"<p>موٹروے اور شہر سے باہر کئی لینوں والی سڑکوں پر یہ لازمی ہے، جیسے ہی ٹریفک پیدل رفتار تک سست ہو جائے یا رک جائے — نہ کہ صرف اس وقت جب پولیس گزرنا چاہے۔</p><p>یہ <b>سب سے بائیں لین اور اس کے بالکل ساتھ والی لین کے درمیان</b> بنایا جاتا ہے۔ یعنی سب سے بائیں لین والے جتنا ہو سکے بائیں ہو جائیں، باقی سب جتنا ہو سکے دائیں۔</p><p>جو ایمرجنسی راستہ نہ بنائے: <b>200 € + 2 پوائنٹس</b>۔ اگر اس سے ایمرجنسی گاڑیوں کو رکاوٹ یا خطرہ ہو، یا کسی چیز کو نقصان پہنچے: <b>240 € سے 320 € تک، 2 پوائنٹس اور 1 ماہ ڈرائیونگ پر پابندی</b>۔</p><p>جو جلدی آگے نکلنے کے لیے بلا اجازت اس راستے میں گاڑی چلائے: <b>240 € سے شروع، 2 پوائنٹس اور 1 ماہ ڈرائیونگ پر پابندی</b>۔</p>"},
-  "probezeit":{"titel":"آزمائشی مدت — بنیادی قواعد","html":"<p>آزمائشی مدت عام طور پر ٹیسٹ پاس کرنے کے بعد <b>2 سال</b> ہوتی ہے، تمام لائسنس کلاسوں کے لیے سوائے T/L جیسی خاص کلاسوں کے۔</p><p>ایک <b>A-خلاف ورزی</b> (سنگین، مثلاً سرخ بتی، الکحل) یا <b>دو B-خلاف ورزیوں</b> (کم سنگین) پر: آزمائشی مدت ایک بار بڑھ کر <b>4 سال</b> ہو جاتی ہے، اس کے ساتھ لازمی تربیتی کورس (ASF، عموماً 300–600 €)۔</p><p>اس کے بعد اگلی A-خلاف ورزی یا مزید دو B-خلاف ورزیاں: تحریری تنبیہ + رضاکارانہ ٹریفک سائیکالوجی مشاورت کی سفارش۔ اس کے بعد بھی ایک A-خلاف ورزی (یا دو B) ہو جائے: <b>ڈرائیونگ لائسنس ختم۔</b></p>"},
-  "probezeit_alkohol":{"titel":"آزمائشی مدت میں الکحل کی ممانعت — § 24c StVG","html":"<p>آزمائشی مدت میں نئے ڈرائیوروں کے لیے <b>0.0 پرومل</b> کی حد ہے، بغیر کسی استثنا کے — آزمائشی مدت سے باہر ڈرائیوروں کی 0.5 پرومل حد کے برعکس۔</p><p>خلاف ورزی فوراً سنگین A-خلاف ورزی شمار ہوتی ہے: آزمائشی مدت میں اضافہ اور تربیتی کورس لازمی ہیں، چاہے ناپی گئی مقدار کتنی ہی ہو۔</p><p>یہ قاعدہ 21 سال سے کم عمر تمام ڈرائیوروں پر بھی لاگو ہوتا ہے، آزمائشی مدت ختم ہونے کے بعد بھی۔</p>"},
+  "probezeit":{"titel":"آزمائشی مدت — بنیادی قواعد","html":"<p>آزمائشی مدت عام طور پر ٹیسٹ پاس کرنے کے بعد <b>2 سال</b> ہوتی ہے، تمام لائسنس کلاسوں کے لیے سوائے T/L جیسی خاص کلاسوں کے۔</p><p>ایک <b>A-خلاف ورزی</b> (سنگین، مثلاً سرخ بتی، الکحل) یا <b>دو B-خلاف ورزیوں</b> (کم سنگین) پر: آزمائشی مدت ایک بار بڑھ کر <b>4 سال</b> ہو جاتی ہے، اس کے ساتھ لازمی اصلاحی کورس (ASF، عموماً 300–600 €)۔</p><p>اس کے بعد اگلی A-خلاف ورزی یا مزید دو B-خلاف ورزیاں: تحریری تنبیہ + رضاکارانہ ٹریفک سائیکالوجی مشاورت کی سفارش۔ اس کے بعد بھی ایک A-خلاف ورزی (یا دو B) ہو جائے: <b>ڈرائیونگ لائسنس ختم۔</b></p>"},
+  "probezeit_alkohol":{"titel":"آزمائشی مدت میں الکحل کی ممانعت — § 24c StVG","html":"<p>آزمائشی مدت میں نئے ڈرائیوروں کے لیے <b>0.0 پرومل</b> کی حد ہے، بغیر کسی استثنا کے — آزمائشی مدت سے باہر ڈرائیوروں کی 0.5 پرومل حد کے برعکس۔</p><p>خلاف ورزی فوراً سنگین A-خلاف ورزی شمار ہوتی ہے: آزمائشی مدت میں اضافہ اور اصلاحی کورس لازمی ہیں، چاہے ناپی گئی مقدار کتنی ہی ہو۔</p><p>یہ قاعدہ 21 سال سے کم عمر تمام ڈرائیوروں پر بھی لاگو ہوتا ہے، آزمائشی مدت ختم ہونے کے بعد بھی۔</p>"},
   "lkw_lenkzeiten":{"titel":"ڈرائیونگ اور آرام کے اوقات — ٹرک کا سب سے اہم قانون","html":"<p>یہ EU ضابطہ (EG) Nr. 561/2006 طے کرتا ہے، اور ڈیجیٹل ٹیکوگراف سے چیک ہوتا ہے۔ بنیادی حدیں:</p><p><b>روزانہ ڈرائیونگ کا وقت:</b> زیادہ سے زیادہ 9 گھنٹے، ہفتے میں دو بار 10 گھنٹے تک بڑھایا جا سکتا ہے۔<br><b>وقفہ:</b> زیادہ سے زیادہ 4.5 گھنٹے ڈرائیونگ کے بعد 45 منٹ کا وقفہ، جسے 15 + 30 منٹ میں تقسیم کیا جا سکتا ہے (اسی ترتیب سے)۔<br><b>روزانہ آرام:</b> کم از کم 11 گھنٹے، ہفتے میں تین بار 9 گھنٹے تک کم کیا جا سکتا ہے۔<br><b>ہفتہ وار ڈرائیونگ کا وقت:</b> زیادہ سے زیادہ 56 گھنٹے، دو ہفتوں میں مل کر زیادہ سے زیادہ 90 گھنٹے۔<br><b>ہفتہ وار آرام:</b> کم از کم 45 گھنٹے، ہر دوسرے ہفتے 24 گھنٹے تک کم کیا جا سکتا ہے، بشرطیکہ 3 ہفتوں کے اندر کمی پوری کی جائے۔</p>"},
-  "lkw_ladung":{"titel":"سامان کو محفوظ باندھنا — بنیادی ذمہ داری","html":"<p>§ 22 StVO کا تقاضا ہے کہ سامان اس طرح رکھا اور باندھا جائے کہ پوری بریک، اچانک بچاؤ کے لیے مڑنے یا خراب سڑک پر بھی وہ <b>نہ کھسکے، نہ الٹے اور نہ گرے</b>۔</p><p>ڈرائیور اور سامان لادنے والا دونوں ذمہ دار ہیں — ناقص بندش پر دونوں کے خلاف کارروائی ہو سکتی ہے۔ عام ذرائع باندھنے والے پٹے، لاکنگ بار اور پھسلن روکنے والی میٹ ہیں۔</p>"},
+  "lkw_ladung":{"titel":"سامان کو محفوظ باندھنا — بنیادی ذمہ داری","html":"<p>§ 22 StVO کا تقاضا ہے کہ سامان اس طرح رکھا اور باندھا جائے کہ پوری قوت سے بریک، اچانک بچاؤ کے لیے مڑنے یا خراب سڑک پر بھی وہ <b>نہ کھسکے، نہ الٹے اور نہ گرے</b>۔</p><p>ڈرائیور اور سامان لادنے والا دونوں ذمہ دار ہیں — ناقص بندش پر دونوں کے خلاف کارروائی ہو سکتی ہے۔ عام ذرائع باندھنے والے پٹے، لاکنگ بار اور پھسلن روکنے والی میٹ ہیں۔</p>"},
   "lkw_tacho":{"titel":"ڈیجیٹل ٹیکوگراف","html":"<p>ذاتی ڈرائیور کارڈ کے ذریعے ڈرائیونگ، کام اور آرام کے اوقات خود بخود ریکارڈ کرتا ہے۔ کاروباری ٹریفک میں 3.5 t سے زیادہ کے تقریباً تمام نئے ٹرکوں میں لازمی ہے۔</p><p>31.12.2024 سے چیکنگ کے وقت موجودہ دن اور <b>پچھلے 56 دنوں</b> کا ریکارڈ دکھانا ضروری ہے (پہلے 28 دن) — Bundesamt für Logistik und Mobilität (BALM، پہلے BAG) اور پولیس چیکنگ میں براہ راست یہ ریکارڈ دیکھتے ہیں۔</p>"},
   "lkw_tempo80":{"titel":"موٹروے پر خاص رفتار 80","html":"<p>3.5 t سے زیادہ کے ٹرکوں کے لیے موٹروے اور الگ سمتوں والی ایکسپریس سڑکوں پر یکساں طور پر <b>80 km/h</b> کی حد ہے (§ 18 Abs. 5 StVO) — وزن چاہے کچھ بھی ہو، اور چاہے کوئی نشان زیادہ رفتار کی اجازت دے۔</p><p>اس کے برعکس آبادی سے باہر عام بین الشہری سڑکوں پر درجہ وار قاعدہ ہے: 7.5 t تک 80 km/h کی اجازت ہے، اس سے زیادہ پر صرف <b>60 km/h</b> — وہاں یہ کئی لینوں والی سڑک پر بھی لاگو ہوتا ہے۔</p>"},
   "Vorfahrt_Paragraph8_StVO.pdf":{"titel":"پہلے گزرنے کا حق — § 8 StVO","meta":"دائیں والے کو پہلے، پہلے گزرنے کے حق کے نشانات، راؤنڈ اباؤٹ · بتاریخ 30.01.2026"},
@@ -5192,7 +5192,7 @@ I18N.vi = Object.assign(I18N.vi || {}, {
   "rImpressumSub":"Thông tin nhà cung cấp theo § 5 DDG",
   "rDatenschutz":"Chính sách bảo mật",
   "rDatenschutzSub":"Chúng tôi lưu dữ liệu nào và vì sao",
-  "rAgb":"Điều khoản kinh doanh chung",
+  "rAgb":"Điều kiện giao dịch chung",
   "rAgbSub":"Điều khoản sử dụng của Fahr-Akademie",
   "rWiderruf":"Hướng dẫn về quyền hủy hợp đồng",
   "rWiderrufSub":"Quyền hủy hợp đồng của bạn khi ký kết",
@@ -5208,23 +5208,23 @@ I18N.vi = Object.assign(I18N.vi || {}, {
   "adminLink":"Khu vực quản trị",
   "spracheWaehlen":"Chọn ngôn ngữ"
 });
-PRUEFUNGSTAG.vi = {"einleitung":"Hồi hộp là chuyện bình thường. Ai biết trước điều gì sẽ đến thì lái xe bình tĩnh hơn. Dưới đây là từng bước diễn ra trong ngày thi.","abschnitte":[{"titel":"Bạn cần mang theo","punkte":["Căn cước hoặc hộ chiếu — không có giấy tờ tùy thân còn hiệu lực thì không được thi.","Kính mắt hoặc kính áp tròng, nếu bạn cần khi lái xe.","Giày thoải mái, đế bằng — không đi dép xỏ ngón hay giày cao gót.","Phần còn lại (giấy yêu cầu thi, chứng nhận đào tạo) do trường dạy lái xe giữ."]},{"titel":"Kỳ thi diễn ra như sau","punkte":["Điểm hẹn thường là trường dạy lái xe hoặc trung tâm sát hạch. Hãy đến sớm 15 phút.","Giám khảo kiểm tra giấy tờ tùy thân của bạn. Giáo viên dạy lái xe ngồi cạnh bạn, giám khảo ngồi phía sau.","Trước khi xuất phát: chỉnh ghế, gương, vô lăng và thắt dây an toàn. Thường có câu hỏi về kỹ thuật, ví dụ về lốp xe, đèn hoặc các loại dung dịch.","Sau đó là phần lái: trong khu dân cư, ngoài khu dân cư và thường cả đường cao tốc hoặc đường ô tô tốc độ cao. Giám khảo sẽ báo trước cho bạn đi hướng nào.","Giữa chừng thường có hai bài thi kỹ năng cơ bản, ví dụ đỗ xe, quay đầu xe hoặc phanh khẩn cấp.","Cuối cùng bạn nhận kết quả ngay trong xe. Đậu rồi? Khi đó bạn nhận bằng lái xe, hoặc giấy chứng nhận thi nếu thi theo BF17."]},{"titel":"Khi mắc lỗi","punkte":["Không phải lỗi nào cũng có nghĩa là „trượt“. Giám khảo đánh giá ấn tượng tổng thể của bạn.","Giữ bình tĩnh và tập trung lái tiếp. Đừng nghĩ về lỗi vừa rồi, hãy nghĩ đến ngã tư tiếp theo.","Nếu lỗi nguy hiểm đến mức giám khảo phải can thiệp, kỳ thi sẽ kết thúc. Khi đó trường dạy lái xe sẽ cùng bạn lên lịch thi tiếp theo.","Nhiều người đậu ở lần thứ hai — nhờ chính những gì học được ở lần đầu."]},{"titel":"Để bớt hồi hộp","punkte":["Tối hôm trước: ngủ sớm. Buổi sáng: ăn uống một chút, đi vệ sinh trước khi thi.","Bài tập thở trước khi lên xe: hít vào 4 giây, giữ 4 giây, thở ra 6 giây. Lặp lại ba đến năm lần.","Hôm trước, hãy xem lại các tuyến đường trong khu vực thi của bạn — không cần xem hết, chỉ những chỗ khó.","Bạn đã làm điều này rất nhiều lần trong các buổi học lái. Kỳ thi cũng chỉ là một chuyến lái như bao chuyến khác."]}]};
+PRUEFUNGSTAG.vi = {"einleitung":"Hồi hộp là chuyện bình thường. Ai biết trước điều gì sẽ đến thì lái xe bình tĩnh hơn. Dưới đây là từng bước diễn ra trong ngày thi.","abschnitte":[{"titel":"Bạn cần mang theo","punkte":["Căn cước hoặc hộ chiếu — không có giấy tờ tùy thân còn hiệu lực thì không được thi.","Kính mắt hoặc kính áp tròng, nếu bạn cần khi lái xe.","Giày thoải mái, đế bằng — không đi dép xỏ ngón hay giày cao gót.","Phần còn lại (giấy yêu cầu thi, chứng nhận đào tạo) do trường dạy lái xe giữ."]},{"titel":"Kỳ thi diễn ra như sau","punkte":["Điểm hẹn thường là trường dạy lái xe hoặc trung tâm sát hạch. Hãy đến sớm 15 phút.","Giám khảo kiểm tra giấy tờ tùy thân của bạn. Giáo viên dạy lái xe ngồi cạnh bạn, giám khảo ngồi phía sau.","Trước khi xuất phát: chỉnh ghế, gương, vô lăng và thắt dây an toàn. Thường có câu hỏi về kỹ thuật, ví dụ về lốp xe, đèn hoặc các loại dung dịch.","Sau đó là phần lái: trong khu dân cư, ngoài khu dân cư và thường cả đường cao tốc hoặc đường ô tô tốc độ cao. Giám khảo sẽ báo trước cho bạn đi hướng nào.","Giữa chừng thường có hai bài thi kỹ năng cơ bản, ví dụ đỗ xe, quay đầu xe hoặc phanh khẩn cấp.","Cuối cùng bạn nhận kết quả ngay trong xe. Đậu rồi? Khi đó bạn nhận bằng lái xe, hoặc giấy chứng nhận đã thi đậu nếu thi theo BF17."]},{"titel":"Khi mắc lỗi","punkte":["Không phải lỗi nào cũng có nghĩa là „trượt“. Giám khảo đánh giá ấn tượng tổng thể của bạn.","Giữ bình tĩnh và tập trung lái tiếp. Đừng nghĩ về lỗi vừa rồi, hãy nghĩ đến ngã tư tiếp theo.","Nếu lỗi nguy hiểm đến mức giám khảo phải can thiệp, kỳ thi sẽ kết thúc. Khi đó trường dạy lái xe sẽ cùng bạn lên lịch thi tiếp theo.","Nhiều người đậu ở lần thứ hai — nhờ chính những gì học được ở lần đầu."]},{"titel":"Để bớt hồi hộp","punkte":["Tối hôm trước: ngủ sớm. Buổi sáng: ăn uống một chút, đi vệ sinh trước khi thi.","Bài tập thở trước khi lên xe: hít vào 4 giây, giữ 4 giây, thở ra 6 giây. Lặp lại ba đến năm lần.","Hôm trước, hãy xem lại các tuyến đường trong khu vực thi của bạn — không cần xem hết, chỉ những chỗ khó.","Bạn đã làm điều này rất nhiều lần trong các buổi học lái. Kỳ thi cũng chỉ là một chuyến lái như bao chuyến khác."]}]};
 NUETZLICH_UE.vi = {
-  "buko_punkte":{"titel":"Danh mục tiền phạt — hệ thống điểm phạt","html":"<p>Từ sau cải cách, Sổ đăng ký năng lực lái xe (Flensburg) có ba mức:</p><p><b>1 điểm</b> — vi phạm nặng, ví dụ dùng điện thoại khi lái xe, vi phạm quyền ưu tiên thông thường.<br><b>2 điểm</b> — vi phạm rất nặng kèm cấm lái xe theo quy định, ví dụ vượt đèn đỏ gây nguy hiểm.<br><b>3 điểm</b> — tội hình sự mà tòa án tước giấy phép lái xe, ví dụ lái xe say rượu từ 1,1 phần nghìn trở lên hoặc bỏ trốn sau tai nạn bị tước bằng.</p><p>Nồng độ cồn từ 0,5 phần nghìn, xử lý như vi phạm hành chính, bị 2 điểm. Khi có 4–5 điểm bạn bị nhắc nhở, 6–7 điểm bị cảnh cáo, từ <b>8 điểm</b> sẽ mất giấy phép lái xe.</p>"},
-  "buko_handy":{"titel":"Cấm dùng điện thoại khi lái xe — § 23 khoản 1a StVO","html":"<p>Không chỉ là gọi điện, mà mọi thiết bị điện tử được cầm trên tay và thao tác — theo các phán quyết của tòa án, cả sạc dự phòng, máy tính bỏ túi hay thuốc lá điện tử có màn hình cảm ứng cũng tính.</p><p><b>100 € + 1 điểm</b> trong trường hợp thông thường.<br><b>150 € + 2 điểm + cấm lái xe 1 tháng</b> nếu gây nguy hiểm cho người khác.<br><b>200 € + 2 điểm + cấm lái xe 1 tháng</b> nếu gây hư hỏng tài sản.</p><p>Vẫn được phép dùng qua thiết bị rảnh tay, miễn là không cầm thiết bị trên tay.</p>"},
-  "buko_rettungsgasse":{"titel":"Hành lang cứu hộ — § 11 khoản 2 StVO","html":"<p>Bắt buộc trên đường cao tốc và đường nhiều làn ngoài khu dân cư, ngay khi xe cộ chỉ còn đi chậm như người đi bộ hoặc dừng hẳn — không phải đợi đến khi cảnh sát muốn đi qua.</p><p>Hành lang được tạo <b>giữa làn ngoài cùng bên trái và làn ngay cạnh nó</b>. Nghĩa là: xe ở làn ngoài cùng bên trái đi sát sang trái hết mức, tất cả các xe khác đi sát sang phải hết mức.</p><p>Ai không tạo hành lang cứu hộ: <b>200 € + 2 điểm</b>. Nếu vì thế mà xe cứu hộ bị cản trở, bị gây nguy hiểm hoặc có hư hỏng tài sản: <b>240 € đến 320 €, 2 điểm và cấm lái xe 1 tháng</b>.</p><p>Ai tự ý chạy vào hành lang để đi nhanh hơn: <b>từ 240 €, 2 điểm và cấm lái xe 1 tháng</b>.</p>"},
+  "buko_punkte":{"titel":"Danh mục tiền phạt — hệ thống điểm phạt","html":"<p>Từ sau cải cách, Sổ đăng ký năng lực lái xe (Flensburg) có ba mức:</p><p><b>1 điểm</b> — vi phạm nặng, ví dụ dùng điện thoại khi lái xe, vi phạm quyền ưu tiên thông thường.<br><b>2 điểm</b> — vi phạm rất nặng kèm cấm lái xe theo quy định, ví dụ vượt đèn đỏ gây nguy hiểm.<br><b>3 điểm</b> — tội hình sự mà tòa án tước giấy phép lái xe, ví dụ lái xe say rượu từ 1,1 phần nghìn trở lên hoặc bỏ trốn khỏi hiện trường tai nạn kèm tước bằng.</p><p>Nồng độ cồn từ 0,5 phần nghìn, xử lý như vi phạm hành chính, bị 2 điểm. Khi có 4–5 điểm bạn bị nhắc nhở, 6–7 điểm bị cảnh cáo, từ <b>8 điểm</b> sẽ mất giấy phép lái xe.</p>"},
+  "buko_handy":{"titel":"Cấm dùng điện thoại khi lái xe — § 23 khoản 1a StVO","html":"<p>Không chỉ áp dụng cho việc gọi điện, mà cho mọi thiết bị điện tử được cầm trên tay để thao tác — theo các phán quyết của tòa án, cả sạc dự phòng, máy tính bỏ túi hay thuốc lá điện tử có màn hình cảm ứng cũng tính.</p><p><b>100 € + 1 điểm</b> trong trường hợp thông thường.<br><b>150 € + 2 điểm + cấm lái xe 1 tháng</b> nếu gây nguy hiểm cho người khác.<br><b>200 € + 2 điểm + cấm lái xe 1 tháng</b> nếu gây hư hỏng tài sản.</p><p>Vẫn được phép dùng qua thiết bị rảnh tay, miễn là không cầm thiết bị trên tay.</p>"},
+  "buko_rettungsgasse":{"titel":"Hành lang cứu hộ — § 11 khoản 2 StVO","html":"<p>Bắt buộc trên đường cao tốc và đường nhiều làn ngoài khu dân cư, ngay khi xe cộ chỉ còn đi chậm như người đi bộ hoặc dừng hẳn — không phải đợi đến khi cảnh sát muốn đi qua.</p><p>Hành lang được tạo <b>giữa làn ngoài cùng bên trái và làn ngay cạnh nó</b>. Nghĩa là: xe ở làn ngoài cùng bên trái đi sát sang trái hết mức, tất cả các xe khác đi sát sang phải hết mức.</p><p>Ai không tạo hành lang cứu hộ: <b>200 € + 2 điểm</b>. Nếu vì thế mà xe ưu tiên bị cản trở, bị gây nguy hiểm hoặc có hư hỏng tài sản: <b>240 € đến 320 €, 2 điểm và cấm lái xe 1 tháng</b>.</p><p>Ai tự ý chạy vào hành lang để đi nhanh hơn: <b>từ 240 €, 2 điểm và cấm lái xe 1 tháng</b>.</p>"},
   "probezeit":{"titel":"Thời gian thử thách — các quy tắc cơ bản","html":"<p>Thời gian thử thách thông thường kéo dài <b>2 năm</b> kể từ khi thi đậu, áp dụng cho mọi hạng bằng lái trừ các hạng đặc biệt như T/L.</p><p>Nếu có <b>một vi phạm loại A</b> (nghiêm trọng, ví dụ vượt đèn đỏ, rượu bia) hoặc <b>hai vi phạm loại B</b> (ít nghiêm trọng hơn): thời gian thử thách được kéo dài một lần lên <b>4 năm</b>, kèm khóa học bồi dưỡng bắt buộc (ASF, thường 300–600 €).</p><p>Sau đó lại có một vi phạm loại A hoặc thêm hai vi phạm loại B: cảnh cáo bằng văn bản + khuyến nghị tham gia tư vấn tâm lý giao thông tự nguyện. Nếu sau đó còn thêm một vi phạm loại A (hoặc hai loại B): <b>mất giấy phép lái xe.</b></p>"},
   "probezeit_alkohol":{"titel":"Cấm rượu bia trong thời gian thử thách — § 24c StVG","html":"<p>Với người mới lái trong thời gian thử thách, giới hạn là <b>0,0 phần nghìn</b>, không có ngoại lệ — khác với mức 0,5 phần nghìn cho người lái ngoài thời gian thử thách.</p><p>Vi phạm lập tức bị tính là vi phạm loại A nghiêm trọng: bắt buộc kéo dài thời gian thử thách và học khóa bồi dưỡng, bất kể nồng độ đo được là bao nhiêu.</p><p>Quy định này còn áp dụng cho mọi người lái dưới 21 tuổi, kể cả sau khi hết thời gian thử thách.</p>"},
   "lkw_lenkzeiten":{"titel":"Thời gian lái và nghỉ — quy định quan trọng nhất cho xe tải","html":"<p>Được quy định trong Quy chế EU (EG) số 561/2006, kiểm soát qua máy ghi hành trình kỹ thuật số. Các giá trị chính:</p><p><b>Thời gian lái trong ngày:</b> tối đa 9 giờ, hai lần mỗi tuần được kéo dài lên 10 giờ.<br><b>Nghỉ giải lao:</b> chậm nhất sau 4,5 giờ lái phải nghỉ 45 phút, có thể chia thành 15 + 30 phút (theo đúng thứ tự này).<br><b>Thời gian nghỉ hằng ngày:</b> ít nhất 11 giờ, ba lần mỗi tuần được rút xuống 9 giờ.<br><b>Thời gian lái trong tuần:</b> tối đa 56 giờ, hai tuần cộng lại tối đa 90 giờ.<br><b>Thời gian nghỉ hằng tuần:</b> ít nhất 45 giờ, cứ hai tuần một lần được rút xuống 24 giờ nhưng phải bù lại trong vòng 3 tuần.</p>"},
   "lkw_ladung":{"titel":"Chằng buộc hàng hóa — nghĩa vụ cơ bản","html":"<p>§ 22 StVO yêu cầu hàng hóa phải được xếp và chằng buộc sao cho kể cả khi phanh gấp, đột ngột tránh né hoặc đi trên mặt đường xấu, hàng cũng <b>không bị xê dịch, lật đổ hay rơi xuống</b>.</p><p>Cả người lái lẫn người xếp hàng đều chịu trách nhiệm — cả hai đều có thể bị xử lý nếu chằng buộc không đạt. Dụng cụ thường dùng là dây chằng, thanh chặn và thảm chống trượt.</p>"},
   "lkw_tacho":{"titel":"Máy ghi hành trình kỹ thuật số","html":"<p>Tự động ghi lại thời gian lái, làm việc và nghỉ qua thẻ lái xe cá nhân. Bắt buộc trên hầu hết các xe tải đời mới trên 3,5 t dùng trong vận tải thương mại.</p><p>Từ ngày 31.12.2024, khi bị kiểm tra phải xuất trình được dữ liệu của ngày hiện tại và <b>56 ngày trước đó</b> (trước đây là 28 ngày) — Cục Liên bang về Logistics và Di chuyển (BALM, trước đây là BAG) và cảnh sát truy cập trực tiếp vào dữ liệu này.</p>"},
-  "lkw_tempo80":{"titel":"Tốc độ riêng 80 trên đường cao tốc","html":"<p>Với xe tải trên 3,5 t, trên đường cao tốc và đường ô tô có dải phân cách áp dụng chung mức <b>80 km/h</b> (§ 18 khoản 5 StVO) — không phụ thuộc vào trọng lượng chính xác, và kể cả khi biển báo cho phép tốc độ cao hơn.</p><p>Còn trên đường liên tỉnh thông thường ngoài khu dân cư thì áp dụng quy tắc theo mức: đến 7,5 t được đi 80 km/h, nặng hơn chỉ được <b>60 km/h</b> — ở đó quy định này áp dụng cả với đường nhiều làn.</p>"},
+  "lkw_tempo80":{"titel":"Tốc độ riêng 80 trên đường cao tốc","html":"<p>Với xe tải trên 3,5 t, trên đường cao tốc và đường dành riêng cho ô tô có dải phân cách áp dụng chung mức <b>80 km/h</b> (§ 18 khoản 5 StVO) — không phụ thuộc vào trọng lượng chính xác, và kể cả khi biển báo cho phép tốc độ cao hơn.</p><p>Còn trên đường liên tỉnh thông thường ngoài khu dân cư thì áp dụng quy tắc theo mức: đến 7,5 t được đi 80 km/h, nặng hơn chỉ được <b>60 km/h</b> — ở đó quy định này áp dụng cả với đường nhiều làn.</p>"},
   "Vorfahrt_Paragraph8_StVO.pdf":{"titel":"Quyền ưu tiên — § 8 StVO","meta":"Bên phải được ưu tiên, biển báo quyền ưu tiên, vòng xuyến · Cập nhật 30.01.2026"},
   "Geschwindigkeit_Paragraph3_StVO.pdf":{"titel":"Tốc độ — § 3 StVO","meta":"Tốc độ phù hợp, tầm nhìn khi có sương mù · Cập nhật 30.01.2026"},
   "Abstand_Paragraph4_StVO.pdf":{"titel":"Khoảng cách — § 4 StVO","meta":"„Một nửa tốc độ“, khoảng cách an toàn · Cập nhật 30.01.2026"},
   "Ueberholen_Paragraph5_StVO.pdf":{"titel":"Vượt xe — § 5 StVO","meta":"Khoảng cách bên hông, báo hiệu, trở lại làn · Cập nhật 30.01.2026"},
   "Abbiegen_Paragraph9_StVO.pdf":{"titel":"Rẽ, quay đầu, lùi xe — § 9 StVO","meta":"Vào đúng làn, quay đầu quan sát qua vai, quy tắc cho xe rẽ trái · Cập nhật 30.01.2026"},
-  "Autobahn_Paragraph18_StVO.pdf":{"titel":"Đường cao tốc và đường ô tô — § 18 StVO","meta":"Nhập làn, ra khỏi đường, quyền ưu tiên của làn đường chính · Cập nhật 30.01.2026"},
+  "Autobahn_Paragraph18_StVO.pdf":{"titel":"Đường cao tốc và đường dành riêng cho ô tô — § 18 StVO","meta":"Nhập làn, ra khỏi đường, quyền ưu tiên của làn đường chính · Cập nhật 30.01.2026"},
   "Beleuchtung_Paragraph17_StVO.pdf":{"titel":"Đèn chiếu sáng — § 17 StVO","meta":"Đèn cốt, đèn pha, khi nào bắt buộc bật đèn nào · Cập nhật 30.01.2026"},
   "Pflichten_Fahrzeugfuehrer_Paragraph23_StVO.pdf":{"titel":"Nghĩa vụ của người lái xe — § 23 StVO","meta":"Tầm nhìn, tình trạng xe, biển số, đèn ban ngày · Cập nhật 30.01.2026"},
   "Fussgaengerueberwege_Paragraph26_StVO.pdf":{"titel":"Vạch sang đường cho người đi bộ — § 26 StVO","meta":"Vạch kẻ ngựa vằn, nghĩa vụ nhường đường, cấm vượt · Cập nhật 30.01.2026"}
@@ -5366,7 +5366,7 @@ I18N.rif = Object.assign(I18N.rif || {}, {
   "pushNein":"War tucciḍ ca lidn",
   "suchPlatzhalter":"Ṛzu, am ṛṛunpwan",
   "fAlle":"Maṛṛa",
-  "fOffen":"Ɛad",
+  "fOffen":"War tekmil ca",
   "fFertig":"Tekmel",
   "nichtsGefunden":"Walu i „{q}“.",
   "nichtsImFilter":"Walu di lfiltr-a.",
@@ -5402,7 +5402,7 @@ I18N.rif = Object.assign(I18N.rif || {}, {
   "navStrecken":"Iberdan",
   "navLabel":"Lmenu ameqqran",
   "mPruefungstag":"Ass n imtiḥan",
-  "iosHinweis":"I iPhone: ṛẓem Akademie kul tikkelt zi licon i yellan ɣef ṭṭabla n tazwara n tilifun-nnec (Home). Safari d licon ttwaḥsaben am sin n tilifunat — mala tbeddleḍ, ad teffɣeḍ.",
+  "iosHinweis":"Nnasiḥa i iPhone: ṛẓem Akademie kul tikkelt zi licon i yellan ɣef ṭṭabla n tazwara n tilifun-nnec (Home). Safari d licon ttwaḥsaben am sin n tilifunat — mala tbeddleḍ, ad teffɣeḍ.",
   "vorschauHinweis":"Ajeṛṛeb: {n} n ttawani timezwura",
   "vorschauEnde":"Aya d ajeṛṛeb. Lvidyu kamel yella di lkunt kamel.",
   "kapitelTitel":"Iḥricen",
@@ -5417,7 +5417,7 @@ I18N.rif = Object.assign(I18N.rif || {}, {
   "videoAnzahl1":"1 n lvidyu",
   "videoAnzahl":"{n} n lvidyuwat",
   "werbeTitel":"Ɛreḍ imeddukal-nnec",
-  "werbeText":"Tessneḍ ca n yiwen ɣaṛ-s imtiḥan dɣya? Uc-as kud-nnec — ad tawim ttenzil s sin nwem.",
+  "werbeText":"Tessneḍ ca n yiwen ɣaṛ-s daɣ imtiḥan qrib? Uc-as kud-nnec — ad tawim ttenzil s sin nwem.",
   "werbeKnopf":"Sken kud-inu",
   "werbeTeilen":"Bḍu lien",
   "werbeNachricht":"Ttɣeṛɣ iberdan n imtiḥan-inu s Fahr-Akademie — iberdan n ṣṣeḥ i yettawi umemtaḥen. S kud-inu ad tawiḍ ttenzil: {link}",
@@ -5468,12 +5468,12 @@ I18N.rif = Object.assign(I18N.rif || {}, {
   "adminLink":"Aḥric n tedbelt",
   "spracheWaehlen":"Xtaṛ tutlayt"
 });
-PRUEFUNGSTAG.rif = {"einleitung":"Lqelq d aya iṭṭṛan. Win yessnen min ɣa d-yas, ad ineheṛ s tlufit. Da tella, tikli s tikli, ammu ad yeddu wass.","abschnitte":[{"titel":"Min ɣa tawiḍ aked-c","punkte":["Lkaṛṭa n tmagit niɣ lpaspuṛ — bla lkaṛṭa iṣeḥḥan, imtiḥan war itteddu ca.","Nnḍaḍeṛ niɣ lentiy, mala ixeṣṣa-c ten bac ad tnehheṛeḍ.","Isebbaḍ n ṛṛaḥa bla ṭṭalun — macci flip-flops, macci ṭṭalun ɛali.","Ayen nniḍen (lwaṛqa n imtiḥan, lwaṛqa n lqeṛya) yella ɣaṛ lawṭu-ikul-nnec."]},{"titel":"Ammu itteddu imtiḥan","punkte":["S lekteṛ ad temlilem di lawṭu-ikul niɣ di lmaktab n imtiḥan. As-d 15 n ddqayeq qbel.","Amemtaḥen ad ixẓeṛ lkaṛṭa-nnec. Amɛellem-nnec iqqim ɣer yidis-nnec, amemtaḥen deffir.","Qbel ma ad tebdiḍ tteddu: qadd lkursi, ṛṛitṛuwat, lbulan d ssemta. S lekteṛ ad ac-d-sseqsan ɣef tteknik, am lpnuwat, ḍḍew niɣ lmayeɛat.","Ɛad d anehheṛ: di temdint, berra i temdint d s lekteṛ lawṭuṛut niɣ abrid n ssuṛɛa. Amemtaḥen ad ac-yini di lweqt mani ɣa tṛaḥeḍ.","Di jaṛ, s lekteṛ ad d-asent sin n lmanuvrat n imtiḥan, am parki, ddumi-tuṛ niɣ lfrinu n lxaṭaṛ.","Di taggara, ad tessneḍ ntija dɣya di ṭumubil. Tenjeḥeḍ? Ad tawiḍ lpermi-nnec, niɣ lwaṛqa n imtiḥan mala d BF17."]},{"titel":"Mala tegiḍ axeṭṭa","punkte":["Macci kul axeṭṭa d „war tenjiḥeḍ ca“. Amemtaḥen ixẓeṛ ɣer unehheṛ-nnec maṛṛa.","Qqim s tlufit, kemmel s lɛaqel. War xemmem ca ɣef uxeṭṭa i yezrin, xemmem ɣef lkaṛfuṛ i d-itasen.","Mala axeṭṭa d lxaṭaṛ aṭṭas ḥetta ixeṣṣa amemtaḥen ad yedxel, imtiḥan ad yekfa. Ɛad lawṭu-ikul-nnec ad tegg aked-c lmaweɛd i d-itasen.","Aṭṭas n medden i yenjeḥen di tikkelt tis snat — s min lemden di tamezwarut."]},{"titel":"Mamec ad tekkseḍ lqelq","punkte":["Tameddit qbel: ṭṭes zik. Tifawt: ecc ca d sew, ṛaḥ ɣer twalit qbel.","Tamrint n nnfes qbel ma ad tekcmeḍ ɣer ṭumubil: ssekcem nnfes 4 n ttawani, ṭṭef-it 4 n ttawani, ssuffeɣ-it 6 n ttawani. Ɛawed-it 3 ɣer 5 n tikkal.","Ass qbel, ɛawed xẓeṛ iberdan n tamnaḍt n imtiḥan-nnec — macci kulci, ɣir imukan iweɛṛen.","Tegiḍ aya aṭṭas n tikkal di ddṛus n unehheṛ. Imtiḥan d anehheṛ am wiyyaḍ."]}]};
+PRUEFUNGSTAG.rif = {"einleitung":"Lqelq d aya iṭṭṛan. Win yessnen min ɣa d-yas, ad inehheṛ s tlufit. Da tella, tikli s tikli, ammu ad yeddu wass.","abschnitte":[{"titel":"Min ɣa tawiḍ aked-c","punkte":["Lkaṛṭa n tmagit niɣ lpaspuṛ — bla lkaṛṭa iṣeḥḥan, imtiḥan war itteddu ca.","Nnḍaḍeṛ niɣ lentiy, mala ixeṣṣa-c ten bac ad tnehheṛeḍ.","Isebbaḍ n ṛṛaḥa bla ṭṭalun — macci flip-flops, macci ṭṭalun ɛali.","Ayen nniḍen (lwaṛqa n imtiḥan, lwaṛqa n lqeṛya) yella ɣaṛ lawṭu-ikul-nnec."]},{"titel":"Ammu itteddu imtiḥan","punkte":["S lekteṛ ad temlilem di lawṭu-ikul niɣ di lmaktab n imtiḥan. As-d 15 n ddqayeq qbel.","Amemtaḥen ad ixẓeṛ lkaṛṭa-nnec. Amɛellem-nnec iqqim ɣer yidis-nnec, amemtaḥen deffir.","Qbel ma ad tebdiḍ tteddu: qadd lkursi, ṛṛitṛuwat, lbulan d ssemta. S lekteṛ ad ac-d-sseqsan ɣef tteknik, am lpnuwat, ḍḍew niɣ lmayeɛat.","Ɛad d anehheṛ: di temdint, berra i temdint d s lekteṛ lawṭuṛut niɣ abrid n ssuṛɛa. Amemtaḥen ad ac-yini di lweqt mani ɣa tṛaḥeḍ.","Di jaṛ, s lekteṛ ad d-asent sin n lmanuvrat n imtiḥan, am parki, ddumi-tuṛ niɣ lfrinu n lxaṭaṛ.","Di taggara, ad tessneḍ ntija dɣya di ṭumubil. Tenjeḥeḍ? Ad tawiḍ lpermi-nnec, niɣ lwaṛqa n imtiḥan mala d BF17."]},{"titel":"Mala tegiḍ axeṭṭa","punkte":["Macci kul axeṭṭa d „war tenjiḥeḍ ca“. Amemtaḥen ixẓeṛ ɣer unehheṛ-nnec maṛṛa.","Qqim s tlufit, kemmel s lɛaqel. War xemmem ca ɣef uxeṭṭa i yezrin, xemmem ɣef lkaṛfuṛ i d-itasen.","Mala axeṭṭa d lxaṭaṛ aṭṭas ḥetta ixeṣṣa amemtaḥen ad yedxel, imtiḥan ad yekfa. Ɛad lawṭu-ikul-nnec ad tegg aked-c lmaweɛd i d-itasen.","Aṭṭas n medden i yenjeḥen di tikkelt tis snat — s min lemden di tamezwarut."]},{"titel":"Mamec ad tekkseḍ lqelq","punkte":["Tameddit qbel: ṭṭes zik. Tifawt: ecc ca d sew, ṛaḥ ɣer twalit qbel.","Tamrint n nnfes qbel ma ad tekcmeḍ ɣer ṭumubil: ssekcem nnfes 4 n ttawani, ṭṭef-it 4 n ttawani, ssuffeɣ-it 6 n ttawani. Ɛawed-it 3 ɣer 5 n tikkal.","Ass qbel, ɛawed xẓeṛ iberdan n tamnaḍt n imtiḥan-nnec — macci kulci, ɣir imukan iweɛṛen.","Tegiḍ aya aṭṭas n tikkal di ddṛus n unehheṛ. Imtiḥan d anehheṛ am wiyyaḍ."]}]};
 NUETZLICH_UE.rif = {
   "buko_punkte":{"titel":"Lɣeṛṛamat — ammu teddunt tinqqaḍin","html":"<p>Zeg uṣlaḥ n lqanun, llant kraḍ n tfesna di ṛṛijistr n unehheṛ (Flensburg):</p><p><b>1 n tneqqiḍt</b> — ixeṭṭan iweɛṛen, am tilifun deg ufus mala tnehheṛeḍ, niɣ axeṭṭa ɣef lpriyuriti.<br><b>2 n tinqqaḍin</b> — ixeṭṭan iweɛṛen aṭṭas s lmenɛ n unehheṛ, am mala tɛeddiḍ ḍḍew azeggaɣ u tegiḍ wiyyaḍ di lxaṭaṛ.<br><b>3 n tinqqaḍin</b> — ljarimat i ɣef tettekkes lmeḥkama lpermi, am anehheṛ s ccṛab zi 1,1 promille niɣ arewwel zi lḥadita s ukkas n lpermi.</p><p>Ccṛab zi 0,5 promille, d axeṭṭa (macci d ljarima), yettawi 2 n tinqqaḍin. S 4–5 n tinqqaḍin ad ac-d-ucen ttedkir, s 6–7 n tinqqaḍin tanbiht, zi <b>8 n tinqqaḍin</b> lpermi iṛuḥ.</p>"},
   "buko_handy":{"titel":"Lmenɛ n tilifun mala tnehheṛeḍ — § 23 Abs. 1a StVO","html":"<p>War yeqqin ca ɣir ɣer usiwel s tilifun: yeqqen ɣer kul lappareil ilikṭṛuni i teṭṭfeḍ deg ufus-nnec u txeddmeḍ s-s — ḥetta powerbank, lmakina n lḥsab niɣ e-cigarette s lekran tactile ttwaḥsaben, ɣef min i ḥekmen lmeḥkamat.</p><p><b>100 € + 1 n tneqqiḍt</b> s lɛada.<br><b>150 € + 2 n tinqqaḍin + 1 n wayyur n lmenɛ n unehheṛ</b> mala tegiḍ wiyyaḍ di lxaṭaṛ.<br><b>200 € + 2 n tinqqaḍin + 1 n wayyur n lmenɛ n unehheṛ</b> mala tḥerseḍ ca n tɣawsa.</p><p>Iqqim d lḥlal ad tsexdmeḍ tilifun s kit mains libres, bla ma teṭṭfeḍ-t deg ufus.</p>"},
-  "buko_rettungsgasse":{"titel":"Abrid n usellek — § 11 Abs. 2 StVO","html":"<p>Ixeṣṣa di lawṭuṛut d di iberdan n berra i temdint s aṭṭas n ṭṭriqat, zeg wami ṭumubilat ad qqimen tteddun am win itteddun s uḍaṛ niɣ ad bedden — macci ɛad mala ixs lbulis ad yezri.</p><p>Tteggen-t <b>jaṛ ṭṭriq i yellan qaɛ ɣer uzelmaḍ d ṭṭriq i yellan ɣer yidis-s</b>. Ihi: wid yellan di ṭṭriq n uzelmaḍ qaɛ tteddun ɣer uzelmaḍ amec zemmren, maṛṛa wiyyaḍ ɣer ufus amec zemmren.</p><p>Win war yeggin abrid n usellek: <b>200 € + 2 n tinqqaḍin</b>. Mala s waya ttwaḥebsen ṭumubilat n usellek, niɣ ɛeddan ɣer lxaṭaṛ, niɣ teḥres ca n tɣawsa: <b>240 € ɣer 320 €, 2 n tinqqaḍin d 1 n wayyur n lmenɛ n unehheṛ</b>.</p><p>Win inehheṛen di ubrid n usellek bla lḥeqq bac ad yeɛjel: <b>zi 240 €, 2 n tinqqaḍin d 1 n wayyur n lmenɛ n unehheṛ</b>.</p>"},
-  "probezeit":{"titel":"Lweqt n tajṛibt — lqawaɛid tizuṛanin","html":"<p>Lweqt n tajṛibt yettawi s lɛada <b>2 n iseggusa</b> zeg wass i tenjeḥeḍ di imtiḥan, i maṛṛa iṣunaf n lpermi ɣir iṣunaf ixuṣṣen am T/L.</p><p>S <b>yiwen n uxeṭṭa A</b> (ameqqran, am ḍḍew azeggaɣ, ccṛab) niɣ <b>sin n ixeṭṭan B</b> (imezzyanen): lweqt n tajṛibt ad yezdad yiwet n tikkelt alami <b>4 n iseggusa</b>, aked sseminar n ujbaṛ (ASF, s lɛada 300–600 €).</p><p>Axeṭṭa A nniḍen niɣ sin n ixeṭṭan B nniḍen deffir-s: tanbiht s tira + ttewṣiya bac ad tṛaḥeḍ, s lxaṭeṛ-nnec, ɣer lxebir n psikuluji n ubrid. Mala yusa-d ɛad yiwen n uxeṭṭa A (niɣ sin n B): <b>lpermi iṛuḥ.</b></p>"},
+  "buko_rettungsgasse":{"titel":"Abrid n usellek — § 11 Abs. 2 StVO","html":"<p>Ixeṣṣa di lawṭuṛut d di iberdan n berra i temdint s aṭṭas n ṭṭriqat, zeg wami ṭumubilat ad qqimen tteddun am win itteddun s uḍaṛ niɣ ad bedden — bla ma tṛaǧuḍ alami ixs lbulis ad yezri.</p><p>Tteggen-t <b>jaṛ ṭṭriq i yellan qaɛ ɣer uzelmaḍ d ṭṭriq i yellan ɣer yidis-s</b>. Ihi: wid yellan di ṭṭriq n uzelmaḍ qaɛ tteddun ɣer uzelmaḍ amec zemmren, maṛṛa wiyyaḍ ɣer ufus amec zemmren.</p><p>Win war yeggin abrid n usellek: <b>200 € + 2 n tinqqaḍin</b>. Mala s waya ttwaḥebsen ṭumubilat n usellek, niɣ ɛeddan ɣer lxaṭaṛ, niɣ teḥres ca n tɣawsa: <b>240 € ɣer 320 €, 2 n tinqqaḍin d 1 n wayyur n lmenɛ n unehheṛ</b>.</p><p>Win inehheṛen di ubrid n usellek bla lḥeqq bac ad yeɛjel: <b>zi 240 €, 2 n tinqqaḍin d 1 n wayyur n lmenɛ n unehheṛ</b>.</p>"},
+  "probezeit":{"titel":"Lweqt n tajṛibt — lqawaɛid tizuṛanin","html":"<p>Lweqt n tajṛibt yettawi s lɛada <b>2 n iseggusa</b> zeg wass i tenjeḥeḍ di imtiḥan, i maṛṛa iṣunaf n lpermi ḥaca iṣunaf ixuṣṣen am T/L.</p><p>S <b>yiwen n uxeṭṭa A</b> (ameqqran, am ḍḍew azeggaɣ, ccṛab) niɣ <b>sin n ixeṭṭan B</b> (imezzyanen): lweqt n tajṛibt ad yezdad yiwet n tikkelt alami <b>4 n iseggusa</b>, aked sseminar n ujbaṛ (ASF, s lɛada 300–600 €).</p><p>Axeṭṭa A nniḍen niɣ sin n ixeṭṭan B nniḍen deffir-s: tanbiht s tira + ttewṣiya bac ad tṛaḥeḍ, s lxaṭeṛ-nnec, ɣer lxebir n psikuluji n ubrid. Mala yusa-d ɛad yiwen n uxeṭṭa A (niɣ sin n B): <b>lpermi iṛuḥ.</b></p>"},
   "probezeit_alkohol":{"titel":"Lmenɛ n ccṛab di lweqt n tajṛibt — § 24c StVG","html":"<p>I inehhaṛen imaynuten di lweqt n tajṛibt, lḥedd d <b>0,0 promille</b>, bla ḥetta yiwen n ustisna — macci am lḥedd n 0,5 promille i inehhaṛen i yellan berra i lweqt n tajṛibt.</p><p>Axeṭṭa ittwaḥseb dɣya d axeṭṭa A ameqqran: azid n lweqt n tajṛibt d sseminar n ujbaṛ ixeṣṣa-ten, xas ma mcḥal n ccṛab i ttwaɛebren.</p><p>Aya ittwaḥseb daɣ i maṛṛa inehhaṛen ddaw n 21 n iseggusa, ḥetta deffir ma yekfa lweqt n tajṛibt.</p>"},
   "lkw_lenkzeiten":{"titel":"Lweqt n unehheṛ d lweqt n usgunfu — lqanun ameqqran n lkamyu","html":"<p>Ittnaḍḍam-it lqanun n Lurub (EG) Nr. 561/2006, ttseqqaden-t s ttakugraf digital. Lmizanat imeqqranen:</p><p><b>Lweqt n unehheṛ n wass:</b> ugar n 9 n tisaɛtin war ixeṣṣa, tzemmreḍ ad t-tzideḍ ɣer 10 n tisaɛtin snat n tikkal di ssimana.<br><b>Asgunfu:</b> s ugar deffir 4,5 n tisaɛtin n unehheṛ, 45 n ddqayeq n usgunfu; tzemmreḍ ad tent-tebḍuḍ ɣer 15 + 30 n ddqayeq (s ttertib-a).<br><b>Asgunfu n wass:</b> qell-ma 11 n tisaɛtin, tzemmreḍ ad t-tneqqṣeḍ ɣer 9 n tisaɛtin kraḍ n tikkal di ssimana.<br><b>Lweqt n unehheṛ n ssimana:</b> ugar n 56 n tisaɛtin war ixeṣṣa, di snat n ssimanat ugar n 90 n tisaɛtin war ixeṣṣa.<br><b>Asgunfu n ssimana:</b> qell-ma 45 n tisaɛtin; kul ssimana tis snat tzemmreḍ ad t-tneqqṣeḍ ɣer 24 n tisaɛtin, ixeṣṣa ad t-tɛewweḍeḍ di 3 n ssimanat.</p>"},
   "lkw_ladung":{"titel":"Aṭṭaf n sselɛa — lwajib amezwaru","html":"<p>§ 22 StVO yenna ixeṣṣa sselɛa ad tili tettwaseṛs d tettwaṭṭef amec <b>war tzemmer ca ad tzelleq, ad tenqleb niɣ ad tewḍa</b> — ḥetta s lfrinu kamel, mala tḥeyydeḍ s lɣefla niɣ ɣef ubrid imeḥfuṛ.</p><p>Lmesʼuliya ɣef unehhaṛ d ɣef win i yɛemmṛen sselɛa — s sin nsen zemmren ad ttwaḥasben mala sselɛa war tettwaṭṭef ca mliḥ. Lḥwayej i ttsexdamen d ssmuṭ n uqqan, lxecbat n usbedd d ṭṭapis anti-dérapant.</p>"},
@@ -5485,7 +5485,7 @@ NUETZLICH_UE.rif = {
   "Ueberholen_Paragraph5_StVO.pdf":{"titel":"Ddubli — § 5 StVO","meta":"Lmasafa zi yidis, ligno qbel, tuɣalin ɣer ṭṭriq · Stand 30.01.2026"},
   "Abbiegen_Paragraph9_StVO.pdf":{"titel":"Adewweṛ, ddumi-tuṛ, anehheṛ ɣer deffir — § 9 StVO","meta":"Akcum di ṭṭriq i ixeṣṣen, axẓaṛ ɣef tɣiṛt, lqaɛida n win idewwṛen ɣer uzelmaḍ · Stand 30.01.2026"},
   "Autobahn_Paragraph18_StVO.pdf":{"titel":"Lawṭuṛut d iberdan n ṭumubilat — § 18 StVO","meta":"Akcum jaṛ ṭumubilat, tuffɣa, lpriyuriti n ubrid ameqqran · Stand 30.01.2026"},
-  "Beleuchtung_Paragraph17_StVO.pdf":{"titel":"Ḍḍew — § 17 StVO","meta":"Lkud, lfaṛ, mani ixeṣṣa kul ḍḍew · Stand 30.01.2026"},
+  "Beleuchtung_Paragraph17_StVO.pdf":{"titel":"Ḍḍew — § 17 StVO","meta":"Lkud, lfaṛ, melmi ixeṣṣa kul ḍḍew · Stand 30.01.2026"},
   "Pflichten_Fahrzeugfuehrer_Paragraph23_StVO.pdf":{"titel":"Lwajibat n unehhaṛ — § 23 StVO","meta":"Axẓaṛ, lḥala n ṭumubil, lmaṭrikula, ḍḍew di nnehaṛ · Stand 30.01.2026"},
   "Fussgaengerueberwege_Paragraph26_StVO.pdf":{"titel":"Zebra (abrid n wid itteddun s uḍaṛ) — § 26 StVO","meta":"Zebra, ixeṣṣa ad tṛaǧuḍ, lmenɛ n ddubli · Stand 30.01.2026"}
 };

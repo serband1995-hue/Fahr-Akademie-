@@ -94,7 +94,7 @@
     "titel": "Krivina i brzinomer"
    },
    "k9": {
-    "text": "Promašio si izlaz? Vozi dalje do sledećeg. Na autoputu nikada ne vozi unazad i ne okreći se – ni na zaustavnoj traci.",
+    "text": "Promašio si izlaz? Vozi dalje do sledećeg. Na autoputu nikada ne vozi unazad i ne okreći se polukružno – ni na zaustavnoj traci.",
     "frage": null,
     "regel": "§ 18 Abs. 7 StVO",
     "titel": "Zapamti"
@@ -128,7 +128,7 @@
      "optionen": [
       "Voziti sporo i čekati",
       "Odlučno ubrzati do brzine saobraćaja",
-      "Odmah skrenuti ulevo"
+      "Odmah preći ulevo"
      ],
      "erklaerung": "Sa sličnom brzinom kao ostali možeš bezbedno da se uključiš. Presporo uključivanje tera druge da koče."
     },
@@ -141,7 +141,7 @@
      "text": "Kada uključujem migavac?",
      "richtig": 1,
      "optionen": [
-      "Tek dok već menjam traku",
+      "Tek kad već menjam traku",
       "Na vreme, unapred",
       "Nikako, ionako je jasno"
      ],
@@ -262,13 +262,13 @@
     "titel": "Stani iza ukrštanja"
    },
    "k1": {
-    "text": "Okreni telo, gledaj kroz zadnje staklo i pravo se otkotrljaj unazad – oko 50 cm od ivičnjaka.",
+    "text": "Okreni telo, gledaj kroz zadnje staklo i polako vozi pravo unazad – oko 50 cm od ivičnjaka.",
     "frage": null,
     "regel": "Osnovni zadatak vožnje: vožnja unazad",
     "titel": "Pravo unazad"
    },
    "k2": {
-    "text": "Kad zadnji točak dođe do ugla: okreni volan udesno, tako da auto ravnomerno prati luk ivičnjaka. Prednji deo pri tome zanosi ulevo na kolovoz – pre toga ponovo pogledaj svuda okolo!",
+    "text": "Kad zadnji točak dođe do ugla: okreni volan udesno, tako da auto ravnomerno prati luk ivičnjaka. Prednji deo se pri tome pomera ulevo ka kolovozu – pre toga ponovo pogledaj svuda okolo!",
     "frage": {
      "text": "Na koju stranu okrećem volan da bi zadnji deo išao udesno?",
      "richtig": 0,
@@ -333,7 +333,7 @@
   "titel": "Kočenje u opasnosti: 30 ili 50?",
   "kapitel": {
    "k0": {
-    "text": "Dve vožnje u poređenju u istoj traci: auto-škola sa 50 km/h i – providno – isti auto sa 30 km/h. Uskoro će se između parkiranih automobila na ulicu otkotrljati lopta, a dete trči za njom.",
+    "text": "Dve vožnje u poređenju u istoj traci: auto-škola sa 50 km/h i – providno – isti auto sa 30 km/h. Uskoro će se između parkiranih automobila na ulicu otkotrljati lopta, a dete će potrčati za njom.",
     "frage": null,
     "regel": "§ 3 Abs. 1 · § 3 Abs. 2a StVO",
     "titel": "Dva auta, ista reakcija"
@@ -354,7 +354,7 @@
     "titel": "Opasnost! Vreme reakcije"
    },
    "k2": {
-    "text": "Kočnicu i kvačilo istovremeno pritisni do kraja i drži pritisak. ABS krčka – tako i treba. Drži volan opušteno, da možeš da izbegneš prepreku.",
+    "text": "Kočnicu i kvačilo istovremeno pritisni do kraja i drži pritisak. ABS vibrira i lupka – tako i treba. Drži volan opušteno, da možeš da izbegneš prepreku.",
     "frage": {
      "text": "Koliki je put kočenja pri kočenju u opasnosti sa 50 km/h (pravilo za pamćenje)?",
      "richtig": 0,
@@ -375,7 +375,7 @@
      "richtig": 1,
      "optionen": [
       "Zbog buke",
-      "Zaustavni put je mnogo kraći – sa 50 sam na mestu gde bih sa 30 već stajao još skoro jednako brz kao na početku",
+      "Zaustavni put je mnogo kraći – sa 50 sam, na mestu gde bih sa 30 već stajao, još skoro jednako brz kao na početku",
       "To je samo preporuka"
      ],
      "erklaerung": "Put kočenja raste sa kvadratom brzine."
@@ -543,7 +543,7 @@
     "titel": "Stani pored prednjeg auta"
    },
    "k2": {
-    "text": "Polako se kotrljaj unazad i okreni volan do kraja udesno. Zadnji deo ulazi u parking mesto. Gledaj unazad, a prednji deo zanosi ulevo na kolovoz – pre toga ponovo pogledaj!",
+    "text": "Polako se kotrljaj unazad i okreni volan do kraja udesno. Zadnji deo ulazi u parking mesto. Gledaj unazad, a prednji deo se pomera ulevo ka kolovozu – pre toga ponovo pogledaj!",
     "frage": null,
     "regel": "§ 9 Abs. 5 · § 1 Abs. 2 StVO",
     "titel": "Volan do kraja udesno"
@@ -570,7 +570,7 @@
     "titel": "Kontriranje volanom"
    },
    "k5": {
-    "text": "Malo napred, dok ispred i iza ne bude slično mnogo mesta. Cilj: paralelno i blizu ivičnjaka (okvirno: do oko 30 cm), bez dodirivanja.",
+    "text": "Malo napred, dok ispred i iza ne bude otprilike jednako mesta. Cilj: paralelno i blizu ivičnjaka (okvirno: do oko 30 cm), bez dodirivanja.",
     "frage": {
      "text": "Koliko auto sme biti udaljen od ivičnjaka?",
      "richtig": 1,
@@ -698,23 +698,23 @@
   }
  },
  "quer_vor": {
-  "kurz": "Unapred na upravno parking mesto – sa zamahom",
+  "kurz": "Unapred na upravno parking mesto – uz odmicanje u stranu",
   "titel": "Parkiranje unapred (upravno)",
   "kapitel": {
    "k0": {
-    "text": "U prolazu parkinga polako priđi mestu, uključi desni migavac. Malo zamahni ulevo, da luk odgovara parking mestu.",
+    "text": "U prolazu parkinga polako priđi mestu, uključi desni migavac. Malo se odmakni ulevo, da luk odgovara parking mestu.",
     "frage": {
-     "text": "Zašto zamahujem pre parkiranja unapred?",
+     "text": "Zašto se odmičem u stranu pre parkiranja unapred?",
      "richtig": 0,
      "optionen": [
       "Da luk odgovara uskom parking mestu",
       "Jer je brže",
       "Nije potrebno"
      ],
-     "erklaerung": "Pri vožnji unapred zadnji točkovi seku krivinu ka unutra – zamah sprečava da zadnji deo okrzne susedni auto."
+     "erklaerung": "Pri vožnji unapred zadnji točkovi seku krivinu ka unutra – odmicanje u stranu sprečava da zadnji deo okrzne susedni auto."
     },
     "regel": "§ 1 Abs. 2 StVO",
-    "titel": "Prođi i zamahni"
+    "titel": "Prođi i odmakni se"
    },
    "k1": {
     "text": "Kad je sredina mesta otprilike u visini spoljnog retrovizora: okreni volan do kraja udesno. Pazi na uglove susednih automobila (pogled preko desnog ramena).",
@@ -897,7 +897,7 @@
     "titel": "Ostavi koridor otvoren"
    },
    "k4": {
-    "text": "Zaustavna traka nije traka za nestrpljive. Ko ne napravi koridor ili se njime sam vozi, rizikuje novčanu kaznu, kaznene poene i zabranu upravljanja vozilom.",
+    "text": "Zaustavna traka nije traka za nestrpljive. Ko ne napravi koridor ili sam vozi kroz njega, rizikuje novčanu kaznu, kaznene poene i zabranu upravljanja vozilom.",
     "frage": null,
     "regel": "§ 11 Abs. 2 StVO · BKatV",
     "titel": "Zapamti"
@@ -977,7 +977,7 @@
       "Ne",
       "Samo uz trubu"
      ],
-     "erklaerung": "§ 20 Abs. 3 StVO: Gradski i školski autobusi koji se sa uključenim svim migavcima približavaju stajalištu ne smeju se preticati."
+     "erklaerung": "§ 20 Abs. 3 StVO: Linijski i školski autobusi koji se sa uključenim svim migavcima približavaju stajalištu ne smeju se preticati."
     },
     "regel": "§ 20 Abs. 3 StVO",
     "titel": "Školski autobus sa svim migavcima"
@@ -1289,7 +1289,7 @@
     "titel": "1. potez: napred, volan do kraja levo"
    },
    "k2": {
-    "text": "Brzina za vožnju unazad, ponovo pogledaj svuda okolo, polako unazad i volan do kraja udesno – do malo pre ivičnjaka iza tebe.",
+    "text": "Ubaci u brzinu za vožnju unazad, ponovo pogledaj svuda okolo, polako unazad i volan do kraja udesno – do malo pre ivičnjaka iza tebe.",
     "frage": {
      "text": "Na koju stranu okrećem volan pri vožnji unazad?",
      "richtig": 1,
