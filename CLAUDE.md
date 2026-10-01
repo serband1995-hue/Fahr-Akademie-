@@ -186,6 +186,9 @@ Konto-Schlüssel, den die Functions nicht haben).
   (eigene Kameras in kleine Bildpuffer, spiegelverkehrt, jedes 2.–4. Bild) und eine dunkle Leiste;
   Tacho, Blinkerpfeile und Schulterblick-Auge sind HTML in `spieler.js` (Maße aus `welt.cockpitMasse()`).
   Der Spiegel mit Spiegelblick-Signal leuchtet gelb. Handy quer + Fahrersicht = Vollbild.
+  **Kamera (01.10.2026, Serband):** Standard ist in ALLEN Szenen „Folgen“ (`schraeg`); der Schalter
+  „Kamera folgt der Erklärung“ startet aus – erst wenn man ihn einschaltet, greifen die Kapitel-Kameras
+  der Szene (`kapitel[].kamera`, z. B. Übersicht/Oben). `grundKamera` in den Daten wird nicht mehr genutzt.
   Die Kompass-Szenen stammen aus dem öffentlichen Kompass-Repo – die Sperre
   schützt die Akademie-Oberfläche, nicht die Rohdaten.
 - **Prüfer nur mit Initialen** (01.10.2026, Entscheidung Serband): `academy_pruefer.name`,
