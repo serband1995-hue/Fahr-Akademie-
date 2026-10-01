@@ -29,11 +29,16 @@ dafür (Überstand, Abschneiden, Überdeckung, Knopfgrößen) lief für
 
 ## Sprachen (29.09.2026)
 
-13 Sprachen (01.10.2026): de, tr, en, ar (rtl), es, ru, sr (lateinisch), ckb (Kurdisch Sorani, rtl),
-kmr (Kurdisch Kurmancî), hi, ur (rtl), vi, rif (Tarifit wie in Nador, lateinisch). Darija bewusst nicht
+18 Sprachen (02.10.2026): de, tr, en, ar (rtl), es, ru, sr (lateinisch), ckb (Kurdisch Sorani, rtl),
+kmr (Kurdisch Kurmancî), hi, ur (rtl), vi, rif (Tarifit wie in Nador, lateinisch) – und seit 02.10.2026 fa (Farsi, rtl,
+Anrede شما, auch für Dari-Sprecher), ps (Paschtu, rtl, تاسو), el (Griechisch), am (Amharisch, Ge'ez-Schrift, höflich እርስዎ),
+ti (Tigrinya, eritreisch, Ge'ez, höflich ንስኹም; Ampel = መብራህቲ ትራፊክ). Diese fünf stehen im eigenen Block
+SPRACHPAKETE2 (index.html/spieler.js) – der erste Block bleibt unberührt. Darija bewusst nicht
 (Entscheidung Serband: Marokkaner lesen Hocharabisch). Flaggen: Kurdisch = Kurdistan-Flagge als kleines SVG
 (`SPRACHEN[].bild`, kein Emoji vorhanden; `#` im data:-Bild immer als `%23`, sonst lädt es nicht), Tarifit = Marokko 🇲🇦
-(Entscheidung Serband, 01.10.2026). Die Texte der acht neuen
+(Entscheidung Serband, 01.10.2026). Farsi = Löwe-und-Sonne-Flagge (SVG `LOEWE_SONNE_FLAGGE`), Paschtu 🇦🇫, Griechisch 🇬🇷,
+Amharisch 🇪🇹, Tigrinya 🇪🇷 (Entscheidung Serband, 02.10.2026). Mehrdeutige Farbwörter beachten: Paschtu شین = grün UND
+blau (blau = آبي), Tarifit azegzaw (blau = aziza). Die Texte der acht neuen
 Sprachen stehen im Block SPRACHPAKETE in index.html bzw. spieler.js (erzeugt aus geprüften JSON-Dateien);
 die LEEREN Einträge `ru:{}` usw. müssen im I18N-Literal stehen, sonst setzt `if(!I18N[sprache])` beim Start
 auf Deutsch zurück. Sorani und Tarifit sollten von Muttersprachlern gegengelesen werden. Web-Recherche eingearbeitet (01.10.2026): Tarifit nach El Aissati (Nador-Lehrbuch)/Serhoual – blau = aziza
@@ -181,7 +186,8 @@ Konto-Schlüssel, den die Functions nicht haben).
   → ganze Szene, sonst nur Kapitel 1 (`teaser.gesperrt` = Titel der übrigen).
   Erzeugt werden die Daten mit `werkzeuge/szenen-export.js` (tastet die
   Kompass-Lernszenen und `werkzeuge/szenen/*.js` ab; Übersetzungen in
-  `werkzeuge/szenen-texte/{tr,en,ar,es}.json`, gleiche Struktur wie `texte.de`).
+  `werkzeuge/szenen-texte/<sprache>.json`, gleiche Struktur wie `texte.de`). Paragraphen-Etiketten (`.vv-regel`, `.par`)
+haben `unicode-bidi:plaintext`, sonst wird „§ 11 Abs. 2 StVO“ in RTL-Sprachen verdreht.
   **Cockpit (01.10.2026):** In der Fahrersicht zeichnet `motor.js` Innen- und Außenspiegel live
   (eigene Kameras in kleine Bildpuffer, spiegelverkehrt, jedes 2.–4. Bild) und eine dunkle Leiste;
   Tacho, Blinkerpfeile und Schulterblick-Auge sind HTML in `spieler.js` (Maße aus `welt.cockpitMasse()`).
