@@ -2021,16 +2021,16 @@ function geraeteId(){
    ========================================================= */
 // flagge: Emoji-Flagge oder ein kurzes Zeichen (flaggeHtml erkennt beides). Arabisch:
 // Flagge Jordaniens (Entscheidung Serband, 30.09.2026). Neue Sprache = neue Zeile hier + Texte in I18N.
-const KURDISTAN_FLAGGE = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20"%3E%3Cpath fill="#ED2024" d="M0 0h30v6.67H0z"/%3E%3Cpath fill="#fff" d="M0 6.67h30v6.66H0z"/%3E%3Cpath fill="#278E43" d="M0 13.33h30V20H0z"/%3E%3Cpolygon fill="#FEBD11" points="15.00,4.80 15.46,6.93 16.53,5.03 16.35,7.21 17.93,5.70 17.11,7.73 19.07,6.76 17.68,8.45 19.84,8.10 18.02,9.31 20.19,9.61 18.09,10.23 20.07,11.16 17.89,11.13 19.50,12.60 17.42,11.93 18.54,13.81 16.75,12.56 17.26,14.69 15.91,12.96 15.78,15.14 15.00,13.10 14.22,15.14 14.09,12.96 12.74,14.69 13.25,12.56 11.46,13.81 12.58,11.93 10.50,12.60 12.11,11.13 9.93,11.16 11.91,10.23 9.81,9.61 11.98,9.31 10.16,8.10 12.32,8.45 10.93,6.76 12.89,7.73 12.07,5.70 13.65,7.21 13.47,5.03 14.54,6.93"/%3E%3Ccircle cx="15" cy="10" r="2.9" fill="#FEBD11"/%3E%3C/svg%3E';
-const AMAZIGH_FLAGGE = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20"%3E%3Cpath fill="#0072C6" d="M0 0h30v6.67H0z"/%3E%3Cpath fill="#3A9D23" d="M0 6.67h30v6.66H0z"/%3E%3Cpath fill="#FFD700" d="M0 13.33h30V20H0z"/%3E%3Cpath fill="none" stroke="#E1261C" stroke-width="1.6" stroke-linecap="round" d="M15 2.6v14.8M11 3c0 3.6 1.8 5.2 4 5.2s4-1.6 4-5.2M11 17c0-3.6 1.8-5.2 4-5.2s4 1.6 4 5.2"/%3E%3C/svg%3E';
+const KURDISTAN_FLAGGE = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20"%3E%3Cpath fill="%23ED2024" d="M0 0h30v6.67H0z"/%3E%3Cpath fill="%23fff" d="M0 6.67h30v6.66H0z"/%3E%3Cpath fill="%23278E43" d="M0 13.33h30V20H0z"/%3E%3Cpolygon fill="%23FEBD11" points="15.00,4.80 15.46,6.93 16.53,5.03 16.35,7.21 17.93,5.70 17.11,7.73 19.07,6.76 17.68,8.45 19.84,8.10 18.02,9.31 20.19,9.61 18.09,10.23 20.07,11.16 17.89,11.13 19.50,12.60 17.42,11.93 18.54,13.81 16.75,12.56 17.26,14.69 15.91,12.96 15.78,15.14 15.00,13.10 14.22,15.14 14.09,12.96 12.74,14.69 13.25,12.56 11.46,13.81 12.58,11.93 10.50,12.60 12.11,11.13 9.93,11.16 11.91,10.23 9.81,9.61 11.98,9.31 10.16,8.10 12.32,8.45 10.93,6.76 12.89,7.73 12.07,5.70 13.65,7.21 13.47,5.03 14.54,6.93"/%3E%3Ccircle cx="15" cy="10" r="2.9" fill="%23FEBD11"/%3E%3C/svg%3E';
 const SPRACHEN = [
   { code:"de", name:"Deutsch", flagge:"🇩🇪" },
   { code:"tr", name:"Türkçe", flagge:"🇹🇷" },
   { code:"en", name:"English", flagge:"🇬🇧" },
   { code:"ar", name:"العربية", flagge:"🇯🇴", rtl:true },
   { code:"es", name:"Español", flagge:"🇪🇸" },
-  // 01.10.2026 (Serband): acht weitere Sprachen. Kurdisch: Flagge Kurdistans, Tarifit (Nador):
-  // Amazigh-Flagge -- beide gibt es nicht als Emoji, deshalb als kleines Bild (bild).
+  // 01.10.2026 (Serband): acht weitere Sprachen. Kurdisch: Flagge Kurdistans -- gibt es nicht als
+  // Emoji, deshalb als kleines Bild (bild; "#" im data:-Bild IMMER als %23, sonst lädt es nicht).
+  // Tarifit (Nador): Flagge Marokkos (Entscheidung Serband, 01.10.2026).
   { code:"ru", name:"Русский", flagge:"🇷🇺" },
   { code:"sr", name:"Srpski", flagge:"🇷🇸" },
   { code:"ckb", name:"کوردی (سۆرانی)", bild:KURDISTAN_FLAGGE, rtl:true },
@@ -2038,7 +2038,7 @@ const SPRACHEN = [
   { code:"hi", name:"हिन्दी", flagge:"🇮🇳" },
   { code:"ur", name:"اردو", flagge:"🇵🇰", rtl:true },
   { code:"vi", name:"Tiếng Việt", flagge:"🇻🇳" },
-  { code:"rif", name:"Tarifit", bild:AMAZIGH_FLAGGE }
+  { code:"rif", name:"Tarifit", flagge:"🇲🇦" }
 ];
 
 const I18N = {

@@ -31,8 +31,9 @@ dafür (Überstand, Abschneiden, Überdeckung, Knopfgrößen) lief für
 
 13 Sprachen (01.10.2026): de, tr, en, ar (rtl), es, ru, sr (lateinisch), ckb (Kurdisch Sorani, rtl),
 kmr (Kurdisch Kurmancî), hi, ur (rtl), vi, rif (Tarifit wie in Nador, lateinisch). Darija bewusst nicht
-(Entscheidung Serband: Marokkaner lesen Hocharabisch). Flaggen: Kurdisch = Kurdistan-Flagge, Tarifit =
-Amazigh-Flagge, beide als kleines SVG (`SPRACHEN[].bild`), weil es kein Emoji gibt. Die Texte der acht neuen
+(Entscheidung Serband: Marokkaner lesen Hocharabisch). Flaggen: Kurdisch = Kurdistan-Flagge als kleines SVG
+(`SPRACHEN[].bild`, kein Emoji vorhanden; `#` im data:-Bild immer als `%23`, sonst lädt es nicht), Tarifit = Marokko 🇲🇦
+(Entscheidung Serband, 01.10.2026). Die Texte der acht neuen
 Sprachen stehen im Block SPRACHPAKETE in index.html bzw. spieler.js (erzeugt aus geprüften JSON-Dateien);
 die LEEREN Einträge `ru:{}` usw. müssen im I18N-Literal stehen, sonst setzt `if(!I18N[sprache])` beim Start
 auf Deutsch zurück. Sorani und Tarifit sollten von Muttersprachlern gegengelesen werden. Web-Recherche eingearbeitet (01.10.2026): Tarifit nach El Aissati (Nador-Lehrbuch)/Serhoual – blau = aziza
