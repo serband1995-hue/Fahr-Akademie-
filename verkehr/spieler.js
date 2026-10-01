@@ -298,7 +298,7 @@ export function starte(el, daten, opt){
       '<div class="vv-kk-nav"><button type="button" class="vv-knopf" data-kapzur>‹ ' + esc(U.kapZurueck) + '</button><button type="button" class="vv-knopf haupt-leicht" data-kapvor>' + esc(U.kapWeiter) + " ›</button></div></section>" +
     '<div class="vv-chips" role="group" aria-label="' + esc(U.kapitel) + '"></div>' +
     '<details class="vv-kapliste"><summary>' + esc(U.alleKap) + ' <span class="vv-kapliste-n"></span></summary><div class="vv-kapliste-inhalt"></div></details>' +
-    '<div class="vv-reihe"><button type="button" class="vv-knopf" data-halb aria-pressed="false">' + esc(U.halb) + '</button><button type="button" class="vv-knopf" data-vorn>' + esc(U.vonVorn) + '</button><button type="button" class="vv-knopf" data-autokam aria-pressed="true">' + esc(U.kamFolgt) + "</button></div>" +
+    '<div class="vv-reihe"><button type="button" class="vv-knopf" data-halb aria-pressed="false">' + esc(U.halb) + '</button><button type="button" class="vv-knopf" data-vorn>' + esc(U.vonVorn) + '</button><button type="button" class="vv-knopf" data-autokam aria-pressed="false">' + esc(U.kamFolgt) + "</button></div>" +
     '<label class="vv-schalter"><input type="checkbox" data-md> ' + esc(U.mitdenken) + "</label>" +
     (mehrere && (T.rf || TD.rf) ? '<section class="vv-karte"><h3>' + esc(U.rf) + '</h3><p style="margin:0" class="vv-rf-text"></p><div class="vv-md-knoepfe"><button type="button" class="vv-knopf" data-rf></button></div></section>' : "") +
     (merken ? '<section class="vv-karte vv-merken"><h3>' + esc(U.merken) + "</h3><ol>" + merken.map((m) => "<li><span>" + esc(m[0]) + '<span class="par">' + esc(m[1]) + "</span></span></li>").join("") + "</ol></section>" : "") +
@@ -314,13 +314,14 @@ export function starte(el, daten, opt){
   const naechstesBild = () => new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
   const luftHolen = () => new Promise((r) => setTimeout(r, 0));   // Eingaben durchlassen, ohne auf ein Bild zu warten
 
-  const st = { variante: null, t: 0, laeuft: false, tempo: 1, mitdenken: false, autoKam: true, kapitel: -1, wartet: false, aufgeloest: false, tz: "tag", bedarf: 2, aus: false };
+  const st = { variante: null, t: 0, laeuft: false, tempo: 1, mitdenken: false, autoKam: false, kamera: "schraeg", kapitel: -1, wartet: false, aufgeloest: false, tz: "tag", bedarf: 2, aus: false };
   let V = null, VB = null;
 
   function kameraKnoepfe(){
     const arten = (V.kameraOpt && V.kameraOpt.fest ? ["uebersicht"] : []).concat(["schraeg", "oben", "fahrer"]);
-    $(".vv-ol").innerHTML = arten.map((a) => '<button type="button" class="vv-pille" data-kam="' + a + '" aria-pressed="false">' + esc(U[a]) + "</button>").join("");
-    $(".vv-kamreihe").innerHTML = arten.map((a) => '<button type="button" data-kam="' + a + '" aria-pressed="false">' + esc(U[a]) + "</button>").join("");
+    const an = (a) => String(a === st.kamera);
+    $(".vv-ol").innerHTML = arten.map((a) => '<button type="button" class="vv-pille" data-kam="' + a + '" aria-pressed="' + an(a) + '">' + esc(U[a]) + "</button>").join("");
+    $(".vv-kamreihe").innerHTML = arten.map((a) => '<button type="button" data-kam="' + a + '" aria-pressed="' + an(a) + '">' + esc(U[a]) + "</button>").join("");
     $$("[data-kam]").forEach((b) => b.addEventListener("click", () => kameraSetzen(b.dataset.kam, true)));
   }
 
@@ -376,7 +377,9 @@ export function starte(el, daten, opt){
     try{ if(welt.renderer.compileAsync) await welt.renderer.compileAsync(welt.szene, welt.kamera); }catch(e){}
     if(weg()) return;
     st.bauend = false; $(".vv-bau").hidden = true;
-    welt.setzeKamera(st.kamera || Vb.grundKamera || "schraeg", true);
+    // 01.10.2026 (Serband): Standard ist überall "Folgen"; die Kapitel-Kameras der Szene
+    // greifen nur, wenn man "Kamera folgt der Erklärung" einschaltet.
+    welt.setzeKamera(st.kamera || "schraeg", true);
     st.bedarf = Math.max(st.bedarf, 3);
   }
 
