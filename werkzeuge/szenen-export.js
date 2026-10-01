@@ -166,7 +166,7 @@ const DT = 1 / 15;
   }, DT);
 
   // Übersetzungen (werkzeuge/szenen-texte/<sprache>.json, gleiche Struktur wie texte.de)
-  ["tr", "en", "ar", "es", "ru", "sr", "ckb", "kmr", "hi", "ur", "vi", "rif"].forEach((sp) => {
+  ["tr", "en", "ar", "es", "ru", "sr", "ckb", "kmr", "hi", "ur", "vi", "rif", "fa", "ps", "el", "am", "ti"].forEach((sp) => {
     const datei = path.join(__dirname, "szenen-texte", sp + ".json");
     if (!fs.existsSync(datei)) return;
     const tx = JSON.parse(fs.readFileSync(datei, "utf8"));
