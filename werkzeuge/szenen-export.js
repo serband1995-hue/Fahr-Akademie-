@@ -166,12 +166,31 @@ const DT = 1 / 15;
   }, DT);
 
   // Übersetzungen (werkzeuge/szenen-texte/<sprache>.json, gleiche Struktur wie texte.de)
-  ["tr", "en", "ar", "es"].forEach((sp) => {
+  ["tr", "en", "ar", "es", "ru", "sr", "ckb", "kmr", "hi", "ur", "vi", "rif"].forEach((sp) => {
     const datei = path.join(__dirname, "szenen-texte", sp + ".json");
     if (!fs.existsSync(datei)) return;
     const tx = JSON.parse(fs.readFileSync(datei, "utf8"));
     szenen.forEach((s) => { if (tx[s.id]) s.texte[sp] = tx[s.id]; else console.log("Übersetzung fehlt:", sp, s.id); });
   });
+  // Beschriftungen im Bild (01.10.2026): de/tr/en/ar/es kommen fest aus dem Export bzw.
+  // werkzeuge/szenen/*.js, die übrigen Sprachen nach Muster aus szenen-texte/beschriftungen.json.
+  const BESCHR = JSON.parse(fs.readFileSync(path.join(__dirname, "szenen-texte", "beschriftungen.json"), "utf8"));
+  const MUSTER = [[/^Reaktion ([\d.,]+) m$/, "reaktion"], [/^Bremsen ([\d.,]+) m$/, "bremsen"], [/^([\d.,]+) m Abstand$/, "abstand"],
+    [/^Gegenverkehr – nicht frei$/, "gegen"], [/^([\d.,]+) m frei$/, "frei"], [/^([\d.,]+) m: noch warten$/, "warten"],
+    [/^([\d.,]+) m: jetzt einordnen$/, "einordnen"], [/^([\d.,]+) m: viel zu knapp$/, "knapp"]];
+  const beschriften = (o) => {
+    if (Array.isArray(o)) return o.forEach(beschriften);
+    if (!o || typeof o !== "object") return;
+    if (typeof o.de === "string" && typeof o.en === "string") {
+      const m = MUSTER.find(([re]) => re.test(o.de));
+      if (!m) { console.log("Beschriftung ohne Muster:", o.de); return; }
+      const zahl = o.de.match(m[0])[1] || "";
+      Object.keys(BESCHR[m[1]]).forEach((sp) => { if (!o[sp]) o[sp] = BESCHR[m[1]][sp].replace("{n}", zahl); });
+      return;
+    }
+    Object.keys(o).forEach((k) => beschriften(o[k]));
+  };
+  szenen.forEach((s) => beschriften(s.varianten));
   fs.mkdirSync(OUT, { recursive: true });
   let summe = 0;
   szenen.forEach((s) => {

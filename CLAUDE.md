@@ -29,7 +29,18 @@ dafür (Überstand, Abschneiden, Überdeckung, Knopfgrößen) lief für
 
 ## Sprachen (29.09.2026)
 
-Fünf Sprachen: de, tr, en, ar (rtl), **es**. Regel (Serband): **alles, was
+13 Sprachen (01.10.2026): de, tr, en, ar (rtl), es, ru, sr (lateinisch), ckb (Kurdisch Sorani, rtl),
+kmr (Kurdisch Kurmancî), hi, ur (rtl), vi, rif (Tarifit wie in Nador, lateinisch). Darija bewusst nicht
+(Entscheidung Serband: Marokkaner lesen Hocharabisch). Flaggen: Kurdisch = Kurdistan-Flagge, Tarifit =
+Amazigh-Flagge, beide als kleines SVG (`SPRACHEN[].bild`), weil es kein Emoji gibt. Die Texte der acht neuen
+Sprachen stehen im Block SPRACHPAKETE in index.html bzw. spieler.js (erzeugt aus geprüften JSON-Dateien);
+die LEEREN Einträge `ru:{}` usw. müssen im I18N-Literal stehen, sonst setzt `if(!I18N[sprache])` beim Start
+auf Deutsch zurück. Sorani und Tarifit sollten von Muttersprachlern gegengelesen werden. Web-Recherche eingearbeitet (01.10.2026): Tarifit nach El Aissati (Nador-Lehrbuch)/Serhoual – blau = aziza
+(nicht azegzaw), „iwa“ = also (waha = nur!), waqila = vielleicht, weiß = acemlal; Sorani nach Rudaw/K24/Wikipedia –
+Ampel = ترافیک لایت, Öl = ڕۆن (nicht زەیت), Kupplung = کلاچ, praktische Prüfung = پراکتیکی. Offen für Muttersprachler:
+rif ṭumubil→ṭṭumubin, ufus→yeffus (rechts), Lehnwörter ligno/lbulan/lfiṛu/lpanu; ckb مافی تێپەڕین (Vorfahrt), کاپۆ (Motorhaube).
+**academy-katalog liefert Übersetzungen nur für `body.sprache`** – mit 13 Sprachen sind es >1000 Zeilen,
+Supabase liefert je Abfrage höchstens 1000 (ohne sprache: nur tr/en/ar/es für alte App-Stände). Regel (Serband): **alles, was
 Schüler sehen, in allen Sprachen** – kein fester deutscher Text im Schülerteil,
 immer `t("…")` mit Schlüssel in allen Sprachen (fehlt einer, erscheint Deutsch).
 Nur die Rechtstexte (Impressum, Datenschutz, AGB, Widerruf) und die StVO-PDFs
@@ -37,8 +48,9 @@ bleiben deutsch; die Übersicht sagt das in der jeweiligen Sprache. Inhalte aus
 der Datenbank (Bereiche, Themen, Videotitel/-beschreibungen) in
 `academy_uebersetzungen` – neue Videos brauchen dort alle vier Fremdsprachen.
 Textkarten "Nützliches": `NUETZLICH_UE`. Die Verwaltung bleibt deutsch.
-Neue Sprache = `SPRACHEN`, `I18N`, `PRUEFUNGSTAG`, `NUETZLICH_UE`, `UI` in
-`verkehr/spieler.js`, `SPRACHEN` in der Edge Function `academy-szene`,
+Neue Sprache = `SPRACHEN` (+ leerer Eintrag im I18N-Literal), `I18N`, `PRUEFUNGSTAG`, `NUETZLICH_UE`, `UI` in
+`verkehr/spieler.js` (+ RTL-Liste dort), `SPRACHEN` in der Edge Function `academy-szene`, Spalte in `untertitel.zeilen` + `vtt()`,
+`werkzeuge/szenen-texte/beschriftungen.json`,
 `werkzeuge/szenen-texte/<sprache>.json` und die Beschriftungen im
 Szenen-Export (`szenen-export.js`, `werkzeuge/szenen/*.js`).
 Sprachwahl (30.09.2026): EIN Knopf mit Flagge (Login + Konto), die Auswahl öffnet ein
@@ -65,7 +77,7 @@ Erkennung erfindet in Stillen Sätze ("Untertitel im Auftrag des ZDF",
 Fertig (30.09.2026): ALLE 38 Videos in de/en/tr/ar/es (Entscheidung Serband: alles außer
 den Originalprüfungen; kein Video ist stumm). Ausgeschlossen – auch in der Function hart
 gesperrt: Bereich "Prüfung" und die IDs in `academy_einstellungen.untertitel_ausgeschlossen`
-(Bauer, Haier ×2, Siamlidis). Neue Videos brauchen die Bunny-Erkennung nicht mehr:
+(B., N. H. ×2, S.). Neue Videos brauchen die Bunny-Erkennung nicht mehr:
 `werkzeuge/untertitel/` erkennt den Ton kostenlos, `zeilen_anlegen` legt die ersten
 deutschen Zeilen an (nur wenn das Video noch keine hat), dann Deutsch korrigieren,
 übersetzen, `abgleich.py --setzen`, `paket` mit `untertitel.vtt(...)`.
@@ -169,8 +181,19 @@ Konto-Schlüssel, den die Functions nicht haben).
   Erzeugt werden die Daten mit `werkzeuge/szenen-export.js` (tastet die
   Kompass-Lernszenen und `werkzeuge/szenen/*.js` ab; Übersetzungen in
   `werkzeuge/szenen-texte/{tr,en,ar,es}.json`, gleiche Struktur wie `texte.de`).
+  **Cockpit (01.10.2026):** In der Fahrersicht zeichnet `motor.js` Innen- und Außenspiegel live
+  (eigene Kameras in kleine Bildpuffer, spiegelverkehrt, jedes 2.–4. Bild) und eine dunkle Leiste;
+  Tacho, Blinkerpfeile und Schulterblick-Auge sind HTML in `spieler.js` (Maße aus `welt.cockpitMasse()`).
+  Der Spiegel mit Spiegelblick-Signal leuchtet gelb. Handy quer + Fahrersicht = Vollbild.
   Die Kompass-Szenen stammen aus dem öffentlichen Kompass-Repo – die Sperre
   schützt die Akademie-Oberfläche, nicht die Rohdaten.
+- **Prüfer nur mit Initialen** (01.10.2026, Entscheidung Serband): `academy_pruefer.name`,
+  Videotitel/-beschreibungen (alle Sprachen) und die Titel bei Bunny tragen nur Initialen
+  ("N. H."; in ar/ckb/ur mit LRM dahinter, damit der Punkt am Kürzel bleibt). Der volle Name
+  steht als Vermerk in `academy_pruefer_vermerk` (RLS: nur Super-Admin; geprüft) und erscheint
+  nur in der Verwaltung klein in Klammern. Neue Prüfer: Formular nimmt den vollen Namen, die
+  App bildet die Initialen. Keine echten Prüfernamen ins Repo. Bunny-Titel an den App-Titel
+  angleichen: `academy-untertitel` Aktion `bunny_titel` mit `setzen:true`.
 - **Zweites Supabase-Projekt `oectrvkjunntzsggyhxv`** (Fahrlehrer-Kompass) ist
   ein separates Projekt mit eigenem Chat. Hier nur als Bridge-Partner
   relevant — nicht versehentlich hineinschreiben.

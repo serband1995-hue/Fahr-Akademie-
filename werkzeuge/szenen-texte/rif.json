@@ -1,0 +1,1368 @@
+{
+ "abfahren": {
+  "kurz": "Kcem di ṭṭriq n ufus zik, ṭṭriq n usbeṭṭu, ɣir dinni ad tfrineḍ",
+  "titel": "Tuffɣa zi lawṭuṛut",
+  "kapitel": {
+   "k0": {
+    "text": "Lpanu n tuffɣa yenna-ac tuffɣa tella 1000 m zzat. Ṛux xemmem: ṛuḥ ɣer ṭṭriq n ufus zik – macci di tsegunt taneggarut zi uzelmaḍ.",
+    "frage": {
+     "text": "Melmi ad ṛuḥeɣ ɣer ufus?",
+     "richtig": 1,
+     "optionen": [
+      "Ɣir ɣer tuffɣa nit",
+      "Zik, s ugar qbel lpanuwat s ijeṛṛiḍen",
+      "Macci muhim, mala ixeṣṣa s tamnaḍt i ittwaḥeṛmen"
+     ],
+     "erklaerung": "Kcem di ṭṭriq i ixeṣṣen zik, bac abeddel n ṭṭriq ad yedder bla ssehwa d bla lxaṭaṛ."
+    },
+    "regel": "Lpanu 449 · § 7 Abs. 5 StVO",
+    "titel": "Tuffɣa tusa-d"
+   },
+   "k1": {
+    "text": "Ligno ɣer ufus, ṛṛitṛu n daxel d ṛṛitṛu n berra, axẓaṛ ɣef tɣiṛt n ufus – ɛad ṛuḥ s tazzla ɣer ṭṭriq n ufus.",
+    "frage": null,
+    "regel": "§ 7 Abs. 5 StVO",
+    "titel": "Ligno, ṛṛitṛu, axẓaṛ ɣef tɣiṛt"
+   },
+   "k2": {
+    "text": "Qqim di ṭṭriq n ufus d ṭṭef ssuṛɛa. Ssexsi ligno.",
+    "frage": null,
+    "regel": "§ 2 Abs. 2 StVO (nehheṛ ɣer ufus)",
+    "titel": "Kcem ɣer ufus"
+   },
+   "k3": {
+    "text": "Tuffɣa tettwasskan tikkelt nniḍen 500 m zzat. Zi ṛux, mala tzemmreḍ, war tdubliḍ ca.",
+    "frage": null,
+    "regel": "Lpanu 449",
+    "titel": "Lpanu n 500 m"
+   },
+   "k4": {
+    "text": "Lpanuwat s 3, 2, 1 n ijeṛṛiḍen: ɛad 300, 200, 100 m alami tazwara n ṭṭriq n usbeṭṭu.",
+    "frage": {
+     "text": "Min tenna lpanu s sin n ijeṛṛiḍen?",
+     "richtig": 0,
+     "optionen": [
+      "Ɛad 200 m alami tuffɣa",
+      "Ssuṛɛa 200",
+      "Sin n ṭṭriqat xwan"
+     ],
+     "erklaerung": "Lpanu 450: 3 n ijeṛṛiḍen = 300 m, 2 = 200 m, 1 = 100 m."
+    },
+    "regel": "Lpanu 450",
+    "titel": "Lpanuwat n tuffɣa"
+   },
+   "k5": {
+    "text": "Ssekker ligno ɣer ufus zik qbel ṭṭriq n usbeṭṭu – wid i d-yetteddun deffir-c ixeṣṣa ad t-ẓaṛen zik.",
+    "frage": null,
+    "regel": "§ 7 Abs. 5 StVO",
+    "titel": "Ligno ɣer ufus"
+   },
+   "k6": {
+    "text": "Ṛṛitṛu d axẓaṛ ɣef tɣiṛt n ufus, ɛad ɛeddi zi lxeṭṭ imqeṭṭeɛ ameqqran ɣer ṭṭriq n usbeṭṭu.",
+    "frage": null,
+    "regel": "Lpanu 340 · § 7 Abs. 5 StVO",
+    "titel": "Ṛṛitṛu, axẓaṛ ɣef tɣiṛt, ɛeddi"
+   },
+   "k7": {
+    "text": "Ssenqes ssuṛɛa ɣir di ṭṭriq n usbeṭṭu, macci qbel di lawṭuṛut. Dinni war tzemmreḍ ca ad tnehhṛeḍ s tazzla ugar zi ṭṭriqat n lawṭuṛut.",
+    "frage": {
+     "text": "Mani ad ssenqseɣ ssuṛɛa?",
+     "richtig": 1,
+     "optionen": [
+      "Zik di ṭṭriq n ufus",
+      "Di ṭṭriq n usbeṭṭu",
+      "Ɣir di lviraj"
+     ],
+     "erklaerung": "Lfrinu di lawṭuṛut yessekcam wid i d-yetteddun deffir-c di lxaṭaṛ – ssenqes ɣir di ṭṭriq n usbeṭṭu, d qbel lviraj ṛuḥ ɣer ssuṛɛa i yellan di lpanu."
+    },
+    "regel": "§ 7a Abs. 3 StVO",
+    "titel": "Ɣir ṛux frini"
+   },
+   "k8": {
+    "text": "Alami d lpanu, frini ɣer lḥedd n ssuṛɛa i yellan fell-as (da 60 km/h), qbel ma lviraj ad iḍeyyeq. Deffir aṭṭas n lawṭuṛut, 60 ad ac-tban d tamezzyant aṭṭas – xẓeṛ lkuntuṛ!",
+    "frage": {
+     "text": "Maɣef ad xẓareɣ ɣer lkuntuṛ?",
+     "richtig": 0,
+     "optionen": [
+      "Acku deffir ssuṛɛa tameqqrant war tessneḍ ca mliḥ mcḥal i teddiḍ",
+      "Ɣef lkuntuṛ n lisans",
+      "War ixeṣṣa ca"
+     ],
+     "erklaerung": "Deffir lawṭuṛut, tettɣileḍ belli teddiḍ s ssuṛɛa tamezzyant ugar zi min yellan (acku twulfeḍ ssuṛɛa tameqqrant)."
+    },
+    "regel": "Lpanu 274 · § 3 Abs. 1 StVO",
+    "titel": "Lviraj d lkuntuṛ"
+   },
+   "k9": {
+    "text": "Tzegreḍ tuffɣa? Kemmel alami tuffɣa nniḍen. Di lawṭuṛut ɛemmaṛs ad tuɣaleḍ ɣer deffir niɣ ad tessdewṛeḍ ṭumubil ɣer tama nniḍen – ḥetta di ṭṭriq n yidis.",
+    "frage": null,
+    "regel": "§ 18 Abs. 7 StVO",
+    "titel": "Cfu"
+   }
+  }
+ },
+ "auffahren": {
+  "kurz": "Ṭṭriq n usɣiwel, af amkan xawi, kcem jaṛ ṭumubilat",
+  "titel": "Akcum ɣer lawṭuṛut",
+  "kapitel": {
+   "k0": {
+    "text": "Akcum yettawi s yiwen n lviraj n yiman-s ɣer lawṭuṛut. Zi da xẓeṛ ṭumubilat di lawṭuṛut: mcḥal i tteddun s tazzla, mani llan imukan xwan?",
+    "frage": {
+     "text": "Wi ɣaṛ-s lpriyuriti mala ad kecmeɣ jaṛ ṭumubilat?",
+     "richtig": 1,
+     "optionen": [
+      "Nec – nec di ṭṭriq n usɣiwel",
+      "Ṭumubilat i yellan di ubrid ameqqran n lawṭuṛut",
+      "Win i itteddun s tazzla ugar"
+     ],
+     "erklaerung": "§ 18 Abs. 3 StVO: Ṭumubilat i yellan di ubrid ameqqran n lawṭuṛut ɣaṛ-sen lpriyuriti."
+    },
+    "regel": "Lpanu 330.1 · § 18 Abs. 2 StVO",
+    "titel": "Akcum n lawṭuṛut"
+   },
+   "k1": {
+    "text": "Di ṭṭriq n usɣiwel, zid lgaz s tazzla alami tuḍeḍ ssuṛɛa n ṭumubilat. Da tzemmreḍ ad tnehhṛeḍ s tazzla ugar zi ṭṭriqat n lawṭuṛut – aya d lebɣi n lqanun.",
+    "frage": {
+     "text": "Min d lxedma tameqqrant ṛux?",
+     "richtig": 1,
+     "optionen": [
+      "Tteddu s ttawil d ṛaǧu",
+      "Zid ssuṛɛa s tazzla alami tuḍeḍ ssuṛɛa n ṭumubilat",
+      "Ṛuḥ dɣya ɣer uzelmaḍ"
+     ],
+     "erklaerung": "Mala teddiḍ s ssuṛɛa am ṭumubilat, tzemmreḍ ad tekcmeḍ jaṛ-asent s lamen. Mala tekcimeḍ s ttawil aṭṭas, wiyyaḍ ad fṛinen."
+    },
+    "regel": "§ 7a Abs. 2 StVO",
+    "titel": "Ṭṭriq n usɣiwel: zid lgaz"
+   },
+   "k2": {
+    "text": "Sken abeddel n ṭṭriq zik d mliḥ – ssekker ligno ɣer uzelmaḍ.",
+    "frage": {
+     "text": "Melmi ad ssekreɣ ligno?",
+     "richtig": 1,
+     "optionen": [
+      "Ɣir mala bdiɣ zik abeddel",
+      "Zik, qbel",
+      "Walu, kulci iban"
+     ],
+     "erklaerung": "Kul abeddel n ṭṭriq ixeṣṣa ad t-tesskneḍ zik d mliḥ (§ 7 Abs. 5 StVO)."
+    },
+    "regel": "§ 7 Abs. 5 StVO",
+    "titel": "Ligno ɣer uzelmaḍ"
+   },
+   "k3": {
+    "text": "Lkamyu itteddu ɣer ufus zzat, ṭumubil tazeggaɣt teǧǧa lmasafa tameqqrant. Amkan xawi deffir-s iṣeḥḥa: ɛdel ssuṛɛa d ṭṭef lmasafa i ixeṣṣen (lḥsab isehlen: azgen n lkuntuṛ s lmitru).",
+    "frage": {
+     "text": "Mani ad kecmeɣ jaṛ ṭumubilat?",
+     "richtig": 1,
+     "optionen": [
+      "Ɣer yidis n lkamyu",
+      "Di umkan xawi deffir lkamyu",
+      "Zzat lkamyu, ad zideɣ lgaz"
+     ],
+     "erklaerung": "Amkan xawi deffir lkamyu d ameqqran. Zzat-s yeḍyeq aṭṭas, d netta ɣaṛ-s lpriyuriti."
+    },
+    "regel": "§ 18 Abs. 3 · § 4 Abs. 1 StVO",
+    "titel": "Xtaṛ amkan xawi"
+   },
+   "k4": {
+    "text": "Qbel abeddel s cwayt: ṛṛitṛu n daxel d ṛṛitṛu n berra, ɛad axẓaṛ ɣef tɣiṛt n uzelmaḍ – mala war txeddmeḍ ca aya, angle mort war t-tẓaṛeḍ ca.",
+    "frage": {
+     "text": "Min ixeṣṣen qbel abeddel n ṭṭriq nit?",
+     "richtig": 1,
+     "optionen": [
+      "Ssenqes ṛṛadyu",
+      "Ṛṛitṛu d axẓaṛ ɣef tɣiṛt n uzelmaḍ",
+      "Wwet lklaksun"
+     ],
+     "erklaerung": "Ɣir s uxẓaṛ ɣef tɣiṛt i tzemmreḍ ad tẓaṛeḍ ṭumubil i yellan di angle mort."
+    },
+    "regel": "§ 7 Abs. 5 StVO: ḥedd war ixeṣṣa ad yili di lxaṭaṛ",
+    "titel": "Ṛṛitṛu d axẓaṛ ɣef tɣiṛt"
+   },
+   "k5": {
+    "text": "Ɛeddi zi lxeṭṭ imqeṭṭeɛ ameqqran – macci zi lxeṭṭ kamel niɣ zi tamnaḍt i ittwaḥeṛmen. Ɛeddi s tazzla d s lɛaqel, war ttṛaǧu ca alami taggara n ṭṭriq.",
+    "frage": null,
+    "regel": "Lpanu 340 · Lpanu 295 · Lpanu 298 · § 7 Abs. 5 StVO",
+    "titel": "Kcem jaṛ ṭumubilat"
+   },
+   "k6": {
+    "text": "Deffir abeddel, ssexsi ligno d kemmel ɣer ufus. Lmasafa aked lkamyu zzat: s lqell azgen n lkuntuṛ s lmitru.",
+    "frage": {
+     "text": "Ɛad ṛux?",
+     "richtig": 1,
+     "optionen": [
+      "Dubli dɣya zi uzelmaḍ",
+      "Ssexsi ligno, nehheṛ ɣer ufus, ṭṭef lmasafa",
+      "Kemmel di ṭṭriq n yidis"
+     ],
+     "erklaerung": "Nehheṛ ɣer ufus (§ 2 Abs. 2 StVO) d lmasafa i ixeṣṣen (§ 4 Abs. 1 StVO)."
+    },
+    "regel": "§ 2 Abs. 2 · § 4 Abs. 1 StVO",
+    "titel": "Ssexsi ligno, ṭṭef lmasafa"
+   },
+   "k7": {
+    "text": "Mala tekcmeḍ ɣer lawṭuṛut, war illi ca yiwen s yiwen (Reißverschluss): win ikeccmen ixeṣṣa ad yejj lpriyuriti. Mala war tufiḍ ca amkan xawi, bedd di taggara n ṭṭriq mala ixeṣṣa – ɛemmaṛs ad tṛuḥeḍ ɣer ṭṭriq n yidis.",
+    "frage": null,
+    "regel": "§ 18 Abs. 3 StVO · § 7 Abs. 4 war yetteddu ca da",
+    "titel": "Cfu"
+   }
+  }
+ },
+ "doppel": {
+  "kurz": "Sin n ṭṭriqat i udewweṛ – kul yiwen iqqim di ṭṭriq-ines",
+  "titel": "Adewweṛ ɣer uzelmaḍ s sin n ṭṭriqat",
+  "kapitel": {
+   "k0": {
+    "text": "Sin n ṭṭriqat ttawin ɣer uzelmaḍ (lflechat ɣef ubrid, Lpanu 297), lfiṛu d azegzaw. Kcem di ṭṭriq zik, ssekker ligno – d qqim di ṭṭriq i txtaṛeḍ.",
+    "frage": {
+     "text": "Ṭumubil n lawṭu-ikul tella di ṭṭriq n ufus zeg sin n ṭṭriqat n uzelmaḍ. Di min n ṭṭriq ad tekcem?",
+     "richtig": 0,
+     "optionen": [
+      "Di ṭṭriq n ufus n ubrid nniḍen",
+      "Di ṭṭriq n uzelmaḍ",
+      "Macci muhim"
+     ],
+     "erklaerung": "Uzelmaḍ iqqim d azelmaḍ, afus iqqim d afus – s waya war illi ca lmuckil aked win yellan ɣer yidis-nnec."
+    },
+    "regel": "Lpanu 297 · § 9 Abs. 1 StVO",
+    "titel": "Sin n ṭṭriqat ɣer uzelmaḍ"
+   },
+   "k1": {
+    "text": "Dewweṛ s lɛedl, ṭumubilat ɣer yidis n tayeḍ. Ixeṭṭan imqeṭṭɛen di lkaṛfuṛ sskanen-ac abrid. War ttbeddal ca ṭṭriq di lkaṛfuṛ!",
+    "frage": null,
+    "regel": "§ 7 Abs. 5 · § 9 Abs. 1 StVO",
+    "titel": "Ṭṭef ṭṭriq-nnec di udewweṛ"
+   },
+   "k2": {
+    "text": "Ɣir deffir lkaṛfuṛ – s ligno, ṛṛitṛu d axẓaṛ ɣef tɣiṛt – beddel ṭṭriq mala ixeṣṣa.",
+    "frage": null,
+    "regel": "§ 7 Abs. 5 StVO",
+    "titel": "Deffir udewweṛ"
+   }
+  }
+ },
+ "ecke": {
+  "kurz": "Ɣer deffir ɣer yiwen n ubrid n yidis – qqim qrib n ṭṭrutwaṛ",
+  "titel": "Ddewṛa ɣer deffir di tiɣmeṛt ɣer ufus",
+  "kapitel": {
+   "k0": {
+    "text": "Bedd ɣer ufus di yidis n ubrid, qrib lṭul n sin niɣ kraḍ n ṭumubilat deffir tiɣmeṛt n ubrid. Xẓeṛ kul tama – ṭumubilat nniḍen ɣaṛ-sent lḥeqq ad zwarent.",
+    "frage": {
+     "text": "Min d lḥaja tameqqrant mala ad tuɣaleḍ ɣer deffir?",
+     "richtig": 1,
+     "optionen": [
+      "Ad tiliḍ s tazzla amec tzemmreḍ",
+      "Tteddu s ttawil d xẓeṛ kul tama",
+      "Xẓeṛ ɣir di ṛṛitṛu n daxel"
+     ],
+     "erklaerung": "Ɣer deffir war ixeṣṣa ca ad tessekcmeḍ ḥedd di lxaṭaṛ – s ttawil, xẓeṛ ɣer deffir d kul tama."
+    },
+    "regel": "§ 9 Abs. 5 StVO",
+    "titel": "Bedd deffir tiɣmeṛt"
+   },
+   "k1": {
+    "text": "Dewweṛ s yiman-nnec, xẓeṛ zi ljaj n deffir d uɣal ɣer deffir s ṣṣwab – qrib 50 cm zi ṭṭrutwaṛ.",
+    "frage": null,
+    "regel": "Lmanuvra n imtiḥan: ɣer deffir",
+    "titel": "Ṣṣwab ɣer deffir"
+   },
+   "k2": {
+    "text": "Mala ṛṛwida n deffir tuḍa tiɣmeṛt: dewweṛ lbulan ɣer ufus, bac ṭumubil ad teḍfeṛ lviraj n ṭṭrutwaṛ s lɛedl. Zzat n ṭumubil ad iṛuḥ ɣer uzelmaḍ ɣer ubrid – qbel xẓeṛ tikkelt nniḍen kul tama!",
+    "frage": {
+     "text": "Mani ad dewweṛeɣ lbulan bac deffir n ṭumubil ad iṛuḥ ɣer ufus?",
+     "richtig": 0,
+     "optionen": [
+      "Ɣer ufus",
+      "Ɣer uzelmaḍ"
+     ],
+     "erklaerung": "Ɣer deffir: dewweṛ lbulan ɣer tama mani txseḍ ad iṛuḥ deffir n ṭumubil."
+    },
+    "regel": "§ 9 Abs. 5 StVO",
+    "titel": "Dewweṛ di tiɣmeṛt"
+   },
+   "k3": {
+    "text": "Mala ṭumubil tella ɣef yiwen n lxeṭṭ aked ṭṭrutwaṛ n ubrid n yidis: ṣeggem lbulan d uɣal ɛad ɣer deffir qrib lṭul n yiwet n ṭumubil.",
+    "frage": null,
+    "regel": "Lqawanin n imtiḥan · Lmanuvrat n imtiḥan",
+    "titel": "Kemmel s ṣṣwab"
+   }
+  }
+ },
+ "eng": {
+  "kurz": "Win ixeṣṣan ad iɛeddi ɣef tɣawsa, ad yejj ṭumubilat i d-yetteddun zzat-s ad ɛeddint",
+  "titel": "Amkan iḍeyyqen: tɣawsa di tama-inu",
+  "kapitel": {
+   "k0": {
+    "text": "Yiwen n lkamyu ibedd s lwarning di tama-inu. Abrid iḍyeq aṭṭas i sin n ṭumubilat ɣer yidis n tayeḍ.",
+    "frage": {
+     "text": "Wi yezmmer ad iɛeddi amezwaru di umkan iḍeyyqen?",
+     "richtig": 1,
+     "optionen": [
+      "Nec – nec d amezwaru i d-yusin",
+      "Ṭumubilat i d-yetteddun zzat-i – tɣawsa tella di tama-inu",
+      "Win i itteddun s tazzla ugar"
+     ],
+     "erklaerung": "§ 6 StVO: Win ixsen ad iɛeddi ɣef tɣawsa zi uzelmaḍ, ixeṣṣa ad yejj ṭumubilat i d-yetteddun zzat-s ad ɛeddint."
+    },
+    "regel": "§ 6 StVO",
+    "titel": "Tɣawsa zzat"
+   },
+   "k1": {
+    "text": "Bedd zik d s lmasafa zi tɣawsa – s waya ad yeqqim umkan bac ad tɛeddiḍ, d ad tẓaṛeḍ ṭumubilat i d-yetteddun zzat-c mliḥ.",
+    "frage": null,
+    "regel": "§ 6 StVO",
+    "titel": "Ṛaǧu s lmasafa"
+   },
+   "k2": {
+    "text": "Mala abrid yexwa: ṛṛitṛu, axẓaṛ ɣef tɣiṛt n uzelmaḍ, ligno ɣer uzelmaḍ d ɛeddi ɣef lkamyu s lmasafa i ixeṣṣen ɣer yidis – xẓeṛ mala yella ca win iteffɣen.",
+    "frage": null,
+    "regel": "§ 6 · § 7 Abs. 5 StVO",
+    "titel": "Sken belli ad teffɣeḍ"
+   },
+   "k3": {
+    "text": "Deffir tɣawsa, ssekker ligno ɣer ufus d uɣal ɣer ufus.",
+    "frage": null,
+    "regel": "§ 6 · § 2 Abs. 2 StVO",
+    "titel": "Uɣal ɣer ufus"
+   }
+  }
+ },
+ "gefahr": {
+  "kurz": "Abrid n ureddi + abrid n lfrinu = abrid alami tbeddeḍ – s usekyad n ureddi",
+  "titel": "Lfrinu n lxaṭaṛ: 30 niɣ 50?",
+  "kapitel": {
+   "k0": {
+    "text": "Sin n tikkal n unehheṛ ɣef yiwen n ṭṭriq: ṭumubil n lawṭu-ikul s 50 km/h d – am tili – ṭumubil nni s 30 km/h. Dɣya ad d-teffeɣ lkuṛa jaṛ ṭumubilat i ibedden ɣer ubrid, d yiwen n uḥenjiṛ ad d-yazel deffir-s.",
+    "frage": null,
+    "regel": "§ 3 Abs. 1 · § 3 Abs. 2a StVO",
+    "titel": "Sin n ṭumubilat, yiwen n ureddi"
+   },
+   "k1": {
+    "text": "Qrib 1 n tsegunt ad tɛeddi alami aḍaṛ ad yili ɣef lfrinu. Di lweqt-a ṭumubil tkemmel bla lfrinu: s 50 km/h qrib 14 m, s 30 km/h ugar zi 8 m.",
+    "frage": {
+     "text": "Mcḥal i yeɛreḍ ubrid n ureddi s 50 km/h (lḥsab isehlen)?",
+     "richtig": 1,
+     "optionen": [
+      "5 m",
+      "15 m",
+      "25 m"
+     ],
+     "erklaerung": "(50 ÷ 10) · 3 = 15 m. Lḥsab ṣṣeḥ yettak qrib 14 m di tsegunt."
+    },
+    "regel": "Lḥsab isehlen n ubrid n ureddi: (km/h ÷ 10) · 3",
+    "titel": "Lxaṭaṛ! Lweqt n ureddi"
+   },
+   "k2": {
+    "text": "Ɛfeṣ qaɛ ɣef lfrinu d lambriyaj di yiwet n tikkelt, d ṭṭef jjehd. ABS itteɣṛas – aya d nnuṛmal. Ṭṭef lbulan s ttawil bac ad tzemmreḍ ad tḥeyydeḍ.",
+    "frage": {
+     "text": "Mcḥal i yeɛreḍ ubrid n lfrinu di lfrinu n lxaṭaṛ zi 50 km/h (lḥsab isehlen)?",
+     "richtig": 0,
+     "optionen": [
+      "12,5 m",
+      "25 m",
+      "50 m"
+     ],
+     "erklaerung": "(50 ÷ 10)² ÷ 2 = 12,5 m. Abrid n lfrinu nnuṛmal (bla lxaṭaṛ): (50 ÷ 10)² = 25 m."
+    },
+    "regel": "Lḥsab isehlen n lfrinu n lxaṭaṛ: (km/h ÷ 10)² ÷ 2",
+    "titel": "Lfrinu kamel"
+   },
+   "k3": {
+    "text": "Ṭumubil n 30 tebedd di lweqt. S 50 km/h abrid war yeqqaḍ ca – di umkan n lkuṛa ṭumubil ɛad tetteddu s qrib 35 km/h. Ssuṛɛa 30 tessellek tudert.",
+    "frage": {
+     "text": "Maɣef ssuṛɛa 30 zzat n timedṛasin d muhimma aṭṭas?",
+     "richtig": 1,
+     "optionen": [
+      "Ɣef ṣṣdaɛ",
+      "Abrid alami tbeddeḍ d amezzyan aṭṭas – s 50, di umkan mani tbeddeḍ zik s 30, ɛad tetteddiḍ qrib s ssuṛɛa n tazwara",
+      "Aya ɣir d ttewṣiya"
+     ],
+     "erklaerung": "Abrid n lfrinu itteɣmi am ssuṛɛa × ssuṛɛa (au carré)."
+    },
+    "regel": "§ 3 Abs. 1 · § 3 Abs. 2a StVO",
+    "titel": "Min i d-yeffɣen"
+   }
+  }
+ },
+ "gruenpfeil": {
+  "kurz": "Bedd qbel, ɛad dewweṛ ɣer ufus s lɛaqel – wid i ɣaṛ-sen azegzaw zwaren",
+  "titel": "Lflecha tazegzawt aked ḍḍew azeggaɣ",
+  "kapitel": {
+   "k0": {
+    "text": "Lfiṛu d azeggaɣ. Ɣer ufus n-s tella lflecha tazegzawt ɣef lpanu n lḥdid aberkan (Lpanu 720) – macci d lflecha i iceɛlen!",
+    "frage": {
+     "text": "Min i d-yessuter lpanu n lflecha tazegzawt d amezwaru?",
+     "richtig": 1,
+     "optionen": [
+      "Ɛeddi s ttawil bla ma tbeddeḍ",
+      "Bedd qaɛ ɣef ujeṛṛeḍ n uḥbas",
+      "Walu, d tazegzawt"
+     ],
+     "erklaerung": "Deffir ma tbeddeḍ, tzemmreḍ ad tdewṛeḍ ɣer ufus s ḍḍew azeggaɣ – tbeddit d ajbaṛ."
+    },
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO · Lpanu 720",
+    "titel": "Azeggaɣ – s lpanu n lflecha tazegzawt"
+   },
+   "k1": {
+    "text": "Bedd qaɛ. Zzat-i, tin itteddun s uḍaṛ tɛeddi abrid s ḍḍew azegzaw.",
+    "frage": {
+     "text": "Wi yezmmer ad iɛeddi amezwaru?",
+     "richtig": 1,
+     "optionen": [
+      "Nec, ɣaṛ-i lflecha",
+      "Wid itteddun s uḍaṛ d ṭumubilat n tama nniḍen i ɣaṛ-sen azegzaw",
+      "Win i d-yusin amezwaru"
+     ],
+     "erklaerung": "War tzemmreḍ ca ad teḥbeseḍ niɣ ad tessekcmeḍ di lxaṭaṛ ḥedd – s lxuṣuṣ wid itteddun s uḍaṛ d ṭumubilat n tama i ɣaṛ-s azegzaw."
+    },
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "titel": "Bedd ɣef ujeṛṛeḍ n uḥbas"
+   },
+   "k2": {
+    "text": "Abrid n wid itteddun s uḍaṛ yexwa. Qqeddem s ttawil alami tẓaṛeḍ mliḥ, d ɛawed bedd.",
+    "frage": null,
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "titel": "Qqeddem alami tẓaṛeḍ"
+   },
+   "k3": {
+    "text": "Zi uzelmaḍ tetteddu-d yiwet n ṭumubil s ḍḍew azegzaw – war tzemmreḍ ca ad tt-teḥbeseḍ niɣ ad tt-tessekcmeḍ di lxaṭaṛ. Ṛaǧu.",
+    "frage": null,
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "titel": "Ṭumubilat n tama nniḍen ɣaṛ-sent azegzaw"
+   },
+   "k4": {
+    "text": "Ṭumubil taziza tɛedda. Axẓaṛ ɣef tɣiṛt n ufus d dewweṛ s ttawil – ɣir zi ṭṭriq n ufus!",
+    "frage": null,
+    "regel": "§ 37 Abs. 2 Nr. 1 StVO",
+    "titel": "Dewweṛ"
+   },
+   "k5": {
+    "text": "Lflecha tazegzawt i iceɛlen di lfiṛu = azegzaw n yiman-s i udewweṛ. Lpanu n lḥdid azegzaw = dewweṛ ɣir deffir ma tbeddeḍ, s lɛaqel qaɛ.",
+    "frage": null,
+    "regel": "§ 37 Abs. 2 StVO",
+    "titel": "Cfu"
+   }
+  }
+ },
+ "kreisel": {
+  "kurz": "Kcem bla ligno, di ṛṛunpwan lpriyuriti, ssekker ligno mala ad teffɣeḍ",
+  "titel": "Ṛṛunpwan",
+  "kapitel": {
+   "k0": {
+    "text": "Ṛṛunpwan s „Ejj lpriyuriti“: ṭumubilat i yellan di ṛṛunpwan ɣaṛ-sent lpriyuriti. Qqeṛṛeb s ttawil d xẓeṛ ɣer uzelmaḍ.",
+    "frage": {
+     "text": "Ad ssekreɣ ligno mala ad kecmeɣ ɣer ṛṛunpwan?",
+     "richtig": 2,
+     "optionen": [
+      "Ih, ɣer ufus",
+      "Ih, ɣer uzelmaḍ",
+      "Lla – ligno di tikcmin ittwaḥeṛṛem"
+     ],
+     "erklaerung": "§ 9a Abs. 1 StVO: Di tikcmin ɣer ṛṛunpwan, ligno ittwaḥeṛṛem."
+    },
+    "regel": "Lpanu 215 · Lpanu 205 · § 9a Abs. 1 StVO",
+    "titel": "Lpanu 215 ddaw Lpanu 205"
+   },
+   "k1": {
+    "text": "Ṭumubil taziza tella zik di ṛṛunpwan d ɣaṛ-s lpriyuriti. Bedd ɣef ujeṛṛeḍ n tṛaǧit d ejj-it ad tɛeddi.",
+    "frage": null,
+    "regel": "§ 9a Abs. 1 StVO · Lpanu 341",
+    "titel": "Ejj lpriyuriti"
+   },
+   "k2": {
+    "text": "Yexwa – kcem bla ligno. Di ṛṛunpwan tetteddiḍ ɛkes n lmegana; tbeddit di ṛṛunpwan tettwaḥeṛṛem.",
+    "frage": null,
+    "regel": "§ 9a Abs. 1 StVO",
+    "titel": "Kcem"
+   },
+   "k3": {
+    "text": "Deffir tuffɣa i yellan qbel tin-nnec, ssekker ligno ɣer ufus, ṛṛitṛu d axẓaṛ ɣef tɣiṛt n ufus – wid yesnin ɣef lbisklit d wid itteddun s uḍaṛ!",
+    "frage": {
+     "text": "Melmi ad ssekreɣ ligno bac ad ffɣeɣ?",
+     "richtig": 1,
+     "optionen": [
+      "Ɛemmaṛs",
+      "Deffir tuffɣa i yellan qbel tin-inu – zik qbel ma ad ffɣeɣ",
+      "Zik mala kecmeɣ"
+     ],
+     "erklaerung": "Tuffɣa ixeṣṣa ad tt-tesskneḍ: ssekker ligno ɣer ufus ɣir ma tɛeddiḍ tuffɣa i yellan qbel tin-nnec."
+    },
+    "regel": "§ 9 Abs. 1 StVO",
+    "titel": "Ligno ɣer ufus bac ad teffɣeḍ"
+   },
+   "k4": {
+    "text": "Deffir tuffɣa yella zebra. Win ixsen ad t-iɛeddi ɣaṛ-s lḥeqq ad yezwar – qqeṛṛeb s ttawil d ṛaǧu.",
+    "frage": {
+     "text": "Tin itteddun s uḍaṛ txs ad tɛeddi zi zebra. Wi ɣaṛ-s lḥeqq ad yezwar?",
+     "richtig": 1,
+     "optionen": [
+      "Nec – ad d-ffɣeɣ zi ṛṛunpwan",
+      "Tin itteddun s uḍaṛ",
+      "Win i itteddun s tazzla ugar"
+     ],
+     "erklaerung": "§ 26 Abs. 1 StVO: Wid itteddun s uḍaṛ i iban belli xsen ad ɛeddin zi zebra, ixeṣṣa ad ten-tejjeḍ ad ɛeddin."
+    },
+    "regel": "§ 26 Abs. 1 StVO",
+    "titel": "Wid itteddun s uḍaṛ di zebra"
+   }
+  }
+ },
+ "laengs": {
+  "kurz": "Ɣer yidis di yiwen n umkan n parki ɣer yidis n ubrid",
+  "titel": "Parki ɣer deffir (ɣef lṭul)",
+  "kapitel": {
+   "k0": {
+    "text": "Amkan n parki iqqaḍ? Lḥsab isehlen: s lqell lṭul n ṭumubil d ugar cwayt, zayed qrib 1,5 m. Ssekker ligno ɣer ufus zik, bac wid i d-yetteddun deffir-c ad ssnen.",
+    "frage": {
+     "text": "Melmi ad ssekreɣ ligno?",
+     "richtig": 1,
+     "optionen": [
+      "Ɣir mala ad uɣaleɣ ɣer deffir",
+      "Zik, mala ad qqeṛṛbeɣ ɣer umkan n parki",
+      "Walu, ad parkiɣ kan"
+     ],
+     "erklaerung": "Ssekker ligno ɣer ufus zik – s waya wid yellan deffir-c ad fehmen maɣef ad tbeddeḍ."
+    },
+    "regel": "§ 1 Abs. 2 · § 12 StVO",
+    "titel": "Xẓeṛ amkan n parki"
+   },
+   "k1": {
+    "text": "Bedd ɣer yidis n ṭumubil i yellan zzat, ɣef yiwen n lxeṭṭ aked-s, s lmasafa n 50 cm alami 1 m ɣer yidis. Deffir n ṭumubil-nnec yella qrib ɣef yiwen n lxeṭṭ aked deffir n-s.",
+    "frage": {
+     "text": "Min ixeṣṣen qbel ma ad tuɣaleḍ ɣer deffir?",
+     "richtig": 1,
+     "optionen": [
+      "Uɣal dɣya ɣer deffir",
+      "Xẓeṛ kul tama – s lxuṣuṣ ɣer deffir",
+      "Wwet lklaksun"
+     ],
+     "erklaerung": "Qbel kul tḥerkt xẓeṛ kul tama; mala ad tuɣaleḍ ɣer deffir, dewweṛ s yiman-nnec d xẓeṛ zi ljaj n deffir."
+    },
+    "regel": "Lmanuvra n imtiḥan: parki ɣef lṭul",
+    "titel": "Bedd ɣer yidis n ṭumubil n zzat"
+   },
+   "k2": {
+    "text": "Uɣal ɣer deffir s ttawil d dewweṛ lbulan qaɛ ɣer ufus. Deffir n ṭumubil ad yekcem ɣer umkan n parki. Xẓeṛ ɣer deffir; zzat n ṭumubil ad iṛuḥ ɣer uzelmaḍ ɣer ubrid – qbel xẓeṛ tikkelt nniḍen!",
+    "frage": null,
+    "regel": "§ 9 Abs. 5 · § 1 Abs. 2 StVO",
+    "titel": "Lbulan qaɛ ɣer ufus"
+   },
+   "k3": {
+    "text": "Ṣeggem lbulan, uɣal cwayt s ṣṣwab ɣer deffir – s waya ṭumubil ad tqeṛṛeb ɣer ṭṭrutwaṛ.",
+    "frage": null,
+    "regel": "Lmanuvra n imtiḥan: parki ɣef lṭul",
+    "titel": "Ṣṣwab ɣer deffir"
+   },
+   "k4": {
+    "text": "Mala tiɣmeṛt n zzat n ufus tɛedda deffir n ṭumubil n zzat: dewweṛ lbulan qaɛ ɣer uzelmaḍ. Ṭumubil ad tdewweṛ alami tili ɣef yiwen n lxeṭṭ aked ṭṭrutwaṛ.",
+    "frage": {
+     "text": "Melmi ad dewweṛeɣ lbulan ɣer uzelmaḍ?",
+     "richtig": 1,
+     "optionen": [
+      "Dɣya di tazwara",
+      "Mala zzat n ṭumubil yɛedda ṭumubil n zzat",
+      "Ɛemmaṛs"
+     ],
+     "erklaerung": "Mala tdewṛeḍ zik aṭṭas, ad tewteḍ zzat – mala tɛeṭṭleḍ, deffir ad yewwet ṭṭrutwaṛ."
+    },
+    "regel": "Lmanuvra n imtiḥan: parki ɣef lṭul",
+    "titel": "Dewweṛ ɣer tama nniḍen"
+   },
+   "k5": {
+    "text": "Qqeddem cwayt, alami yella umkan am yiwen zzat d deffir. Lebɣi: ɣef yiwen n lxeṭṭ aked ṭṭrutwaṛ d qrib n-s (s ugar qrib 30 cm), bla ma tewteḍ deg-s.",
+    "frage": {
+     "text": "Mcḥal i tezmmer ṭumubil ad tili tebɛed zi ṭṭrutwaṛ?",
+     "richtig": 1,
+     "optionen": [
+      "Macci muhim",
+      "Qrib – s ugar qrib 30 cm",
+      "S lqell 1 m"
+     ],
+     "erklaerung": "Parki iṣeḥḥan: ɣef yiwen n lxeṭṭ aked ṭṭrutwaṛ d qrib n-s – maca bla ma tewteḍ deg-s."
+    },
+    "regel": "Lmanuvra n imtiḥan: parki ɣef lṭul",
+    "titel": "Ṣeggem ṭumubil"
+   }
+  }
+ },
+ "links_gegen": {
+  "kurz": "Ṭumubilat i d-yetteddun zzat-c d wid i ittdewwiṛen ɣer ufus zi tama nniḍen ɣaṛ-sen lḥeqq ad zwaren",
+  "titel": "Adewweṛ ɣer uzelmaḍ s ṭumubilat i d-yetteddun zzat-c",
+  "kapitel": {
+   "k0": {
+    "text": "Ṛṛitṛu, ligno ɣer uzelmaḍ, kcem ɣer tlemmast n ubrid. Qbel ma ad tekcmeḍ, xẓeṛ wid i d-yetteddun deffir-c.",
+    "frage": {
+     "text": "Mani ad kecmeɣ bac ad dewweṛeɣ ɣer uzelmaḍ?",
+     "richtig": 1,
+     "optionen": [
+      "Ɣer ufus qaɛ",
+      "Alami tlemmast n ubrid",
+      "Di tama n ṭumubilat i d-yetteddun"
+     ],
+     "erklaerung": "Adewweṛ ɣer uzelmaḍ: kcem alami tlemmast (di abrid n yiwen n ttijah ɣer uzelmaḍ amec tzemmreḍ)."
+    },
+    "regel": "§ 9 Abs. 1 StVO",
+    "titel": "Kcem di ṭṭriq"
+   },
+   "k1": {
+    "text": "Qqeddem alami di lkaṛfuṛ d ṛaǧu. Iṛwidat ṣṣwab – mala yewwet-c ḥedd zi deffir, war tetteddiḍ ca ɣer ṭumubilat i d-yetteddun zzat-c.",
+    "frage": {
+     "text": "S min n ttertib i zemmrent ṭumubilat ad ɛeddint?",
+     "erklaerung": "Win ittdewwiṛen ɣer uzelmaḍ, ad yejj ṭumubilat i d-yetteddun zzat-s ad ɛeddint – ḥetta win ittdewwiṛen ɣer ufus zi tama nniḍen. Ṭumubil n lawṭu-ikul teddu taneggarut.",
+     "reihenfolge": [
+      "Taziza (nican)",
+      "Tazeggaɣt (tdewweṛ ɣer ufus)",
+      "Lfurguna (nican)",
+      "Lawṭu-ikul (ɣer uzelmaḍ)"
+     ]
+    },
+    "regel": "§ 9 Abs. 3 StVO",
+    "titel": "Ṛaǧu di lkaṛfuṛ"
+   },
+   "k2": {
+    "text": "Wid itteddun nican d wid ittdewwiṛen ɣer ufus zi tama nniḍen ɣaṛ-sen lḥeqq ad zwaren. Dewweṛ ɣir mala yexwa kulci d war yella ca ḥedd s uḍaṛ i yettɛeddin.",
+    "frage": null,
+    "regel": "§ 9 Abs. 3 · § 9 Abs. 4 StVO",
+    "titel": "Ejj ṭumubilat n zzat ad ɛeddint"
+   },
+   "k3": {
+    "text": "Di ubrid mani ad dewweṛeɣ, yella win itteddun s uḍaṛ yettɛeddi abrid. Qadeṛ-it aṭṭas – ṛaǧu alami yuḍa tama nniḍen.",
+    "frage": {
+     "text": "Win itteddun s uḍaṛ ɛad yella di ubrid. Min ad geɣ?",
+     "richtig": 1,
+     "optionen": [
+      "Wwet lklaksun",
+      "Ṛaǧu alami yɛedda",
+      "Ɛeddi qrib deffir-s"
+     ],
+     "erklaerung": "Mala ad tdewṛeḍ, qadeṛ wid itteddun s uḍaṛ aṭṭas – mala ixeṣṣa, ṛaǧu."
+    },
+    "regel": "§ 9 Abs. 3 StVO",
+    "titel": "Xẓeṛ wid itteddun s uḍaṛ"
+   },
+   "k4": {
+    "text": "Qbel adewweṛ nit: axẓaṛ ɣef tɣiṛt n uzelmaḍ (wid yesnin ɣef lbisklit, wid ittdubliyen), ɛad dewweṛ s tazzla s udewweṛ ameqqran.",
+    "frage": null,
+    "regel": "§ 9 Abs. 1 StVO",
+    "titel": "Axẓaṛ ɣef tɣiṛt n uzelmaḍ"
+   }
+  }
+ },
+ "quer_rueck": {
+  "kurz": "Ɣer deffir di umkan n parki ɣef lɛeṛḍ – deffir-s ad teffɣeḍ ɣer zzat s uxẓaṛ mliḥ",
+  "titel": "Parki ɣer deffir (ɣef lɛeṛḍ)",
+  "kapitel": {
+   "k0": {
+    "text": "Nehheṛ s ttawil di ubrid n lparking, ssekker ligno ɣer ufus d ɛeddi amkan n parki alami deffir n ṭumubil yella qrib 1–2 m deffir-s.",
+    "frage": null,
+    "regel": "§ 1 Abs. 2 StVO",
+    "titel": "Ɛeddi amkan n parki"
+   },
+   "k1": {
+    "text": "Qbel ma ad tuɣaleḍ ɣer deffir, xẓeṛ kul tama – wid itteddun s uḍaṛ d ṭumubilat di ubrid n lparking!",
+    "frage": {
+     "text": "Maɣef ɣer deffir di umkan n parki ɣef lɛeṛḍ?",
+     "richtig": 0,
+     "optionen": [
+      "Bac mala ad teffɣeḍ deffir-s ad tẓaṛeḍ mliḥ ɣer zzat",
+      "Lqanun yenna aya",
+      "Acku yeɣwel ugar"
+     ],
+     "erklaerung": "Ɣer deffir tzemmreḍ ad tdewṛeḍ qrib ugar, d mala ad teffɣeḍ ad tẓaṛeḍ ṭumubilat i d-yetteddun."
+    },
+    "regel": "§ 9 Abs. 5 StVO",
+    "titel": "Xẓeṛ kul tama"
+   },
+   "k2": {
+    "text": "Uɣal s ttawil ɣer deffir d dewweṛ lbulan qaɛ ɣer ufus. Xẓeṛ ɣer deffir d ɣer tiɣmeṛin n ṭumubilat i yellan ɣer yidis.",
+    "frage": null,
+    "regel": "Lmanuvra n imtiḥan: parki ɣef lɛeṛḍ",
+    "titel": "Lbulan qaɛ"
+   },
+   "k3": {
+    "text": "Mala ṭumubil tella ɣef yiwen n lxeṭṭ aked ṭumubilat n yidis: ṣeggem lbulan d uɣal ɣer deffir di tlemmast alami taggara n umkan n parki.",
+    "frage": {
+     "text": "Melmi ad ṣeggmeɣ lbulan?",
+     "richtig": 1,
+     "optionen": [
+      "Ɣir ma kecmeɣ ɣer umkan n parki",
+      "Mala ṭumubil tella ɣef yiwen n lxeṭṭ aked ṭumubilat n yidis",
+      "Ɛemmaṛs"
+     ],
+     "erklaerung": "Ɛad kemmel s ṣṣwab – mala lla, ṭumubil ad tebded s tmeɛwajt."
+    },
+    "regel": "Lqawanin n imtiḥan · Lmanuvrat n imtiḥan",
+    "titel": "Ṣṣwab ɣer deffir"
+   }
+  }
+ },
+ "quer_vor": {
+  "kurz": "Ɣer zzat di umkan n parki ɣef lɛeṛḍ – s ubɛad cwayt ɣer tama nniḍen",
+  "titel": "Parki ɣer zzat (ɣef lɛeṛḍ)",
+  "kapitel": {
+   "k0": {
+    "text": "Di ubrid n lparking, qqeṛṛeb s ttawil ɣer umkan n parki, ssekker ligno ɣer ufus. Bɛed cwayt ɣer uzelmaḍ, bac adewweṛ ad yeqqaḍ ɣer umkan n parki.",
+    "frage": {
+     "text": "Maɣef ad bɛedeɣ ɣer uzelmaḍ qbel parki ɣer zzat?",
+     "richtig": 0,
+     "optionen": [
+      "Bac adewweṛ ad yeqqaḍ di umkan n parki iḍeyyqen",
+      "Acku yeɣwel ugar",
+      "War ixeṣṣa ca"
+     ],
+     "erklaerung": "Mala tetteddiḍ ɣer zzat, iṛwidat n deffir tteddun ɣer daxel n lviraj – mala tebɛedeḍ, deffir n ṭumubil war yettwet ca ṭumubil n yidis."
+    },
+    "regel": "§ 1 Abs. 2 StVO",
+    "titel": "Ɛeddi d bɛed"
+   },
+   "k1": {
+    "text": "Mala tlemmast n umkan n parki tella qrib ɣef yiwen n lxeṭṭ aked ṛṛitṛu n berra: dewweṛ lbulan qaɛ ɣer ufus. Xẓeṛ tiɣmeṛin n ṭumubilat n yidis (axẓaṛ ɣef tɣiṛt n ufus).",
+    "frage": null,
+    "regel": "Lmanuvra n imtiḥan: parki ɣef lɛeṛḍ",
+    "titel": "Lbulan qaɛ"
+   },
+   "k2": {
+    "text": "Ṣeggem lbulan d kcem di tlemmast n umkan n parki, alami zzat n ṭumubil yella qrib n taggara. Ixeṣṣa ad tzemmreḍ ad teffɣeḍ zi sin n yidisen.",
+    "frage": {
+     "text": "Min yexṣan mala ad teffɣeḍ zi lparking deffir-s?",
+     "richtig": 1,
+     "optionen": [
+      "Walu",
+      "Ad teffɣeḍ ɣer deffir – war tettẓaṛeḍ ca mliḥ ṭumubilat",
+      "Ad yexs ugar n lisans"
+     ],
+     "erklaerung": "Ɣef waya, ttewṣiya d parki ɣer deffir: deffir-s ad teffɣeḍ ɣer zzat s uxẓaṛ mliḥ."
+    },
+    "regel": "Lqawanin n imtiḥan · Lmanuvrat n imtiḥan",
+    "titel": "Ṣṣwab ɣer daxel"
+   }
+  }
+ },
+ "rechts_rad": {
+  "kurz": "Axẓaṛ ɣef tɣiṛt – win yesnin ɣef lbisklit nican ɣaṛ-s lḥeqq ad yezwar",
+  "titel": "Adewweṛ ɣer ufus s ubrid n lbisklit",
+  "kapitel": {
+   "k0": {
+    "text": "Ṛṛitṛu, ligno ɣer ufus, kcem ɣer ufus amec tzemmreḍ. Ɣer ufus n ubrid yella ubrid n lbisklit.",
+    "frage": {
+     "text": "Wi ɣaṛ-s lḥeqq ad yezwar da?",
+     "richtig": 1,
+     "optionen": [
+      "Nec – ttedduɣ s tazzla ugar",
+      "Win yesnin ɣef lbisklit i itteddun nican",
+      "Win yuḍan amezwaru ɣer lkaṛfuṛ"
+     ],
+     "erklaerung": "§ 9 Abs. 3 StVO: Win ittdewwiṛen ixeṣṣa ad yejj wid yesnin ɣef lbisklit ad ɛeddin, mala tteddun ɣer yidis n ubrid di yiwen n ttijah aked-s."
+    },
+    "regel": "§ 9 Abs. 1 StVO",
+    "titel": "Kcem ɣer ufus d ssekker ligno"
+   },
+   "k1": {
+    "text": "Qbel adewweṛ nit: ṛṛitṛu d axẓaṛ ɣef tɣiṛt n ufus – win yesnin ɣef lbisklit yezmmer ad yili di angle mort.",
+    "frage": null,
+    "regel": "§ 9 Abs. 1 · § 9 Abs. 3 StVO",
+    "titel": "Axẓaṛ ɣef tɣiṛt n ufus"
+   },
+   "k2": {
+    "text": "Win yesnin ɣef lbisklit yetteddu-d zi deffir d itteddu nican. Bedd d ejj-it ad iɛeddi – ɛad dewweṛ ɣer ufus s udewweṛ amezzyan.",
+    "frage": {
+     "text": "Min ad geɣ ṛux?",
+     "richtig": 1,
+     "optionen": [
+      "Dewweṛ s tazzla zzat n win yesnin ɣef lbisklit",
+      "Bedd d ejj-it ad iɛeddi",
+      "Wwet lklaksun bac ad yefrini"
+     ],
+     "erklaerung": "Win yesnin ɣef lbisklit ɣaṛ-s lḥeqq ad yezwar. Lḥwadet aked lbisklit mala ttdewwiṛen ṭumubilat ɣer ufus, zi lḥwadet i yuɛṛen ugar di temdint."
+    },
+    "regel": "§ 9 Abs. 3 StVO",
+    "titel": "Ṛaǧu"
+   },
+   "k3": {
+    "text": "Dewweṛ ɣir mala yexwa. Mala tettdewwiṛeḍ, kemmel xẓeṛ wid yesnin ɣef lbisklit d wid itteddun s uḍaṛ – win nniḍen s lbisklit ɛad yusa-d.",
+    "frage": null,
+    "regel": "§ 9 Abs. 3 StVO",
+    "titel": "Dewweṛ – kemmel xẓeṛ"
+   }
+  }
+ },
+ "reissverschluss": {
+  "kurz": "Sseqdec sin n ṭṭriqat alami amkan iḍeyyqen, ɛad yiwen s yiwen",
+  "titel": "Yiwen s yiwen (Reißverschluss) mala ṭṭriq ad yekfu",
+  "kapitel": {
+   "k0": {
+    "text": "Lpanu n tḍeyqit yenna-ac: ṭṭriq n ufus ad yekfu. Sin n ṭṭriqat ttwasseqdacen alami amkan iḍeyyqen.",
+    "frage": {
+     "text": "Melmi ad ṛuḥeɣ ɣer uzelmaḍ?",
+     "richtig": 1,
+     "optionen": [
+      "Dɣya, mala ẓṛiɣ lpanu",
+      "Qbel tazwara n umkan iḍeyyqen nit",
+      "Ɛemmaṛs, wiyyaḍ ixeṣṣa ad ṛaǧun"
+     ],
+     "erklaerung": "§ 7 Abs. 4 StVO: Kcem qbel tazwara n umkan iḍeyyqen nit, yiwen s yiwen."
+    },
+    "regel": "Lpanu 531 · § 7 Abs. 4 StVO",
+    "titel": "Ṭṭriq ad yekfu"
+   },
+   "k1": {
+    "text": "War ttbeddal ca ṭṭriq zik aṭṭas: win i itteddun ɣer ufus alami amkan iḍeyyqen, yesseqdac abrid s ṣṣwab d iɛawen bac aḥbas n ṭumubilat ad yili d amezzyan.",
+    "frage": null,
+    "regel": "§ 7 Abs. 4 StVO",
+    "titel": "Nehheṛ alami zzat"
+   },
+   "k2": {
+    "text": "Ssekker ligno ɣer uzelmaḍ, ɛdel ssuṛɛa aked ṭumubilat n uzelmaḍ d af ṭumubil i ad tekcmeḍ deffir-s.",
+    "frage": null,
+    "regel": "§ 7 Abs. 5 StVO",
+    "titel": "Ligno d xẓeṛ amkan xawi"
+   },
+   "k3": {
+    "text": "Qbel amkan iḍeyyqen nit: axẓaṛ ɣef tɣiṛt – d kcem ɣer uzelmaḍ deffir yiwet n ṭumubil, yiwen s yiwen. Wid itteddun ɣer uzelmaḍ ttǧǧan kul tikkelt yiwet n ṭumubil ad tekcem.",
+    "frage": {
+     "text": "Wi ixeṣṣan ad yejj wi ad yekcem?",
+     "richtig": 1,
+     "optionen": [
+      "Ḥetta ḥedd – win i d-yusin amezwaru",
+      "Wid itteddun ɣer uzelmaḍ ttǧǧan kul tikkelt yiwet n ṭumubil ad tekcem, yiwen s yiwen",
+      "Wid itteddun ɣer ufus ixeṣṣa ad ṛaǧun alami yexwa kulci"
+     ],
+     "erklaerung": "Yiwen s yiwen: yiwen zi uzelmaḍ, yiwen zi ufus."
+    },
+    "regel": "§ 7 Abs. 4 · § 7 Abs. 5 StVO",
+    "titel": "Kcem yiwen s yiwen"
+   },
+   "k4": {
+    "text": "Yiwen s yiwen yetteddu mala ṭṭriq yekfa niɣ yeḥbes. Di ṭṭriq n usɣiwel n lawṭuṛut WAR yetteddu CA – dinni ṭumubilat n ubrid ameqqran ɣaṛ-sent lpriyuriti.",
+    "frage": null,
+    "regel": "§ 7 Abs. 4 · § 18 Abs. 3 StVO",
+    "titel": "Cfu"
+   }
+  }
+ },
+ "rettungsgasse": {
+  "kurz": "Zi mala ṭumubilat ad ɛeṭṭlent: win yellan ɣer uzelmaḍ qaɛ ɣer uzelmaḍ, maṛṛa wiyyaḍ ɣer ufus",
+  "titel": "Abrid n usellek",
+  "kapitel": {
+   "k0": {
+    "text": "Ṭumubilat tteddunt s ttawil. Zi mala ad tteddunt am win itteddun s uḍaṛ niɣ ad bedden maṛṛa, ixeṣṣa ad teggeḍ abrid n usellek – bla ma tṛaǧuḍ alami d-yas ḍḍew aziza.",
+    "frage": {
+     "text": "Melmi ad teggeḍ abrid n usellek?",
+     "richtig": 1,
+     "optionen": [
+      "Ɣir mala sliɣ i ssiṛina",
+      "Zi mala ṭumubilat tteddunt am win itteddun s uḍaṛ niɣ bedden",
+      "Ɣir mala tella lḥadita zzat-i"
+     ],
+     "erklaerung": "§ 11 Abs. 2 StVO: mala tteddunt am win itteddun s uḍaṛ niɣ bedden – dɣya."
+    },
+    "regel": "§ 11 Abs. 2 StVO",
+    "titel": "Ṭumubilat ɛeṭṭlent"
+   },
+   "k1": {
+    "text": "Abrid n usellek yettili jaṛ ṭṭriq i yellan ɣer uzelmaḍ qaɛ d ṭṭriq i yellan ɣer ufus n-s: win yellan ɣer uzelmaḍ qaɛ yettqeṛṛeb ɣer uzelmaḍ – maṛṛa wiyyaḍ ɣer ufus.",
+    "frage": {
+     "text": "Cek di ṭṭriq n tlemmast zeg kraḍ n ṭṭriqat. Mani ad tṛuḥeḍ?",
+     "richtig": 1,
+     "optionen": [
+      "Ɣer uzelmaḍ",
+      "Ɣer ufus",
+      "Ad qqimeɣ mani lliɣ"
+     ],
+     "erklaerung": "Maṛṛa ṭṭriqat, ḥaca ṭṭriq n uzelmaḍ qaɛ, ttqeṛṛben ɣer ufus."
+    },
+    "regel": "§ 11 Abs. 2 StVO",
+    "titel": "Mani ad tqeṛṛbeḍ?"
+   },
+   "k2": {
+    "text": "Ḍḍew aziza d ssiṛina: xwi abrid dɣya. Bedd, war ttḥeṛṛak ca ṭumubil ɣer da d ɣer da – abrid n usellek ixeṣṣa ad yili d ṣṣwab d xawi.",
+    "frage": null,
+    "regel": "§ 38 Abs. 1 · § 11 Abs. 2 StVO",
+    "titel": "Ṭumubil n usellek tusa-d"
+   },
+   "k3": {
+    "text": "Abrid n usellek iqqim d xawi, ḥetta mala tɛedda yiwet n ṭumubil n usellek – s lɛada ttasent-d nniḍen. War ttḍfaṛ ca deffir-s!",
+    "frage": {
+     "text": "Lambulansa tɛedda. Ɛad ṛux?",
+     "richtig": 1,
+     "optionen": [
+      "Ḍfeṛ-itt, s waya ad teɣwel",
+      "Ejj abrid xawi, zemmrent ad d-asent nniḍen",
+      "Uɣal dɣya ɣer ṭṭriq-nnec"
+     ],
+     "erklaerung": "Abrid n usellek iqqim alami ṭumubilat ɛawden tteddunt."
+    },
+    "regel": "§ 11 Abs. 2 · § 38 Abs. 1 StVO",
+    "titel": "Ejj abrid xawi"
+   },
+   "k4": {
+    "text": "Ṭṭriq n yidis macci d abrid i wid war ɣaṛ-sen ṣṣbeṛ. Win war yeggin abrid n usellek niɣ inehheṛen deg-s, yezmmer ad yexleṣ lɣeṛṛama, ad yawi tinqqaḍin d lmenɛ n unehheṛ.",
+    "frage": null,
+    "regel": "§ 11 Abs. 2 StVO · BKatV",
+    "titel": "Cfu"
+   }
+  }
+ },
+ "rvl": {
+  "kurz": "Wi ad yezwar? Kraḍ n ṭumubilat di yiwen n lkaṛfuṛ bla lpanuwat",
+  "titel": "Wi d-itasen zi ufus ɛad ag izeggʷar (tamnaḍt n 30)",
+  "kapitel": {
+   "k0": {
+    "text": "Di tamnaḍt n 30 qrib ɛemmaṛs ttilin lpanuwat n lpriyuriti – da tetteddu lqaɛida: wi d-itasen zi ufus ɛad ag izeggʷar. Qqeṛṛeb s ttawil, bac ad tzemmreḍ ad tbeddeḍ.",
+    "frage": {
+     "text": "Min n lqaɛida i yetteddun di lkaṛfuṛ-a?",
+     "richtig": 0,
+     "optionen": [
+      "Wi d-itasen zi ufus ɛad ag izeggʷar",
+      "Abrid ameqqran ɣaṛ-s lpriyuriti",
+      "Win i d-yusin amezwaru ad iɛeddi"
+     ],
+     "erklaerung": "Bla lpanuwat, lfiṛu niɣ lbulis, yetteddu § 8 Abs. 1 StVO: win i d-yettasen zi ufus ɣaṛ-s lpriyuriti."
+    },
+    "regel": "Lpanu 274.1 · § 8 Abs. 1 StVO",
+    "titel": "Lkaṛfuṛ bla lpanuwat"
+   },
+   "k1": {
+    "text": "S kraḍ nsent bedden. Kul yiwen ixeẓẓeṛ ɣer ufus: win war ɣaṛ-s ḥedd ɣer ufus, yezmmer ad yezwar.",
+    "frage": {
+     "text": "S min n ttertib i zemmrent ṭumubilat ad ɛeddint?",
+     "erklaerung": "Taziza war ɣaṛ-s ḥedd ɣer ufus, teddu tamezwarut. Ɛad ṭumubil n lawṭu-ikul (taziza tella ɣer ufus n-s). Tazeggaɣt taneggarut – ɣer ufus n-s tella ṭumubil n lawṭu-ikul.",
+     "reihenfolge": [
+      "Taziza (zi ufus)",
+      "Lawṭu-ikul",
+      "Tazeggaɣt (tdewweṛ ɣer uzelmaḍ)"
+     ]
+    },
+    "regel": "§ 8 Abs. 1 · § 8 Abs. 2 StVO",
+    "titel": "Wi ad yezwar?"
+   },
+   "k2": {
+    "text": "Ṭumubil taziza war ɣaṛ-s ḥedd zi ufus, teddu tamezwarut.",
+    "frage": null,
+    "regel": "§ 8 Abs. 1 StVO",
+    "titel": "Taziza teddu"
+   },
+   "k3": {
+    "text": "Ṛux ufus yexwa – ṭumubil n lawṭu-ikul teddu nican, tɛedda lkaṛfuṛ.",
+    "frage": null,
+    "regel": "§ 8 Abs. 1 StVO",
+    "titel": "Ɛad lawṭu-ikul"
+   },
+   "k4": {
+    "text": "Tazeggaɣt tdewweṛ ɣer uzelmaḍ. Tṛaǧa, acku ṭumubil n lawṭu-ikul tusa-d zi ufus.",
+    "frage": null,
+    "regel": "§ 8 Abs. 1 · § 9 Abs. 1 StVO",
+    "titel": "Taneggarut: tazeggaɣt"
+   },
+   "k5": {
+    "text": "Win ixeṣṣan ad iṛaǧu, isskan aya s ssuṛɛa tamezzyant. Mala llant ṭumubilat di kuẓ n yidisen maṛṛa, inehhaṛen ttemsawalen – yiwen yettaǧǧa i wayeḍ.",
+    "frage": null,
+    "regel": "§ 8 Abs. 2 · § 11 Abs. 3 StVO",
+    "titel": "Cfu"
+   }
+  }
+ },
+ "schulbus": {
+  "kurz": "War tdubliḍ ca, tteddu am win itteddun s uḍaṛ – ḥetta zi tama nniḍen – d xemmem di iḥenjiṛen",
+  "titel": "Ṭṭubis n lmedṛasa s lwarning",
+  "kapitel": {
+   "k0": {
+    "text": "Ṭṭubis n lmedṛasa yetteqeṛṛeb ɣer lmaḥeṭṭa s lwarning iceɛlen. Ṛux war tzemmreḍ ca ad t-tdubliḍ.",
+    "frage": {
+     "text": "Zemmreɣ ad dubliɣ ṭṭubis mala yetteqeṛṛeb ɣer lmaḥeṭṭa s lwarning?",
+     "richtig": 1,
+     "optionen": [
+      "Ih, mala abrid yexwa",
+      "Lla",
+      "Ɣir s lklaksun"
+     ],
+     "erklaerung": "§ 20 Abs. 3 StVO: Ṭṭubisat n lxeṭṭ d n lmedṛasa i yetteqeṛṛben ɣer lmaḥeṭṭa s lwarning, war tzemmreḍ ca ad ten-tdubliḍ."
+    },
+    "regel": "§ 20 Abs. 3 StVO",
+    "titel": "Ṭṭubis n lmedṛasa s lwarning"
+   },
+   "k1": {
+    "text": "Axir, di tazwara bedd s lmasafa deffir ṭṭubis. Iḥenjiṛen war tessneḍ ca min ad gen, zemmren ad d-azzlen ɣer ubrid deffir niɣ zzat ṭṭubis.",
+    "frage": null,
+    "regel": "§ 20 Abs. 4 · § 3 Abs. 2a StVO",
+    "titel": "Ṭṭubis ibedd – iḥenjiṛen tteffɣen"
+   },
+   "k2": {
+    "text": "Ɛeddi ɣir s ssuṛɛa n win itteddun s uḍaṛ (qrib 4–7 km/h) d s lmasafa i ixeṣṣen bac ḥedd war yettili ca di lxaṭaṛ. Aya yetteddu ḥetta i ṭumubilat i d-yetteddun zi tama nniḍen!",
+    "frage": {
+     "text": "Ssuṛɛa n win itteddun s uḍaṛ tetteddu ḥetta i ṭumubilat n tama nniḍen?",
+     "richtig": 1,
+     "optionen": [
+      "Lla, ɣir i tama n ṭṭubis",
+      "Ih – ḥetta ṭumubilat n tama nniḍen di yiwen n ubrid tteddunt s ssuṛɛa n win itteddun s uḍaṛ",
+      "Ɣir di wussan n lmedṛasa"
+     ],
+     "erklaerung": "§ 20 Abs. 4 StVO: Ssuṛɛa n win itteddun s uḍaṛ tetteddu ḥetta i ṭumubilat n tama nniḍen di yiwen n ubrid."
+    },
+    "regel": "§ 20 Abs. 4 StVO",
+    "titel": "Ssuṛɛa n win itteddun s uḍaṛ"
+   },
+   "k3": {
+    "text": "Zzat ṭṭubis, yiwen n uḥenjiṛ yettɛeddi abrid s tazzla. Bedd dɣya – mala ixeṣṣa, ixeṣṣa ad tṛaǧuḍ.",
+    "frage": {
+     "text": "Min ad geɣ?",
+     "richtig": 1,
+     "optionen": [
+      "Ḥeyyed d kemmel",
+      "Bedd d ṛaǧu alami aḥenjiṛ yuḍa tama nniḍen s lamen",
+      "Wwet lklaksun"
+     ],
+     "erklaerung": "Mala ixeṣṣa, ixeṣṣa ad tṛaǧuḍ – war ixeṣṣa ca ad tessekcmeḍ wid i d-yeffɣen zi ṭṭubis di lxaṭaṛ."
+    },
+    "regel": "§ 20 Abs. 4 StVO",
+    "titel": "Aḥenjiṛ yazzel ɣer ubrid!"
+   },
+   "k4": {
+    "text": "Ṭṭubis yessekker ligno ɣer uzelmaḍ bac ad yeffeɣ zi lmaḥeṭṭa. Ejj ṭṭubis ad yeffeɣ – mala ixeṣṣa, ṛaǧu.",
+    "frage": null,
+    "regel": "§ 20 Abs. 5 StVO",
+    "titel": "Ṭṭubis iteffeɣ"
+   }
+  }
+ },
+ "stop": {
+  "kurz": "Kul tikkelt bedd qaɛ ɣef ujeṛṛeḍ n stop – ɛad qqeddem s ttawil",
+  "titel": "Lpanu n stop (Lpanu 206)",
+  "kapitel": {
+   "k0": {
+    "text": "Lpanu 206 yenna: bedd ɣef ujeṛṛeḍ n stop – kul tikkelt, ḥetta mala abrid yexwa – ɛad ejj lpriyuriti.",
+    "frage": {
+     "text": "Ixeṣṣa ad beddeɣ ɣer lpanu n stop ḥetta mala ẓṛiɣ belli abrid yexwa?",
+     "richtig": 1,
+     "optionen": [
+      "Lla, ad ɛeddiɣ s ttawil, iqqaḍ",
+      "Ih – kul tikkelt bedd qaɛ",
+      "Ɣir di yiḍ"
+     ],
+     "erklaerung": "Lpanu 206: tbeddit d ajbaṛ. Iṛwidat ixeṣṣa ad bedden qaɛ."
+    },
+    "regel": "Lpanu 206 · Lpanu 294",
+    "titel": "Bedd! Ejj lpriyuriti"
+   },
+   "k1": {
+    "text": "Ṭumubil tebedd ɣef ujeṛṛeḍ n stop – iṛwidat bedden qaɛ. Zi da s lɛada war tettẓaṛeḍ ca mliḥ.",
+    "frage": null,
+    "regel": "Lpanu 206 · Lpanu 294",
+    "titel": "Bedd qaɛ ɣef ujeṛṛeḍ n stop"
+   },
+   "k2": {
+    "text": "Qqeddem s ttawil alami tẓaṛeḍ mliḥ, d ɛawed bedd. Xẓeṛ ɣer uzelmaḍ, ɣer ufus, ɣer uzelmaḍ.",
+    "frage": {
+     "text": "Ɣef ujeṛṛeḍ n stop war tettẓaṛeḍ ca mliḥ. Ɛad min?",
+     "richtig": 1,
+     "optionen": [
+      "Ṛuḥ kan",
+      "Qqeddem s ttawil d ɛawed xẓeṛ",
+      "Wwet lklaksun"
+     ],
+     "erklaerung": "Deffir tbeddit ɣef ujeṛṛeḍ n stop, tzemmreḍ ad tqeddmeḍ s lɛaqel alami tẓaṛeḍ mliḥ."
+    },
+    "regel": "§ 8 Abs. 2 StVO",
+    "titel": "Qqeddem s ttawil"
+   },
+   "k3": {
+    "text": "Sin n ṭumubilat i yellan di ubrid n lpriyuriti ɣaṛ-sent lpriyuriti. Dewweṛ ɣer ufus ɣir mala abrid yexwa.",
+    "frage": null,
+    "regel": "§ 8 Abs. 2 StVO",
+    "titel": "Ejj ṭumubilat ad ɛeddint"
+   }
+  }
+ },
+ "ueberholen": {
+  "rf": {
+   "falsch": "Ṛux tẓaṛeḍ axeṭṭa i yettɛawaden aṭṭas. Xẓeṛ mani i yebda lxaṭaṛ: lmasafa, tamnaḍt tazeggaɣt, appel de phare. Deffir-s, axir ad temqabaleḍ-tt aked nnusxa iṣeḥḥan.",
+   "richtig": "Ṛux tẓaṛeḍ amec i tella s ṣṣwab. Lḥala-ya tella daɣ s uxeṭṭa i yettɛawaden ugar di ubrid: ad tqeṛṛbeḍ aṭṭas ɣer lkamyu d ad teffɣeḍ bla ma tẓaṛeḍ abrid yexwa."
+  },
+  "kurz": "Xẓeṛ abrid, ṛaǧu ṭumubilat i d-yetteddun zzat-c, dubli s tazzla, uɣal s lmasafa",
+  "titel": "Ddubli di ubrid n berra i temdint",
+  "worum": "Zzat-c yella yiwen n lkamyu s 60 km/h, lḥedd n ssuṛɛa d 100. Ddubli d yiwet zeg tḥerkat i yuɛṛen ugar berra i temdint: tetteddiḍ di ṭṭriq n ṭumubilat i d-yetteddun zzat-c. Tzemmreḍ ad tdubliḍ ɣir mala abrid yexwa aṭṭas zzat-c.",
+  "merken": [
+   [
+    "Dubli ɣir mala abrid iban mliḥ, ṭumubilat i d-yetteddun zzat-c war tteḥbesent ca di maṛṛa lweqt n ddubli, d ɣir s ssuṛɛa tameqqrant ugar aṭṭas.",
+    "§ 5 Abs. 2 StVO"
+   ],
+   [
+    "Mala lḥala n ubrid war tebayyen ca, war tdubliḍ ca. Mala tcekkeḍ: qqim deffir.",
+    "§ 5 Abs. 3 Nr. 1 StVO"
+   ],
+   [
+    "Qbel ma ad teffɣeḍ: ṛṛitṛu, axẓaṛ ɣef tɣiṛt, ligno. Mala ad tuɣaleḍ ɣer ufus, war teḥbiseḍ ca win i tdubliḍ.",
+    "§ 5 Abs. 4 · Abs. 4a StVO"
+   ],
+   [
+    "Win i ttdubliyen war yezmmer ca ad yezid ssuṛɛa.",
+    "§ 5 Abs. 6 StVO"
+   ],
+   [
+    "Lḥsab isehlen: bac ad tdubliḍ s 100 km/h yiwen n lkamyu s 60 km/h, ixeṣṣa-c qrib 250 m n ubrid n ddubli d qrib 500 m n uxẓaṛ xawi.",
+    "Lḥsab isehlen"
+   ]
+  ],
+  "kapitel": {
+   "lkw": {
+    "text": "Berra i temdint, lḥedd d 100 km/h, zzat yetteddu yiwen n lkamyu s 60. Ṭṭef lmasafa i ixeṣṣen, s lqell azgen n lkuntuṛ s lmitru. S waya tẓaṛeḍ ɣer yidis n-s d tzemmreḍ ad tzideḍ ssuṛɛa qbel.",
+    "frage": {
+     "text": "Melmi zemmreɣ ad dubliɣ?",
+     "richtig": 1,
+     "optionen": [
+      "Kul tikkelt mala ttedduɣ s tazzla ugar",
+      "Ɣir mala iban belli ṭumubilat i d-yetteddun zzat-i war tteḥbesent ca di maṛṛa lweqt n ddubli, d ttedduɣ s tazzla ugar aṭṭas",
+      "Ɣir zi ufus"
+     ],
+     "erklaerung": "§ 5 Abs. 2 StVO: Dubli ɣir mala war tetteḥbiseḍ ca ṭumubilat i d-yetteddun zzat-c, d s ssuṛɛa tameqqrant ugar aṭṭas."
+    },
+    "regel": "§ 4 Abs. 1 · § 5 Abs. 2 StVO",
+    "titel": "Lkamyu itteddu s ttawil zzat"
+   },
+   "gegen": {
+    "text": "Tusa-d yiwet n ṭumubil zzat-c. Ṛux war teffɣeḍ ca, ṛaǧu. Tamnaḍt tazegzawt niɣ tazeggaɣt tessken-ac mala qrib 500 m i ixeṣṣen xwan.",
+    "frage": {
+     "text": "Mcḥal n ubrid xawi i ixeṣṣen, qrib, bac ad tdubliḍ s 100 km/h yiwen n lkamyu s 60 km/h?",
+     "richtig": 1,
+     "optionen": [
+      "Qrib 100 m",
+      "Qrib 250 m n ubrid n ddubli, d ṭumubilat i d-yetteddun zzat-c ttasent-d di lweqt-a ɛad aked aya: qrib 500 m n uxẓaṛ",
+      "Qrib 50 m"
+     ],
+     "erklaerung": "Abrid n ddubli ≈ (lṭul n sin n ṭumubilat + lmasafa zzat d deffir) × v₁ ÷ (v₁ − v₂) ≈ 100 m × 100 ÷ 40 ≈ 250 m. Di lweqt-a, ṭumubil i d-yetteddun zzat-c tettawi ɛad qrib aya."
+    },
+    "regel": "§ 5 Abs. 2 StVO",
+    "titel": "Ṭumubilat i d-yetteddun zzat-c"
+   },
+   "f_raus": {
+    "text": "Yeffeɣ dɣya deffir ṭumubil tamezwarut i d-yusin zzat-s, bla axẓaṛ ɣef tɣiṛt, bla ma yezid ssuṛɛa qbel, d bla ma yessen min yellan deffir-s. Tamnaḍt d tazeggaɣt: lfurguna tqeṛṛeb aṭṭas.",
+    "frage": {
+     "text": "Min i yezmmer ad yɛawen da?",
+     "richtig": 1,
+     "optionen": [
+      "Ffeɣ s tazzla ugar",
+      "Qqim deffir, zid lmasafa d dubli ɣir mala tessneḍ belli abrid yexwa s lamen",
+      "Wwet lklaksun"
+     ],
+     "erklaerung": "Mala lḥala n ubrid war tebayyen ca, ddubli ittwaḥeṛṛem (§ 5 Abs. 3 Nr. 1 StVO). S lmasafa tameqqrant ugar, ad tẓaṛeḍ mala abrid yexwa."
+    },
+    "regel": "§ 5 Abs. 2 · § 5 Abs. 3 Nr. 1 StVO",
+    "titel": "Yeffeɣ bla ma yẓeṛ abrid"
+   },
+   "verbot": {
+    "text": "Di tazwara lxeṭṭ imqeṭṭeɛ s tixfawin timezzyanin yessken-ac belli ad d-yas lxeṭṭ kamel, ɛad yetteddu Lpanu 276. Da ɣer ufus yekcem yiwen n ubrid n lxela, d tṛaktuṛ i yellan dinni yexs ad yekcem ɣer ubrid. Ddubli i tebdiḍ ixeṣṣa ad t-tekmeleḍ qbel.",
+    "frage": {
+     "text": "Zemmreɣ ad ɛeddiɣ lxeṭṭ kamel n tlemmast bac ad dubliɣ?",
+     "richtig": 1,
+     "optionen": [
+      "Ih, cwayt",
+      "Lla",
+      "Ɣir i tṛaktuṛat"
+     ],
+     "erklaerung": "Lxeṭṭ kamel (Lpanu 295) war tzemmreḍ ca ad t-tɛeddiḍ."
+    },
+    "regel": "Lpanu 276 · Lpanu 295",
+    "titel": "Lmenɛ n ddubli zzat"
+   },
+   "vorbei": {
+    "text": "Ffeɣ d zid ssuṛɛa s tazzla. Lḥedd n ssuṛɛa iqqim d lḥedd. Ṭṭef lmasafa i ixeṣṣen ɣer yidis aked lkamyu.",
+    "frage": {
+     "text": "Lkamyu yettzid ssuṛɛa mala ttdubliɣ-t. Yezmmer ad yegg aya?",
+     "richtig": 1,
+     "optionen": [
+      "Ih",
+      "Lla, win i ttdubliyen war yezmmer ca ad yezid ssuṛɛa-ns"
+     ],
+     "erklaerung": "§ 5 Abs. 6 StVO: Win i ttdubliyen war yezmmer ca ad yezid ssuṛɛa-ns."
+    },
+    "regel": "§ 5 Abs. 2 · § 5 Abs. 4 · § 3 Abs. 3 StVO",
+    "titel": "Ɛeddi s tazzla"
+   },
+   "f_dicht": {
+    "text": "Ɣir 12 m n lmasafa s 60 km/h. Lkamyu iḥebbes axẓaṛ ɣer zzat: s waya war tettẓaṛeḍ ca mala d-tetteddu ca n ṭumubil zzat-c. Iṣeḥḥan d s lqell 30 m.",
+    "frage": {
+     "text": "Mcḥal n lmasafa i iṣeḥḥan s 60 km/h (lḥsab isehlen)?",
+     "richtig": 1,
+     "optionen": [
+      "6 m",
+      "Azgen n lkuntuṛ: 30 m",
+      "Lṭul n yiwet n ṭumubil"
+     ],
+     "erklaerung": "Lḥsab isehlen berra i temdint: azgen n lkuntuṛ s lmitru, ihi 30 m s 60 km/h. Aya d qrib 2 n tsegunin."
+    },
+    "regel": "§ 4 Abs. 1 StVO",
+    "titel": "Yeqqeṛṛeb aṭṭas"
+   },
+   "f_gegen": {
+    "text": "Lfurguna tfrina d tessekker lfaṛ s tazzla (appel de phare). Win iḥebbsen ṭumubilat i d-yetteddun zzat-s, war ixeṣṣa ca ad yedubli. Ṛux yeqqim-as ɣir yiwen n ubrid: ad yuɣal ɣer ufus s lxaṭaṛ.",
+    "regel": "§ 5 Abs. 2 StVO",
+    "titel": "Ṭumubil n zzat ixeṣṣa ad tefrini"
+   },
+   "f_knapp": {
+    "text": "Yekcem di umkan xawi, ɣir s cwayt n lmitruwat zzat lkamyu. Lkamyu ixeṣṣa ad yefrini. Win ittdubliyen war yezmmer ca ad yeḥbes win i yedubla mala yuɣal ɣer ufus.",
+    "regel": "§ 5 Abs. 4 StVO",
+    "titel": "Yuɣal qrib aṭṭas"
+   },
+   "sichern": {
+    "text": "Abrid yexwa d iban mliḥ, ulac lxeṭṭ kamel. Ṛṛitṛu n daxel d ṛṛitṛu n berra, axẓaṛ ɣef tɣiṛt n uzelmaḍ, ɛad ligno ɣer uzelmaḍ. Zi ṛux bda tzideḍ cwayt n ssuṛɛa.",
+    "regel": "§ 5 Abs. 4 · § 5 Abs. 4a StVO",
+    "titel": "Ṛṛitṛu, axẓaṛ ɣef tɣiṛt, ligno"
+   },
+   "f_besser": {
+    "text": "Ṭṭef lmasafa, ṛaǧu ṭumubilat i d-yetteddun zzat-c, d dubli ɣir mala abrid yexwa s lamen, s ssuṛɛa i tzideḍ qbel. Mala tcekkeḍ: war tdubliḍ ca. Nnasiḥa: xẓeṛ nnusxa „Amec i tella s ṣṣwab“.",
+    "regel": "§ 5 Abs. 2 · § 5 Abs. 3 StVO",
+    "titel": "Amec i ixeṣṣa ad tili"
+   },
+   "einordnen": {
+    "text": "Ṛṛitṛu n daxel: ɣir mala tẓaṛeḍ lkamyu kamel deg-s, ssekker ligno ɣer ufus d uɣal ɣer ṭṭriq-nnec. War tuɣal ca qrib aṭṭas zzat-s.",
+    "regel": "§ 5 Abs. 4 · § 5 Abs. 4a StVO",
+    "titel": "Ligno ɣer ufus, uɣal ɣer ṭṭriq"
+   }
+  },
+  "rfKnopf": {
+   "falsch": "Xẓeṛ axeṭṭa i yettɛawaden",
+   "richtig": "Xẓeṛ nnusxa iṣeḥḥan"
+  },
+  "varianten": {
+   "falsch": "Axeṭṭa i yettɛawaden",
+   "richtig": "Amec i tella s ṣṣwab"
+  },
+  "worumRegel": "§ 5 StVO"
+ },
+ "voreinander": {
+  "kurz": "Wid ibedden udem ɣer udem d ttdewwiṛen ɣer uzelmaḍ, ttdewwiṛen zzat wa i wa",
+  "titel": "Sin n wid ittdewwiṛen ɣer uzelmaḍ: zzat wa i wa",
+  "kapitel": {
+   "k0": {
+    "text": "Ṭumubil n lawṭu-ikul d ṭumubil tazeggaɣt s sin nsent xsent ad dewweṛent ɣer uzelmaḍ, d bedden udem ɣer udem.",
+    "frage": {
+     "text": "Amec ad dewweṛent s sin nsent?",
+     "richtig": 0,
+     "optionen": [
+      "Zzat wa i wa – kul yiwet tdewweṛ zzat tayeḍ",
+      "Deffir wa i wa, ɣer tama n tayeḍ",
+      "Win i d-yusin amezwaru, ad yezwar"
+     ],
+     "erklaerung": "§ 9 Abs. 4 StVO: Wid ittdewwiṛen ɣer uzelmaḍ i d-yetteddun udem ɣer udem, ttdewwiṛen zzat wa i wa – ḥaca mala lḥala n ubrid niɣ lkaṛfuṛ yessuter ca n tɣawsa nniḍen."
+    },
+    "regel": "§ 9 Abs. 4 StVO",
+    "titel": "Sin n wid ittdewwiṛen ɣer uzelmaḍ"
+   },
+   "k1": {
+    "text": "S sin nsent bdant tteddunt di yiwen n lweqt d ttdewwiṛent zzat tayeḍ – ṭumubilat ttemlaqant afus ɣer ufus. S waya tɛeddiḍ s tazzla – maca ṭumubil nniḍen i ittdewwiṛen ɣer uzelmaḍ tḥebbes-ac axẓaṛ ɣer ṭumubilat i d-yetteddun deffir-s zi tama nniḍen, ɣef waya xẓeṛ mliḥ ugar.",
+    "frage": null,
+    "regel": "§ 9 Abs. 4 StVO",
+    "titel": "Dewweṛ zzat wa i wa"
+   },
+   "k2": {
+    "text": "Deffir wa i wa (ad tdewṛeḍ ɣef ṭumubil nniḍen) ɣir mala ijeṛṛiḍen, lfiṛu niɣ lcekl n lkaṛfuṛ ssutren aya.",
+    "frage": null,
+    "regel": "§ 9 Abs. 4 StVO",
+    "titel": "Cfu"
+   }
+  }
+ },
+ "wenden": {
+  "kurz": "Adewweṛ ɣer tama nniḍen s zzat d deffir di yiwen n ubrid iḍeyyqen",
+  "titel": "Ddumi-tuṛ s kraḍ n tḥerkat",
+  "kapitel": {
+   "k0": {
+    "text": "Bedd ɣer yidis n ufus. Xẓeṛ: tzemmreḍ ad tegeḍ ddumi-tuṛ da, d tzemmreḍ ad tẓaṛeḍ mliḥ? Ssekker ligno ɣer uzelmaḍ d xẓeṛ ɣer sin n ttijahat.",
+    "frage": {
+     "text": "Min d lḥaja tameqqrant di ddumi-tuṛ?",
+     "richtig": 1,
+     "optionen": [
+      "Tiḥerkat tidrusin amec tzemmreḍ",
+      "Qbel kul taḥerkt xẓeṛ ɣer sin n ttijahat",
+      "Kemmel s tazzla"
+     ],
+     "erklaerung": "Di ddumi-tuṛ war ixeṣṣa ca ad tessekcmeḍ ḥedd di lxaṭaṛ (§ 9 Abs. 5 StVO) – axẓaṛ d lḥaja tameqqrant."
+    },
+    "regel": "§ 9 Abs. 5 StVO",
+    "titel": "Wjed"
+   },
+   "k1": {
+    "text": "Bda tteddu s ttawil d dewweṛ lbulan qaɛ ɣer uzelmaḍ – alami qrib n ṭṭrutwaṛ n tama nniḍen. Qbel ma ad tbeddeḍ s cwayt, dewweṛ lbulan ɣer ufus.",
+    "frage": null,
+    "regel": "Lmanuvra n imtiḥan: ddumi-tuṛ",
+    "titel": "Taḥerkt 1: zzat, lbulan qaɛ ɣer uzelmaḍ"
+   },
+   "k2": {
+    "text": "Lmaṛcarir, ɛawed xẓeṛ kul tama, uɣal s ttawil ɣer deffir d dewweṛ lbulan qaɛ ɣer ufus – alami qrib n ṭṭrutwaṛ i yellan deffir-c.",
+    "frage": {
+     "text": "Mani ad dewweṛeɣ lbulan mala ad uɣaleɣ ɣer deffir?",
+     "richtig": 1,
+     "optionen": [
+      "Ɣer uzelmaḍ",
+      "Ɣer ufus – deffir n ṭumubil ixeṣṣa ad iṛuḥ ɣer ufus",
+      "Walu"
+     ],
+     "erklaerung": "Ɣer deffir: dewweṛ lbulan ɣer tama mani txseḍ ad iṛuḥ deffir n ṭumubil."
+    },
+    "regel": "§ 9 Abs. 5 StVO",
+    "titel": "Taḥerkt 2: deffir, lbulan qaɛ ɣer ufus"
+   },
+   "k3": {
+    "text": "Ɛawed xẓeṛ, dewweṛ lbulan qaɛ ɣer uzelmaḍ d ffeɣ ɣer ttijah amaynu. Kcem ɣer ufus.",
+    "frage": null,
+    "regel": "§ 2 Abs. 2 StVO",
+    "titel": "Taḥerkt 3: zzat, ffeɣ ɣer uzelmaḍ"
+   },
+   "k4": {
+    "text": "War ttdewwiṛ ca lbulan mala ṭumubil tebedd, dewweṛ-it mala ṭumubil tetteddu s ttawil. Mcḥal n tḥerkat macci d muhim – ṭṭrutwaṛ war ixeṣṣa ca ad t-tewteḍ.",
+    "frage": null,
+    "regel": "Lqawanin n imtiḥan · Lmanuvrat n imtiḥan",
+    "titel": "Cfu"
+   }
+  }
+ },
+ "zebra": {
+  "kurz": "Xẓeṛ zzat, qqim wajed i lfrinu – win ixsen ad iɛeddi ɣaṛ-s lḥeqq ad yezwar",
+  "titel": "Zebra (abrid n wid itteddun s uḍaṛ)",
+  "kapitel": {
+   "k0": {
+    "text": "Kkes aḍaṛ zi lgaz zik d xẓeṛ ṭṭrutwaṛat: yella win ixsen ad iɛeddi? Iḥenjiṛen d imezzyanen, war ttbanen ca mliḥ.",
+    "frage": {
+     "text": "Amec ad qqeṛṛbeɣ ɣer zebra mala yella win iban belli ixs ad iɛeddi?",
+     "richtig": 1,
+     "optionen": [
+      "Kemmel am nnuṛmal, netta ixeṣṣa ad iṛaǧu",
+      "Ɣir s ssuṛɛa tamezzyant, d mala ixeṣṣa ṛaǧu",
+      "Wwet lklaksun d ɛeddi"
+     ],
+     "erklaerung": "§ 26 Abs. 1 StVO: Ejj wid itteddun s uḍaṛ ad ɛeddin, qqeṛṛeb ɣir s ssuṛɛa tamezzyant, mala ixeṣṣa ṛaǧu."
+    },
+    "regel": "Lpanu 350 · § 26 Abs. 1 StVO",
+    "titel": "Lpanu 350 – zebra zzat"
+   },
+   "k1": {
+    "text": "Wid itteddun s uḍaṛ bdan tteddun – bedd qbel zebra, macci ɣef-s. Ddubli niɣ aɛeddi ɣef ṭumubil i yṛaǧun ittwaḥeṛṛem.",
+    "frage": {
+     "text": "Ṭumubil i yellan zzat-i tebedd ɣer zebra. Zemmreɣ ad tt-dubliɣ zi uzelmaḍ?",
+     "richtig": 1,
+     "optionen": [
+      "Ih, mala ttedduɣ s tazzla",
+      "Lla – ɣer zebra ddubli ittwaḥeṛṛem",
+      "Ih, s lklaksun"
+     ],
+     "erklaerung": "§ 26 Abs. 3 StVO: Ɣer zebra ddubli ittwaḥeṛṛem."
+    },
+    "regel": "§ 26 Abs. 1 · § 26 Abs. 3 StVO",
+    "titel": "Bedd"
+   },
+   "k2": {
+    "text": "Kemmel ɣir mala maṛṛa ffɣen zi zebra s lamen – ḥetta zi tama nniḍen. Axẓaṛ di wallen iɛawen.",
+    "frage": null,
+    "regel": "§ 26 Abs. 1 StVO",
+    "titel": "Ɣir mala yexwa"
+   },
+   "k3": {
+    "text": "Mala ṭumubilat ɛeṭṭlent deffir zebra, war tekcimeḍ ca ɣef zebra mala ad tqqimeḍ ttṛaǧuḍ dinni.",
+    "frage": null,
+    "regel": "§ 26 Abs. 2 StVO",
+    "titel": "Cfu"
+   }
+  }
+ }
+}

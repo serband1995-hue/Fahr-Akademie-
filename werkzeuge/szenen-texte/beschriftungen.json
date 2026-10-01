@@ -1,0 +1,11 @@
+{
+  "_hinweis": "Beschriftungen in den 3D-Szenen (01.10.2026) fuer die Sprachen ohne feste Eintraege im Export ({n} = Zahl). de/tr/en/ar/es stehen direkt in szenen-export.js bzw. werkzeuge/szenen/*.js.",
+  "reaktion":  { "ru": "Реакция {n} м", "sr": "Reakcija {n} m", "ckb": "کاردانەوە {n} م", "kmr": "Reaksiyon {n} m", "hi": "प्रतिक्रिया {n} मी", "ur": "ردعمل {n} میٹر", "vi": "Phản xạ {n} m", "rif": "Areddi {n} m" },
+  "bremsen":   { "ru": "Торможение {n} м", "sr": "Kočenje {n} m", "ckb": "برێک {n} م", "kmr": "Fren {n} m", "hi": "ब्रेकिंग {n} मी", "ur": "بریک {n} میٹر", "vi": "Phanh {n} m", "rif": "Lfrinu {n} m" },
+  "abstand":   { "ru": "{n} м дистанция", "sr": "{n} m razmak", "ckb": "{n} م مەودا", "kmr": "{n} m dûrahî", "hi": "{n} मी दूरी", "ur": "{n} میٹر فاصلہ", "vi": "Cách {n} m", "rif": "Lmasafa {n} m" },
+  "gegen":     { "ru": "Встречные – не свободно", "sr": "Suprotni smer – nije slobodno", "ckb": "هاتوچۆی بەرامبەر – چۆڵ نییە", "kmr": "Trafîka hember – ne vala ye", "hi": "सामने से ट्रैफ़िक – रास्ता खाली नहीं", "ur": "سامنے سے ٹریفک – راستہ خالی نہیں", "vi": "Xe ngược chiều – không trống", "rif": "Ṭumubilat i d-yetteddun – ubrid war yexwi ca" },
+  "frei":      { "ru": "{n} м свободно", "sr": "{n} m slobodno", "ckb": "{n} م چۆڵە", "kmr": "{n} m vala ye", "hi": "{n} मी खाली", "ur": "{n} میٹر خالی", "vi": "{n} m trống", "rif": "{n} m xawi" },
+  "warten":    { "ru": "{n} м: подожди ещё", "sr": "{n} m: sačekaj još malo", "ckb": "{n} م: کەمێکی تر چاوەڕێ بکە", "kmr": "{n} m: hinekî din bisekine", "hi": "{n} मी: थोड़ा रुकें", "ur": "{n} میٹر: تھوڑا رکیں", "vi": "{n} m: chờ thêm chút", "rif": "{n} m: ṛaǧu cwayt" },
+  "einordnen": { "ru": "{n} м: теперь вернись в полосу", "sr": "{n} m: sad se vrati u traku", "ckb": "{n} م: ئێستا بگەڕێوە هێڵەکەت", "kmr": "{n} m: niha vegere şerîda xwe", "hi": "{n} मी: अब लेन में लौटें", "ur": "{n} میٹر: اب لین میں واپس آئیں", "vi": "{n} m: giờ về lại làn", "rif": "{n} m: uɣal ɣer ṭṭriq-nnec" },
+  "knapp":     { "ru": "{n} м: слишком близко", "sr": "{n} m: previše blizu", "ckb": "{n} م: زۆر نزیکە", "kmr": "{n} m: pir nêzîk e", "hi": "{n} मी: बहुत पास", "ur": "{n} میٹر: بہت قریب", "vi": "{n} m: quá sát", "rif": "{n} m: tqeṛṛbeḍ aṭṭas" }
+}

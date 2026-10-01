@@ -579,8 +579,10 @@ export function bauePkw(M, opt){
     const sae = kiste(0.07, l, 0.08, M.innen, (a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (B / 2 - 0.1) * seite);
     sae.rotation.z = Math.atan2(b[0] - a[0], b[1] - a[1]) * -1; sae.castShadow = false; g.add(sae);
   });
-  const isp = kiste(0.025, 0.06, 0.2, M.kunststoff, X(fsO[0]) + 0.02, fsO[1] - 0.13, 0.05); isp.castShadow = false; g.add(isp);
-  g.add(kiste(0.005, 0.05, 0.18, M.spiegel, X(fsO[0]) + 0.005, fsO[1] - 0.13, 0.05));
+  // Innenspiegel als eigene Gruppe: im Cockpit der Fahrersicht ausgeblendet (dort gibt es den Live-Spiegel)
+  const ispG = new THREE.Group();
+  const isp = kiste(0.025, 0.06, 0.2, M.kunststoff, X(fsO[0]) + 0.02, fsO[1] - 0.13, 0.05); isp.castShadow = false; ispG.add(isp);
+  ispG.add(kiste(0.005, 0.05, 0.18, M.spiegel, X(fsO[0]) + 0.005, fsO[1] - 0.13, 0.05)); g.add(ispG);
   // Fahrschul-Dachschild: dreieckiges Profil quer ueber dem Dach
   if(opt.fahrschule){
     const dachY = Math.max.apply(null, P.profil.map(function(p){ return p[1]; }));
@@ -599,8 +601,8 @@ export function bauePkw(M, opt){
     g.add(kiste(0.3, 0.04, 0.9, M.kunststoff, dachX, dachY + 0.05, 0));
   }
   const radGr = raeder.map(function(r){ return r.lenk || r.dreh.parent; });
-  verschmelzen(g, function(o){ return o.isSprite || o === fahrer.kopf || radGr.indexOf(o) !== -1; });
-  return { gruppe: g, raeder: raeder, lichter: lichter, kopf: fahrer.kopf, laenge: L, breite: B, hoehe: Math.max.apply(null, P.profil.map(function(p){ return p[1]; })), augen: { x: sitzX + 0.06, y: 1.16 + (P.kastenHinten ? 0.55 : (P === PKW.suv ? 0.2 : 0)), z: -0.37 }, lack: lack };
+  verschmelzen(g, function(o){ return o.isSprite || o === fahrer.kopf || o === ispG || radGr.indexOf(o) !== -1; });
+  return { gruppe: g, raeder: raeder, lichter: lichter, kopf: fahrer.kopf, innenspiegel: ispG, laenge: L, breite: B, hoehe: Math.max.apply(null, P.profil.map(function(p){ return p[1]; })), augen: { x: sitzX + 0.06, y: 1.16 + (P.kastenHinten ? 0.55 : (P === PKW.suv ? 0.2 : 0)), z: -0.37 }, lack: lack };
 }
 
 // Sattelzug, 16,5 m: Fahrerhaus (Frontlenker) + Kofferauflieger
@@ -1155,7 +1157,7 @@ export function erstelleWelt(canvas, opt){
     const nacht = welt.lichtAn;
     welt.fahrzeuge.forEach(function(f){
       const p = f.pose(t), s = f.signale(t) || {};
-      f.stand = p;
+      f.stand = p; f.sig = s;
       const g = f.bau.gruppe;
       g.position.set(p.x, 0, p.z); g.rotation.y = p.h;
       g.visible = p.sichtbar !== false;
@@ -1198,7 +1200,7 @@ export function erstelleWelt(canvas, opt){
       const a = fokus.bau.augen, g = fokus.bau.gruppe;
       const v = new THREE.Vector3(a.x, a.y, a.z).applyMatrix4(g.matrixWorld);
       kam.sollPos.copy(v);
-      kam.sollZiel.set(v.x + fx * 40, v.y - 0.9, v.z + fz * 40);
+      kam.sollZiel.set(v.x + fx * 40, v.y - (cockpit.an ? 0.3 : 0.9), v.z + fz * 40);
       kamera.fov = 62;
     } else if(kam.art === "oben"){
       const ko = welt.kameraOpt || {}, fe = ko.fest;
@@ -1248,6 +1250,7 @@ export function erstelleWelt(canvas, opt){
       kamera.lookAt(kam.ziel); kamera.updateProjectionMatrix();
       // In der Fahrersicht das eigene Dachschild/Kopf nicht vor die Linse holen
       if(fokus.bau.kopf) fokus.bau.kopf.visible = kam.art !== "fahrer";
+      if(fokus.bau.innenspiegel) fokus.bau.innenspiegel.visible = !(cockpit.an && kam.art === "fahrer");
       const L = fokus.bau.lichter;
       [L.glanzFront, L.glanzBlinkL, L.glanzBlinkR].forEach(function(a){ a.forEach(function(sp){ sp.visible = kam.art !== "fahrer"; }); });
       // Sonne und Schattenbereich wandern mit
@@ -1269,7 +1272,99 @@ export function erstelleWelt(canvas, opt){
     }
     himmel.position.copy(kamera.position); sterne.position.copy(kamera.position);
     renderer.render(szene, kamera);
+    if(cockpit.an && kam.art === "fahrer" && fokus && fokus.stand) cockpitZeichnen(fokus, dt);
   };
+
+  // Cockpit in der Fahrersicht (01.10.2026, Serband): Innenspiegel oben, Aussenspiegel links
+  // und rechts auf einer dunklen Armaturenleiste. Die Spiegel zeigen live, was hinter dem Auto
+  // passiert (eigene Kameras, spiegelverkehrt). Tacho und Blinker liegen als HTML darueber
+  // (spieler.js); welt.cockpitMasse() liefert dafuer dieselben Masse.
+  // Leistung: Spiegelbilder in kleiner Aufloesung, ohne neue Schatten, nur jedes zweite (hoch),
+  // dritte (mittel) bzw. vierte (niedrig) Bild neu.
+  const cockpit = { an: false, takt: 0, hud: new THREE.Scene(), ortho: new THREE.OrthographicCamera(0, 1, 1, 0, -10, 10), teile: null, w: 0, h: 0 };
+  welt.setzeCockpit = function(an){ cockpit.an = !!an; };
+  welt.cockpitMasse = function(){
+    const el = canvas.parentElement || canvas;
+    const W = Math.max(1, el.clientWidth), H = Math.max(1, el.clientHeight);
+    const leiste = Math.max(56, Math.min(120, H * 0.24));
+    const iw = Math.min(W * 0.36, 320), ih = iw * 0.27;
+    const sw = Math.min(W * 0.21, leiste * 1.7, 190), sh = Math.min(leiste - 10, sw * 0.62);
+    return { W: W, H: H, leiste: leiste,
+      innen: { x: (W - iw) / 2, y: 6, w: iw, h: ih },
+      links: { x: 6, y: H - sh - 5, w: sw, h: sh },
+      rechts: { x: W - sw - 6, y: H - sh - 5, w: sw, h: sh } };
+  };
+  function rundeForm(w, h, r){
+    const f = new THREE.Shape();
+    f.moveTo(r, 0); f.lineTo(w - r, 0); f.quadraticCurveTo(w, 0, w, r); f.lineTo(w, h - r); f.quadraticCurveTo(w, h, w - r, h);
+    f.lineTo(r, h); f.quadraticCurveTo(0, h, 0, h - r); f.lineTo(0, r); f.quadraticCurveTo(0, 0, r, 0);
+    return f;
+  }
+  function flaeche(form, w, h, mat){
+    const g = new THREE.ShapeGeometry(form, 8), uv = g.attributes.uv, pos = g.attributes.position;
+    for(let i = 0; i < pos.count; i++) uv.setXY(i, pos.getX(i) / w, pos.getY(i) / h);
+    return new THREE.Mesh(g, mat);
+  }
+  function cockpitBauen(m){
+    const hud = cockpit.hud;
+    while(hud.children.length){ const o = hud.children.pop(); o.geometry.dispose(); if(o.userData.eigenMat) o.material.dispose(); }
+    const t = cockpit.teile || { ziele: {}, kams: {} };
+    // Armaturenleiste: schwarz, oben leicht gewoelbt
+    const W = m.W, L = m.leiste, leiste = new THREE.Shape();
+    leiste.moveTo(0, 0); leiste.lineTo(W, 0); leiste.lineTo(W, L * 0.86); leiste.quadraticCurveTo(W / 2, L * 1.14, 0, L * 0.86); leiste.lineTo(0, 0);
+    const lm = new THREE.Mesh(new THREE.ShapeGeometry(leiste, 16), new THREE.MeshBasicMaterial({ color: 0x07090b, toneMapped: false, fog: false }));
+    lm.userData.eigenMat = true; hud.add(lm);
+    t.rahmen = {};
+    ["innen", "links", "rechts"].forEach(function(n){
+      const r = m[n], rund = n === "innen" ? Math.min(14, r.h * 0.45) : Math.min(16, r.h * 0.35), rand = 3;
+      const y = m.H - r.y - r.h; // HUD-Koordinaten: y nach oben
+      const rm = flaeche(rundeForm(r.w + rand * 2, r.h + rand * 2, rund + rand), r.w + rand * 2, r.h + rand * 2,
+        new THREE.MeshBasicMaterial({ color: 0xd8dde2, toneMapped: false, fog: false }));
+      rm.position.set(r.x - rand, y - rand, 1); rm.userData.eigenMat = true; hud.add(rm); t.rahmen[n] = rm;
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5), fw = Math.round(r.w * dpr * (qualitaet.stufe === "hoch" ? 1 : 0.7)), fh = Math.round(r.h * dpr * (qualitaet.stufe === "hoch" ? 1 : 0.7));
+      if(!t.ziele[n]) t.ziele[n] = new THREE.WebGLRenderTarget(fw, fh);
+      else t.ziele[n].setSize(fw, fh);
+      const tex = t.ziele[n].texture; tex.wrapS = THREE.RepeatWrapping; tex.repeat.x = -1; tex.offset.x = 1; // spiegelverkehrt
+      const bm = flaeche(rundeForm(r.w, r.h, rund), r.w, r.h, new THREE.MeshBasicMaterial({ map: tex, fog: false }));
+      bm.position.set(r.x, y, 2); bm.userData.eigenMat = true; hud.add(bm);
+      if(!t.kams[n]) t.kams[n] = new THREE.PerspectiveCamera(n === "innen" ? 22 : 30, r.w / r.h, 0.3, 4700);
+      t.kams[n].aspect = r.w / r.h; t.kams[n].updateProjectionMatrix();
+    });
+    cockpit.ortho.left = 0; cockpit.ortho.right = m.W; cockpit.ortho.top = m.H; cockpit.ortho.bottom = 0; cockpit.ortho.updateProjectionMatrix();
+    cockpit.teile = t; cockpit.w = m.W; cockpit.h = m.H; cockpit.stufe = qualitaet.stufe;
+  }
+  const _v = new THREE.Vector3(), _z = new THREE.Vector3();
+  function cockpitZeichnen(fokus, dt){
+    const m = welt.cockpitMasse();
+    if(!cockpit.teile || cockpit.w !== m.W || cockpit.h !== m.H || cockpit.stufe !== qualitaet.stufe) cockpitBauen(m);
+    const t = cockpit.teile, g = fokus.bau.gruppe, a = fokus.bau.augen, B = fokus.bau.breite || 1.8;
+    const sig = fokus.sig || {};
+    // Hervorhebung: der Spiegel, in den gerade geschaut wird, leuchtet gelb
+    ["innen", "links", "rechts"].forEach(function(n){ t.rahmen[n].material.color.setHex(sig.spiegel === n ? 0xffc21a : 0xd8dde2); });
+    const jedes = qualitaet.stufe === "hoch" ? 2 : qualitaet.stufe === "mittel" ? 3 : 4;
+    // nach einem Sprung (dt 0) sofort neu, sonst jedes 2./3./4. Bild (spart Rechenzeit am Handy)
+    if(!dt || cockpit.takt++ % jedes === 0){
+      const lage = {
+        innen: { von: [a.x + 0.55, a.y + 0.12, 0], nach: [-60, a.y - 0.2, 0] },
+        links: { von: [a.x + 0.35, a.y - 0.12, -(B / 2 + 0.12)], nach: [-60, a.y - 1.4, -(B / 2 + 5.5)] },
+        rechts: { von: [a.x + 0.35, a.y - 0.12, B / 2 + 0.12], nach: [-60, a.y - 1.4, B / 2 + 6.5] }
+      };
+      const sichtbar = g.visible, autoSchatten = renderer.shadowMap.autoUpdate, alt = renderer.getRenderTarget();
+      g.visible = false; renderer.shadowMap.autoUpdate = false;
+      ["innen", "links", "rechts"].forEach(function(n){
+        const k = t.kams[n], l = lage[n];
+        _v.set(l.von[0], l.von[1], l.von[2]).applyMatrix4(g.matrixWorld);
+        _z.set(l.nach[0], l.nach[1], l.nach[2]).applyMatrix4(g.matrixWorld);
+        k.position.copy(_v); k.up.set(0, 1, 0); k.lookAt(_z);
+        himmel.position.copy(k.position); sterne.position.copy(k.position);
+        renderer.setRenderTarget(t.ziele[n]); renderer.render(szene, k);
+      });
+      renderer.setRenderTarget(alt); g.visible = sichtbar; renderer.shadowMap.autoUpdate = autoSchatten;
+      himmel.position.copy(kamera.position); sterne.position.copy(kamera.position);
+    }
+    const ac = renderer.autoClear; renderer.autoClear = false; renderer.clearDepth();
+    renderer.render(cockpit.hud, cockpit.ortho); renderer.autoClear = ac;
+  }
 
   // Punkt in Bildschirm-Koordinaten (fuer Beschriftungen ueber dem Bild)
   welt.aufsBild = function(x, y, z){
