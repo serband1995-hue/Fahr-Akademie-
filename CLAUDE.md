@@ -74,7 +74,7 @@ Erkennung erfindet in Stillen Sätze ("Untertitel im Auftrag des ZDF",
 Fertig (30.09.2026): ALLE 38 Videos in de/en/tr/ar/es (Entscheidung Serband: alles außer
 den Originalprüfungen; kein Video ist stumm). Ausgeschlossen – auch in der Function hart
 gesperrt: Bereich "Prüfung" und die IDs in `academy_einstellungen.untertitel_ausgeschlossen`
-(Bauer, Haier ×2, Siamlidis). Neue Videos brauchen die Bunny-Erkennung nicht mehr:
+(B., N. H. ×2, S.). Neue Videos brauchen die Bunny-Erkennung nicht mehr:
 `werkzeuge/untertitel/` erkennt den Ton kostenlos, `zeilen_anlegen` legt die ersten
 deutschen Zeilen an (nur wenn das Video noch keine hat), dann Deutsch korrigieren,
 übersetzen, `abgleich.py --setzen`, `paket` mit `untertitel.vtt(...)`.
@@ -184,6 +184,13 @@ Konto-Schlüssel, den die Functions nicht haben).
   Der Spiegel mit Spiegelblick-Signal leuchtet gelb. Handy quer + Fahrersicht = Vollbild.
   Die Kompass-Szenen stammen aus dem öffentlichen Kompass-Repo – die Sperre
   schützt die Akademie-Oberfläche, nicht die Rohdaten.
+- **Prüfer nur mit Initialen** (01.10.2026, Entscheidung Serband): `academy_pruefer.name`,
+  Videotitel/-beschreibungen (alle Sprachen) und die Titel bei Bunny tragen nur Initialen
+  ("N. H."; in ar/ckb/ur mit LRM dahinter, damit der Punkt am Kürzel bleibt). Der volle Name
+  steht als Vermerk in `academy_pruefer_vermerk` (RLS: nur Super-Admin; geprüft) und erscheint
+  nur in der Verwaltung klein in Klammern. Neue Prüfer: Formular nimmt den vollen Namen, die
+  App bildet die Initialen. Keine echten Prüfernamen ins Repo. Bunny-Titel an den App-Titel
+  angleichen: `academy-untertitel` Aktion `bunny_titel` mit `setzen:true`.
 - **Zweites Supabase-Projekt `oectrvkjunntzsggyhxv`** (Fahrlehrer-Kompass) ist
   ein separates Projekt mit eigenem Chat. Hier nur als Bridge-Partner
   relevant — nicht versehentlich hineinschreiben.

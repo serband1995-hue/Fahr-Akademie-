@@ -637,6 +637,7 @@
   .admin-row{display:flex;justify-content:space-between;align-items:center;gap:10px;}
   .admin-name{font-weight:700;font-size:14.5px;}
   .admin-sub{color:var(--muted);font-size:13px;margin-top:3px;}
+  .pr-vermerk{color:var(--muted);font-size:12px;font-weight:400;}
   .admin-badge{font-size:12.5px;font-weight:700;padding:4px 10px;border-radius:14px;white-space:nowrap;}
   /* ---- Bereich 7+8 (27.08.2026) ---- */
   /* Kompakte Aktions-Buttons in Listen */
@@ -1873,7 +1874,7 @@ const DEMO_FAHRLEHRER = [
   {id:"fl2", name:"Fahrlehrer 2 (Platzhalter)"}
 ];
 const DEMO_PRUEFER = [
-  {id:"pr1",name:"Michael Tiezel"},{id:"pr2",name:"Harald Mützel"},{id:"pr3",name:"Laura"},
+  {id:"pr1",name:"M. T."},{id:"pr2",name:"H. M."},{id:"pr3",name:"L."},
   {id:"pr4",name:"Prüfer 4"},{id:"pr5",name:"Prüfer 5"},{id:"pr6",name:"Prüfer 6"},
   {id:"pr7",name:"Prüfer 7"},{id:"pr8",name:"Prüfer 8"},{id:"pr9",name:"Prüfer 9"}
 ];
@@ -1961,6 +1962,21 @@ let adminTopVideos = [];
 let adminTopSperr = [];
 let allFahrlehrer = [];
 let allPruefer = [];
+// 01.10.2026 (Serband): Prüfer heißen überall nur noch mit Initialen ("N. H."). Den vollen
+// Namen gibt es nur als Vermerk für den Super-Admin (Tabelle academy_pruefer_vermerk, RLS).
+let prueferVermerk = {};
+function prueferInitialen(name){
+  return String(name || "").trim().split(/\s+/).filter(Boolean)
+    .map(function(w){ return Array.from(w)[0].toUpperCase() + "."; }).join(" ");
+}
+function prueferHtml(p){
+  const v = prueferVermerk[p.id];
+  return esc(p.name) + (v ? ' <span class="pr-vermerk">(' + esc(v) + ")</span>" : "");
+}
+function prueferText(p){
+  const v = prueferVermerk[p.id];
+  return p.name + (v ? " (" + v + ")" : "");
+}
 let allSchueler = [];
 // --- Abrechnung / Verkaufsbuch (28.08.2026) ---
 let allVerkaeufe = [];      // Belege aus academy_verkaeufe
@@ -8863,7 +8879,7 @@ async function loadAdminData(){
   // und die Seite stand kurz leer da, bevor die Schülerliste hereinsprang.
   const istSuper = myRole === "super_admin";
   const [flRes, prRes, scRes, tgRes, vdRes, vtRes, vprRes, pkRes, gbRes, sgRes,
-         fsRes, kdRes, skRes, topVidRes, topSperrRes, vkRes, schAlleRes, vsAlleRes, anfRes] = await Promise.all([
+         fsRes, kdRes, skRes, topVidRes, topSperrRes, vkRes, schAlleRes, vsAlleRes, anfRes, pvRes] = await Promise.all([
     supa.from("academy_fahrlehrer").select("*"),
     supa.from("academy_pruefer").select("*"),
     supa.from("academy_schueler").select(myRole === "super_admin" ? "*" : SCHUELER_SPALTEN_OHNE_PIN).order("erstellt_am",{ascending:false}),
@@ -8882,8 +8898,13 @@ async function loadAdminData(){
     supa.from("academy_verkaeufe").select("*").order("verkauft_am",{ascending:false}),
     istSuper ? supa.from("academy_schulen").select("*").order("name") : Promise.resolve(null),
     istSuper ? supa.from("academy_einstellungen").select("wert").eq("schluessel", "vorschau_sekunden").maybeSingle() : Promise.resolve(null),
-    anfragenAbfrage()
+    anfragenAbfrage(),
+    istSuper ? supa.from("academy_pruefer_vermerk").select("*") : Promise.resolve(null)
   ]);
+  if(pvRes && !pvRes.error){
+    prueferVermerk = {};
+    (pvRes.data || []).forEach(function(r){ prueferVermerk[r.pruefer_id] = r.vermerk; });
+  }
   adminAnfragen = (anfRes && !anfRes.error && anfRes.data) || [];
   anfragenGeprueftAm = Date.now();
   if(vkRes && !vkRes.error){ allVerkaeufe = vkRes.data || []; verkaeufeGeladenAm = Date.now(); }
@@ -10970,7 +10991,7 @@ function renderAdminVideos(){
       bereiche.length ? bereiche.join(", ") : "kein Bereich",
       v.fahrzeug ? v.fahrzeug : null,
       gebietName ? "Gebiet " + gebietName : null,
-      prueferForVideo.length ? "Prüfer: " + prueferForVideo.map(function(p){ return p.name; }).join(", ") : null,
+      prueferForVideo.length ? "Prüfer: " + prueferForVideo.map(prueferText).join(", ") : null,
       v.dauer_sekunden ? zeitFormat(v.dauer_sekunden) : null,
       v.gratis ? "Kostprobe" : null
     ].filter(Boolean);
@@ -11036,7 +11057,7 @@ function renderAdminVideos(){
   const prueferCheckboxes = allPruefer.map(function(p){
     return '<label style="display:flex;align-items:flex-start;gap:8px;font-weight:400;text-transform:none;letter-spacing:0;font-size:14px;color:var(--text);margin-bottom:0;padding:6px;border-radius:8px;">' +
       '<input type="checkbox" value="' + esc(p.id) + '" class="nv-pruefer-cb" style="margin-top:2px;flex:none;width:18px;height:18px;">' +
-      '<span style="flex:1;line-height:1.3;">' + esc(p.name) + '</span>' +
+      '<span style="flex:1;line-height:1.3;">' + prueferHtml(p) + '</span>' +
     "</label>";
   }).join("");
 
@@ -11701,7 +11722,7 @@ async function videoBearbeiten(id){
       "<span>" + esc(t.label) + '</span><span class="thema-bereich">' + esc(t.stufe) + "</span></label>";
   }).join("");
   const pruefer = allPruefer.map(function(p){
-    return '<label class="vb-pr"><input type="checkbox" class="vb-pruefer" value="' + esc(p.id) + '"' + (hatPr.has(p.id) ? " checked" : "") + "> " + esc(p.name) + "</label>";
+    return '<label class="vb-pr"><input type="checkbox" class="vb-pruefer" value="' + esc(p.id) + '"' + (hatPr.has(p.id) ? " checked" : "") + "> " + prueferHtml(p) + "</label>";
   }).join("");
   const html =
     '<label>Titel</label><input id="vb-titel" class="blatt-feld" value="' + esc(v.titel_de || v.titel) + '">' +
@@ -11941,7 +11962,7 @@ function renderAdminPruefer(){
   const rows = allPruefer.map(function(p){
     return '<div class="admin-card glass">' +
       '<div class="admin-row">' +
-        '<div class="admin-name">' + esc(p.name) + "</div>" +
+        '<div class="admin-name">' + prueferHtml(p) + "</div>" +
         '<button class="icon-btn danger" data-delp="' + esc(p.id) + '" title="Löschen">' + icon("papierkorb") + '</button>' +
       "</div>" +
     "</div>";
@@ -11951,6 +11972,7 @@ function renderAdminPruefer(){
     neuBoxAnfang("Prüfer anlegen", allPruefer.length === 0) +
       '<div class="admin-form-title">Neuen Prüfer anlegen</div>' +
       '<label>Name</label><input id="np-name" placeholder="Vor- und Nachname">' +
+      '<div class="admin-sub">Schüler sehen nur die Initialen (z. B. „N. H.“). Der volle Name bleibt als Vermerk nur hier sichtbar.</div>' +
       '<button class="btn-primary" id="np-btn" style="margin-top:6px;">Prüfer anlegen</button>' +
     "</div></details>" +
     '<div class="section-label">Alle Prüfer (' + allPruefer.length + ")</div>" +
@@ -11965,10 +11987,11 @@ function renderAdminPruefer(){
 async function createPruefer(){
   const name = document.getElementById("np-name").value.trim();
   if(!name){ showToast("Name ist Pflicht"); return; }
-  const neu = { id:"pr" + Date.now(), name:name };
+  const neu = { id:"pr" + Date.now(), name:prueferInitialen(name) };
 
   if(DEMO_MODE){
     DEMO_PRUEFER.push(neu);
+    prueferVermerk[neu.id] = name;
     allPruefer = DEMO_PRUEFER;
     renderAdminPruefer();
     showToast("Prüfer angelegt");
@@ -11976,9 +11999,10 @@ async function createPruefer(){
   }
   const { error } = await supa.from("academy_pruefer").insert(neu);
   if(error){ showToast("Fehler: " + error.message); return; }
+  const vm = await supa.from("academy_pruefer_vermerk").insert({ pruefer_id:neu.id, vermerk:name });
   await loadAdminData();
   renderAdminPruefer();
-  showToast("Prüfer angelegt");
+  showToast(vm.error ? "Prüfer angelegt – Vermerk fehlt: " + vm.error.message : "Prüfer angelegt");
 }
 
 async function deletePruefer(id){
