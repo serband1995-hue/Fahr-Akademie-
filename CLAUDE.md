@@ -35,7 +35,10 @@ kmr (Kurdisch Kurmancî), hi, ur (rtl), vi, rif (Tarifit wie in Nador, lateinisc
 Amazigh-Flagge, beide als kleines SVG (`SPRACHEN[].bild`), weil es kein Emoji gibt. Die Texte der acht neuen
 Sprachen stehen im Block SPRACHPAKETE in index.html bzw. spieler.js (erzeugt aus geprüften JSON-Dateien);
 die LEEREN Einträge `ru:{}` usw. müssen im I18N-Literal stehen, sonst setzt `if(!I18N[sprache])` beim Start
-auf Deutsch zurück. Sorani und Tarifit sollten von Muttersprachlern gegengelesen werden.
+auf Deutsch zurück. Sorani und Tarifit sollten von Muttersprachlern gegengelesen werden. Web-Recherche eingearbeitet (01.10.2026): Tarifit nach El Aissati (Nador-Lehrbuch)/Serhoual – blau = aziza
+(nicht azegzaw), „iwa“ = also (waha = nur!), waqila = vielleicht, weiß = acemlal; Sorani nach Rudaw/K24/Wikipedia –
+Ampel = ترافیک لایت, Öl = ڕۆن (nicht زەیت), Kupplung = کلاچ, praktische Prüfung = پراکتیکی. Offen für Muttersprachler:
+rif ṭumubil→ṭṭumubin, ufus→yeffus (rechts), Lehnwörter ligno/lbulan/lfiṛu/lpanu; ckb مافی تێپەڕین (Vorfahrt), کاپۆ (Motorhaube).
 **academy-katalog liefert Übersetzungen nur für `body.sprache`** – mit 13 Sprachen sind es >1000 Zeilen,
 Supabase liefert je Abfrage höchstens 1000 (ohne sprache: nur tr/en/ar/es für alte App-Stände). Regel (Serband): **alles, was
 Schüler sehen, in allen Sprachen** – kein fester deutscher Text im Schülerteil,
