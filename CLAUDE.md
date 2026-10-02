@@ -46,7 +46,9 @@ Sprachen stehen im Block SPRACHPAKETE in index.html bzw. spieler.js (erzeugt aus
 die LEEREN Einträge `ru:{}` usw. müssen im I18N-Literal stehen, sonst setzt `if(!I18N[sprache])` beim Start
 auf Deutsch zurück. Sorani und Tarifit sollten von Muttersprachlern gegengelesen werden. Web-Recherche eingearbeitet (01.10.2026): Tarifit nach El Aissati (Nador-Lehrbuch)/Serhoual – blau = aziza
 (nicht azegzaw), „iwa“ = also (waha = nur!), waqila = vielleicht, weiß = acemlal; Sorani nach Rudaw/K24/Wikipedia –
-Ampel = ترافیک لایت, Öl = ڕۆن (nicht زەیت), Kupplung = کلاچ, praktische Prüfung = پراکتیکی. Offen für Muttersprachler:
+Ampel = ترافیک لایت, Öl = ڕۆن (nicht زەیت), Kupplung = کلاچ, praktische Prüfung = پراکتیکی. Tarifit (02.10.2026): Ölmessstab = aɛekkaz n uɛebbaṛ n zzit, Haubenstab = aɛekkaz (vorher
+„ajdiḍ“ = Vogel, in 6 Untertitelzeilen korrigiert); Blau-Reste azeṛqan → aziza/taziza korrigiert.
+Offen für Muttersprachler:
 rif ṭumubil→ṭṭumubin, ufus→yeffus (rechts), Lehnwörter ligno/lbulan/lfiṛu/lpanu; ckb مافی تێپەڕین (Vorfahrt), کاپۆ (Motorhaube).
 **academy-katalog liefert Übersetzungen nur für `body.sprache`** – mit 13 Sprachen sind es >1000 Zeilen,
 Supabase liefert je Abfrage höchstens 1000 (ohne sprache: nur tr/en/ar/es für alte App-Stände). Regel (Serband): **alles, was
@@ -103,8 +105,10 @@ am Handy) kommt aus der Bunny-Bibliothek – nichts zu tun.
 Zeit (faster-whisper), `abgleich.py` richtet die Zeilen daran aus (globale Ausrichtung im
 ±6-s-Korridor; gedehnte Wörter vom Ende her gekürzt; Lesezeit max. 17 Zeichen/s; keine
 Überlappung). Zugang nur über einen lokalen Schlüssel, dessen SHA-256 VORÜBERGEHEND im
-Vault als `untertitel_abgleich_hash` liegt – danach löschen (Stand 02.10.2026: wieder angelegt für die
-fünf neuen Sprachen, NOCH NICHT gelöscht – zusammen mit `untertitel.hochladen_neu5` entfernen).
+Vault als `untertitel_abgleich_hash` liegt – danach löschen (Stand 02.10.2026: mit Zufallswert
+überschrieben, der alte Schlüssel ist nachweislich abgelehnt; Eintrag und die leere Hilfstabelle
+`untertitel.hochladen_neu5` können im Dashboard gelöscht werden – Lösch-Befehle über die
+Claude-Verbindung hängen an einer Bestätigung).
 **CDN-Falle:** Bunny liefert Untertitel mit `max-age` 30 Tage aus und ignoriert `?ver=`.
 Überschreibt man eine Spur, sehen Knoten, die sie schon geholt hatten, bis zum Leeren des
 Caches die alte. Nach dem Überschreiben: Pull-Zone-Cache in Bunny leeren (braucht den
