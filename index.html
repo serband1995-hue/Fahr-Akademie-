@@ -565,6 +565,50 @@
     transition:top 1.4s ease,left 1.4s ease;z-index:5;user-select:none;
     background:rgba(0,0,0,.08);padding:3px 7px;border-radius:5px;white-space:nowrap;
   }
+  /* Hinweise im Video (02.10.2026, Serband): an wichtigen Stellen blendet sich oben rechts
+     ein kleiner, halbdurchsichtiger §-Knopf ein (8 s, das Video läuft weiter). Antippen hält an
+     und öffnet ein Blatt zum Lesen. Das Wasserzeichen meidet die Ecke oben rechts
+     (startWatermark), damit sich nichts überdeckt. Unter dem Video: "Wichtige Stellen"
+     (zugeklappt) mit Sprung-Liste und Schalter zum Ausblenden. */
+  .hw-knopf{position:absolute;top:6px;right:6px;z-index:6;max-width:70%;min-height:44px;
+    display:flex;align-items:flex-start;justify-content:flex-end;padding:4px;border:none;background:none;
+    cursor:pointer;font:inherit;opacity:0;visibility:hidden;transform:translateY(-4px);
+    transition:opacity .45s ease,transform .45s ease,visibility 0s linear .45s;}
+  .hw-knopf.sichtbar{opacity:1;visibility:visible;transform:none;transition:opacity .45s ease,transform .45s ease;}
+  .hw-pille{display:flex;align-items:center;gap:7px;min-height:34px;padding:4px 12px 4px 4px;
+    border-radius:var(--r-pill);background:rgba(10,12,9,.52);border:1px solid rgba(255,255,255,.22);
+    color:#fff;font-size:12.5px;font-weight:700;line-height:1.2;text-align:start;
+    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(0,0,0,.25);}
+  [dir="rtl"] .hw-pille{padding:4px 4px 4px 12px;}
+  .hw-par-ic{flex:none;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:var(--gold);color:var(--auf-gold);font-size:14px;font-weight:800;}
+  .hw-pille-text{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;}
+  .hw-box{margin-top:14px;border-radius:var(--r-m);background:var(--surface);border:1px solid var(--border);}
+  .hw-box summary{list-style:none;display:flex;align-items:center;gap:10px;min-height:48px;padding:8px 14px;cursor:pointer;
+    font-weight:700;color:var(--text);}
+  .hw-box summary::-webkit-details-marker{display:none;}
+  .hw-box summary .hw-par-ic{width:24px;height:24px;font-size:13px;}
+  .hw-zahl{margin-inline-start:auto;min-width:24px;padding:1px 8px;border-radius:var(--r-pill);background:var(--gold-schwach);
+    color:var(--text);font-size:13px;text-align:center;font-variant-numeric:tabular-nums;}
+  .hw-pfeil{flex:none;display:flex;transition:transform .25s ease;color:var(--muted);}
+  .hw-box[open] .hw-pfeil{transform:rotate(180deg);}
+  .hw-inhalt{padding:0 14px 6px;}
+  .hw-inhalt .sprung-zeile{text-align:start;}
+  .hw-inhalt .sprung-zeile span:last-child{flex:1;min-width:0;overflow-wrap:anywhere;}
+  .hw-schalter{display:flex;align-items:center;gap:12px;min-height:48px;padding:6px 0;cursor:pointer;color:var(--text);font-size:14.5px;}
+  .hw-schalter input{flex:none;width:20px;height:20px;margin:0;accent-color:var(--gold);}
+  .hw-blatt .hw-par{display:inline-block;margin-top:10px;padding:3px 10px;border-radius:var(--r-pill);background:var(--gold-schwach);
+    color:var(--text);font-size:13px;font-weight:700;unicode-bidi:plaintext;}
+  .hw-blatt{max-height:calc(100dvh - 8px);overflow-y:auto;}
+  .hw-blatt .blatt-text{color:var(--text);white-space:normal;overflow-wrap:anywhere;}
+  .hw-blatt .blatt-knoepfe > *{margin-top:0;}
+  /* Handy quer = Video füllt den Bildschirm, die Hinweise bleiben sichtbar (Bunnys eigenes
+     Vollbild zeigt keine Einblendungen der App). Zurück: Handy wieder hochkant drehen. */
+  @media (orientation:landscape) and (max-height:500px){
+    body.video-offen .player-wrap{position:fixed;inset:0;z-index:150;border-radius:0;box-shadow:none;animation:none;}
+    body.video-offen .player-wrap iframe{width:100%;height:100%;aspect-ratio:auto !important;}
+    body.video-offen .hw-knopf{top:max(6px, env(safe-area-inset-top));right:max(6px, env(safe-area-inset-right));max-width:45%;}
+  }
 
   /* ---------- ADMIN ---------- */
   .admin-tabs{display:flex;gap:8px;margin-bottom:18px;overflow-x:auto;scrollbar-width:none;
@@ -1235,6 +1279,18 @@
   .blatt-inhalt label{display:block;margin-top:12px;font-size:13px;font-weight:600;color:var(--muted);}
   .blatt-inhalt .blatt-haken{display:flex;}
   .blatt-inhalt .themen-box{max-height:40vh;}
+  /* Hinweise im Video bearbeiten (02.10.2026) */
+  .vb-hw-liste{display:flex;flex-direction:column;gap:10px;}
+  .vb-hw{padding:10px 12px;border:1px solid var(--border);border-radius:var(--r-m);background:var(--surface);}
+  .vb-hw.aus{opacity:.75;border-style:dashed;}
+  .vb-hw-kopf{display:flex;gap:8px;}
+  .vb-hw-kopf .vb-hw-zeit{flex:none;width:84px;font-variant-numeric:tabular-nums;}
+  .vb-hw-kopf .vb-hw-titel{flex:1;min-width:0;}
+  .vb-hw .blatt-feld{margin-top:8px;}
+  .vb-hw-fuss{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px;}
+  .vb-hw-fuss .blatt-haken{margin:0;padding:8px 10px;flex:1;min-width:200px;}
+  .vb-hw-stand{font-size:13px;color:var(--muted);}
+  .vb-hw-weg{flex:none;min-height:44px;}
   .vb-pruefer-liste{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:4px 10px;}
   .vb-pr{display:flex !important;align-items:center;gap:8px;min-height:40px;margin:0 !important;font-weight:400 !important;color:var(--text) !important;font-size:14.5px !important;}
   .video-ausgeblendet{opacity:.72;border-style:dashed;}
@@ -1549,6 +1605,7 @@ const ICONS = {
   pdf:'<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 13h1.5a1.5 1.5 0 010 3H9zM14 13v3h1.5a1.5 1.5 0 000-3z"/>',
   frage:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 3.5"/><path d="M12 17h.01"/>',
   info:'<circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/>',
+  runter:'<path d="M6 9l6 6 6-6"/>',
   logout:'<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>',
   download:'<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/>',
   hashtag:'<path d="M5 9h14M5 15h14M10 4L8 20M16 4l-2 16"/>',
@@ -6826,6 +6883,27 @@ NUETZLICH_UE.ti = {
   "Fussgaengerueberwege_Paragraph26_StVO.pdf":{"titel":"መሳገሪ እግረኛታት — § 26 StVO","meta":"ዘብራ፣ ግዴታ ምጽባይ፣ ምሕላፍ ክልኩል · ዕለት 30.01.2026"}
 };
 /* === SPRACHPAKETE2-ENDE === */
+/* === HINWEIS-TEXTE (02.10.2026): §-Hinweise im Video, alle 18 Sprachen === */
+Object.assign(I18N.de, { hwStellen:"Wichtige Stellen", hwZeigen:"Hinweise im Video einblenden", hwOeffnen:"Hinweis öffnen",
+  hwSchliessen:"Schließen", hwNochmal:"Stelle nochmal ansehen", hwWeiter:"Weiter ansehen" });
+Object.assign(I18N.tr, { hwStellen:"Önemli anlar", hwZeigen:"Videoda notları göster", hwOeffnen:"Notu aç", hwSchliessen:"Kapat", hwNochmal:"Bu anı tekrar izle", hwWeiter:"İzlemeye devam et" });
+Object.assign(I18N.en, { hwStellen:"Key moments", hwZeigen:"Show notes in the video", hwOeffnen:"Open note", hwSchliessen:"Close", hwNochmal:"Rewatch this part", hwWeiter:"Keep watching" });
+Object.assign(I18N.ar, { hwStellen:"لحظات مهمة", hwZeigen:"إظهار الملاحظات في الفيديو", hwOeffnen:"فتح الملاحظة", hwSchliessen:"إغلاق", hwNochmal:"أعد مشاهدة المقطع", hwWeiter:"تابع المشاهدة" });
+Object.assign(I18N.es, { hwStellen:"Momentos clave", hwZeigen:"Mostrar notas en el vídeo", hwOeffnen:"Abrir nota", hwSchliessen:"Cerrar", hwNochmal:"Volver a ver esa parte", hwWeiter:"Seguir viendo" });
+Object.assign(I18N.ru, { hwStellen:"Важные моменты", hwZeigen:"Показывать пояснения в видео", hwOeffnen:"Открыть пояснение", hwSchliessen:"Закрыть", hwNochmal:"Пересмотреть момент", hwWeiter:"Смотреть дальше" });
+Object.assign(I18N.sr, { hwStellen:"Važni momenti", hwZeigen:"Prikaži napomene u videu", hwOeffnen:"Otvori napomenu", hwSchliessen:"Zatvori", hwNochmal:"Pogledaj deo ponovo", hwWeiter:"Gledaj dalje" });
+Object.assign(I18N.ckb, { hwStellen:"ساتە گرنگەکان", hwZeigen:"تێبینییەکان لە ڤیدیۆکەدا پیشان بدە", hwOeffnen:"تێبینییەکە بکەرەوە", hwSchliessen:"داخستن", hwNochmal:"ئەو ساتە دووبارە ببینە", hwWeiter:"بەردەوام بە" });
+Object.assign(I18N.kmr, { hwStellen:"Demên girîng", hwZeigen:"Têbîniyan di vîdyoyê de nîşan bide", hwOeffnen:"Têbîniyê veke", hwSchliessen:"Bigire", hwNochmal:"Vê demê dîsa bibîne", hwWeiter:"Temaşeyê bidomîne" });
+Object.assign(I18N.hi, { hwStellen:"ज़रूरी पल", hwZeigen:"वीडियो में नोट दिखाएँ", hwOeffnen:"नोट खोलें", hwSchliessen:"बंद करें", hwNochmal:"यह हिस्सा फिर देखें", hwWeiter:"आगे देखें" });
+Object.assign(I18N.ur, { hwStellen:"اہم لمحات", hwZeigen:"ویڈیو میں نوٹس دکھائیں", hwOeffnen:"نوٹ کھولیں", hwSchliessen:"بند کریں", hwNochmal:"یہ حصہ دوبارہ دیکھیں", hwWeiter:"آگے دیکھیں" });
+Object.assign(I18N.vi, { hwStellen:"Đoạn quan trọng", hwZeigen:"Hiện ghi chú trong video", hwOeffnen:"Mở ghi chú", hwSchliessen:"Đóng", hwNochmal:"Xem lại đoạn này", hwWeiter:"Xem tiếp" });
+Object.assign(I18N.rif, { hwStellen:"Imukan ixataren", hwZeigen:"Sken lmeɛlumat di lvidyu", hwOeffnen:"Ṛẓem lmeɛluma", hwSchliessen:"Ɣleq", hwNochmal:"Ɛawed xẓeṛ aya", hwWeiter:"Kemmel axẓaṛ" });
+Object.assign(I18N.fa, { hwStellen:"لحظه‌های مهم", hwZeigen:"نمایش نکته‌ها در ویدیو", hwOeffnen:"باز کردن نکته", hwSchliessen:"بستن", hwNochmal:"دیدن دوباره این بخش", hwWeiter:"ادامه تماشا" });
+Object.assign(I18N.ps, { hwStellen:"مهمې شېبې", hwZeigen:"په ویډیو کې یادښتونه ښکاره کړئ", hwOeffnen:"یادښت پرانیزئ", hwSchliessen:"بندول", hwNochmal:"دا برخه بیا وګورئ", hwWeiter:"کتلو ته دوام ورکړئ" });
+Object.assign(I18N.el, { hwStellen:"Σημαντικά σημεία", hwZeigen:"Εμφάνιση σημειώσεων στο βίντεο", hwOeffnen:"Άνοιγμα σημείωσης", hwSchliessen:"Κλείσιμο", hwNochmal:"Δες το σημείο ξανά", hwWeiter:"Συνέχεια προβολής" });
+Object.assign(I18N.am, { hwStellen:"አስፈላጊ ነጥቦች", hwZeigen:"በቪዲዮው ውስጥ ማስታወሻዎችን ያሳዩ", hwOeffnen:"ማስታወሻውን ይክፈቱ", hwSchliessen:"ይዝጉ", hwNochmal:"ይህን ክፍል እንደገና ይመልከቱ", hwWeiter:"መመልከቱን ይቀጥሉ" });
+Object.assign(I18N.ti, { hwStellen:"ኣገደስቲ ነጥብታት", hwZeigen:"ኣብ ቪድዮ መዘኻኸሪታት ኣርእዩ", hwOeffnen:"መዘኻኸሪ ክፈቱ", hwSchliessen:"ዕጸዉ", hwNochmal:"ነዚ ክፋል ደጊምኩም ርኣዩ", hwWeiter:"ምርኣይ ቀጽሉ" });
+/* === HINWEIS-TEXTE-ENDE === */
 
 /* 26.09.2026: Abmelden NUR bei eindeutigem Grund vom Server. Frueher fuehrte jede
    401/403-Antwort zum Abmelden mit dem Text "anderes Geraet" -- auch ein falsch
@@ -9414,7 +9492,7 @@ function initialen(name){
   return (teile[0][0] + teile[teile.length - 1][0]).toUpperCase();
 }
 function startWatermark(){
-  stopWatermark();
+  wasserzeichenEntfernen();
   if(session && session.demo) return; // Demo-Modus hat keine echte Nummer
   const wrap = document.querySelector(".player-wrap");
   if(!wrap || !session || !session.telefon) return;
@@ -9429,13 +9507,25 @@ function startWatermark(){
   function platzieren(){
     // Bleibt innerhalb des sichtbaren Bereichs (Rand-Puffer, damit der Text nicht
     // ueber den Player-Rand hinausragt).
-    el.style.top = (4 + Math.random() * 82) + "%";
-    el.style.left = (3 + Math.random() * 62) + "%";
+    // 02.10.2026: Oben (bis 24 %) nur in der linken Hälfte -- oben rechts sitzt der
+    // §-Hinweis (.hw-knopf), die beiden dürfen sich nie überdecken.
+    const oben = 4 + Math.random() * 82;
+    let linksMax = 62;
+    if(oben / 100 * wrap.clientHeight < 62){
+      const w = wrap.clientWidth || 1;
+      linksMax = Math.max(0, ((w * 0.28 - el.offsetWidth) / w) * 100 - 3);
+    }
+    el.style.top = oben + "%";
+    el.style.left = (3 + Math.random() * linksMax) + "%";
   }
   platzieren();
   wzInterval = setInterval(platzieren, 4000);
 }
 function stopWatermark(){
+  hinweiseStoppen(); // gleiches Sicherheitsnetz: Videoseite verlassen = Hinweise und Querformat-Vollbild aus
+  wasserzeichenEntfernen();
+}
+function wasserzeichenEntfernen(){
   if(wzInterval){ clearInterval(wzInterval); wzInterval = null; }
   const el = document.querySelector(".wz-overlay");
   if(el) el.remove();
@@ -9543,14 +9633,19 @@ async function openVideo(videoId){
       ? '<div class="kapitel-box"><div class="section-label" style="margin:0 0 6px;">' + esc(t("kapitelTitel")) + "</div>" +
           '<div class="kapitel-liste">' + kapitel.map(function(k){ return '<button class="kapitel-chip druck-2" data-springen="' + Math.floor(k.t) + '"><span class="sprung-zeit">' + esc(zeitFormat(k.t)) + "</span> " + esc(k.titel || "") + "</button>"; }).join("") + "</div></div>" : "";
 
+    const hinweise = hinweiseFuerVideo(vObj);
     document.getElementById("app").innerHTML =
       krume +
       '<div class="player-wrap"><iframe src="' + esc(embedUrl) + '" ' +
-      'style="border:0;width:100%;aspect-ratio:16/9;display:block;" allow="autoplay; fullscreen"></iframe></div>' +
-      weiterBeiHtml + fehlerHtml + kapitelHtml +
+      'style="border:0;width:100%;aspect-ratio:16/9;display:block;" allow="autoplay; fullscreen"></iframe>' +
+      (hinweise.length ? '<button type="button" class="hw-knopf" id="hw-knopf" tabindex="-1" aria-hidden="true"><span class="hw-pille"><span class="hw-par-ic">§</span><span class="hw-pille-text"></span></span></button>' : "") +
+      "</div>" +
+      weiterBeiHtml + fehlerHtml + kapitelHtml + hinweisListeHtml(hinweise) +
       weiterBtn;
     startWatermark();
     playerSteuerungStarten(videoId);
+    document.body.classList.add("video-offen");
+    hinweiseStarten(hinweise);
     document.querySelectorAll("[data-springen]").forEach(function(b){
       b.addEventListener("click", function(){ playerSpringen(Number(b.dataset.springen)); if(b.classList.contains("weiter-bei")) b.remove(); });
     });
@@ -9585,6 +9680,7 @@ async function openVideo(videoId){
    Springen die Quelle mit Startzeit neu geladen. */
 let playerSt = null;
 function playerSteuerungStoppen(){
+  hinweiseStoppen();
   if(playerSt){ window.removeEventListener("message", playerSt.handler); clearTimeout(playerSt.rueckfall); playerSt = null; }
 }
 function playerSteuerungStarten(videoId){
@@ -9609,12 +9705,21 @@ function playerSteuerungStarten(videoId){
       st.bereit = true;
       st.senden("addEventListener", "timeupdate");
       st.senden("addEventListener", "ended");
+      st.senden("addEventListener", "play");
+      st.senden("addEventListener", "pause");
       if(st.wartend !== null){ const z = st.wartend; st.wartend = null; playerSpringen(z); }
     } else if(d.event === "timeupdate" && d.value){
+      st.spielt = true;
+      if(hwSt) hinweisZeit(d.value.seconds);
       const jetzt = Date.now();
       if(jetzt - st.zuletzt > 5000){ st.zuletzt = jetzt; positionMerken(videoId, d.value.seconds, d.value.duration); }
     } else if(d.event === "ended"){
+      st.spielt = false;
       positionLoeschen(videoId);
+    } else if(d.event === "play"){
+      st.spielt = true;
+    } else if(d.event === "pause"){
+      st.spielt = false;
     }
   };
   window.addEventListener("message", st.handler);
@@ -9633,6 +9738,133 @@ function playerSpringen(sek){
       st.wartend = null;
     }
   }, 2500);
+}
+/* ---- Hinweise im Video (02.10.2026, Serband) ----
+   academy_videos.hinweise = [{id, t, titel, text, par, art, aktiv}]. Schüler sehen nur
+   aktive (vom Serband freigegebene). Übersetzungen in academy_uebersetzungen
+   (art "video", feld "hinweis:<id>:titel" / "hinweis:<id>:text"). Ob sie im Video
+   erscheinen, merkt sich nur dieses Gerät (academy_hinweise_aus). */
+const HW_SICHTBAR_S = 8;
+let hwSt = null;
+function hinweiseFuerVideo(v){
+  const roh = Array.isArray(v && v.hinweise) ? v.hinweise : [];
+  return roh.filter(function(h){ return h && h.aktiv === true && h.id && isFinite(Number(h.t)) && h.titel; })
+    .map(function(h){
+      // Übersetzung nur, wenn sie zum aktuellen deutschen Text gehört (siehe hinweisStand)
+      const ueOk = h.ue_fuer && h.ue_fuer === hinweisStand(h);
+      return { id: String(h.id), t: Math.max(0, Number(h.t)),
+        titel: ueOk ? inhalt("video", v.id, "hinweis:" + h.id + ":titel", h.titel) : h.titel,
+        text: ueOk ? inhalt("video", v.id, "hinweis:" + h.id + ":text", h.text || "") : (h.text || ""),
+        par: h.par || "" };
+    })
+    .sort(function(a, b){ return a.t - b.t; });
+}
+function hinweiseImVideoAn(){ return lsLesen("academy_hinweise_aus", false) !== true; }
+function hinweisListeHtml(hinweise){
+  if(!hinweise.length) return "";
+  return '<details class="hw-box" id="hw-box"><summary class="druck-3"><span class="hw-par-ic">§</span>' +
+      "<span>" + esc(t("hwStellen")) + '</span><span class="hw-zahl">' + hinweise.length + "</span>" +
+      '<span class="hw-pfeil">' + icon("runter") + "</span></summary>" +
+    '<div class="hw-inhalt">' +
+      hinweise.map(function(h, i){
+        return '<button type="button" class="sprung-zeile druck-3" data-hw-sprung="' + i + '"><span class="sprung-zeit">' +
+          esc(zeitFormat(h.t)) + "</span><span>" + esc(h.titel) + "</span></button>";
+      }).join("") +
+      '<label class="hw-schalter"><input type="checkbox" id="hw-schalter"' + (hinweiseImVideoAn() ? " checked" : "") + ">" +
+        "<span>" + esc(t("hwZeigen")) + "</span></label>" +
+    "</div></details>";
+}
+function hinweiseStarten(hinweise){
+  hwSt = null;
+  if(!hinweise.length) return;
+  const knopf = document.getElementById("hw-knopf");
+  hwSt = { liste: hinweise, knopf: knopf, aktuell: -1, an: hinweiseImVideoAn() };
+  if(knopf) knopf.addEventListener("click", function(){
+    if(hwSt && hwSt.aktuell >= 0) hinweisOeffnen(hwSt.liste[hwSt.aktuell]);
+  });
+  document.querySelectorAll("[data-hw-sprung]").forEach(function(b){
+    b.addEventListener("click", function(){
+      const h = hinweise[Number(b.dataset.hwSprung)];
+      if(!h) return;
+      playerSpringen(Math.max(0, Math.floor(h.t) - 2));
+      const wrap = document.querySelector(".player-wrap");
+      if(wrap && wrap.getBoundingClientRect().top < 0) wrap.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+  const schalter = document.getElementById("hw-schalter");
+  if(schalter) schalter.addEventListener("change", function(){
+    try{ localStorage.setItem("academy_hinweise_aus", JSON.stringify(!schalter.checked)); } catch(e){}
+    if(hwSt){ hwSt.an = schalter.checked; if(!hwSt.an) hinweisKnopfZeigen(-1); }
+  });
+}
+function hinweiseStoppen(){
+  hwSt = null;
+  document.body.classList.remove("video-offen");
+}
+// Wird bei jedem timeupdate des Players aufgerufen (etwa 4x pro Sekunde).
+function hinweisZeit(sek){
+  if(!hwSt || !hwSt.an || !(sek >= 0)) return;
+  let treffer = -1;
+  hwSt.liste.forEach(function(h, i){ if(sek >= h.t && sek < h.t + HW_SICHTBAR_S) treffer = i; });
+  if(treffer !== hwSt.aktuell) hinweisKnopfZeigen(treffer);
+}
+function hinweisKnopfZeigen(i){
+  if(!hwSt || !hwSt.knopf) return;
+  hwSt.aktuell = i;
+  const k = hwSt.knopf;
+  if(i < 0){
+    k.classList.remove("sichtbar"); k.setAttribute("aria-hidden", "true"); k.tabIndex = -1;
+    return;
+  }
+  const h = hwSt.liste[i];
+  k.querySelector(".hw-pille-text").textContent = h.titel;
+  k.setAttribute("aria-label", t("hwOeffnen") + ": " + h.titel);
+  k.removeAttribute("aria-hidden"); k.tabIndex = 0;
+  k.classList.add("sichtbar");
+}
+// Antippen hält das Video an, damit man in Ruhe lesen kann; "Weiter ansehen" spielt weiter.
+function hinweisOeffnen(h){
+  const st = playerSt;
+  const liefVorher = !!(st && st.spielt);
+  if(st && st.bereit) st.senden("pause");
+  hinweisKnopfZeigen(-1);
+  if(blattSchliessen) blattSchliessen(null);
+  const overlay = document.createElement("div");
+  overlay.className = "blatt-overlay";
+  overlay.innerHTML =
+    '<div class="blatt hw-blatt" role="dialog" aria-modal="true" aria-labelledby="hw-blatt-titel">' +
+      '<div class="blatt-griff"></div>' +
+      '<div class="blatt-kopf"><div class="blatt-titel" id="hw-blatt-titel">' + esc(h.titel) + "</div>" +
+        '<button class="blatt-zu druck-2" aria-label="' + esc(t("hwSchliessen")) + '">' + icon("x") + "</button></div>" +
+      (h.par ? '<div class="hw-par" dir="ltr">' + esc(h.par) + "</div>" : "") +
+      (h.text ? '<div class="blatt-text">' + esc(h.text) + "</div>" : "") +
+      '<div class="blatt-knoepfe">' +
+        '<button class="btn-still druck-2" id="hw-nochmal">' + esc(t("hwNochmal")) + "</button>" +
+        '<button class="btn-gold druck-1" id="hw-weiter">' + esc(t("hwWeiter")) + "</button>" +
+      "</div>" +
+    "</div>";
+  document.body.appendChild(overlay);
+  requestAnimationFrame(function(){ overlay.classList.add("offen"); });
+  let fertig = false;
+  function beenden(weiterspielen){
+    if(fertig) return; fertig = true; blattSchliessen = null;
+    overlay.classList.remove("offen");
+    setTimeout(function(){ overlay.remove(); }, 320);
+    document.removeEventListener("keydown", beiTaste);
+    if(weiterspielen && playerSt === st && st && st.bereit) st.senden("play");
+  }
+  function beiTaste(ev){ if(ev.key === "Escape") beenden(liefVorher); }
+  blattSchliessen = function(){ beenden(false); };
+  overlay.querySelector(".blatt-zu").addEventListener("click", function(){ beenden(liefVorher); });
+  overlay.querySelector("#hw-weiter").addEventListener("click", function(){ beenden(true); });
+  overlay.querySelector("#hw-nochmal").addEventListener("click", function(){
+    beenden(false);
+    playerSpringen(Math.max(0, Math.floor(h.t) - 5));
+  });
+  overlay.addEventListener("click", function(ev){ if(ev.target === overlay) beenden(liefVorher); });
+  document.addEventListener("keydown", beiTaste);
+  const weiter = overlay.querySelector("#hw-weiter");
+  if(weiter) weiter.focus({ preventScroll: true });
 }
 function positionenLesen(){ const p = lsLesen("academy_pos", {}); return (p && typeof p === "object") ? p : {}; }
 function positionLesen(videoId){ return positionenLesen()[videoId] || null; }
@@ -13061,11 +13293,15 @@ async function videoBearbeiten(id){
     '<textarea id="vb-kapitel" class="blatt-feld" rows="4" placeholder="00:00 Start am TÜV&#10;02:40 Kreisverkehr&#10;05:10 Schulzone">' + esc(zeitListeText(v.kapitel, "titel")) + "</textarea>" +
     '<label>Fehlerstellen <span class="vb-hilfe">nur bei „nicht bestanden“ — z. B. „07:15 Schulterblick beim Abbiegen fehlte“</span></label>' +
     '<textarea id="vb-fehler" class="blatt-feld" rows="3" placeholder="07:15 Schulterblick beim Abbiegen fehlte">' + esc(zeitListeText(v.fehlerstellen, "text")) + "</textarea>" +
+    '<label>Hinweise im Video <span class="vb-hilfe">§-Einblendung oben rechts, 8 Sekunden; Schüler sehen nur freigegebene</span></label>' +
+    '<div class="vb-hw-liste" id="vb-hw-liste">' + (Array.isArray(v.hinweise) ? v.hinweise : []).map(hinweisZeileHtml).join("") + "</div>" +
+    '<button type="button" class="btn-still druck-2" id="vb-hw-neu" style="margin-top:8px;">+ Hinweis hinzufügen</button>' +
     '<label>Themen</label><input id="vb-tag-suche" class="blatt-feld" placeholder="Thema suchen, z. B. Zebra">' +
     '<div class="themen-box">' + themen + "</div>";
   const werte = await blattFormular({
     titel: "Video bearbeiten", html: html, okText: "Speichern",
     binden: function(o){
+      hinweisEditorBinden(o, v);
       const s = o.querySelector("#vb-tag-suche");
       s.addEventListener("input", function(){
         const q = s.value.toLowerCase().trim();
@@ -13082,6 +13318,7 @@ async function videoBearbeiten(id){
         gebiet_id: o.querySelector("#vb-gebiet").value || null,
         kapitelRoh: o.querySelector("#vb-kapitel").value,
         fehlerRoh: o.querySelector("#vb-fehler").value,
+        hinweise: hinweiseLesen(o, v),
         tags: Array.from(o.querySelectorAll(".vb-tag:checked")).map(function(c){ return c.value; }),
         pruefer: Array.from(o.querySelectorAll(".vb-pruefer:checked")).map(function(c){ return c.value; })
       };
@@ -13094,10 +13331,11 @@ async function videoBearbeiten(id){
   if(kap.fehler){ showToast("Kapitelmarke nicht verstanden: „" + kap.fehler + "“ — Format 02:40 Titel"); return; }
   const fst = zeitListeLesen(werte.fehlerRoh, "text");
   if(fst.fehler){ showToast("Fehlerstelle nicht verstanden: „" + fst.fehler + "“ — Format 07:15 Text"); return; }
-  if(DEMO_MODE){ Object.assign(v, werte); renderAdminVideos(); return; }
+  if(werte.hinweise.fehler){ showToast("Hinweis: " + werte.hinweise.fehler); return; }
+  if(DEMO_MODE){ Object.assign(v, werte, { hinweise: werte.hinweise.liste }); renderAdminVideos(); return; }
   const felder = { titel: werte.titel, beschreibung: werte.beschreibung || null, pruefung_ergebnis: werte.pruefung_ergebnis,
     gratis: werte.gratis, fahrzeug: werte.fahrzeug, gebiet_id: werte.gebiet_id,
-    kapitel: kap.liste, fehlerstellen: fst.liste };
+    kapitel: kap.liste, fehlerstellen: fst.liste, hinweise: werte.hinweise.liste };
   const res = await supa.from("academy_videos").update(felder).eq("id", id).select("id");
   if(!aenderungOk(res)){ showToast("Konnte nicht gespeichert werden — keine Berechtigung oder keine Verbindung"); return; }
   // Themen und Pruefer: nur die Unterschiede schreiben. Erst hinzufuegen, dann entfernen --
@@ -13115,6 +13353,72 @@ async function videoBearbeiten(id){
   await loadAdminData();
   renderAdminVideos();
   showToast(teilFehler ? "Gespeichert, aber Themen/Prüfer nur teilweise — bitte prüfen" : "Gespeichert");
+}
+
+/* ---- Hinweise im Video: Editor (02.10.2026) ----
+   Jeder Hinweis behält seine id (h1, h2 …): an ihr hängen die Übersetzungen
+   (feld "hinweis:<id>:titel|text"). ue_fuer = Prüfsumme des deutschen Textes, für den
+   die Übersetzungen gemacht wurden. Ändert sich der deutsche Text, passt die Prüfsumme
+   nicht mehr und Schüler sehen Deutsch statt einer veralteten Übersetzung. */
+function hinweisStand(h){
+  const s = String(h.titel || "") + "\n" + String(h.text || "");
+  let x = 5381;
+  for(let i = 0; i < s.length; i++) x = ((x * 33) ^ s.charCodeAt(i)) >>> 0;
+  return x.toString(36);
+}
+function hinweisZeileHtml(h){
+  const stand = !h.ue_fuer ? "noch nicht übersetzt" : (h.ue_fuer === hinweisStand(h) ? "übersetzt" : "Text geändert — Übersetzung veraltet, Schüler sehen Deutsch");
+  return '<div class="vb-hw' + (h.aktiv ? "" : " aus") + '" data-hw-id="' + esc(h.id || "") + '">' +
+    '<div class="vb-hw-kopf"><input class="blatt-feld vb-hw-zeit" value="' + esc(h.t !== undefined ? zeitFormat(h.t) : "") + '" placeholder="05:10" aria-label="Zeit">' +
+      '<input class="blatt-feld vb-hw-titel" maxlength="40" value="' + esc(h.titel || "") + '" placeholder="Kurztitel, z. B. Durchgezogene Linie" aria-label="Titel"></div>' +
+    '<textarea class="blatt-feld vb-hw-text" rows="2" maxlength="300" placeholder="Erklärung in 1–3 kurzen Sätzen, Du-Form" aria-label="Text">' + esc(h.text || "") + "</textarea>" +
+    '<input class="blatt-feld vb-hw-par" value="' + esc(h.par || "") + '" placeholder="Fundstelle, z. B. § 5 Abs. 4 StVO (optional)" aria-label="Fundstelle">' +
+    '<div class="vb-hw-fuss"><label class="blatt-haken"><input type="checkbox" class="vb-hw-aktiv"' + (h.aktiv ? " checked" : "") + "><span>Freigegeben — Schüler sehen ihn</span></label>" +
+      '<button type="button" class="btn-still druck-2 vb-hw-weg">Entfernen</button></div>' +
+    (h.id ? '<div class="vb-hw-stand">' + esc(stand) + "</div>" : "") +
+  "</div>";
+}
+function hinweisEditorBinden(o, v){
+  const liste = o.querySelector("#vb-hw-liste");
+  liste.addEventListener("click", function(ev){
+    const weg = ev.target.closest(".vb-hw-weg");
+    if(weg) weg.closest(".vb-hw").remove();
+  });
+  liste.addEventListener("change", function(ev){
+    if(ev.target.classList.contains("vb-hw-aktiv")) ev.target.closest(".vb-hw").classList.toggle("aus", !ev.target.checked);
+  });
+  o.querySelector("#vb-hw-neu").addEventListener("click", function(){
+    liste.insertAdjacentHTML("beforeend", hinweisZeileHtml({ aktiv: true }));
+    const neu = liste.lastElementChild;
+    neu.querySelector(".vb-hw-zeit").focus();
+  });
+}
+function hinweiseLesen(o, v){
+  const alt = {};
+  (Array.isArray(v.hinweise) ? v.hinweise : []).forEach(function(h){ alt[h.id] = h; });
+  let hoechste = 0;
+  Object.keys(alt).forEach(function(id){ const m = /^h(\d+)$/.exec(id); if(m) hoechste = Math.max(hoechste, Number(m[1])); });
+  const liste = [];
+  for(const z of o.querySelectorAll(".vb-hw")){
+    const zeitRoh = z.querySelector(".vb-hw-zeit").value.trim();
+    const titel = z.querySelector(".vb-hw-titel").value.trim();
+    const text = z.querySelector(".vb-hw-text").value.trim();
+    const par = z.querySelector(".vb-hw-par").value.trim();
+    if(!zeitRoh && !titel && !text) continue; // leere neue Zeile
+    const m = zeitRoh.match(/^(?:(\d{1,2}):)?(\d{1,2}):(\d{2})$/);
+    if(!m || Number(m[3]) > 59) return { fehler: "Zeit „" + zeitRoh.slice(0, 12) + "“ nicht verstanden — Format 05:10" };
+    if(!titel) return { fehler: "Titel fehlt bei " + zeitRoh };
+    let t = Number(m[1] || 0) * 3600 + Number(m[2]) * 60 + Number(m[3]);
+    const vorher = alt[z.dataset.hwId];
+    // Unveränderte Zeit: die genaue Sekunde (mit Kommastelle) behalten
+    if(vorher && zeitFormat(vorher.t) === zeitRoh) t = vorher.t;
+    const h = Object.assign({}, vorher || {}, { id: vorher ? vorher.id : "h" + (++hoechste), t: t,
+      titel: titel.slice(0, 40), text: text.slice(0, 300), par: par.slice(0, 80),
+      aktiv: z.querySelector(".vb-hw-aktiv").checked });
+    liste.push(h);
+  }
+  liste.sort(function(a, b){ return a.t - b.t; });
+  return { liste: liste };
 }
 
 // "02:40 Kreisel" <-> {t:160, titel:"Kreisel"}. Stunden optional (1:02:40).

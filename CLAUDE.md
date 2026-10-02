@@ -100,7 +100,8 @@ am Handy) kommt aus der Bunny-Bibliothek – nichts zu tun.
 Zeit (faster-whisper), `abgleich.py` richtet die Zeilen daran aus (globale Ausrichtung im
 ±6-s-Korridor; gedehnte Wörter vom Ende her gekürzt; Lesezeit max. 17 Zeichen/s; keine
 Überlappung). Zugang nur über einen lokalen Schlüssel, dessen SHA-256 VORÜBERGEHEND im
-Vault als `untertitel_abgleich_hash` liegt – danach löschen (Stand: gelöscht).
+Vault als `untertitel_abgleich_hash` liegt – danach löschen (Stand 02.10.2026: wieder angelegt für die
+fünf neuen Sprachen, NOCH NICHT gelöscht – zusammen mit `untertitel.hochladen_neu5` entfernen).
 **CDN-Falle:** Bunny liefert Untertitel mit `max-age` 30 Tage aus und ignoriert `?ver=`.
 Überschreibt man eine Spur, sehen Knoten, die sie schon geholt hatten, bis zum Leeren des
 Caches die alte. Nach dem Überschreiben: Pull-Zone-Cache in Bunny leeren (braucht den
@@ -197,6 +198,19 @@ haben `unicode-bidi:plaintext`, sonst wird „§ 11 Abs. 2 StVO“ in RTL-Sprach
   der Szene (`kapitel[].kamera`, z. B. Übersicht/Oben). `grundKamera` in den Daten wird nicht mehr genutzt.
   Die Kompass-Szenen stammen aus dem öffentlichen Kompass-Repo – die Sperre
   schützt die Akademie-Oberfläche, nicht die Rohdaten.
+- **Hinweise im Video** (02.10.2026, Serband): `academy_videos.hinweise` = jsonb
+  `[{id, t, titel, text, par, art, aktiv, ue_fuer}]`. Schüler sehen nur `aktiv: true` (filtert
+  schon `academy-katalog`, die App nochmal). Oben rechts im Video blendet sich 8 s lang ein
+  halbdurchsichtiger §-Knopf ein (Video läuft weiter); Antippen hält an und öffnet ein Blatt.
+  Unter dem Video „Wichtige Stellen“ (zugeklappt, Sprung-Liste, Schalter
+  `localStorage.academy_hinweise_aus`). Das Wasserzeichen meidet die Ecke oben rechts. Handy quer
+  = Video füllt den Bildschirm (`body.video-offen`), damit die Hinweise sichtbar bleiben –
+  Bunnys eigenes Vollbild zeigt keine App-Einblendungen. Übersetzungen in
+  `academy_uebersetzungen` (art `video`, feld `hinweis:<id>:titel|text`); sie gelten nur, wenn
+  `ue_fuer` = `hinweisStand()` des deutschen Textes ist – ändert jemand den deutschen Text, sehen
+  Schüler Deutsch statt einer veralteten Übersetzung. Pflege: Verwaltung → Video bearbeiten.
+  Werkzeug: `sprachen_werkzeug_setzen('hinweise','de',…)` / `('hinweis_ue',<sprache>,…)`.
+  Originalprüfungen haben keine Hinweise (wie bei den Untertiteln).
 - **Prüfer nur mit Initialen** (01.10.2026, Entscheidung Serband): `academy_pruefer.name`,
   Videotitel/-beschreibungen (alle Sprachen) und die Titel bei Bunny tragen nur Initialen
   ("N. H."; in ar/ckb/ur mit LRM dahinter, damit der Punkt am Kürzel bleibt). Der volle Name
