@@ -6,10 +6,13 @@ minderjährig — entsprechend vorsichtig mit Daten umgehen.
 
 ## Arbeitsregeln (nicht verhandelbar)
 
-1. **Erst besprechen, Plan zeigen, auf "Los" warten.** "Ja" zu einer Liste ist
-   Zustimmung zur Diskussion, keine Bauanweisung.
-2. **Bei Nummernlisten gilt nur, was ausdrücklich mit "ja" bestätigt wird.**
-   Alles andere ist dauerhaft ein Nein, ohne Rückfrage.
+1. **Fertig bauen, dann kontrolliert Serband** (ersetzt seit 02.10.2026 „erst besprechen,
+   auf Los warten“): Aufträge komplett durchziehen – bauen, doppelt prüfen, live stellen –
+   und am Ende übersichtlich berichten, was gemacht wurde und was er am Video/in der App
+   nachsehen sollte. Er kontrolliert in Ruhe und sagt dann, was geändert wird. Rückfragen nur,
+   wenn etwas wirklich nicht entscheidbar ist oder unwiderruflich Daten verloren gingen.
+2. **Bei Nummernlisten von Serband gilt nur, was er mit "ja" bestätigt.** Was er
+   ausdrücklich ablehnt, bleibt ein Nein, ohne Rückfrage.
 3. **Immer die echte Live-Datei aus GitHub laden**, nie einer Kopie im
    Projektwissen vertrauen. War zweimal die Fehlerquelle.
 4. **Chirurgische Edits (str_replace) statt Neuschriebe**, wo möglich.
