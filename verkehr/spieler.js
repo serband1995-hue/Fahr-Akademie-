@@ -58,6 +58,29 @@ UI.el = {"abspielen":"Αναπαραγωγή","anhalten":"Παύση","uebersich
 UI.am = {"abspielen":"ያጫውቱ","anhalten":"ያቁሙ","uebersicht":"አጠቃላይ እይታ","schraeg":"መከተል","oben":"ከላይ","fahrer":"አሽከርካሪ","tag":"ቀን","daemmerung":"ድንግዝግዝ","nacht":"ሌሊት","halb":"½ ፍጥነት","vonVorn":"ከመጀመሪያው","kamFolgt":"ካሜራው ማብራሪያውን ይከተላል","mitdenken":"አብረው ያስቡ፦ ትዕይንቱ በጥያቄዎች ላይ ይቆማል","md":"አብረው ያስቡ","aufl":"መልሱን ይመልከቱ","weiter":"ይቀጥሉ","richtigIst":"ትክክለኛው መልስ","reihenfolge":"ቅደም ተከተሉ","kein3d":"ይቅርታ፣ መሣሪያዎ የ3D ምስሉን ማሳየት አይችልም። ማብራሪያዎቹን ከታች ያገኛሉ።","worum":"ስለ ምንድን ነው?","merken":"የሚታወስ ደንብ","rf":"ትክክልና ስህተት","zeit":"የጊዜ መስመር","kapitel":"ምዕራፎች","blick":"የእይታ አቅጣጫ","tageszeit":"የቀኑን ሰዓት ይቀይሩ","fassung":"ቅጂ","teaserTitel":"በሙሉ መዳረሻ ይቀጥሉ","teaserText":"ናሙናው ይህ ነበር። በሙሉ መዳረሻ ሙሉውን ትዕይንት ከሁሉም ምዕራፎችና ጥያቄዎች ጋር ያያሉ፦","teaserKnopf":"መዳረሻ ይጠይቁ","nochmal":"ናሙናውን እንደገና","gesperrt":"በሙሉ መዳረሻ","buehne":"ተንቀሳቃሽ የ3D ትዕይንት","kapZurueck":"ይመለሱ","kapWeiter":"ይቀጥሉ","alleKap":"ሁሉም ምዕራፎች","ende":"የትዕይንቱ መጨረሻ","aufbau":"ትዕይንቱ እየተዘጋጀ ነው …","zurFrage":"ወደ ጥያቄው","schliessen":"ይዝጉ"};
 UI.ti = {"abspielen":"ኣጻውቱ","anhalten":"ደው ኣብሉ","uebersicht":"ሓፈሻዊ ርኢቶ","schraeg":"ምስዓብ","oben":"ካብ ላዕሊ","fahrer":"ዘዋሪ","tag":"መዓልቲ","daemmerung":"ዕራርቦ","nacht":"ለይቲ","halb":"½ ናህሪ","vonVorn":"ካብ መጀመርታ","kamFolgt":"ካሜራ ንመብርሂ ይስዕብ","mitdenken":"ብሓባር ምሕሳብ: ትርኢት ኣብ ሕቶታት ደው ይብል","md":"ብሓባር ምሕሳብ","aufl":"መልሲ ኣርእዩ","weiter":"ቀጽሉ","richtigIst":"ቅኑዕ መልሲ","reihenfolge":"ቅደም ተኸተል","kein3d":"መሳርሒኹም 3D ምርኣይ ኣይክእልን ኢዩ። መብርሂታት ኣብ ታሕቲ ኣለዉ።","worum":"ብዛዕባ እንታይ ኢዩ?","merken":"ንምዝካር ዝኸውን ሕጊ","rf":"ቅኑዕን ጌጋን","zeit":"መስመር ግዜ","kapitel":"ምዕራፋት","blick":"ኣንፈት ምርኣይ","tageszeit":"ግዜ መዓልቲ ቀይሩ","fassung":"ቅዲ","teaserTitel":"ምስ ምሉእ መእተዊ ቀጽሉ","teaserText":"እዚ ናጻ መቐመሲ ነይሩ። ምስ ምሉእ መእተዊ ነቲ ምሉእ ትርኢት ምስ ኩሎም ምዕራፋትን ሕቶታትን ትርእዩ:","teaserKnopf":"መእተዊ ሕተቱ","nochmal":"ናጻ መቐመሲ ደጊምኩም","gesperrt":"ምስ ምሉእ መእተዊ","buehne":"ዝንቀሳቐስ 3D ትርኢት","kapZurueck":"ንድሕሪት","kapWeiter":"ቀጽሉ","alleKap":"ኩሎም ምዕራፋት","ende":"መወዳእታ ትርኢት","aufbau":"ትርኢት ይዳሎ ኣሎ …","zurFrage":"ናብ ሕቶ","schliessen":"ዕጸዉ"};
 // === SPRACHPAKETE2-ENDE ===
+/* Stimme (03.10.2026, Serband): gesprochene Kapiteltexte. Die Aufnahmen liegen in
+   verkehr/stimme/<sprache>/ (einmal erzeugt, ElevenLabs über Higgsfield), dazu je Sprache ein
+   Verzeichnis stimme/<sprache>.json: { "<szene>/<kapitel>": { h, d, f } } mit h = Prüfsumme des
+   Kapiteltextes (stimmeStand), d = Länge in Sekunden, f = Dateiname. Passt h nicht mehr zum
+   aktuellen Text (Text geändert), bleibt das Kapitel stumm statt etwas Falsches zu sagen.
+   Sprachen ohne Verzeichnis haben keinen Vorlesen-Knopf. */
+const VORLESEN = { de: "Vorlesen", en: "Read aloud", tr: "Sesli anlat", ar: "القراءة بالصوت", es: "Leer en voz alta", ru: "Озвучка",
+  sr: "Čitaj naglas", ckb: "خوێندنەوە بە دەنگ", kmr: "Bi deng bixwîne", hi: "सुनें", ur: "سنیں", vi: "Đọc to", rif: "Ɣer s ṣṣut",
+  fa: "خواندن با صدا", ps: "په غږ لوستل", el: "Ανάγνωση φωναχτά", am: "በድምፅ ያዳምጡ", ti: "ብድምጺ ስምዑ" };
+export function stimmeStand(text){
+  const s = String(text || "");
+  let x = 5381;
+  for(let i = 0; i < s.length; i++) x = ((x * 33) ^ s.charCodeAt(i)) >>> 0;
+  return x.toString(36);
+}
+const stimmeVerzeichnisse = {};
+function stimmeVerzeichnis(sprache){
+  if(!stimmeVerzeichnisse[sprache]){
+    stimmeVerzeichnisse[sprache] = fetch(new URL("stimme/" + sprache + ".json", import.meta.url))
+      .then((r) => r.ok ? r.json() : null).catch(() => null);
+  }
+  return stimmeVerzeichnisse[sprache];
+}
 const BUCHST = ["A", "B", "C", "D"];
 
 // Tacho der Fahrersicht: 0-160 km/h auf 240 Grad (wie im echten Auto)
@@ -132,6 +155,10 @@ const CSS = `
 .vv .vv-chip.zu{opacity:.62;border-style:dashed;}
 .vv .vv-chip .fz{color:var(--vv-gold-text);font-weight:800;}
 .vv .vv-reihe{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.vv .vv-stimme-knopf{display:inline-flex;align-items:center;justify-content:center;gap:6px;}
+.vv .vv-stimme-knopf[hidden]{display:none;}
+.vv .vv-stimme-knopf svg{width:18px;height:18px;flex:none;fill:currentColor;}
+.vv .vv-stimme-knopf[aria-pressed="false"] .vv-welle{opacity:.25;}
 .vv .vv-segment{display:flex;padding:4px;border-radius:999px;background:var(--vv-strong);border:1px solid var(--vv-border);margin:4px 0 12px;}
 .vv .vv-segment button{flex:1;min-height:44px;border:none;border-radius:999px;background:none;font-weight:700;font-size:15px;color:var(--vv-muted);cursor:pointer;}
 .vv .vv-segment button[aria-pressed="true"]{background:var(--vv-bg);color:var(--vv-text);box-shadow:0 1px 4px rgba(0,0,0,.12);}
@@ -307,7 +334,8 @@ export function starte(el, daten, opt){
       '<div class="vv-kk-nav"><button type="button" class="vv-knopf" data-kapzur>‹ ' + esc(U.kapZurueck) + '</button><button type="button" class="vv-knopf haupt-leicht" data-kapvor>' + esc(U.kapWeiter) + " ›</button></div></section>" +
     '<div class="vv-chips" role="group" aria-label="' + esc(U.kapitel) + '"></div>' +
     '<details class="vv-kapliste"><summary>' + esc(U.alleKap) + ' <span class="vv-kapliste-n"></span></summary><div class="vv-kapliste-inhalt"></div></details>' +
-    '<div class="vv-reihe"><button type="button" class="vv-knopf" data-halb aria-pressed="false">' + esc(U.halb) + '</button><button type="button" class="vv-knopf" data-vorn>' + esc(U.vonVorn) + '</button><button type="button" class="vv-knopf" data-autokam aria-pressed="false">' + esc(U.kamFolgt) + "</button></div>" +
+    '<div class="vv-reihe"><button type="button" class="vv-knopf" data-halb aria-pressed="false">' + esc(U.halb) + '</button><button type="button" class="vv-knopf" data-vorn>' + esc(U.vonVorn) + '</button><button type="button" class="vv-knopf" data-autokam aria-pressed="false">' + esc(U.kamFolgt) + "</button>" +
+      '<button type="button" class="vv-knopf vv-stimme-knopf" data-stimme aria-pressed="false" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="vv-welle" d="M16 8.5a4.5 4.5 0 010 7M18.5 6a8 8 0 010 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>' + esc(VORLESEN[sprache] || VORLESEN.de) + "</button></div>" +
     '<label class="vv-schalter"><input type="checkbox" data-md> ' + esc(U.mitdenken) + "</label>" +
     (mehrere && (T.rf || TD.rf) ? '<section class="vv-karte"><h3>' + esc(U.rf) + '</h3><p style="margin:0" class="vv-rf-text"></p><div class="vv-md-knoepfe"><button type="button" class="vv-knopf" data-rf></button></div></section>' : "") +
     (merken ? '<section class="vv-karte vv-merken"><h3>' + esc(U.merken) + "</h3><ol>" + merken.map((m) => "<li><span>" + esc(m[0]) + '<span class="par">' + esc(m[1]) + "</span></span></li>").join("") + "</ol></section>" : "") +
@@ -326,6 +354,56 @@ export function starte(el, daten, opt){
   const st = { variante: null, t: 0, laeuft: false, tempo: 1, mitdenken: false, autoKam: false, kamera: "schraeg", kapitel: -1, wartet: false, aufgeloest: false, tz: "tag", bedarf: 2, aus: false };
   let V = null, VB = null;
 
+  // ---- Stimme ----
+  const stimme = { an: false, verz: null, kid: null, audio: null, url: "" };
+  try{ stimme.an = localStorage.getItem("vv_stimme") !== "aus"; }catch(e){ stimme.an = true; }
+  function stimmeEintrag(kid){
+    if(!stimme.verz || !kid) return null;
+    const e = stimme.verz[daten.id + "/" + kid];
+    return (e && e.h === stimmeStand(kapTxt(kid).text)) ? e : null;
+  }
+  function stimmeAktiv(){ return stimme.an && !!stimme.verz; }
+  function stimmeStopp(){ if(stimme.audio){ try{ stimme.audio.pause(); }catch(e){} } stimme.kid = null; }
+  // läuft die Aufnahme des Kapitels kid noch (gestartet und nicht zu Ende)?
+  function stimmeSprichtNoch(kid){ const a = stimme.audio; return !!(a && stimme.kid === kid && !a.paused && !a.ended); }
+  function stimmeStart(kid){
+    const e = stimmeAktiv() ? stimmeEintrag(kid) : null;
+    if(!e){ stimmeStopp(); return; }
+    if(!stimme.audio){ stimme.audio = new Audio(); stimme.audio.preload = "auto"; }
+    const url = new URL("stimme/" + sprache + "/" + e.f, import.meta.url).href;
+    if(stimme.url !== url){ stimme.audio.src = url; stimme.url = url; }
+    try{ stimme.audio.currentTime = 0; }catch(x){}
+    stimme.kid = kid;
+    const p = stimme.audio.play(); if(p && p.catch) p.catch(() => {});
+  }
+  // Szene läuft weiter: dasselbe Kapitel fortsetzen oder (am Kapitelanfang) neu beginnen
+  function stimmeWeiter(){
+    if(!stimmeAktiv() || !V) return;
+    const n = Math.max(0, aktKapitel(st.t)), k = V.kapitel[n];
+    const a = stimme.audio;
+    // dieses Kapitel ist schon dran (läuft, angehalten oder fertig gesprochen): nur fortsetzen, nie doppelt vorlesen
+    if(a && stimme.kid === k.id){ if(a.paused && !a.ended){ const p = a.play(); if(p && p.catch) p.catch(() => {}); } return; }
+    if(st.t - k.t < 0.8) stimmeStart(k.id);
+  }
+  // Mit Stimme läuft die Szene so viel langsamer, dass der Satz ins Kapitel passt (höchstens auf 35 %)
+  function stimmeFaktor(){
+    if(!stimmeAktiv() || st.kapitel < 0) return 1;
+    const k = V.kapitel[st.kapitel], e = stimmeEintrag(k.id);
+    if(!e || stimme.kid !== k.id) return 1;
+    const ende = st.kapitel + 1 < V.kapitel.length ? V.kapitel[st.kapitel + 1].t : V.dauer;
+    return Math.max(0.35, Math.min(1, (ende - k.t) / (e.d + 0.4)));
+  }
+  function stimmeKnopf(){
+    const b = $("[data-stimme]"); if(!b) return;
+    b.hidden = !stimme.verz;
+    b.setAttribute("aria-pressed", String(stimme.an));
+  }
+  stimmeVerzeichnis(sprache).then((v) => {
+    if(st.aus || !v) return;
+    stimme.verz = v; stimmeKnopf();
+    if(st.laeuft) stimmeWeiter();
+  });
+
   function kameraKnoepfe(){
     const arten = (V.kameraOpt && V.kameraOpt.fest ? ["uebersicht"] : []).concat(["schraeg", "oben", "fahrer"]);
     const an = (a) => String(a === st.kamera);
@@ -335,6 +413,7 @@ export function starte(el, daten, opt){
   }
 
   function variante(name){
+    stimmeStopp();
     V = daten.varianten.find((v) => v.name === name) || daten.varianten[0];
     st.variante = V.name; VB = vorbereiten(V);
     $$("[data-var]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.var === V.name)));
@@ -436,6 +515,7 @@ export function starte(el, daten, opt){
   function aktKapitel(t){ let n = -1; V.kapitel.forEach((k, i) => { if(t >= k.t - 1e-6) n = i; }); return n; }
   function kapitelZeigen(n){
     kkVorher();
+    if(stimme.kid && (!V.kapitel[Math.max(0, n)] || V.kapitel[Math.max(0, n)].id !== stimme.kid)) stimmeStopp();
     st.kapitel = n; st.aufgeloest = false;
     const k = V.kapitel[Math.max(0, n)], tx = kapTxt(k.id);
     const gesamt = V.kapitel.length + (teaser && teaser.gesperrt ? teaser.gesperrt.length : 0);
@@ -532,6 +612,7 @@ export function starte(el, daten, opt){
   function springe(t, sofort){
     st.t = Math.max(0, Math.min(V.dauer, t));
     st.wartet = false; frageKnopf();
+    stimmeStopp();
     teaserWeg();
     const n = aktKapitel(st.t);
     if(n !== st.kapitel || sofort) kapitelZeigen(n);
@@ -620,7 +701,7 @@ export function starte(el, daten, opt){
     $("[data-vollspiel]").innerHTML = st.laeuft ? '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>' : '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>';
     $("[data-vollspiel]").setAttribute("aria-label", st.laeuft ? U.anhalten : U.abspielen);
   }
-  $("[data-vollspiel]").addEventListener("click", () => { spielen(!st.laeuft); st.bedarf = Math.max(st.bedarf, 2); });
+  $("[data-vollspiel]").addEventListener("click", () => { spielen(!st.laeuft); st.bedarf = Math.max(st.bedarf, 2); if(st.laeuft) stimmeWeiter(); else if(stimme.audio) stimme.audio.pause(); });
   $("[data-vollzu]").addEventListener("click", () => kameraSetzen("schraeg", true));
 
   // Schleife: zeichnet nur, wenn sich etwas bewegt (Akku schonen)
@@ -631,9 +712,14 @@ export function starte(el, daten, opt){
     const dt = Math.min(0.1, (jetzt - letzte) / 1000); letzte = jetzt;
     if(!imBild || document.hidden) return;
     if(st.laeuft && !st.bauend){
-      const tNeu = st.t + dt * st.tempo, nNeu = aktKapitel(tNeu);
-      if(nNeu !== st.kapitel){
+      const tNeu = st.t + dt * st.tempo * stimmeFaktor(), nNeu = aktKapitel(tNeu);
+      // Stimme spricht noch: am Kapitelende warten, bis der Satz zu Ende ist
+      const wartenAufStimme = nNeu !== st.kapitel && st.kapitel >= 0 && stimmeSprichtNoch(V.kapitel[st.kapitel].id);
+      if(wartenAufStimme){
+        st.t = Math.max(st.t, (nNeu >= 0 && nNeu < V.kapitel.length ? V.kapitel[nNeu].t : V.dauer) - 0.02);
+      } else if(nNeu !== st.kapitel){
         st.t = V.kapitel[nNeu].t; kapitelZeigen(nNeu);
+        stimmeStart(V.kapitel[nNeu].id);
         if(st.mitdenken && kapTxt(V.kapitel[nNeu].id).frage){ st.wartet = true; spielen(false); frageZeigen(kapTxt(V.kapitel[nNeu].id).frage, false); }
         else st.t = tNeu;
       } else st.t = tNeu;
@@ -654,7 +740,16 @@ export function starte(el, daten, opt){
   }
 
   // Bedienung
-  $("[data-spielen]").addEventListener("click", () => { st.wartet = false; spielen(!st.laeuft); });
+  $("[data-spielen]").addEventListener("click", () => { st.wartet = false; spielen(!st.laeuft); if(st.laeuft) stimmeWeiter(); else if(stimme.audio) stimme.audio.pause(); });
+  $("[data-stimme]").addEventListener("click", () => {
+    stimme.an = !stimme.an;
+    try{ localStorage.setItem("vv_stimme", stimme.an ? "an" : "aus"); }catch(e){}
+    stimmeKnopf();
+    if(!stimme.an) stimmeStopp();
+    else if(st.laeuft){ const n = Math.max(0, aktKapitel(st.t)); stimmeStart(V.kapitel[n].id); }
+  });
+  const sichtWechsel = () => { if(document.hidden && stimme.audio) stimme.audio.pause(); };
+  document.addEventListener("visibilitychange", sichtWechsel);
   $("[data-zurfrage]").addEventListener("click", () => {
     const f = $(".vv-md"); if(f) try{ f.scrollIntoView({ block: "center", behavior: ruhig ? "auto" : "smooth" }); }catch(e){}
   });
@@ -665,10 +760,10 @@ export function starte(el, daten, opt){
   $("[data-kapvor]").addEventListener("click", () => {
     const n = Math.max(0, aktKapitel(st.t));
     if(n >= V.kapitel.length - 1){ if(teaser){ spielen(false); teaserZeigen(); } return; }
-    springe(V.kapitel[n + 1].t + 0.01, true); spielen(true);
+    springe(V.kapitel[n + 1].t + 0.01, true); spielen(true); stimmeWeiter();
   });
   $("[data-halb]").addEventListener("click", () => { st.tempo = st.tempo === 1 ? 0.5 : 1; $("[data-halb]").setAttribute("aria-pressed", String(st.tempo === 0.5)); });
-  $("[data-vorn]").addEventListener("click", () => { springe(0, true); spielen(true); });
+  $("[data-vorn]").addEventListener("click", () => { springe(0, true); spielen(true); stimmeWeiter(); });
   $("[data-autokam]").addEventListener("click", () => { st.autoKam = !st.autoKam; $("[data-autokam]").setAttribute("aria-pressed", String(st.autoKam)); if(st.autoKam) kapitelZeigen(st.kapitel); });
   $("[data-md]").addEventListener("change", (e) => { st.mitdenken = e.target.checked; });
   $$("[data-var]").forEach((b) => b.addEventListener("click", () => { spielen(false); variante(b.dataset.var); }));
@@ -706,10 +801,12 @@ export function starte(el, daten, opt){
   raf = requestAnimationFrame(schleife);
 
   return {
-    zustand: () => ({ t: st.t, laeuft: st.laeuft, kapitel: st.kapitel, variante: st.variante, dauer: V.dauer, kamera: welt ? welt.kameraArt() : null, fehler3d: !$(".vv-fehler").hidden, bereit: !!welt && !st.bauend }),
+    zustand: () => ({ stimme: { an: stimme.an, verz: !!stimme.verz, kid: stimme.kid, spricht: !!(stimme.audio && !stimme.audio.paused && !stimme.audio.ended) }, t: st.t, laeuft: st.laeuft, kapitel: st.kapitel, variante: st.variante, dauer: V.dauer, kamera: welt ? welt.kameraArt() : null, fehler3d: !$(".vv-fehler").hidden, bereit: !!welt && !st.bauend }),
     springe, spielen, variante, kameraSetzen, welt: () => welt,
     zerstoeren(){
       st.aus = true; cancelAnimationFrame(raf);
+      stimmeStopp(); if(stimme.audio){ try{ stimme.audio.removeAttribute("src"); stimme.audio.load(); }catch(e){} }
+      document.removeEventListener("visibilitychange", sichtWechsel);
       if(ro) ro.disconnect(); if(io) io.disconnect(); if(frageIo) frageIo.disconnect();
       if(welt){
         try{
