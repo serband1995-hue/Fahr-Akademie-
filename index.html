@@ -570,6 +570,20 @@
      und öffnet ein Blatt zum Lesen. Das Wasserzeichen meidet die Ecke oben rechts
      (startWatermark), damit sich nichts überdeckt. Unter dem Video: "Wichtige Stellen"
      (zugeklappt) mit Sprung-Liste und Schalter zum Ausblenden. */
+  .tipp-flaeche{position:absolute;left:0;right:0;top:0;bottom:64px;z-index:3;pointer-events:none;
+    -webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;}
+  .tipp-flaeche.aktiv{pointer-events:auto;cursor:pointer;}
+  .tipp-zeichen{position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;
+    background:rgba(10,12,9,.5);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;}
+  .tipp-zeichen svg{width:30px;height:30px;fill:#fff;}
+  .tipp-sprung{position:absolute;top:50%;transform:translateY(-50%);padding:8px 14px;border-radius:999px;background:rgba(10,12,9,.5);
+    color:#fff;font-weight:700;font-size:14px;opacity:0;pointer-events:none;white-space:nowrap;direction:ltr;}
+  .tipp-sprung.l{left:12%;} .tipp-sprung.r{right:12%;}
+  .tipp-zeichen.zeigen,.tipp-sprung.zeigen{animation:tippBlink .7s ease-out;}
+  @keyframes tippBlink{0%{opacity:0;transform:translateY(-50%) scale(.85);}15%{opacity:1;}70%{opacity:1;}100%{opacity:0;}}
+  .tipp-zeichen.zeigen{animation-name:tippBlinkMitte;}
+  @keyframes tippBlinkMitte{0%{opacity:0;transform:scale(.85);}15%{opacity:1;transform:scale(1);}70%{opacity:1;}100%{opacity:0;}}
+  @media (prefers-reduced-motion: reduce){ .tipp-zeichen.zeigen,.tipp-sprung.zeigen{animation-duration:1.2s;} }
   .hw-knopf{position:absolute;top:6px;right:6px;z-index:6;max-width:70%;min-height:44px;
     display:flex;align-items:flex-start;justify-content:flex-end;padding:4px;border:none;background:none;
     cursor:pointer;font:inherit;opacity:0;visibility:hidden;transform:translateY(-4px);
@@ -9597,7 +9611,10 @@ async function openVideo(videoId){
     const embedUrl = "https://iframe.mediadelivery.net/embed/" + encodeURIComponent(data.library_id) + "/" +
       encodeURIComponent(data.bunny_video_id) + "?token=" + encodeURIComponent(data.token) +
       "&expires=" + encodeURIComponent(data.expires) +
-      (sprache !== "de" ? "&captions=" + encodeURIComponent(sprache) : "");
+      (sprache !== "de" ? "&captions=" + encodeURIComponent(sprache) : "") +
+      // 03.10.2026: Chromecast/AirPlay aus -- am Handy war die Steuerleiste zu breit, Abspielen
+      // und 10-s-Zurück wurden links abgeschnitten.
+      "&chromecast=false&disableAirplay=true";
 
     // Server hat den Fortschritt schon gespeichert — lokal sofort mitziehen,
     // damit Häkchen/Verlauf auch ohne Neu-Login sofort aktuell sind.
@@ -9638,12 +9655,14 @@ async function openVideo(videoId){
       krume +
       '<div class="player-wrap"><iframe src="' + esc(embedUrl) + '" ' +
       'style="border:0;width:100%;aspect-ratio:16/9;display:block;" allow="autoplay; fullscreen"></iframe>' +
+      '<div class="tipp-flaeche" id="tipp-flaeche" aria-hidden="true"><span class="tipp-zeichen"></span><span class="tipp-sprung l">« 10 s</span><span class="tipp-sprung r">10 s »</span></div>' +
       (hinweise.length ? '<button type="button" class="hw-knopf" id="hw-knopf" tabindex="-1" aria-hidden="true"><span class="hw-pille"><span class="hw-par-ic">§</span><span class="hw-pille-text"></span></span></button>' : "") +
       "</div>" +
       weiterBeiHtml + fehlerHtml + kapitelHtml + hinweisListeHtml(hinweise) +
       weiterBtn;
     startWatermark();
     playerSteuerungStarten(videoId);
+    tippFlaecheStarten();
     document.body.classList.add("video-offen");
     hinweiseStarten(hinweise);
     document.querySelectorAll("[data-springen]").forEach(function(b){
@@ -9709,7 +9728,10 @@ function playerSteuerungStarten(videoId){
       st.senden("addEventListener", "pause");
       if(st.wartend !== null){ const z = st.wartend; st.wartend = null; playerSpringen(z); }
     } else if(d.event === "timeupdate" && d.value){
-      st.spielt = true;
+      // ein verspätetes timeupdate nach "pause" soll den Zustand nicht umdrehen
+      if(!st.pauseSeit || Date.now() - st.pauseSeit > 800) st.spielt = true;
+      st.zeit = d.value.seconds; if(d.value.duration) st.dauer = d.value.duration;
+      tippFlaecheAn();
       if(hwSt) hinweisZeit(d.value.seconds);
       const jetzt = Date.now();
       if(jetzt - st.zuletzt > 5000){ st.zuletzt = jetzt; positionMerken(videoId, d.value.seconds, d.value.duration); }
@@ -9717,9 +9739,9 @@ function playerSteuerungStarten(videoId){
       st.spielt = false;
       positionLoeschen(videoId);
     } else if(d.event === "play"){
-      st.spielt = true;
+      st.spielt = true; st.pauseSeit = 0; tippFlaecheAn();
     } else if(d.event === "pause"){
-      st.spielt = false;
+      st.spielt = false; st.pauseSeit = Date.now();
     }
   };
   window.addEventListener("message", st.handler);
@@ -9739,6 +9761,48 @@ function playerSpringen(sek){
     }
   }, 2500);
 }
+/* ---- Tippen aufs Video (03.10.2026, Serband) ----
+   Einmal tippen = Anhalten/Weiter, Doppeltipp links = 10 s zurück, rechts = 10 s vor.
+   Die Fläche liegt über dem Bild, lässt aber unten 64 px frei: dort ist Bunnys Steuerleiste.
+   Erst aktiv, wenn das Video einmal läuft -- den ersten Start macht Bunny selbst (iPhone
+   verlangt dafür einen Tipp IM Player). */
+const TIPP_DOPPEL_MS = 280;
+function tippFlaecheAn(){ const f = document.getElementById("tipp-flaeche"); if(f) f.classList.add("aktiv"); }
+function tippZeichen(art, seite){
+  const f = document.getElementById("tipp-flaeche"); if(!f) return;
+  const el = art === "sprung" ? f.querySelector(".tipp-sprung." + seite) : f.querySelector(".tipp-zeichen");
+  if(art !== "sprung") el.innerHTML = art === "pause"
+    ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>'
+    : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+  el.classList.remove("zeigen"); void el.offsetWidth; el.classList.add("zeigen");
+}
+function tippFlaecheStarten(){
+  const f = document.getElementById("tipp-flaeche");
+  if(!f) return;
+  let warte = null, letzte = 0;
+  f.addEventListener("click", function(ev){
+    const st = playerSt;
+    if(!st || !st.bereit) return;
+    const r = f.getBoundingClientRect(), links = (ev.clientX - r.left) < r.width / 2;
+    const jetzt = Date.now();
+    if(warte && jetzt - letzte < TIPP_DOPPEL_MS){
+      // Doppeltipp: springen, Zustand (läuft/angehalten) bleibt
+      clearTimeout(warte); warte = null;
+      const ziel = Math.max(0, Math.min((st.dauer || 1e9) - 0.5, (st.zeit || 0) + (links ? -10 : 10)));
+      st.zeit = ziel;
+      st.senden("setCurrentTime", ziel);
+      tippZeichen("sprung", links ? "l" : "r");
+      return;
+    }
+    letzte = jetzt;
+    warte = setTimeout(function(){
+      warte = null;
+      if(st.spielt){ st.senden("pause"); st.spielt = false; st.pauseSeit = Date.now(); tippZeichen("pause"); }
+      else { st.senden("play"); st.spielt = true; st.pauseSeit = 0; tippZeichen("play"); }
+    }, TIPP_DOPPEL_MS);
+  });
+}
+
 /* ---- Hinweise im Video (02.10.2026, Serband) ----
    academy_videos.hinweise = [{id, t, titel, text, par, art, aktiv}]. Schüler sehen nur
    aktive (vom Serband freigegebene). Übersetzungen in academy_uebersetzungen

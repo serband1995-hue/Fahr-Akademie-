@@ -171,6 +171,12 @@ Konto-Schlüssel, den die Functions nicht haben).
   (bei Freigabe). Vorschaubilder: `academy-vorschaubild`, Vorschau gesperrter
   Videos: `academy-vorschau` (liefert nur die ersten N Sekunden, N in
   `academy_einstellungen.vorschau_sekunden`).
+- **Tippen aufs Video** (03.10.2026, Serband): eigene Fläche `.tipp-flaeche` über dem Bunny-iframe
+  (unten 64 px frei für Bunnys Steuerleiste): 1× tippen = Anhalten/Weiter, Doppeltipp links/rechts =
+  10 s zurück/vor (über player.js; `st.zeit` aus timeupdate). Erst aktiv, wenn das Video läuft – den
+  ersten Start macht Bunny (iPhone braucht den Tipp im Player). Embed mit `chromecast=false&disableAirplay=true`,
+  weil die Steuerleiste am Handy zu breit war (Abspielen links abgeschnitten). Die Knöpfe der Leiste
+  selbst stellt man nur in der Bunny-Bibliothek ein (Konto-Schlüssel, nicht in den Functions).
 - **Kapitel/Fehlerstellen** als jsonb `[{t, titel}]` / `[{t, text}]`; Sprünge im
   Player über das player.js-Protokoll (postMessage). Abspielstelle nur lokal
   (`localStorage.academy_pos`), nie auf dem Server.
