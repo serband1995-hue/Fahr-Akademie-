@@ -205,6 +205,18 @@ haben `unicode-bidi:plaintext`, sonst wird „§ 11 Abs. 2 StVO“ in RTL-Sprach
   der Szene (`kapitel[].kamera`, z. B. Übersicht/Oben). `grundKamera` in den Daten wird nicht mehr genutzt.
   Die Kompass-Szenen stammen aus dem öffentlichen Kompass-Repo – die Sperre
   schützt die Akademie-Oberfläche, nicht die Rohdaten.
+- **Stimme in „Verkehr verstehen“** (03.10.2026, Serband): Kapiteltexte werden vorgelesen
+  (ElevenLabs-Stimme „Julian“ über Higgsfield `text2speech_v2`/`elevenlabs`, Preset
+  95429266-c0ac-4137-a209-63b8812b0f23). Dateien im Repo: `verkehr/stimme/<sprache>/<szene>-<kapitel>-<stand>.mp3`
+  (48 kbit/s mono) + Verzeichnis `verkehr/stimme/<sprache>.json` `{ "<szene>/<kapitel>": {h, d, f} }`;
+  h = `stimmeStand(text)` (djb2 wie `hinweisStand`). Ändert sich ein Kapiteltext, passt h nicht mehr und
+  das Kapitel bleibt stumm – neu aufnehmen. Spieler: Knopf „Vorlesen“ (nur wenn es ein Verzeichnis für
+  die Sprache gibt; an/aus in `localStorage.vv_stimme`), mit Stimme läuft die Szene in Zeitlupe
+  (bis 35 %) und wartet am Kapitelende, bis der Satz zu Ende ist. Fertig: de, tr, ar (je 114 Kapitel).
+  Sprechtext ≠ Anzeigetext: „=“ → „:“, „4–7“ → „4 bis 7“; Türkisch „km/h“ → „saatte … kilometre“,
+  Klammern als Nebensatz (sonst überspringt die Stimme sie). Kontrolle: faster-whisper (small) +
+  Textvergleich (Werkzeuge im Scratchpad, Ablauf: Texte per SQL, Aufnahme, ffmpeg, Verzeichnis, Prüfung).
+  Kosten: rund 0,45 Higgsfield-Credits je Kapitel und Sprache.
 - **Hinweise im Video** (02.10.2026, Serband): `academy_videos.hinweise` = jsonb
   `[{id, t, titel, text, par, art, aktiv, ue_fuer}]`. Schüler sehen nur `aktiv: true` (filtert
   schon `academy-katalog`, die App nochmal). Oben rechts im Video blendet sich 8 s lang ein
