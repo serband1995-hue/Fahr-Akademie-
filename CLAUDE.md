@@ -1,10 +1,10 @@
-# Fahr-Akademie — Projektgedächtnis
+# Fahr-Akademie: notes for Claude
 
-Vanilla-JS-App (eine `index.html`, ~9.500 Zeilen) für Fahrschüler. Backend:
-Supabase-Projekt `fxgljvhpikjcejhghgbp` (eu-central-1). Nutzer teilweise
-minderjährig — entsprechend vorsichtig mit Daten umgehen.
+**Always reply to Serban in German**: simple, short, no jargon. He works on his phone.
 
-## Arbeitsregeln (nicht verhandelbar)
+Vanilla-JS app for driving students (one `index.html`, ~15,000 lines). Backend: Supabase project `fxgljvhpikjcejhghgbp` (eu-central-1). Videos on Bunny Stream. Users are partly minors: be careful with data.
+
+## Arbeitsregeln (nicht verhandelbar, Wortlaut von Serban)
 
 1. **Fertig bauen, dann kontrolliert Serband** (ersetzt seit 02.10.2026 „erst besprechen,
    auf Los warten“): Aufträge komplett durchziehen – bauen, doppelt prüfen, live stellen –
@@ -21,243 +21,26 @@ minderjährig — entsprechend vorsichtig mit Daten umgehen.
 6. **Geheimnisse nicht durch den Chat schleusen.** Secrets bleiben im Supabase
    Vault oder in Umgebungsvariablen.
 
-## Handy zuerst (26.09.2026)
+## Always
+- **Phone first:** build and check every change at 360–412 px (and landscape): nothing cut off, nothing scrolls sideways, no buttons on images, long TR/AR texts wrap.
+- **Everything students see in all 18 languages** (`t("…")`), never hard-coded German. Admin area stays German.
+- Database change → run `get_advisors` afterwards. Edge Functions → `verify_jwt: false` (they check access themselves). Prove security claims with real tests.
+- Never write to the Fahrlehrer-Kompass Supabase project (`oectrvkjunntzsggyhxv`).
+- Unclear? Don't guess, ask.
 
-Die Schüler nutzen die App fast ausschließlich auf dem **Handy**; nur Serband
-arbeitet am Tablet. Jede Änderung zuerst auf 360–412 px Breite bauen und prüfen:
-nichts abgeschnitten, nichts seitlich wischbar, was wie abgehackt wirkt, keine
-Knöpfe auf dem Bild, lange Texte (TR/AR) brechen um. Die automatische Prüfung
-dafür (Überstand, Abschneiden, Überdeckung, Knopfgrößen) lief für
-"Verkehr verstehen" über alle Szenen und Sprachen.
+## Detailed project memory: read before touching these areas
+`docs/PROJEKTGEDAECHTNIS.md` (the former long CLAUDE.md, unchanged) has the details that cannot be seen in the code. Read the relevant section before working on:
+- languages and translations (section "Sprachen")
+- subtitles (section "Untertitel")
+- login, roles, candidates vs. students, locks, video tokens (section "Architektur-Grenzen")
+- known error sources (section "Bekannte Fehlerquellen")
+Add new detail knowledge there or in the vault, and keep this file short: it is sent with every message.
 
-## Sprachen (29.09.2026)
-
-18 Sprachen (02.10.2026): de, tr, en, ar (rtl), es, ru, sr (lateinisch), ckb (Kurdisch Sorani, rtl),
-kmr (Kurdisch Kurmancî), hi, ur (rtl), vi, rif (Tarifit wie in Nador, lateinisch) – und seit 02.10.2026 fa (Farsi, rtl,
-Anrede شما, auch für Dari-Sprecher), ps (Paschtu, rtl, تاسو), el (Griechisch), am (Amharisch, Ge'ez-Schrift, höflich እርስዎ),
-ti (Tigrinya, eritreisch, Ge'ez, höflich ንስኹም; Ampel = መብራህቲ ትራፊክ). Diese fünf stehen im eigenen Block
-SPRACHPAKETE2 (index.html/spieler.js) – der erste Block bleibt unberührt. Darija bewusst nicht
-(Entscheidung Serband: Marokkaner lesen Hocharabisch). Flaggen: Kurdisch = Kurdistan-Flagge als kleines SVG
-(`SPRACHEN[].bild`, kein Emoji vorhanden; `#` im data:-Bild immer als `%23`, sonst lädt es nicht), Tarifit = Marokko 🇲🇦
-(Entscheidung Serband, 01.10.2026). Farsi = Löwe-und-Sonne-Flagge (SVG `LOEWE_SONNE_FLAGGE`), Paschtu 🇦🇫, Griechisch 🇬🇷,
-Amharisch 🇪🇹, Tigrinya 🇪🇷 (Entscheidung Serband, 02.10.2026). Mehrdeutige Farbwörter beachten: Paschtu شین = grün UND
-blau (blau = آبي), Tarifit azegzaw (blau = aziza). Die Texte der acht neuen
-Sprachen stehen im Block SPRACHPAKETE in index.html bzw. spieler.js (erzeugt aus geprüften JSON-Dateien);
-die LEEREN Einträge `ru:{}` usw. müssen im I18N-Literal stehen, sonst setzt `if(!I18N[sprache])` beim Start
-auf Deutsch zurück. Sorani und Tarifit sollten von Muttersprachlern gegengelesen werden. Web-Recherche eingearbeitet (01.10.2026): Tarifit nach El Aissati (Nador-Lehrbuch)/Serhoual – blau = aziza
-(nicht azegzaw), „iwa“ = also (waha = nur!), waqila = vielleicht, weiß = acemlal; Sorani nach Rudaw/K24/Wikipedia –
-Ampel = ترافیک لایت, Öl = ڕۆن (nicht زەیت), Kupplung = کلاچ, praktische Prüfung = پراکتیکی. Tarifit (02.10.2026): Ölmessstab = aɛekkaz n uɛebbaṛ n zzit, Haubenstab = aɛekkaz (vorher
-„ajdiḍ“ = Vogel, in 6 Untertitelzeilen korrigiert); Blau-Reste azeṛqan → aziza/taziza korrigiert.
-Offen für Muttersprachler:
-rif ṭumubil→ṭṭumubin, ufus→yeffus (rechts), Lehnwörter ligno/lbulan/lfiṛu/lpanu; ckb مافی تێپەڕین (Vorfahrt), کاپۆ (Motorhaube).
-**academy-katalog liefert Übersetzungen nur für `body.sprache`** – mit 13 Sprachen sind es >1000 Zeilen,
-Supabase liefert je Abfrage höchstens 1000 (ohne sprache: nur tr/en/ar/es für alte App-Stände). Regel (Serband): **alles, was
-Schüler sehen, in allen Sprachen** – kein fester deutscher Text im Schülerteil,
-immer `t("…")` mit Schlüssel in allen Sprachen (fehlt einer, erscheint Deutsch).
-Nur die Rechtstexte (Impressum, Datenschutz, AGB, Widerruf) und die StVO-PDFs
-bleiben deutsch; die Übersicht sagt das in der jeweiligen Sprache. Inhalte aus
-der Datenbank (Bereiche, Themen, Videotitel/-beschreibungen) in
-`academy_uebersetzungen` – neue Videos brauchen dort alle vier Fremdsprachen.
-Textkarten "Nützliches": `NUETZLICH_UE`. Die Verwaltung bleibt deutsch.
-Neue Sprache = `SPRACHEN` (+ leerer Eintrag im I18N-Literal), `I18N`, `PRUEFUNGSTAG`, `NUETZLICH_UE`, `UI` in
-`verkehr/spieler.js` (+ RTL-Liste dort), `SPRACHEN` in der Edge Function `academy-szene`, Spalte in `untertitel.zeilen` + `vtt()`,
-`werkzeuge/szenen-texte/beschriftungen.json`,
-`werkzeuge/szenen-texte/<sprache>.json` und die Beschriftungen im
-Szenen-Export (`szenen-export.js`, `werkzeuge/szenen/*.js`).
-Sprachwahl (30.09.2026): EIN Knopf mit Flagge (Login + Konto), die Auswahl öffnet ein
-Blatt (`spracheWaehlen()`); Flagge steht in `SPRACHEN[].flagge` (Arabisch: Jordanien 🇯🇴, 30.09.2026; vorher
-neutral "ع").
-
-## Untertitel (30.09.2026)
-
-Nur Technik-Videos und Prüfungsstrecken (Entscheidung Serband). Edge Function
-`academy-untertitel` (verify_jwt false; nur Super-Admin-JWT oder intern per pg_net
-mit Header `x-intern` = Vault-Geheimnis `untertitel_intern`). Ablauf: Bunny erkennt
-NUR Deutsch (`start`, 0,10 $/Min) → deutschen Text korrigieren und mit den
-App-Fachbegriffen übersetzen → `hochladen` als Spur mit reinem Sprachcode ("tr") →
-`loeschen` der "-auto"-Spuren. Bunnys eigene Übersetzung hatte Fachfehler
-(Abblendlicht → Fernlicht) und verrutschte Zeiten – nicht verwenden. Sprachen in
-`academy_einstellungen.untertitel_sprachen`. Die App schaltet Untertitel nur bei
-Fremdsprachen automatisch ein (`captions=<sprache>`), Deutsch ohne.
-**Hochladen immer mit `paket`** (mehrere Spuren + Löschen nacheinander in EINEM
-Aufruf): parallele Aufrufe an dasselbe Video überschreiben bei Bunny gegenseitig
-die Spurenliste (Dateien da, Player sieht sie nicht). `start` braucht
-`targetLanguages: ["de"]` – eine leere Liste lehnt Bunny ab. Die automatische
-Erkennung erfindet in Stillen Sätze ("Untertitel im Auftrag des ZDF",
-"Copyright WDR", "Das war's für heute") – beim Korrigieren streichen.
-Fertig (30.09.2026): ALLE 38 Videos in de/en/tr/ar/es (Entscheidung Serband: alles außer
-den Originalprüfungen; kein Video ist stumm). Ausgeschlossen – auch in der Function hart
-gesperrt: Bereich "Prüfung" und die IDs in `academy_einstellungen.untertitel_ausgeschlossen`
-(B., N. H. ×2, S.). Neue Videos brauchen die Bunny-Erkennung nicht mehr:
-`werkzeuge/untertitel/` erkennt den Ton kostenlos, `zeilen_anlegen` legt die ersten
-deutschen Zeilen an (nur wenn das Video noch keine hat), dann Deutsch korrigieren,
-übersetzen, `abgleich.py --setzen`, `paket` mit `untertitel.vtt(...)`.
-
-**Quelle der Untertitel ist die Tabelle `untertitel.zeilen`** (eigenes Schema, von außen
-nicht erreichbar): je Zeile Beginn/Ende, `de` + alle Übersetzungen, `anker` (Wortzeiten).
-Bunny-Dateien werden daraus gebaut: `untertitel.vtt(video, sprache, videolänge_s)` teilt
-lange Sätze fürs Handy (max. 2 Zeilen à ~40 Zeichen, Stücke ≤ 76 Zeichen), verteilt die
-Zeit sprechgenau über die Anker und setzt bei Arabisch das RTL-Zeichen. Neue Sprache =
-Spalte ergänzen + `vtt()` + `untertitel_sprachen`; hochladen per `paket` mit
-`untertitel.vtt(...)` direkt im SQL. Aussehen (weiße Schrift auf schwarzem Balken, 18 px
-am Handy) kommt aus der Bunny-Bibliothek – nichts zu tun.
-**Synchron zum Ton** (`werkzeuge/untertitel/`): `ton-erkennen.py` erkennt jedes Wort mit
-Zeit (faster-whisper), `abgleich.py` richtet die Zeilen daran aus (globale Ausrichtung im
-±6-s-Korridor; gedehnte Wörter vom Ende her gekürzt; Lesezeit max. 17 Zeichen/s; keine
-Überlappung). Zugang nur über einen lokalen Schlüssel, dessen SHA-256 VORÜBERGEHEND im
-Vault als `untertitel_abgleich_hash` liegt – danach löschen (Stand 02.10.2026: mit Zufallswert
-überschrieben, der alte Schlüssel ist nachweislich abgelehnt; Eintrag und die leere Hilfstabelle
-`untertitel.hochladen_neu5` können im Dashboard gelöscht werden – Lösch-Befehle über die
-Claude-Verbindung hängen an einer Bestätigung).
-**CDN-Falle:** Bunny liefert Untertitel mit `max-age` 30 Tage aus und ignoriert `?ver=`.
-Überschreibt man eine Spur, sehen Knoten, die sie schon geholt hatten, bis zum Leeren des
-Caches die alte. Nach dem Überschreiben: Pull-Zone-Cache in Bunny leeren (braucht den
-Konto-Schlüssel, den die Functions nicht haben).
-
-## Vor jedem Bau-Schritt
-
-- Betrifft es die Datenbank: `get_advisors` danach ausführen (security +
-  performance).
-- Betrifft es eine Edge Function: `verify_jwt` ausdrücklich auf `false`
-  (alle 21 Functions sind bewusst öffentlich, machen ihre eigene Prüfung).
-- Sicherheitsbehauptungen mit echten Tests beweisen (RLS-Simulation,
-  Transaktion + Rollback), nicht nur behaupten.
-
-## Architektur-Grenzen, die man dem Code nicht ansieht
-
-- **Schüler-Login** läuft NICHT über Supabase Auth, sondern über eigene
-  Sessions (`academy_sessions`, Telefon+PIN gegen `academy-login`). Nur
-  **Admins** nutzen echtes Supabase Auth.
-- **Rollen:** `academy_admin_users.rolle` ist `super_admin` oder `schule`.
-  RLS-Policies laufen über die SECURITY-DEFINER-Funktionen
-  `academy_my_role()` / `academy_my_schule()`.
-- **Kandidaten vs. Schüler sind bewusst getrennte Tabellen.**
-  `academy_kandidaten` = Rohimport aus Fahrlehrer-Kompass, unfreigeschaltet.
-  `academy_schueler` = echter Zugang mit PIN. Die Ein-Klick-Freischaltung
-  (`academy-zugang-aktivieren`) macht daraus einen Schüler.
-- **Kompass-Brücke:** geteiltes Geheimnis `kompass_bridge_secret` im Vault
-  beider Projekte, per `get_decrypted_secret()`. `academy-kandidaten-sync`
-  schreibt NIE in `academy_schueler` — nur in `academy_kandidaten`. Ein
-  Kompass-Fehler kann also nie bestehende Zugänge/PINs verändern.
-- **Prüfungsstrecken gehören zum Vollzugang** (Entscheidung Serband,
-  26.09.2026 — ersetzt den früheren Satz "Prüfungsvideos sind bewusst ohne
-  Sperre", der nicht mehr dem Code entsprach). Sie sind wie alle anderen
-  Videos über `academy-video-token` gesperrt; eine einzelne Strecke kann per
-  `academy_videos.gratis` als Kostprobe freigegeben werden.
-- **Abmelden nur mit eindeutigem Code** (26.09.2026): Die App meldet Schüler
-  nur bei `session_ungueltig`, `session_abgelaufen`, `zugang_gesperrt`,
-  `zugang_abgelaufen` oder `schule_pausiert` ab (Feld `code` in der Antwort
-  der Edge Functions). Neue Ablehnungsgründe brauchen einen eigenen Code,
-  sonst bleibt der Schüler angemeldet — das ist Absicht.
-- **Archivieren statt Löschen** (26.09.2026): Schüler bekommen `archiviert_am`
-  (Zugang ruht, `aktiv=false`, vorheriger Stand in `archiv_vorher_aktiv`),
-  Videos `ausgeblendet=true` (auch `academy-video-token` lehnt sie ab).
-  Endgültig löschen: nur Super-Admin, nur mit Eingabe von Name/Titel; die
-  Löschrichtlinie für Partner auf `academy_schueler` ist entfernt. Das
-  Protokoll-Feld `akteur` setzt ein Trigger aus `auth.uid()`.
-- **Kein Lernverlauf in der Verwaltung** (26.09.2026): `academy_fortschritt`
-  wird im Admin nicht mehr geladen; "Inaktiv" = keine Anmeldung seit 14 Tagen.
-- **Katalog nur für Angemeldete** (26.09.2026): Schüler laden Themen/Videos/
-  Prüfer über die Edge Function `academy-katalog` (prüft die Schüler-Session;
-  Verwaltung per Admin-JWT für die Vorschau). Der direkte Lesezugriff mit dem
-  anon-Key wird mit `db/nach-livegang-stufe3.sql` geschlossen — ERST nachdem
-  diese App-Version live ist.
-- **Video-Status** (26.09.2026): `academy_videos.status` = entwurf |
-  verarbeitung | bereit | live. Nur `live` sehen Schüler (Katalog, Token,
-  Vorschau). Hochladen über `academy-upload` (TUS direkt zu Bunny, API-Key
-  bleibt auf dem Server), Push erst beim Veröffentlichen.
-- **Bunny schützt Dateien nur per Referer** (Stand 26.09.2026, geprüft).
-  Deshalb verlässt `bunny_video_id` den Server nur über `academy-video-token`
-  (bei Freigabe). Vorschaubilder: `academy-vorschaubild`, Vorschau gesperrter
-  Videos: `academy-vorschau` (liefert nur die ersten N Sekunden, N in
-  `academy_einstellungen.vorschau_sekunden`).
-- **Tippen aufs Video** (03.10.2026, Serband): eigene Fläche `.tipp-flaeche` über dem Bunny-iframe
-  (unten 64 px frei für Bunnys Steuerleiste): 1× tippen = Anhalten/Weiter, Doppeltipp links/rechts =
-  10 s zurück/vor (über player.js; `st.zeit` aus timeupdate). Erst aktiv, wenn das Video läuft – den
-  ersten Start macht Bunny (iPhone braucht den Tipp im Player). Embed mit `chromecast=false&disableAirplay=true`,
-  weil die Steuerleiste am Handy zu breit war (Abspielen links abgeschnitten). Die Knöpfe der Leiste
-  selbst stellt man nur in der Bunny-Bibliothek ein (Konto-Schlüssel, nicht in den Functions).
-- **Kapitel/Fehlerstellen** als jsonb `[{t, titel}]` / `[{t, text}]`; Sprünge im
-  Player über das player.js-Protokoll (postMessage). Abspielstelle nur lokal
-  (`localStorage.academy_pos`), nie auf dem Server.
-- **supabase-js liegt im Repo** (`vendor/`, feste Version). Bei einem Update
-  neue Datei mit neuer Versionsnummer anlegen, Script-Tag und `sw.js`
-  (STATIC_ASSETS + CACHE_NAME) anpassen.
-- **Logo** ist die Datei `logo-264.jpg` (nicht mehr im HTML eingebettet), im
-  Service Worker vorgeladen. Neues Logo = neuer Dateiname + `sw.js` anpassen.
-- **Anklickbare `<div>`s** bekommen automatisch `role="button"`/`tabindex`
-  (`KLICK_FLAECHEN` + `tastaturSystemStarten`). Neue Klickflächen mit
-  `data-…`-Attribut dort eintragen — oder gleich `<button>` verwenden.
-- **Verkehr verstehen** (`verkehr/`, Stufe 6): eigener 3D-Motor `motor.js` auf
-  three.js (`vendor/three-0.186.1.min.js`, fest), Stadt/Autobahn-Welt und
-  Verkehrsteilnehmer in `stadt.js`, Bedienung in `spieler.js` (lädt die App erst
-  beim Öffnen einer Szene per `import()`). Eine Szene ist eine reine Funktion der
-  Zeit – Springen, Anhalten, halbes Tempo ohne Nebenwirkungen. Mitdenken OHNE
-  Bewertung (E6 = a): keine Antwortknöpfe, kein Rot/Grün, nichts gespeichert.
-  **Szenendaten liegen NICHT im Repo**, sondern in `academy_szenen` (kein
-  öffentlicher Lesezugriff; nur Super-Admin liest/ändert Kostprobe/Aktiv).
-  Ausgeliefert nur über `academy-szene`: Vollzugang, Kostprobe oder Gratis-Thema
-  → ganze Szene, sonst nur Kapitel 1 (`teaser.gesperrt` = Titel der übrigen).
-  Erzeugt werden die Daten mit `werkzeuge/szenen-export.js` (tastet die
-  Kompass-Lernszenen und `werkzeuge/szenen/*.js` ab; Übersetzungen in
-  `werkzeuge/szenen-texte/<sprache>.json`, gleiche Struktur wie `texte.de`). Paragraphen-Etiketten (`.vv-regel`, `.par`)
-haben `unicode-bidi:plaintext`, sonst wird „§ 11 Abs. 2 StVO“ in RTL-Sprachen verdreht.
-  **Cockpit (01.10.2026):** In der Fahrersicht zeichnet `motor.js` Innen- und Außenspiegel live
-  (eigene Kameras in kleine Bildpuffer, spiegelverkehrt, jedes 2.–4. Bild) und eine dunkle Leiste;
-  Tacho, Blinkerpfeile und Schulterblick-Auge sind HTML in `spieler.js` (Maße aus `welt.cockpitMasse()`).
-  Der Spiegel mit Spiegelblick-Signal leuchtet gelb. Handy quer + Fahrersicht = Vollbild.
-  **Kamera (01.10.2026, Serband):** Standard ist in ALLEN Szenen „Folgen“ (`schraeg`); der Schalter
-  „Kamera folgt der Erklärung“ startet aus – erst wenn man ihn einschaltet, greifen die Kapitel-Kameras
-  der Szene (`kapitel[].kamera`, z. B. Übersicht/Oben). `grundKamera` in den Daten wird nicht mehr genutzt.
-  Die Kompass-Szenen stammen aus dem öffentlichen Kompass-Repo – die Sperre
-  schützt die Akademie-Oberfläche, nicht die Rohdaten.
-- **Stimme in „Verkehr verstehen“** (03.10.2026, Serband): Kapiteltexte werden vorgelesen
-  (ElevenLabs-Stimme „Julian“ über Higgsfield `text2speech_v2`/`elevenlabs`, Preset
-  95429266-c0ac-4137-a209-63b8812b0f23). Dateien im Repo: `verkehr/stimme/<sprache>/<szene>-<kapitel>-<stand>.mp3`
-  (48 kbit/s mono) + Verzeichnis `verkehr/stimme/<sprache>.json` `{ "<szene>/<kapitel>": {h, d, f} }`;
-  h = `stimmeStand(text)` (djb2 wie `hinweisStand`). Ändert sich ein Kapiteltext, passt h nicht mehr und
-  das Kapitel bleibt stumm – neu aufnehmen. Spieler: Knopf „Vorlesen“ (nur wenn es ein Verzeichnis für
-  die Sprache gibt; an/aus in `localStorage.vv_stimme`), mit Stimme läuft die Szene in Zeitlupe
-  (bis 35 %) und wartet am Kapitelende, bis der Satz zu Ende ist. Fertig: de, tr, ar (je 114 Kapitel).
-  Sprechtext ≠ Anzeigetext: „=“ → „:“, „4–7“ → „4 bis 7“; Türkisch „km/h“ → „saatte … kilometre“,
-  Klammern als Nebensatz (sonst überspringt die Stimme sie). Kontrolle: faster-whisper (small) +
-  Textvergleich (Werkzeuge im Scratchpad, Ablauf: Texte per SQL, Aufnahme, ffmpeg, Verzeichnis, Prüfung).
-  Kosten: rund 0,45 Higgsfield-Credits je Kapitel und Sprache.
-- **Hinweise im Video** (02.10.2026, Serband): `academy_videos.hinweise` = jsonb
-  `[{id, t, titel, text, par, art, aktiv, ue_fuer}]`. Schüler sehen nur `aktiv: true` (filtert
-  schon `academy-katalog`, die App nochmal). Oben rechts im Video blendet sich 8 s lang ein
-  halbdurchsichtiger §-Knopf ein (Video läuft weiter); Antippen hält an und öffnet ein Blatt.
-  Unter dem Video „Wichtige Stellen“ (zugeklappt, Sprung-Liste, Schalter
-  `localStorage.academy_hinweise_aus`). Das Wasserzeichen meidet die Ecke oben rechts. Handy quer
-  = Video füllt den Bildschirm (`body.video-offen`), damit die Hinweise sichtbar bleiben –
-  Bunnys eigenes Vollbild zeigt keine App-Einblendungen. Übersetzungen in
-  `academy_uebersetzungen` (art `video`, feld `hinweis:<id>:titel|text`); sie gelten nur, wenn
-  `ue_fuer` = `hinweisStand()` des deutschen Textes ist – ändert jemand den deutschen Text, sehen
-  Schüler Deutsch statt einer veralteten Übersetzung. Pflege: Verwaltung → Video bearbeiten.
-  Werkzeug: `sprachen_werkzeug_setzen('hinweise','de',…)` / `('hinweis_ue',<sprache>,…)`.
-  Originalprüfungen haben keine Hinweise (wie bei den Untertiteln).
-- **Prüfer nur mit Initialen** (01.10.2026, Entscheidung Serband): `academy_pruefer.name`,
-  Videotitel/-beschreibungen (alle Sprachen) und die Titel bei Bunny tragen nur Initialen
-  ("N. H."; in ar/ckb/ur mit LRM dahinter, damit der Punkt am Kürzel bleibt). Der volle Name
-  steht als Vermerk in `academy_pruefer_vermerk` (RLS: nur Super-Admin; geprüft) und erscheint
-  nur in der Verwaltung klein in Klammern. Neue Prüfer: Formular nimmt den vollen Namen, die
-  App bildet die Initialen. Keine echten Prüfernamen ins Repo. Bunny-Titel an den App-Titel
-  angleichen: `academy-untertitel` Aktion `bunny_titel` mit `setzen:true`.
-- **Zweites Supabase-Projekt `oectrvkjunntzsggyhxv`** (Fahrlehrer-Kompass) ist
-  ein separates Projekt mit eigenem Chat. Hier nur als Bridge-Partner
-  relevant — nicht versehentlich hineinschreiben.
-
-## Bekannte Fehlerquellen
-
-- `academy_schueler.klasse` ist NOT NULL mit Default `'B'`. Ein explizit
-  mitgeschicktes `null` hebelt den Default aus und lässt den Insert
-  scheitern (siehe `academy-zugang-aktivieren` v2-Fix).
-- Doppelte Variablendeklarationen (`letzter`) haben schon einmal zu weißem
-  Bildschirm geführt — vor jedem Merge Syntax prüfen.
-- Service Worker: HTML/API-Aufrufe müssen Network First sein, nie Cache
-  First — sonst sehen Schüler dauerhaft alte Stände.
-
-## Bei Unklarheit
-
-Nicht raten. Fragen. Eine falsche Annahme kostet mehr Zeit als eine
-Rückfrage.
+## Memory: Obsidian vault
+Serban's long-term memory lives in the private repo `serband1995-hue/obsidian-vault`.
+- **Run `/vault` at the start of every session.** It loads his profile, binding working rules and this project's overview (~6k tokens instead of re-reading code or old chats).
+- If the vault is missing: `add_repo` (owner `serband1995-hue`, repo `obsidian-vault`, access `push`), clone to `/home/user/obsidian-vault`, then `/vault`.
+- Read only the notes the task needs (start from the index). Never the whole vault.
+- Code beats vault: verify the real code before changing it; fix the vault if it is outdated.
+- End of a larger task, or when Serban says "Vault aktualisieren": follow `CLAUDE.md` in the vault (session log, update notes, push to vault `main`).
+- New task = new session: suggest it when a session gets long and the next task is unrelated.
