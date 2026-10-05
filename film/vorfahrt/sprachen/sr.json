@@ -1,7 +1,7 @@
 {
  "titel": "Prvenstvo prolaza – ko prolazi prvi?",
  "ui_ueber": "Pregled: prvenstvo prolaza za 5 minuta",
- "ui_intro": "Kratak film bez zvuka: sve piše na slici. Možeš da zaustaviš film ili izabereš poglavlje kad god želiš.",
+ "ui_intro": "Kratak film bez zvuka: sve piše na slici. Možeš da zaustaviš film ili da izabereš poglavlje kad god želiš.",
  "ui_start": "Pokreni film",
  "ui_pause": "Zaustavi",
  "ui_weiter": "Nastavi",
@@ -40,7 +40,7 @@
  "k3_p4": "Nastavljaš tek kad drugog ne ugrožavaš niti bitno ometaš.",
  "k3_p5": "Iz suprotnog smera važi isto: i tamo prvenstvo prolaza ima ko dolazi zdesna.",
  "k3_p6": "Tipična greška: ne pogledati udesno ili se jednostavno ubaciti.",
- "k3_merk": "Pravilo desne strane važi samo ako ništa više ne kaže drugačije.",
+ "k3_merk": "Pravilo desne strane važi samo ako nijedno više pravilo ne kaže drugačije.",
  "k4_kicker": "Vozila iz suprotnog smera",
  "k4_titel": "Skretanje levo",
  "k4_pill": "ispred drugog",
