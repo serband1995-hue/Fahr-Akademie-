@@ -1,7 +1,7 @@
 {
  "titel": "Mafê pêşîyê – kî pêşî diçe?",
  "ui_ueber": "Nêrîna giştî: Mafê pêşîyê di 5 deqeyan de",
- "ui_intro": "Fîlmeke kurt bê deng: Her tişt di wêneyê de wek nivîs e. Tu dikarî her dem raweستî an beşekê hilbijêrî.",
+ "ui_intro": "Fîlmeke kurt bê deng: Her tişt di wêneyê de wek nivîs e. Tu dikarî her dem bisekinî an beşekê hilbijêrî.",
  "ui_start": "Fîlmê dest pê bike",
  "ui_pause": "Raweste",
  "ui_weiter": "Bidomîne",
@@ -21,7 +21,7 @@
  "s1_name": "Polîs",
  "s1_text": "Nîşan û fermanên polîsê ji hemû qaîdeyên din, çirayên trafîkê û nîşanan pêşîtir in.",
  "s1_plus": "Hingê jî divê tu bi xwe baldar bî.",
- "s2_name": "Çiraya trafîkê",
+ "s2_name": "Çira",
  "s2_text": "Ronahiyên trafîkê ji nîşanên mafê pêşîyê û rast berî çep pêşîtir in.",
  "s2_plus": "Bi kesk jî divê tu baldar bî.",
  "s3_name": "Nîşan",
