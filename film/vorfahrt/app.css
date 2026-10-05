@@ -43,3 +43,10 @@
 .vf-text p { margin:0 0 6px; }
 .vf-text .vf-ref { color:var(--muted,#6F6857); font-size:13px; }
 @media (prefers-reduced-motion: reduce) { .vf-szenen .stage { transition:none; } }
+/* Paragrafen-Verweise nie verdrehen (RTL-Sprachen), Regel 8 der Sprachen-Notiz */
+.vf-szenen .rf, .vf-szenen .step .rf, .vf-text .vf-ref { unicode-bidi:plaintext; }
+/* Schriften ohne Playfair-Zeichen (ar, ckb, ur, hi, fa, ps, el, am, ti): Überschriften in Barlow, mehr Zeilenhöhe */
+.vf-barlow { --vf-titel:var(--ff-body,'Barlow',sans-serif); }
+.vf-barlow .ttl, .vf-barlow .nm, .vf-barlow .merk, .vf-barlow .bigcard, .vf-barlow .vf-kopf, .vf-barlow .vf-text h3 { font-weight:700; }
+.vf[lang="ur"] .vf-szenen :is(.pt .tx,.step .tx,.step .px,.sub,.merk,.ttl,.step .nm), .vf[lang="ur"] .vf-text, .vf[lang="ur"] .vf-intro { line-height:1.7; }
+.vf[lang="ps"] .vf-szenen :is(.pt .tx,.step .tx,.step .px,.sub,.merk,.ttl,.step .nm), .vf[lang="ps"] .vf-text, .vf[lang="ps"] .vf-intro { line-height:1.55; }

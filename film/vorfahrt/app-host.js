@@ -4,6 +4,7 @@
      zeichen  Pfad zum Ordner mit den Verkehrszeichen (SVG)
    Voraussetzung: GSAP ist als window.gsap geladen (vendor/gsap-3.14.2.min.js). */
 const RTL_SPRACHEN = ["ar", "ckb", "ur", "fa", "ps"];
+const BARLOW_SPRACHEN = ["ar", "ckb", "ur", "hi", "fa", "ps", "el", "am", "ti"];   // Playfair hat diese Schriften nicht
 const SVG = {
   play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>',
   pause: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>',
@@ -20,7 +21,7 @@ export function starte(platz, opt) {
   if (!document.getElementById("vf-css")) { const s = document.createElement("style"); s.id = "vf-css"; s.textContent = CSS; document.head.appendChild(s); }
   const el = (tag, cls, text) => { const d = document.createElement(tag); if (cls) d.className = cls; if (text != null) d.textContent = text; return d; };
 
-  const wurzel = el("section", "vf" + (rtl ? " vf-rtl" : "")); wurzel.lang = lang;
+  const wurzel = el("section", "vf" + (rtl ? " vf-rtl" : "") + (BARLOW_SPRACHEN.indexOf(lang) >= 0 ? " vf-barlow" : "")); wurzel.lang = lang;
   wurzel.setAttribute("aria-label", tx("titel"));
   wurzel.appendChild(el("h2", "vf-kopf", tx("ui_ueber")));
   wurzel.appendChild(el("p", "vf-intro", tx("ui_intro")));
