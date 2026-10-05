@@ -60,7 +60,7 @@
     const d = document.createElement("div");
     d.className = "sign " + (cls || "");
     d.style.cssText = `left:${x}px;top:${y}px;width:${size}px;height:${size}px;margin:${-size / 2}px 0 0 ${-size / 2}px`;
-    d.innerHTML = `<img src="assets/zeichen/${file}" alt="" width="${size}" height="${size}">`;
+    d.innerHTML = `<img src="${BK.zeichenBase}${file}" alt="" width="${size}" height="${size}">`;
     parent.appendChild(d); return d;
   }
   function badge(parent, txt, x, y, cls) {
@@ -68,10 +68,12 @@
     d.className = "badge " + (cls || ""); d.textContent = txt;
     d.style.cssText = `left:${x}px;top:${y}px`; parent.appendChild(d); return d;
   }
-  function pill(parent, txt, x, y, rot) {
+  /* anchor: "m" (Mitte, Standard), "l" (linke Kante bei x), "r" (rechte Kante bei x): so wächst ein langer Text weg vom Pfeil */
+  function pill(parent, txt, x, y, rot, anchor) {
     const d = document.createElement("div");
     d.className = "pill"; d.textContent = txt;
-    d.style.cssText = `left:${x}px;top:${y}px;transform:translate(-50%,-50%) rotate(${rot || 0}deg)`; parent.appendChild(d); return d;
+    const tr = anchor === "l" ? "translate(0,-50%)" : anchor === "r" ? "translate(-100%,-50%)" : "translate(-50%,-50%)";
+    d.style.cssText = `left:${x}px;top:${y}px;transform:${tr} rotate(${rot || 0}deg);transform-origin:${anchor === "l" ? "0 50%" : anchor === "r" ? "100% 50%" : "50% 50%"}`; parent.appendChild(d); return d;
   }
   function arrow(parent, x, y, rot, len) {
     len = len || 150;
@@ -132,5 +134,12 @@
   function pulse(tl, el, t0, t1) {
     for (let t = t0; t < t1 - 1.2; t += 1.2) { tl.to(el, { scale: 1.14, duration: 0.6, ease: "sine.inOut" }, t); tl.to(el, { scale: 1, duration: 0.6, ease: "sine.inOut" }, t + 0.6); }
   }
-  window.BK = { P, CARS, BOX, carSVG, makeCar, carBits, roadSVG, sign, badge, pill, arrow, policeSVG, ampelSVG, miniCross, pose, mv, arc, blink, lights, pulse };
+  /* Schrift in der Bühne an die Breite anpassen (lange Wörter in anderen Sprachen). Erst verkleinern, dann umbrechen. */
+  function fit(el, maxW, startPx, minPx) {
+    el.style.fontSize = startPx + "px";
+    let px = startPx;
+    while (px > minPx && el.scrollWidth > maxW) { px -= 2; el.style.fontSize = px + "px"; }
+  }
+  const BK = { P, CARS, BOX, carSVG, makeCar, carBits, roadSVG, sign, badge, pill, arrow, policeSVG, ampelSVG, miniCross, pose, mv, arc, blink, lights, pulse, fit, zeichenBase: "assets/zeichen/" };
+  window.BK = BK;
 })();

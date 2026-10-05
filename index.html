@@ -8635,7 +8635,7 @@ function renderVerkehrHtml(){
         "</button>";
       }).join("") + "</div>";
   }).join("");
-  return kopf + gruppen;
+  return kopf + '<div id="vf-platz"></div>' + gruppen;   // Erklärfilm „Vorfahrt“ als Überblick vor den Einzelszenen (verkehr/vorfahrt-film.js)
 }
 
 function renderVerkehrSzeneHtml(){
@@ -8665,7 +8665,24 @@ function renderVerkehrSzeneHtml(){
 
 function verkehrAufraeumen(){
   if(vvSpieler){ try{ vvSpieler.zerstoeren(); }catch(e){} vvSpieler = null; }
+  if(vvFilm){ try{ vvFilmZustand = { z: vvFilm.zustand(), t: Date.now() }; vvFilm.zerstoeren(); }catch(e){} vvFilm = null; }
   vvMontiert = null;
+}
+
+// Erklärfilm „Vorfahrt“ (05.10.2026): eigene Datei, Animation läuft live, nur der Text wechselt die Sprache.
+// Er ist eine Zugabe: schlägt das Laden fehl, bleibt der Platz einfach leer.
+let vvFilm = null, vvFilmZustand = null;
+async function vorfahrtFilmEinhaengen(){
+  const platz = document.getElementById("vf-platz");
+  if(!platz) return;
+  try{
+    const r = await Promise.all([import("./verkehr/vorfahrt-film.js"), skriptLaden("vendor/gsap-3.14.2.min.js", "gsap")]);
+    if(!document.body.contains(platz) || platz.firstChild) return; // inzwischen neu gezeichnet
+    // wurde nur neu gezeichnet (nicht verlassen), geht der Film an derselben Stelle weiter
+    const z = vvFilmZustand && Date.now() - vvFilmZustand.t < 3000 ? vvFilmZustand.z : null;
+    vvFilmZustand = null;
+    vvFilm = r[0].starte(platz, { sprache: sprache, zustand: z });
+  } catch(e){}
 }
 
 async function verkehrEinhaengen(){
@@ -9150,6 +9167,7 @@ function renderCatalog(){
     b.addEventListener("click", function(){ vvListeFehler = false; go({ drawer: "verkehr" }); nachObenScrollen(); });
   });
   verkehrEinhaengen();
+  vorfahrtFilmEinhaengen();
   // Zugangsanfrage (12.09.2026)
   document.querySelectorAll("[data-zugang-anfragen]").forEach(function(b){
     b.addEventListener("click", function(){ zugangAnfragen(b, b.dataset.zugangAnfragen); });

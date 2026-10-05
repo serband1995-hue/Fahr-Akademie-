@@ -6,13 +6,15 @@ Motion-Graphics-Film aus Code (kein KI-Bild, keine Credits). Gebaut mit [HyperFr
 ## Dateien
 | Datei | Zweck |
 |---|---|
-| `text.js` | **Eine Quelle** für Bildschirmtext, Sprechertext und Untertitel (Deutsch) samt Zeiten |
-| `baukasten.js` | Bausteine: Kreuzung, Autos (Blinker, Bremslicht), Schilder, Polizist, Ampel, Bewegungs-Hilfen |
-| `index.html` | Der Film: 6 Kapitel auf einer Zeitleiste (GSAP), 1920×1080, 30 fps, ca. 3:17 |
-| `export-text.mjs` | `node export-text.mjs` → `out/untertitel-de.vtt` und `out/sprechertext-de.txt` |
-| `assets/zeichen/` | Amtliche Verkehrszeichen (Wikimedia Commons, gemeinfrei), siehe unten |
-| `assets/fonts/`, `assets/lib/` | Playfair Display, Barlow (OFL) und GSAP, lokal damit nichts aus dem Netz geladen wird |
-| `out/` | Ergebnisse (MP4, Standbild, Untertitel) |
+| `text.js` | **Eine Quelle** für allen Text (Deutsch, mit Schlüsseln) und alle Zeiten. Keine Stimme: alles steht im Bild |
+| `szenen.js` | Die sechs Kapitel (Bewegung, Text-Einblendung). Gemeinsam für MP4 und App |
+| `baukasten.js` | Bausteine: Kreuzung, Autos, Schilder, Polizist, Ampel, Bewegungs-Hilfen |
+| `buehne.css` | Aussehen der Bühne (gemeinsam) |
+| `index.html` | MP4-Fassung (HyperFrames): Bild links, Text rechts, 1920×1080 |
+| `app-host.js`, `app.css` | App-Fassung: Bild oben, Text darunter, Steuerung, 18 Sprachen |
+| `app-bauen.mjs` | `node app-bauen.mjs` → erzeugt `../../verkehr/vorfahrt-film.js` (nicht von Hand ändern) und kopiert die Zeichen |
+| `sprachen/<code>.json` | Übersetzungen (gleiche Schlüssel wie `text.js`), kommen nach der Freigabe des deutschen Textes |
+| `assets/` | Zeichen (Wikimedia, gemeinfrei), Schriften, GSAP (in der App: `vendor/gsap-3.14.2.min.js`) |
 
 ## Bauen
 ```bash
@@ -20,7 +22,7 @@ cd film/vorfahrt
 npx hyperframes lint                # Prüfung
 npx hyperframes snapshot . --at 10,55,120   # Standbilder zur Sichtprüfung
 npx hyperframes render . -q standard -o out/vorfahrt-de-stumm.mp4   # ca. 3–4 Minuten
-node export-text.mjs                # Untertitel + Sprechertext
+node app-bauen.mjs                  # App-Datei neu erzeugen (nach jeder Änderung an Text/Szenen)
 ```
 Voraussetzungen: Node 22, FFmpeg, Chrome Headless Shell (`npx hyperframes browser ensure`).
 Telemetrie aus: `HYPERFRAMES_NO_TELEMETRY=1`.
@@ -41,6 +43,5 @@ Zweiter, unabhängiger Durchlauf: Aussagen und Szenenlogik gegen die Gesetzestex
 - Zeichen 306 – Vorfahrtstraße (StVO 1970), falls vorhanden in `assets/zeichen/`
 
 ## Offen / bewusst noch nicht gemacht
-- **Stimme:** noch nicht eingesprochen (erst nach Freigabe des Textes, einmal, Stimme „Julian“). Die Zeiten in `text.js` sind auf ca. 2,1 Wörter pro Sekunde ausgelegt.
-- **In-App-Fassung** (18 Sprachen aus `t()`): kommt nach Freigabe des MP4.
-- **Bunny-Upload / Eintrag in der Akademie:** nur auf ausdrückliche Anweisung (keine Schreibzugriffe auf die Akademie-Datenbank aus dieser Arbeit).
+- Deutscher Text wartet auf Freigabe durch Serban; danach 17 Sprachen (`sprachen/*.json`), dann MP4 neu rendern.
+- Bunny-Upload / Eintrag in der Akademie: nur auf ausdrückliche Anweisung (keine Schreibzugriffe auf die Datenbank aus dieser Arbeit).
