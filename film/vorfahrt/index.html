@@ -195,7 +195,7 @@
   function K4(sc, i, T0, ch) {
     const st = stageBase(sc, { marks: "h" }); const p = panel(sc, ch, i);
     // Vorfahrtstraße: Zeichen 306 an zwei Ecken
-    const s1 = BK.sign(st, "z306.svg", 340, 770, 96), s2 = BK.sign(st, "z306.svg", 740, 310, 96);
+    const s1 = BK.sign(st, "z306.svg", 384, 706, 88), s2 = BK.sign(st, "z306.svg", 696, 374, 88);
     [s1, s2].forEach(s => tl.fromTo(s, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(2)" }, T0 + 0.4));
     const L = BK.makeCar(st, "k4l", "ivory"), G = BK.makeCar(st, "k4g", "green"), R = BK.makeCar(st, "k4r", "slate");
     BK.pose(tl, L, -100, 595, 0); BK.pose(tl, G, 1180, 485, 180); BK.pose(tl, R, 1180, 485, 180);

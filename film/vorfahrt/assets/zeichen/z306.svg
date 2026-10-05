@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- NACHZEICHNUNG von Zeichen 306 (Vorfahrtstraße) nach amtlicher Form.
+     Das Original (Wikimedia Commons, gemeinfrei) konnte am 05.10.2026 wegen einer Abruf-Sperre nicht geladen werden.
+     Ersetzen durch: "Zeichen 306 - Vorfahrtstraße, StVO 1970.svg" von commons.wikimedia.org (Datei so speichern: z306.svg). -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect x="29" y="29" width="142" height="142" rx="11" transform="rotate(45 100 100)" fill="#fff" stroke="#111" stroke-width="2.4"/>
+  <rect x="53" y="53" width="94" height="94" rx="7" transform="rotate(45 100 100)" fill="#F6C400" stroke="#111" stroke-width="1.6"/>
+</svg>
