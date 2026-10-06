@@ -37,7 +37,7 @@ export const TEXTE = {
     tempoErgBlitzer: "Blitzer",
     tempoHinweis: "Im echten Leben gilt auf der Autobahn die Richtgeschwindigkeit 130 km/h. Wo ein Schild eine Höchstgeschwindigkeit zeigt, musst du dich immer daran halten.",
     tempoZ274: "Verkehrszeichen 274: Höchstgeschwindigkeit {v} km/h",
-    tempoZ282: "Verkehrszeichen 282: Ende aller Streckenverbote",
+    tempoZ282: "Verkehrszeichen 282: Ende sämtlicher Streckenverbote",
     vorschauMarke: "Vorschau",
     memoryName: "Schilder-Memory",
     memoryKurz: "Finde zu jedem Verkehrsschild die passende Bedeutung.",

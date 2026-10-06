@@ -11,7 +11,7 @@
    Aufräumen: Zeitgeber und Listener werden in zerstoeren() entfernt; wer die App verlässt (Seite unsichtbar), bricht die
    Runde ab, wie bei den anderen Spielen. */
 import { rankingKarte, profilKarte } from "./rahmen.js";
-import { schildBild } from "./schilder.js";
+import { schildBild, schilderVorladen } from "./schilder.js";
 
 /* Die Schilder: id (= Bildname in schilder.js, = Textschlüssel z…l / z…m), amtliche Nummer fürs Popup */
 export const SCHILDER = [
@@ -41,6 +41,7 @@ export function passen(a, b) { return a !== b && a.paar === b.paar && a.art !== 
 export function zeitText(k, ms) { return k.zahl(ms / 1000, 1) + " s"; }
 
 export function starte(platz, k) {
+  schilderVorladen();              // alle Schildbilder gleich laden: beim Aufdecken darf nichts nachladen
   let zustand = "bereit";          // bereit | start | lauf | popup | fertig
   let karten = [];
   let offen = [];                  // gerade aufgedeckt (0–2 Karten)

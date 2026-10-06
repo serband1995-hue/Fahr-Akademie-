@@ -10,7 +10,7 @@ import { db, rufe, warte, hier } from "./spiele-im-speicher.mjs";
 import { REGELN, LERN_MS, GESAMT_MS, lage, tipp, rollen, blitzer, obergrenze } from "../../spiele/tempo.js";
 import { SCHILDER, PAARE, ZURUECK_MS, ZUG_MIN_MS, mischen, neueKarten, passen } from "../../spiele/memory.js";
 import * as V from "../../spiele/vorfahrt.js";
-import { SCHILD_IDS, schildBild } from "../../spiele/schilder.js";
+import { SCHILD_IDS, SCHILD_DATEIEN, TEMPO_ZAHLEN, schildBild, zeichen274, zeichen282 } from "../../spiele/schilder.js";
 import { TEXTE } from "../../spiele/texte.js";
 import { existsSync } from "node:fs";
 
@@ -237,11 +237,31 @@ await pruefe("14 Schilder, jedes mit Bild und Texten (Name + Erklärung) in alle
   assert.equal(new Set(SCHILDER.map((x) => x.id)).size, 14, "doppelte Schild-id");
   for (const sc of SCHILDER) {
     assert.ok(SCHILD_IDS.includes(sc.id), "kein Bild für " + sc.id);
-    assert.ok(schildBild(sc.id, { beschriftung: "x", zahl: sc.zahl }).length > 50, "leeres Bild " + sc.id);
+    assert.ok(schildBild(sc.id, { beschriftung: "x" }).startsWith("<img "), "Bild ist kein <img> " + sc.id);
     for (const l of Object.keys(TEXTE)) for (const suffix of ["l", "m"]) assert.ok(TEXTE[l][sc.id + suffix] && TEXTE[l][sc.id + suffix].trim(), l + " " + sc.id + suffix);
     assert.ok(/^\d{3}(\.\d)?$/.test(sc.nr), "Zeichennummer " + sc.nr);
   }
-  for (const f of ["z205.svg", "z206.svg", "z306.svg", "z2741.svg"]) assert.ok(existsSync(join(hier, "../../verkehr/vorfahrt-zeichen", f)), f);
+});
+await pruefe("Alle Verkehrszeichen sind AMTLICHE Bilddateien (nichts nachgezeichnet): vorhanden, gültiges SVG, ohne Skripte/externe Verweise, in QUELLEN.md genannt", async () => {
+  const ordner = join(hier, "../../verkehr/vorfahrt-zeichen");
+  const quellen = readFileSync(join(ordner, "QUELLEN.md"), "utf8");
+  assert.ok(SCHILD_DATEIEN.length >= 19, "zu wenige Bilder: " + SCHILD_DATEIEN.length);
+  for (const f of SCHILD_DATEIEN) {
+    const pfad = join(ordner, f);
+    assert.ok(existsSync(pfad), "Datei fehlt: " + f);
+    const t = readFileSync(pfad, "utf8");
+    assert.ok(/<svg[\s>]/.test(t) && t.trim().endsWith("</svg>"), "kein vollständiges SVG: " + f);
+    assert.ok(t.length > 800 && t.length < 200_000, "Größe " + f + " " + t.length);
+    assert.ok(!/<script|onload\s*=|<foreignObject|javascript:/i.test(t), "gefährlicher Inhalt in " + f);
+    assert.ok(!/(?:xlink:)?href\s*=\s*["']https?:/i.test(t), "externer Verweis in " + f);
+    assert.ok(quellen.includes(f), "nicht in QUELLEN.md: " + f);
+  }
+  // keine Reste von selbst Gezeichnetem: schilder.js liefert nur <img>
+  for (const id of SCHILD_IDS) assert.ok(schildBild(id, {}).startsWith("<img "), id);
+  assert.ok(zeichen282("x").includes("z282.svg"));
+  for (const v of TEMPO_ZAHLEN) assert.ok(zeichen274(v, "x").includes("z274-" + v + ".svg"));
+  assert.throws(() => zeichen274(70, "x"), /kein Bild/);
+  assert.ok(REGELN.LIMITS.every((v) => TEMPO_ZAHLEN.includes(v)), "Tempo-Sprint braucht für jedes Schild ein Bild");
 });
 await pruefe("Karten: 12 Stück, je Schild genau eine Schild-Karte und eine Text-Karte, 6 verschiedene Paare, gemischt", async () => {
   const zufall = zufallsquelle(7);
