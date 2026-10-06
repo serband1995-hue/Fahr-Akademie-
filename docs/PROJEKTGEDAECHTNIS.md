@@ -266,10 +266,9 @@ Spiel Abnahme durch ihn, Erfahrungen fließen ins nächste. Gleiche Spieldynamik
 A Reaktion/Tippen (Ampel-Bremsweg, Tempo-Sprint), B Szene+Auswahl (Rechts vor Links, Fahrlehrer-Simulator,
 Verkehrskontrolle, Duell), C Bild antippen (Gefahren finden, Fahrzeug-Check), D einzeln (Schilder-Memory, Schilder-Ninja).
 Reihenfolge: Ampel-Bremsweg, Tempo-Sprint, Schilder-Memory, Rechts vor Links, Fahrlehrer-Simulator, Verkehrskontrolle,
-Gefahren finden, Fahrzeug-Check, Schilder-Ninja, Duell. Fertig: **Ampel-Bremsweg** (Spiel 1, mit Rahmen).
-Beschlossen (noch nicht gebaut): Tempo-Sprint = Autobahn, Tippen beschleunigt, nie schneller als das Schild, am Ende „keine
-Begrenzung“, 10 s Endspurt, Ranking = Höchstgeschwindigkeit; Strafe bei zu schnell = Blitzer + 2 s Zeitstrafe (Vorschlag, offen);
-Memory: Schild ↔ Kurzbedeutung, Pop-up mit Bedeutung nach StVO, nur gängige Schilder für Offenbach innerorts (Liste im Chat, noch nicht bestätigt).
+Gefahren finden, Fahrzeug-Check, Schilder-Ninja, Duell. Fertig: **Ampel-Bremsweg** (Spiel 1, mit Rahmen, für alle live),
+**Tempo-Sprint** (Spiel 2, 07.10.2026 gebaut, `nurVorschau: true` bis Serban „ok“ sagt, siehe unten).
+Memory (Spiel 3, noch nicht gebaut): Schild ↔ Kurzbedeutung, Pop-up mit Bedeutung nach StVO, nur gängige Schilder für Offenbach innerorts (Liste im Chat, noch nicht bestätigt).
 
 **Aufbau**
 - `spiele/` wird erst beim Öffnen geladen (wie `verkehr/`): `spiele.js` (Startseite + Weiche), `rahmen.js` (Rahmen für ALLE Spiele:
@@ -277,6 +276,11 @@ Memory: Schild ↔ Kurzbedeutung, Pop-up mit Bedeutung nach StVO, nur gängige S
   Block wie `UI` in `verkehr/spieler.js`), `spiele.css`. Ein neues Spiel = Datei mit `starte(platz, k)` + Eintrag in `SPIELE`
   in `spiele.js` + Schlüssel in ALLEN Sprachen in `texte.js` + Spiel-Eintrag im `SPIELE`-Block der Function.
 - In `index.html` nur: Menüpunkt (`spieleSichtbar()`), Navigationsfeld `spiel` im Stapel, `spieleAufruf()`, `spieleEinhaengen()/spieleAufraeumen()`.
+- **Einzel-Freigabe je Spiel (07.10.2026):** jeder Eintrag in `SPIELE` (`spiele/spiele.js`) hat `nurVorschau` (true/false). Mit `true` zeigt die Startseite die Karte
+  (mit Marke „Vorschau“) und öffnet das Spiel NUR auf Vorschau-Geräten (`opt.vorschauGeraet` = Vorschau der Verwaltung oder `?spiele=1`); ein direkt aufgerufenes
+  Spiel mit `nurVorschau` öffnet für normale Schüler nicht (Startseite). Freigabe = `nurVorschau: false` (kleiner eigener Pull Request nach Serbans „ok“).
+  `index.html`: `spieleGeraetVorschau()` (Gerät) und `spieleSichtbar()` (Menüpunkt: `SPIELE_FUER_ALLE || Gerät`). Grenze: der Server kennt das Flag nicht – wer die Function
+  selbst aufruft, kann auch für ein verstecktes Spiel eine Runde melden (die Bestenliste ist nur im Spiel selbst zu sehen). Testwerte von Serban bleiben nach der Freigabe in der Bestenliste.
 - **Sichtbarkeit:** seit 06.10.2026 `SPIELE_FUER_ALLE = true` (Serban: für alle Schüler freigegeben). Mit `false` sähen den Bereich nur die Vorschau der Verwaltung und Geräte mit `?spiele=1`
   in der Adresse (`?spiele=0` schaltet aus; im Browser-Speicher des Geräts, die installierte iPhone-App hat einen eigenen Speicher) – nützlich, um ein NEUES Spiel erst selbst zu prüfen.
   Beim Einbau weiterer Spiele: erst sichtbar machen, wenn Serban abgenommen hat (z. B. Eintrag in `SPIELE` in `spiele.js` mit einer Vorschau-Bedingung versehen).
@@ -292,10 +296,23 @@ Memory: Schild ↔ Kurzbedeutung, Pop-up mit Bedeutung nach StVO, nur gängige S
 - Der Ampel-Bremsweg rechnet mit den Fahrschul-Faustformeln (Reaktionsweg (v/10)·3, Bremsweg (v/10)², Nässe Bremsweg ×2) und stellt die
   gemessene Handy-Reaktion daneben: Handy-Reaktionen sind kürzer als im Verkehr (~1 s), sonst entsteht falsche Sicherheit.
 
+**Tempo-Sprint (Spiel 2, 07.10.2026)** – `spiele/tempo.js`
+- Ablauf ab Tipp auf Start: Server-Runde anmelden, 3 s Countdown, 6 Schilder je 5 s (80, 100, 80, 60, 100, 120; Zeichen 274 als SVG, selbst gezeichnet), dann Zeichen 282
+  („Ende aller Streckenverbote“, fünf schräge Streifen) und 10 s Endspurt. Ranking = höchste Geschwindigkeit im Endspurt (km/h, größer ist besser).
+- Regeln (Konstanten `REGELN` in `tempo.js`; **Balance 07.10.2026, Wunsch Serban: wer richtig gut ist, wird SEHR schnell**): Tippen `v += 5 · (1 − v/420)`, ohne Tippen −16 km/h je Sekunde. Im Endspurt hält sich das Tempo bei `v* = 420 · (1 − 16/(5 · Tipps/s))`: 6 Tipps/s ≈ 160 km/h, 10/s ≈ 237, 14/s ≈ 287, 15,8/s (Grenze) ≈ 303. Blitzer wenn `v > Schild + 5` (erst 2,5 s nach einem neuen Schild – man muss
+  ja erst langsamer werden können; das Schild wird 2 s vorher am Straßenrand angekündigt), Blitzer = Tippen 2 s gesperrt und Tempo ×0,6 (Vorschlag Claude, von Serban nicht bestätigt, im Bericht genannt).
+  Ein Tipp zählt erst 63 ms nach dem letzten gezählten (Mehrfinger-Salven zählen nur bis ~16/s); nach dem Ende ist die Tippfläche 1,5 s gesperrt (sonst startet wildes Weitertippen sofort die nächste Runde).
+- **Server** (`academy-spiele.ts`, v2): `ergebnis` nimmt zusätzlich `tipps`. Der Eintrag `tempo` im `SPIELE`-Block hat `wert_ist_zeit:false`, `vorlauf_ms:43000` (3 + 30 + 10 s) und `pruefe`:
+  `tipps` ganze Zahl 0–160, Tempo höchstens `tempoObergrenze(tipps)` + 1 (n Tipps ab 130 km/h im dichtesten Abstand von 60 ms, MIT Rollverlust dazwischen; für 159 Tipps ≈ 309 km/h). Die Zahlen `TEMPO` im Server müssen gleich `REGELN` in `tempo.js` sein
+  (`pruefe-academy-spiele.mjs` vergleicht sie und rechnet ganze Läufe aus dem Spielmodell durch: ehrliche Läufe werden nie abgelehnt).
+- Layout: Tacho, Straße, Meldung UND Tippfläche müssen zusammen in ein Handy-Bild (über der Menüleiste, ~90 px): beim Start `scrollIntoView(start)` der Bühne, Tippfläche nach Bildschirmhöhe (`clamp(96px,21vh,170px)`), Anleitung unter der Tippfläche (im Lauf ausgeblendet).
+  Querformat: Bühne links, Tippfläche rechts.
+
 **Prüfen (vor jeder Änderung an Spielen laufen lassen, jedes neue Spiel bekommt Fälle dazu)**
-- `node --experimental-strip-types werkzeuge/edge-functions/pruefe-academy-spiele.mjs` – Logik der Function gegen eine Datenbank im Speicher (24 Fälle).
+- `node --experimental-strip-types werkzeuge/edge-functions/pruefe-academy-spiele.mjs` – Logik der Function gegen eine Datenbank im Speicher (46 Fälle, davon Spielregeln und Server des Tempo-Sprints).
 - `node --experimental-strip-types werkzeuge/pruefe-spiele-im-browser.mjs` – echte App im Chromium mit Fingertipp: Menü, Spiel, Fehlstart, Rechnung,
-  Bestenliste, Ausblenden, Verlassen mitten in der Runde, Handy hoch/quer/klein/dunkel, alle 18 Sprachen (124 Prüfungen). Bilder: `$SPIELE_BILDER`.
+  Bestenliste, Ausblenden, Verlassen mitten in der Runde, Handy hoch/quer/klein/dunkel, alle 18 Sprachen, Einzel-Freigabe, Tempo-Sprint in ECHTER Zeit (ca. 8 min gesamt;
+  nur Spiel 2: `NUR_TEMPO=1`). Bilder: `$SPIELE_BILDER`.
 - Beide Prüfungen wurden selbst geprüft: mit absichtlich eingebauten Fehlern (Zeitprüfung, Einmal-Einlösung, Wertgrenzen, fremde Runde, Bremse, Rechenfehler) schlagen sie an.
 
 **Gelernt bei Spiel 1 (fließt in jedes weitere Spiel)**
@@ -305,6 +322,10 @@ Memory: Schild ↔ Kurzbedeutung, Pop-up mit Bedeutung nach StVO, nur gängige S
 - Messen erst nach Überblendung/Scrollen der App (sonst falsche Layout-Befunde und Geisterbilder auf Fotos). Querformat am Handy: die Bühne zuerst und von selbst ins Bild
   scrollen, sonst deckt die Menüleiste den Knopf zur Hälfte ab.
 - Spielnamen vom Gerät mit `hasOwnProperty` prüfen (`__proto__`, `constructor`). Späte Server-Antworten mit einem Zähler verwerfen (`ergId`), sonst überschreiben sie neuere Ergebnisse.
+- **Gelernt bei Spiel 2 (Tipp-Spiele, Familie A):** (1) Bei Spielen, in denen man schnell tippt, MUSS die Tippfläche zusammen mit der Anzeige im Bild bleiben – sonst scrollt der Spieler; (2) nach dem Ende
+  die Tippfläche kurz sperren (Nachtippen startet sonst sofort eine neue Runde); (3) Mehrfinger/Salven: Mindestabstand zwischen gezählten Tipps im Spiel UND Obergrenze im Server;
+  (4) die Obergrenze im Server aus der Spielregel ableiten und mit dem Spielmodell testen, nicht schätzen; (5) Prüfskripte nicht mit Sentinel-Werten (-1e9) bauen – das gab falsche Fehlalarme;
+  (6) lange Läufe in echter Zeit prüfen, aber mit eingebautem Bot, der Fingerereignisse schickt (`pointerdown`).
 - Tarifit: `lfiṛu` heißt Ampel (nicht Bremse; Bremse = `lfrinu`). Sprachen rif, ckb, kmr, ps, am, ti sind von mir übersetzt, NICHT von Muttersprachlern geprüft.
 
 ## Bekannte Fehlerquellen
