@@ -297,7 +297,7 @@ Spiel 3 **Schilder-Memory** und Spiel 4 **Rechts vor Links** (gebaut 07.10.2026,
   gemessene Handy-Reaktion daneben: Handy-Reaktionen sind kürzer als im Verkehr (~1 s), sonst entsteht falsche Sicherheit.
 
 **Tempo-Sprint (Spiel 2, 07.10.2026)** – `spiele/tempo.js`
-- Ablauf ab Tipp auf Start: Server-Runde anmelden, 3 s Countdown, 6 Schilder je 5 s (80, 100, 80, 60, 100, 120; Zeichen 274 als SVG, selbst gezeichnet), dann Zeichen 282
+- Ablauf ab Tipp auf Start: Server-Runde anmelden, 3 s Countdown, 6 Schilder je 5 s (80, 100, 80, 60, 100, 120; Zeichen 274 als amtliches Bild), dann Zeichen 282
   („Ende aller Streckenverbote“, fünf schräge Streifen) und 10 s Endspurt. Ranking = höchste Geschwindigkeit im Endspurt (km/h, größer ist besser).
 - Regeln (Konstanten `REGELN` in `tempo.js`; **Balance 07.10.2026, Wunsch Serban: wer richtig gut ist, wird SEHR schnell**): Tippen `v += 5 · (1 − v/420)`, ohne Tippen −16 km/h je Sekunde. Im Endspurt hält sich das Tempo bei `v* = 420 · (1 − 16/(5 · Tipps/s))`: 6 Tipps/s ≈ 160 km/h, 10/s ≈ 237, 14/s ≈ 287, 15,8/s (Grenze) ≈ 303. Blitzer wenn `v > Schild + 5` (erst 2,5 s nach einem neuen Schild – man muss
   ja erst langsamer werden können; das Schild wird 2 s vorher am Straßenrand angekündigt), Blitzer = Tippen 2 s gesperrt und Tempo ×0,6 (Vorschlag Claude, von Serban nicht bestätigt, im Bericht genannt).
