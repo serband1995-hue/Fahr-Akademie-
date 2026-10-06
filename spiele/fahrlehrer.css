@@ -1,0 +1,91 @@
+/* Spiel 5: Fahrlehrer-Simulator (07.10.2026). Eigene Datei; wird von spiele/fahrlehrer.js selbst per <link> geladen.
+   Greift nur auf die Farb-/Abstandswerte der App zu (:root in index.html), passt sich also dem Dunkelmodus an.
+   Baut auf den Grundklassen aus spiele.css auf (.karte, .sp-label, .sp-erg, .sp-gross, .sp-badge …), die der Spiele-Bereich immer mitlädt.
+   Handy zuerst (360 x 740, 320 x 640), danach Querformat. Die Zeichnung der Szene (Straße, Autos) hat feste Farben wie bei den anderen Spielen. */
+
+.sp-fahrlehrer{display:grid;gap:10px;min-width:0;}
+.sp-fahrlehrer .sp-spieltitel{font-size:20px;}
+.sp-fl-buehne{display:grid;gap:8px;padding:10px;scroll-margin-top:8px;min-width:0;}
+.sp-fl-hud{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-m);font-weight:700;min-height:1.6em;}
+.sp-fl-runde{font-size:14px;color:var(--muted);min-width:0;overflow-wrap:anywhere;}
+.sp-fl-punkte{flex:none;}
+.sp-fl-punkte b{font-size:20px;font-variant-numeric:tabular-nums;font-family:var(--ff-titel);}
+.sp-fl-leiste{height:6px;border-radius:3px;background:var(--surface-strong);overflow:hidden;}
+.sp-fl-leiste i{display:block;height:100%;width:0;background:var(--gruen-hell);}
+.sp-fl-leiste i.spurt{background:var(--gold);}
+
+/* Szene: 16:9, Start-Knopf MITTEN darüber (liegt nie unter der Menüleiste) */
+.sp-fl-brett{position:relative;min-width:0;}
+.sp-fl-szene{width:100%;aspect-ratio:16/9;border-radius:var(--r-m);overflow:hidden;background:#6f9a5a;transition:opacity .2s;}
+.sp-fl-szene.aus{opacity:.45;}
+.sp-fl-svg{display:block;width:100%;height:100%;}
+.sp-fl-brett .sp-fl-knopf{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);width:min(82%,260px);}
+.sp-fl-knopf,.sp-fl-weiter{border:0;border-radius:var(--r-l);cursor:pointer;font-family:inherit;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.sp-fl-knopf{min-height:62px;font-size:22px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 6px 18px rgba(43,40,30,.22);}
+.sp-fl-knopf[hidden]{display:none;}
+.sp-fl-knopf.start{background:var(--gruen);color:var(--auf-tief);}
+.sp-fl-knopf.warte{background:var(--surface-strong);color:var(--muted);cursor:default;}
+.sp-fl-knopf:focus-visible,.sp-fl-weiter:focus-visible,.sp-fl-wahl:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+
+.sp-fl-bild{margin:0;font-size:13.5px;line-height:1.4;overflow-wrap:anywhere;min-height:1.4em;}
+.sp-fl-bild:empty{display:none;}
+.sp-fl-legende{color:var(--muted);font-size:12.5px;}
+.sp-fl-frage{min-height:1.4em;font-weight:700;font-size:15px;line-height:1.35;overflow-wrap:anywhere;}
+.sp-fl-frage:empty{display:none;}
+.sp-fl-schritt{display:inline-block;margin-inline-end:6px;padding:1px 8px;border-radius:var(--r-pill);background:var(--surface-tint);color:var(--gruen-text);font-size:12px;font-weight:800;white-space:nowrap;}
+.sp-fl-frage.urteil{font-size:18px;font-weight:800;}
+.sp-fl-frage.urteil.ja{color:var(--gruen-text);}
+.sp-fl-frage.urteil.nein{color:var(--warn);}
+
+/* Antworten */
+.sp-fl-antworten{display:grid;gap:8px;min-width:0;}
+.sp-fl-antworten[hidden],.sp-fl-aufloesung[hidden]{display:none;}
+.sp-fl-wahl{display:block;width:100%;min-height:48px;padding:10px 12px;text-align:start;border:1.5px solid var(--hairline);border-radius:var(--r-m);
+  background:var(--bg);color:var(--text);font-family:inherit;font-size:15px;line-height:1.35;font-weight:600;cursor:pointer;touch-action:manipulation;
+  overflow-wrap:anywhere;hyphens:auto;-webkit-tap-highlight-color:transparent;scroll-margin-bottom:104px;}
+.sp-fl-wahl:active:not(:disabled){transform:scale(.99);}
+.sp-fl-wahl:disabled{cursor:default;}
+.sp-fl-wahl.richtig{border-color:#2ea84f;box-shadow:inset 0 0 0 1.5px #2ea84f;background:var(--surface-tint);}
+.sp-fl-wahl.richtig::before{content:"\2713\00a0";color:var(--gruen-text);font-weight:800;}
+.sp-fl-wahl.falsch{border-color:var(--warn);box-shadow:inset 0 0 0 1.5px var(--warn);}
+.sp-fl-wahl.falsch::before{content:"\2717\00a0";color:var(--warn);font-weight:800;}
+.sp-fl-wahl.blass{opacity:.5;}
+
+/* Auflösung nach der Runde */
+.sp-fl-aufloesung{display:grid;gap:8px;padding:10px;border-radius:var(--r-m);background:var(--surface-strong);min-width:0;}
+.sp-fl-zeile{display:flex;align-items:flex-start;gap:10px;min-width:0;}
+.sp-fl-marke{flex:none;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;line-height:1;margin-top:1px;}
+.sp-fl-zeile.ja .sp-fl-marke{background:#2ea84f;color:#fff;}
+.sp-fl-zeile.ja .sp-fl-marke::before{content:"\2713";}
+.sp-fl-zeile.nein .sp-fl-marke{background:var(--warn);color:var(--auf-warn);}
+.sp-fl-zeile.nein .sp-fl-marke::before{content:"\2717";}
+.sp-fl-zeilentext{min-width:0;font-size:14.5px;line-height:1.4;overflow-wrap:anywhere;}
+.sp-fl-zeilentext .sp-label{margin-bottom:1px;}
+.sp-fl-plus{margin-inline-start:6px;color:var(--gruen-text);font-weight:800;letter-spacing:0;}
+.sp-fl-regel{border-top:1px solid var(--hairline);padding-top:8px;min-width:0;}
+.sp-fl-regel p{margin:2px 0 0;font-size:14.5px;line-height:1.45;overflow-wrap:anywhere;hyphens:auto;}
+.sp-fl-weiter{margin-top:4px;width:100%;min-height:48px;background:var(--gruen);color:var(--auf-tief);font-size:16px;font-weight:800;scroll-margin-bottom:104px;}
+.sp-fl-richtigzahl{margin:0;font-weight:700;}
+.sp-fl-anleitung{margin:0;line-height:1.5;}
+
+.fl-blink{animation:fl-blink .7s steps(2,start) infinite;}
+@keyframes fl-blink{50%{opacity:.15;}}
+@media (prefers-reduced-motion:reduce){.fl-blink{animation:none;}.sp-fl-szene{transition:none;}}
+
+/* Querformat am Handy: Szene links, Frage und Antworten rechts, alles ohne Scrollen im Bild */
+@media (max-height:520px){
+  .sp-fahrlehrer .sp-spieltitel{display:none;}
+  .sp-fl-anleitung{display:none;}
+  .sp-fl-buehne{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);column-gap:12px;row-gap:6px;padding:8px;align-content:start;
+    grid-template-areas:"brett hud" "brett leiste" "brett frage" "brett wahl" "bild wahl";}
+  .sp-fl-hud{grid-area:hud;}.sp-fl-leiste{grid-area:leiste;}.sp-fl-brett{grid-area:brett;}
+  .sp-fl-bild{grid-area:bild;font-size:12px;}.sp-fl-legende{font-size:11.5px;}
+  .sp-fl-frage{grid-area:frage;font-size:14px;}
+  .sp-fl-antworten,.sp-fl-aufloesung{grid-area:wahl;}
+  .sp-fl-antworten{gap:6px;}
+  .sp-fl-wahl{min-height:44px;padding:6px 10px;font-size:13.5px;}
+  .sp-fl-zeilentext,.sp-fl-regel p{font-size:13px;}
+  .sp-fl-aufloesung{padding:8px;gap:6px;}
+  .sp-fl-weiter{min-height:44px;}
+  .sp-fl-knopf{min-height:48px;font-size:18px;}
+}
