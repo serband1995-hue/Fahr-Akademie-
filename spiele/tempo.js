@@ -8,6 +8,8 @@
    Regeln (Zahlen in REGELN -- die Obergrenze für den Server steht in werkzeuge/edge-functions/academy-spiele.ts
    und MUSS dieselben Zahlen haben; die Prüfung vergleicht beide):
      Tippen   v = v + GAIN * (1 - v / VTOP)        (je schneller, desto weniger bringt ein Tipp)
+     Spielraum nach oben (07.10.2026, Wunsch Serban: wer richtig gut ist, soll SEHR schnell werden): im Endspurt hält sich das Tempo bei
+     v* = VTOP * (1 - DECAY / (GAIN * Tipps pro Sekunde)); gemütlich (6/s) ~160 km/h, flott (10/s) ~235, sehr gut (14/s) ~285, Grenze (16/s) ~300.
      Rollen   v = v - DECAY pro Sekunde            (ohne Tippen wird man langsamer)
      Blitzer  v > Schild + TOL (erst KULANZ_MS nach dem Schild): Tippen 2 s gesperrt, Tempo * BLITZ_FAKTOR
    Mehr als ~16 Tipps pro Sekunde schafft kein Mensch: ein Tipp zählt erst TAP_ABSTAND_MS nach dem letzten gezählten
@@ -18,13 +20,14 @@
 import { rankingKarte, profilKarte } from "./rahmen.js";
 
 export const REGELN = {
-  GAIN: 3.6, VTOP: 280, DECAY: 8,           // km/h je Tipp (bei v = 0), Höchsttempo-Grenze, km/h Verlust je Sekunde
+  GAIN: 5, VTOP: 420, DECAY: 16,            // km/h je Tipp (bei v = 0), Höchsttempo-Grenze, km/h Verlust je Sekunde
   TOL: 5, BLITZ_FAKTOR: 0.6, SPERRE_MS: 2000,
   LIMITS: [80, 100, 80, 60, 100, 120],      // Z 274, je SEGMENT_MS; das letzte ist das höchste (Endspurt startet davon)
   SEGMENT_MS: 5000, ANKUENDIGUNG_MS: 2000, KULANZ_MS: 2500,
   COUNTDOWN_MS: 3000, SPURT_MS: 10000,
   V_START: 50, V0_MAX: 130,                 // Startgeschwindigkeit; Obergrenze fürs Tempo bei Beginn des Endspurts (120 + TOL + ein Tipp)
-  TAP_ABSTAND_MS: 63, TAPS_MAX: 160          // 160 Tipps in 10 s = 16 pro Sekunde
+  TAP_ABSTAND_MS: 63, TAPS_MAX: 160,         // 160 Tipps in 10 s = 16 pro Sekunde
+  OBERGRENZE_ABSTAND_MS: 60                  // Server rechnet seine Obergrenze mit diesem (etwas dichteren) Abstand: gilt für jeden ehrlichen Lauf
 };
 export const LERN_MS = REGELN.LIMITS.length * REGELN.SEGMENT_MS;                        // 30 s
 export const GESAMT_MS = REGELN.COUNTDOWN_MS + LERN_MS + REGELN.SPURT_MS;              // 43 s: früheste mögliche Ergebnis-Zeit
@@ -32,10 +35,15 @@ export const GESAMT_MS = REGELN.COUNTDOWN_MS + LERN_MS + REGELN.SPURT_MS;       
 /* ---- Reine Rechnung (ohne Bildschirm), damit sie sich prüfen lässt ---- */
 export function tipp(v) { return Math.min(REGELN.VTOP, v + REGELN.GAIN * (1 - v / REGELN.VTOP)); }
 export function rollen(v, ms) { return Math.max(0, v - REGELN.DECAY * ms / 1000); }
-/* Höchste Geschwindigkeit, die mit n Tipps im Endspurt überhaupt möglich ist (ohne Rollverlust, ab V0_MAX). */
+/* Höchste Geschwindigkeit, die mit n Tipps im Endspurt überhaupt möglich ist: Start bei V0_MAX, alle Tipps gleich am Anfang
+   im dichtesten Abstand (spätere Tipps bringen nie mehr, weil das Tempo dazwischen nur sinkt), dazwischen der Rollverlust.
+   Gleiche Rechnung wie tempoObergrenze() im Server. */
 export function obergrenze(n) {
   let v = REGELN.V0_MAX;
-  for (let i = 0; i < n; i++) v = tipp(v);
+  for (let i = 0; i < n; i++) {
+    if (i > 0) v = Math.max(0, v - REGELN.DECAY * REGELN.OBERGRENZE_ABSTAND_MS / 1000);
+    v = tipp(v);
+  }
   return v;
 }
 /* Was gilt zur Zeit t (ms ab Lernphasen-Beginn)?  { phase:"lern"|"spurt"|"ende", limit, naechstes, frei, ankuendigung, blitzerAktiv, segmentZeit } */

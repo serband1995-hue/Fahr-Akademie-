@@ -32,11 +32,15 @@ function json(body: unknown, status = 200) {
 }
 
 // Tempo-Sprint (07.10.2026): dieselben Zahlen wie REGELN in spiele/tempo.js (die Prüfung pruefe-academy-spiele.mjs vergleicht beides).
-const TEMPO = { GAIN: 3.6, VTOP: 280, V0_MAX: 130, TAPS_MAX: 160 };
-// Höchste Geschwindigkeit, die mit n Tipps im Endspurt überhaupt möglich ist (ohne Rollverlust, ab V0_MAX).
+const TEMPO = { GAIN: 5, VTOP: 420, DECAY: 16, V0_MAX: 130, TAPS_MAX: 160, ABSTAND_MS: 60 };
+// Höchste Geschwindigkeit, die mit n Tipps im Endspurt überhaupt möglich ist: Start bei V0_MAX, alle Tipps gleich am Anfang im
+// dichtesten Abstand (spätere Tipps bringen nie mehr, das Tempo sinkt dazwischen nur), dazwischen der Rollverlust.
 function tempoObergrenze(n: number): number {
   let v = TEMPO.V0_MAX;
-  for (let i = 0; i < n; i++) v = Math.min(TEMPO.VTOP, v + TEMPO.GAIN * (1 - v / TEMPO.VTOP));
+  for (let i = 0; i < n; i++) {
+    if (i > 0) v = Math.max(0, v - TEMPO.DECAY * TEMPO.ABSTAND_MS / 1000);
+    v = Math.min(TEMPO.VTOP, v + TEMPO.GAIN * (1 - v / TEMPO.VTOP));
+  }
   return v;
 }
 

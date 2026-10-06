@@ -299,11 +299,11 @@ Memory (Spiel 3, noch nicht gebaut): Schild ↔ Kurzbedeutung, Pop-up mit Bedeut
 **Tempo-Sprint (Spiel 2, 07.10.2026)** – `spiele/tempo.js`
 - Ablauf ab Tipp auf Start: Server-Runde anmelden, 3 s Countdown, 6 Schilder je 5 s (80, 100, 80, 60, 100, 120; Zeichen 274 als SVG, selbst gezeichnet), dann Zeichen 282
   („Ende aller Streckenverbote“, fünf schräge Streifen) und 10 s Endspurt. Ranking = höchste Geschwindigkeit im Endspurt (km/h, größer ist besser).
-- Regeln (Konstanten `REGELN` in `tempo.js`): Tippen `v += 3,6 · (1 − v/280)`, ohne Tippen −8 km/h je Sekunde, Blitzer wenn `v > Schild + 5` (erst 2,5 s nach einem neuen Schild – man muss
+- Regeln (Konstanten `REGELN` in `tempo.js`; **Balance 07.10.2026, Wunsch Serban: wer richtig gut ist, wird SEHR schnell**): Tippen `v += 5 · (1 − v/420)`, ohne Tippen −16 km/h je Sekunde. Im Endspurt hält sich das Tempo bei `v* = 420 · (1 − 16/(5 · Tipps/s))`: 6 Tipps/s ≈ 160 km/h, 10/s ≈ 237, 14/s ≈ 287, 15,8/s (Grenze) ≈ 303. Blitzer wenn `v > Schild + 5` (erst 2,5 s nach einem neuen Schild – man muss
   ja erst langsamer werden können; das Schild wird 2 s vorher am Straßenrand angekündigt), Blitzer = Tippen 2 s gesperrt und Tempo ×0,6 (Vorschlag Claude, von Serban nicht bestätigt, im Bericht genannt).
   Ein Tipp zählt erst 63 ms nach dem letzten gezählten (Mehrfinger-Salven zählen nur bis ~16/s); nach dem Ende ist die Tippfläche 1,5 s gesperrt (sonst startet wildes Weitertippen sofort die nächste Runde).
 - **Server** (`academy-spiele.ts`, v2): `ergebnis` nimmt zusätzlich `tipps`. Der Eintrag `tempo` im `SPIELE`-Block hat `wert_ist_zeit:false`, `vorlauf_ms:43000` (3 + 30 + 10 s) und `pruefe`:
-  `tipps` ganze Zahl 0–160, Tempo höchstens `tempoObergrenze(tipps)` + 1 (n Tipps ab 130 km/h ohne Rollverlust). Die Zahlen `TEMPO` im Server müssen gleich `REGELN` in `tempo.js` sein
+  `tipps` ganze Zahl 0–160, Tempo höchstens `tempoObergrenze(tipps)` + 1 (n Tipps ab 130 km/h im dichtesten Abstand von 60 ms, MIT Rollverlust dazwischen; für 159 Tipps ≈ 309 km/h). Die Zahlen `TEMPO` im Server müssen gleich `REGELN` in `tempo.js` sein
   (`pruefe-academy-spiele.mjs` vergleicht sie und rechnet ganze Läufe aus dem Spielmodell durch: ehrliche Läufe werden nie abgelehnt).
 - Layout: Tacho, Straße, Meldung UND Tippfläche müssen zusammen in ein Handy-Bild (über der Menüleiste, ~90 px): beim Start `scrollIntoView(start)` der Bühne, Tippfläche nach Bildschirmhöhe (`clamp(96px,21vh,170px)`), Anleitung unter der Tippfläche (im Lauf ausgeblendet).
   Querformat: Bühne links, Tippfläche rechts.

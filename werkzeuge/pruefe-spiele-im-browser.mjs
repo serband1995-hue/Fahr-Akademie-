@@ -393,8 +393,8 @@ async function tempoPruefungen() {
   pruefe("Endspurt dauert 10 s (Ergebnis nach 39,5–41,5 s)", gesamt > 39500 && gesamt < 41800, gesamt + " ms");
   const wert = parseInt((await s.textContent(".sp-gross")).trim(), 10);
   const zahlen = (await s.locator(".sp-t-zahlen b").allTextContents()).map((x) => parseInt(x, 10));
-  pruefe("Ergebnis: Höchsttempo im spielbaren Bereich (130–230)", wert >= 130 && wert <= 230, "wert=" + wert);
-  pruefe("Tipps im Endspurt: ca. 12 pro Sekunde (60–135), Blitzer 0", zahlen[0] >= 60 && zahlen[0] <= 135 && zahlen[1] === 0, zahlen.join(","));
+  pruefe("Ergebnis: guter Spieler (12,5 Tipps/s) kommt SEHR schnell (240–300 km/h)", wert >= 240 && wert <= 300, "wert=" + wert);
+  pruefe("Tipps im Endspurt: ca. 12 pro Sekunde (90–135), Blitzer 0", zahlen[0] >= 90 && zahlen[0] <= 135 && zahlen[1] === 0, zahlen.join(","));
   pruefe("Höchsttempo ist mit diesen Tipps möglich (<= Obergrenze)", wert <= Math.ceil(obergrenze(zahlen[0])) + 1, wert + " > " + obergrenze(zahlen[0]));
   pruefe("Tacho zeigt am Ende das Höchsttempo", (await zahlJetzt(s)) === wert, (await zahlJetzt(s)) + " vs " + wert);
   pruefe("Hinweis zur Richtgeschwindigkeit 130 steht da", (await s.textContent(".sp-hinweis-strasse")).includes("130 km/h") && (await s.textContent(".sp-hinweis-strasse")).includes("Richtgeschwindigkeit"));
@@ -458,6 +458,7 @@ async function tempoPruefungen() {
   pruefe("Blitzer-Zahl im Ergebnis stimmt mit den beobachteten überein (>= 3)", z2[1] >= 3, "Ergebnis " + z2[1] + ", gesehen " + blitzSeen);
   pruefe("Server nahm den Salven-Lauf an (Rekord/Platz sichtbar) – Tipps <= TAPS_MAX", (await s.locator(".sp-badge").count()) >= 1 && /Platz \d+ von \d+|Höchsttempo/.test(await s.textContent(".sp-speicher")), await s.textContent(".sp-speicher"));
   pruefe("Tempo mit Salven nicht über der Obergrenze", w2 <= Math.ceil(obergrenze(z2[0])) + 1, w2 + " vs " + obergrenze(z2[0]));
+  pruefe("Salven-Lauf (~14 Tipps/s) kommt trotz Blitzer-Strafen über 250 km/h – wer richtig gut ist, wird sehr schnell", w2 >= 250 && w2 <= 320, "wert=" + w2);
   await layoutPruefen(s, "Tempo-Sprint Ergebnis 412", 412);
   pruefe("Konsole ohne Fehler (Blitzer-Lauf)", s.fehler.length === 0, s.fehler.join(" | "));
   await s.context().close();
