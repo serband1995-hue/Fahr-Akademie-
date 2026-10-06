@@ -279,7 +279,7 @@
     box-shadow:var(--schatten-2);
   }
 
-  .logo-img{width:64px;height:64px;border-radius:16px;display:block;box-shadow:0 6px 20px rgba(43,40,30,.18);}
+  .logo-img{width:64px;height:64px;display:block;filter:drop-shadow(0 6px 12px rgba(43,40,30,.22));}
 
   /* ---------- LOGIN ---------- */
   .login-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;}
@@ -871,6 +871,11 @@
     min-height:44px;display:flex;align-items:center;justify-content:center;}
   .fa-wortmarke{font-size:12.5px;font-weight:700;letter-spacing:.18em;
     text-transform:uppercase;color:var(--faint);}
+  /* 06.10.2026: Logo statt Schriftzug, mittig oben, tippbar = zurück zum Dashboard */
+  .fa-logo-btn{background:none;border:none;cursor:pointer;padding:4px;
+    min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;}
+  .fa-logo-btn .logo-img{width:40px;height:40px;filter:drop-shadow(0 3px 6px rgba(43,40,30,.2));}
+  .fa-logo-btn:active .logo-img{transform:scale(.94);}
   .konto-btn{background:none;border:none;cursor:pointer;padding:0;
     min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:flex-end;}
   .konto-kreis{width:30px;height:30px;border-radius:50%;background:var(--surface-tint);
@@ -1617,7 +1622,7 @@ function _urlBase64ToUint8Array(base64String){
 const DEMO_MODE = SUPABASE_URL.indexOf("DEIN-PROJEKT") !== -1;
 
 // 26.09.2026 (D10): war ein 46-KB-Bild direkt im HTML. Jetzt eine kleine Datei, die der Service Worker zwischenspeichert.
-const LOGO = "./logo-264.jpg";
+const LOGO = "./logo-264.png";
 
 // ---- ICON-SYSTEM (Bereich 2, Punkt 4) ----
 // Echte SVGs statt Emoji: einheitlich auf allen Geräten, färben sich mit der Textfarbe mit.
@@ -1646,6 +1651,7 @@ const ICONS = {
   download:'<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/>',
   hashtag:'<path d="M5 9h14M5 15h14M10 4L8 20M16 4l-2 16"/>',
   verkehr:'<path d="M5 17h14v-4.5l-2-5H7l-2 5z"/><path d="M5 12.5h14"/><circle cx="8" cy="17" r="1.8"/><circle cx="16" cy="17" r="1.8"/>',
+  spiele:'<rect x="3" y="7.5" width="18" height="10" rx="5"/><path d="M8 10.5v4M6 12.5h4"/><circle cx="15.5" cy="11.5" r=".9" fill="currentColor" stroke="none"/><circle cx="17.8" cy="13.8" r=".9" fill="currentColor" stroke="none"/>',
   home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
   liste:'<path d="M8 6h13M8 12h13M8 18h13"/><path d="M3.5 6h.01M3.5 12h.01M3.5 18h.01"/>',
   strecke:'<circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H16a3 3 0 0 0 0-6H8a3 3 0 0 1 0-6h7.5"/>',
@@ -6919,6 +6925,12 @@ NUETZLICH_UE.ti = {
   "Fussgaengerueberwege_Paragraph26_StVO.pdf":{"titel":"መሳገሪ እግረኛታት — § 26 StVO","meta":"ዘብራ፣ ግዴታ ምጽባይ፣ ምሕላፍ ክልኩል · ዕለት 30.01.2026"}
 };
 /* === SPRACHPAKETE2-ENDE === */
+/* === Menüpunkt „Spiele“ (06.10.2026), alle 18 Sprachen. rif/ckb/kmr/ps/am/ti bitte gegenlesen lassen. === */
+(function(){
+  const M_SPIELE = { de:"Spiele", tr:"Oyunlar", en:"Games", ar:"ألعاب", es:"Juegos", ru:"Игры", sr:"Igre", ckb:"یاریەکان", kmr:"Lîstik",
+    hi:"खेल", ur:"کھیل", vi:"Trò chơi", rif:"Lɛab", fa:"بازی‌ها", ps:"لوبې", el:"Παιχνίδια", am:"ጨዋታዎች", ti:"ጸወታታት" };
+  Object.keys(M_SPIELE).forEach(function(c){ if(I18N[c]) I18N[c].mSpiele = M_SPIELE[c]; });
+})();
 /* === HINWEIS-TEXTE (02.10.2026): §-Hinweise im Video, alle 18 Sprachen === */
 Object.assign(I18N.de, { hwStellen:"Wichtige Stellen", hwZeigen:"Hinweise im Video einblenden", hwOeffnen:"Hinweis öffnen",
   hwSchliessen:"Schließen", hwNochmal:"Stelle nochmal ansehen", hwWeiter:"Weiter ansehen" });
@@ -7179,6 +7191,7 @@ let rechtDoc = null;         // Unterseite in "Rechtliches": null (Übersicht) |
 let selectedBereich = null;  // welcher Bereich gerade als eigene "Netflix-Seite" offen ist
 let selectedHashtag = null;  // welches # gerade angetippt wurde (bereichsübergreifende Themensuche)
 let vvSzene = null;          // Verkehr verstehen: geöffnete Szene (null = Übersicht), 26.09.2026
+let spielAktiv = null;       // Spiele: geöffnetes Spiel (null = Startseite der Spiele), 06.10.2026
 
 /* ---- Stapel-Navigation (13.09.2026, Paket 4.6) ----------------------------
    Vorher fuehrte JEDER Zurueck-Knopf hart zu "Start" -- wer ueber die Themen-
@@ -7199,19 +7212,20 @@ let navStapel = [];
 // Momentaufnahme des aktuellen Bildschirms
 function navJetzt(){
   return { view: mainView, bereich: selectedBereich, hashtag: selectedHashtag,
-           recht: rechtDoc, drawer: drawerView, szene: vvSzene };
+           recht: rechtDoc, drawer: drawerView, szene: vvSzene, spiel: spielAktiv };
 }
 
 // Momentaufnahme wieder herstellen
 function navAnwenden(z){
   mainView = z.view; selectedBereich = z.bereich; selectedHashtag = z.hashtag;
-  rechtDoc = z.recht; drawerView = z.drawer; vvSzene = z.szene || null;
+  rechtDoc = z.recht; drawerView = z.drawer; vvSzene = z.szene || null; spielAktiv = z.spiel || null;
 }
 
 // Zwei Ansichten sind gleich, wenn ALLE fuenf Felder uebereinstimmen.
 function navGleich(a, b){
   return a.view === b.view && a.bereich === b.bereich && a.hashtag === b.hashtag
-    && a.recht === b.recht && a.drawer === b.drawer && (a.szene || null) === (b.szene || null);
+    && a.recht === b.recht && a.drawer === b.drawer && (a.szene || null) === (b.szene || null)
+    && (a.spiel || null) === (b.spiel || null);
 }
 
 // Ist die Ansicht eine Wurzel? Eine Drawer-Seite ist NIE eine Wurzel -- sie wird
@@ -7231,6 +7245,7 @@ function navName(z){
   if(z.drawer === "themen") return t("mThemen");
   if(z.drawer === "nuetzliches") return t("mNuetzliches");
   if(z.drawer === "verkehr"){ const sz = z.szene && vvListe && vvListe.find(function(s){ return s.id === z.szene; }); return sz ? sz.titel : t("mVerkehr"); }
+  if(z.drawer === "spiele") return t("mSpiele");
   if(z.drawer === "rechtliches") return t("mRechtliches");
   if(z.drawer === "hilfe") return t("mHilfe");
   if(z.drawer === "ueber") return t("mUeber");
@@ -7255,7 +7270,8 @@ function go(aenderung){
     hashtag: aenderung.hashtag !== undefined ? aenderung.hashtag : null,
     recht: aenderung.recht !== undefined ? aenderung.recht : null,
     drawer: aenderung.drawer !== undefined ? aenderung.drawer : null,
-    szene: aenderung.szene !== undefined ? aenderung.szene : null
+    szene: aenderung.szene !== undefined ? aenderung.szene : null,
+    spiel: aenderung.spiel !== undefined ? aenderung.spiel : null
   };
   // Ziel ist die Ansicht, auf der wir schon stehen (Doppeltipp aus Ungeduld auf dem
   // Handy): nur neu zeichnen, nichts ablegen. Sonst zeigte Zurueck auf dieselbe Seite
@@ -7310,6 +7326,11 @@ function esc(s){
 }
 
 function init(){
+  try{ // 06.10.2026: Spiele-Vorschau auf diesem Gerät ein-/ausschalten (?spiele=1 / ?spiele=0)
+    const sq = new URLSearchParams(location.search).get("spiele");
+    if(sq === "1") localStorage.setItem("spiele_vorschau", "1");
+    if(sq === "0") localStorage.removeItem("spiele_vorschau");
+  } catch(e){}
   druckSystemStarten(); // einmal pro App-Start: ein Listener statt vieler (13.09.2026)
   try{ tastaturSystemStarten(); }catch(e){} // D9, darf den Start nie verhindern
   if(!DEMO_MODE && !supa){ zeigeOfflineHinweis(); return; }
@@ -8762,6 +8783,60 @@ function tFett(schluessel){
   return esc(t(schluessel)).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
 }
 
+/* ---------------------------------------------------------------------------
+   Spiele (06.10.2026): Mini-Spiele rund um den Verkehr mit Bestenliste.
+   Alles Spielerische liegt in spiele/ (wird erst beim Öffnen geladen). Hier nur Menü, Navigation und der
+   Server-Aufruf academy-spiele. Der Name im Ranking kommt vom Server aus dem Konto (Vorname + 1 Buchstabe).
+   Sichtbar ist der Bereich erst für die Vorschau der Verwaltung und für Geräte mit ?spiele=1 (unten in init());
+   für alle Schüler: SPIELE_FUER_ALLE auf true setzen.
+   --------------------------------------------------------------------------- */
+const SPIELE_FUER_ALLE = false;
+let spieleInstanz = null;
+
+function spieleSichtbar(){
+  if(SPIELE_FUER_ALLE) return true;
+  if(session && session.vorschau) return true;
+  try{ return localStorage.getItem("spiele_vorschau") === "1"; } catch(e){ return false; }
+}
+
+async function spieleAufruf(body){
+  if(!session || !session.session_token) throw new Error("keine_sitzung");
+  const headers = { "Content-Type": "application/json", "Authorization": "Bearer " + SUPABASE_ANON_KEY };
+  const res = await fetch(SUPABASE_URL + "/functions/v1/academy-spiele", {
+    method: "POST", headers: headers, body: JSON.stringify(Object.assign({ session_token: session.session_token }, body))
+  });
+  let data = {};
+  try{ data = await res.json(); } catch(e){}
+  if(res.ok && data.ok) return data;
+  if(istAbmeldeGrund(data)){ abmeldenWegen(data.code); throw new Error("abgemeldet"); }
+  throw new Error(data.code || "fehler");
+}
+
+function renderSpieleHtml(){
+  return zurueckPille() + '<div id="spiele-platz"></div>';
+}
+
+function spieleAufraeumen(){
+  if(spieleInstanz){ try{ spieleInstanz.zerstoeren(); } catch(e){} spieleInstanz = null; }
+}
+
+function spieleEinhaengen(){
+  const platz = document.getElementById("spiele-platz");
+  if(!platz) return;
+  const spiel = spielAktiv;
+  import("./spiele/spiele.js").then(function(mod){
+    if(!document.body.contains(platz)) return; // inzwischen weiternavigiert
+    spieleInstanz = mod.starte(platz, {
+      sprache: sprache, spiel: spiel,
+      vorschau: DEMO_MODE || !session || !!session.vorschau || !session.session_token,
+      api: spieleAufruf,
+      offen: function(id){ go({ drawer: "spiele", spiel: id }); nachObenScrollen(); }
+    });
+  }).catch(function(){
+    if(document.body.contains(platz)) platz.innerHTML = '<div class="leer-hinweis">' + esc(t("vvFehler")) + "</div>";
+  });
+}
+
 function renderHilfeHtml(){
   return zurueckPille() +
     '<div class="tagline" style="font-size:20px;margin-bottom:4px;">' + esc(t("mHilfe")) + '</div>' +
@@ -9074,12 +9149,14 @@ function druckSystemStarten(){
 function renderCatalog(){
   stopWatermark(); // Sicherheitsnetz: egal auf welchem Weg man die Videoseite verlaesst
   verkehrAufraeumen(); // 3D-Szene freigeben, bevor die Seite neu gezeichnet wird
+  spieleAufraeumen();  // Spiel-Zeitgeber stoppen (06.10.2026)
 
   let content;
   if(drawerView === "dashboard") content = renderDashboardHtml();
   else if(drawerView === "themen") content = renderThemenHtml();
   else if(drawerView === "nuetzliches") content = renderNuetzlichesHtml();
   else if(drawerView === "verkehr") content = renderVerkehrHtml();
+  else if(drawerView === "spiele") content = renderSpieleHtml();
   else if(drawerView === "rechtliches") content = renderRechtlichesHtml();
   else if(drawerView === "hilfe") content = renderHilfeHtml();
   else if(drawerView === "ueber") content = renderUeberHtml();
@@ -9112,12 +9189,13 @@ function renderCatalog(){
     ["dashboard","dashboard",t("mDashboard")],
     ["themen","hashtag",t("mThemen")],
     ["verkehr","verkehr",t("mVerkehr")],
+    ].concat(spieleSichtbar() ? [["spiele","spiele",t("mSpiele")]] : []).concat([
     ["nuetzliches","buch",t("mNuetzliches")],
     ["rechtliches","schild",t("mRechtliches")],
     ["pruefungstag","kalender",t("mPruefungstag")],
     ["hilfe","frage",t("mHilfe")],
     ["ueber","info",t("mUeber")]
-  ];
+  ]);
   const drawerHtml =
     '<div class="drawer-backdrop' + (drawerOpen ? " open" : "") + '" id="drawer-backdrop"></div>' +
     '<div class="drawer' + (drawerOpen ? " open" : "") + '">' +
@@ -9138,8 +9216,8 @@ function renderCatalog(){
     drawerHtml +
     '<div class="header">' +
       '<button class="menu-btn" id="drawer-open-btn" aria-label="Menü">' + icon("menu") + "</button>" +
-      '<button class="fa-wortmarke-btn" id="wortmarke-home-btn" aria-label="Zum Start">' +
-        '<span class="fa-wortmarke">Fahr-Akademie</span></button>' +
+      '<button class="fa-logo-btn" id="wortmarke-home-btn" aria-label="Fahr-Akademie – Zum Start">' +
+        '<img class="logo-img" src="' + LOGO + '" alt="" width="40" height="40"></button>' +
       '<button class="konto-btn" data-view="konto" aria-label="Konto">' +
         '<span class="konto-kreis">' + esc(initialen(session && session.name)) + "</span></button>" +
     "</div>" +
@@ -9219,6 +9297,7 @@ function renderCatalog(){
   verkehrEinhaengen();
   vorfahrtFilmEinhaengen();
   verkehrKachelnEinhaengen();
+  spieleEinhaengen();
   // Zugangsanfrage (12.09.2026)
   document.querySelectorAll("[data-zugang-anfragen]").forEach(function(b){
     b.addEventListener("click", function(){ zugangAnfragen(b, b.dataset.zugangAnfragen); });

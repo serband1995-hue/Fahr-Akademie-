@@ -64,7 +64,7 @@
   const r = window.VFSzenen.bauen({
     tl: tl, T: T, tx: function (k) { return T.de[k]; },
     scenes: T.kapitel.map(function (_, i) { return document.getElementById("s" + (i + 1)); }),
-    logo: "assets/logo-264.jpg"
+    logo: "assets/logo-264.png"
   });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(r.refit);
   tl.seek(0);
