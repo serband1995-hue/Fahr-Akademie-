@@ -279,7 +279,7 @@
     box-shadow:var(--schatten-2);
   }
 
-  .logo-img{width:64px;height:64px;border-radius:16px;display:block;box-shadow:0 6px 20px rgba(43,40,30,.18);}
+  .logo-img{width:64px;height:64px;display:block;filter:drop-shadow(0 6px 12px rgba(43,40,30,.22));}
 
   /* ---------- LOGIN ---------- */
   .login-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;}
@@ -871,6 +871,11 @@
     min-height:44px;display:flex;align-items:center;justify-content:center;}
   .fa-wortmarke{font-size:12.5px;font-weight:700;letter-spacing:.18em;
     text-transform:uppercase;color:var(--faint);}
+  /* 06.10.2026: Logo statt Schriftzug, mittig oben, tippbar = zurück zum Dashboard */
+  .fa-logo-btn{background:none;border:none;cursor:pointer;padding:4px;
+    min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;}
+  .fa-logo-btn .logo-img{width:40px;height:40px;filter:drop-shadow(0 3px 6px rgba(43,40,30,.2));}
+  .fa-logo-btn:active .logo-img{transform:scale(.94);}
   .konto-btn{background:none;border:none;cursor:pointer;padding:0;
     min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:flex-end;}
   .konto-kreis{width:30px;height:30px;border-radius:50%;background:var(--surface-tint);
@@ -1595,7 +1600,7 @@ function _urlBase64ToUint8Array(base64String){
 const DEMO_MODE = SUPABASE_URL.indexOf("DEIN-PROJEKT") !== -1;
 
 // 26.09.2026 (D10): war ein 46-KB-Bild direkt im HTML. Jetzt eine kleine Datei, die der Service Worker zwischenspeichert.
-const LOGO = "./logo-264.jpg";
+const LOGO = "./logo-264.png";
 
 // ---- ICON-SYSTEM (Bereich 2, Punkt 4) ----
 // Echte SVGs statt Emoji: einheitlich auf allen Geräten, färben sich mit der Textfarbe mit.
@@ -9088,8 +9093,8 @@ function renderCatalog(){
     drawerHtml +
     '<div class="header">' +
       '<button class="menu-btn" id="drawer-open-btn" aria-label="Menü">' + icon("menu") + "</button>" +
-      '<button class="fa-wortmarke-btn" id="wortmarke-home-btn" aria-label="Zum Start">' +
-        '<span class="fa-wortmarke">Fahr-Akademie</span></button>' +
+      '<button class="fa-logo-btn" id="wortmarke-home-btn" aria-label="Fahr-Akademie – Zum Start">' +
+        '<img class="logo-img" src="' + LOGO + '" alt="" width="40" height="40"></button>' +
       '<button class="konto-btn" data-view="konto" aria-label="Konto">' +
         '<span class="konto-kreis">' + esc(initialen(session && session.name)) + "</span></button>" +
     "</div>" +

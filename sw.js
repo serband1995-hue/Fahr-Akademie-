@@ -19,11 +19,12 @@
 // deshalb ist cache-first hier sicher -- eine neue Version bekommt einen neuen Namen.
 // v4 (26.09.2026): Logo als eigene kleine Datei (vorher 46 KB im HTML).
 // v5 (05.10.2026): GSAP 3.14.2 (Erklärfilm „Vorfahrt“ in „Verkehr verstehen“) liegt in vendor/, Dateiname trägt die Version.
-const CACHE_NAME = "fahr-akademie-shell-v5";
+// v6 (06.10.2026): neues Logo (transparentes PNG) + neue App-Icons.
+const CACHE_NAME = "fahr-akademie-shell-v6";
 const STATIC_ASSETS = [
   "./vendor/supabase-js-2.117.2.min.js",
   "./vendor/gsap-3.14.2.min.js",
-  "./logo-264.jpg",
+  "./logo-264.png",
   "./manifest.json",
   "./icon-192.png",
   "./icon-512.png",

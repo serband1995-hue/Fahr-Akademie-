@@ -183,7 +183,7 @@ Konto-Schlüssel, den die Functions nicht haben).
 - **supabase-js liegt im Repo** (`vendor/`, feste Version). Bei einem Update
   neue Datei mit neuer Versionsnummer anlegen, Script-Tag und `sw.js`
   (STATIC_ASSETS + CACHE_NAME) anpassen.
-- **Logo** ist die Datei `logo-264.jpg` (nicht mehr im HTML eingebettet), im
+- **Logo** ist die Datei `logo-264.png` (nicht mehr im HTML eingebettet), im
   Service Worker vorgeladen. Neues Logo = neuer Dateiname + `sw.js` anpassen.
 - **Anklickbare `<div>`s** bekommen automatisch `role="button"`/`tabindex`
   (`KLICK_FLAECHEN` + `tastaturSystemStarten`). Neue Klickflächen mit
