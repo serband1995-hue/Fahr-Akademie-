@@ -27,13 +27,13 @@ export const SPIELE = [
   }
 ,
   {
-    id: "memory", name: "memoryName", kurz: "memoryKurz", einheit: "s", bestKey: "bestzeit", nurVorschau: true,
+    id: "memory", name: "memoryName", kurz: "memoryKurz", einheit: "s", bestKey: "bestzeit", nurVorschau: false,
     format: function (ms, k) { return k.zahl(ms / 1000, 1) + " s"; },
     laden: function () { return import("./memory.js"); },
     symbol: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="8" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="10" width="8" height="10" rx="2" fill="currentColor" opacity=".25" stroke="currentColor" stroke-width="1.8"/><path d="M7 7.5l.01 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'
   },
   {
-    id: "vorfahrt", name: "vorName", kurz: "vorKurz", einheit: "", bestKey: "vorBestwert", nurVorschau: true,
+    id: "vorfahrt", name: "vorName", kurz: "vorKurz", einheit: "", bestKey: "vorBestwert", nurVorschau: false,
     format: function (w, k) { return w + " " + k.tx("vorPunkte"); },
     laden: function () { return import("./vorfahrt.js"); },
     symbol: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 2v7H2M15 2v7h7M9 22v-7H2M15 22v-7h7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg>'
