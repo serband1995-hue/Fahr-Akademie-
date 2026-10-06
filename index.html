@@ -1159,12 +1159,34 @@
   .vv-kachel-knopf{display:inline-flex;align-items:center;gap:6px;width:auto;}
   .vv-gruppe{font-family:var(--ff-titel);font-weight:600;font-size:19px;margin:var(--sp-l) 0 var(--sp-s);display:flex;align-items:center;gap:8px;}
   .vv-zahl{font-family:var(--ff-body);font-size:13px;font-weight:700;color:var(--muted);background:var(--surface-strong,#EAE3D2);border-radius:999px;padding:1px 9px;}
-  .vv-raster{display:grid;grid-template-columns:1fr;gap:var(--sp-s);}
-  @media (min-width:600px){ .vv-raster{grid-template-columns:1fr 1fr;} }
   .vv-karte{display:flex;flex-direction:column;gap:4px;text-align:start;padding:var(--sp-m);width:100%;cursor:pointer;font:inherit;color:inherit;border:1px solid var(--border);min-height:44px;}
-  .vv-karte-titel{font-weight:700;font-size:16px;}
-  .vv-karte-kurz{color:var(--muted);font-size:14.5px;}
-  .vv-karte-fuss{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px;font-size:13px;color:var(--faint);font-weight:600;}
+  /* Bild-Kacheln „Verkehr verstehen“ (06.10.2026): je Kategorie eine Wisch-Zeile, Verhalten in verkehr/kacheln.js.
+     --p (0..1) setzt kacheln.js beim Wischen: 1 = vorne im Blick (groß, scharf), 0 = weg (klein, weich). */
+  .vk-reihe{--ursprung:left center;display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-padding-inline:20px;padding:10px 20px 8px;margin-inline:-20px;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .vk-reihe::-webkit-scrollbar{display:none;}
+  .vk-reihe::after{content:"";flex:0 0 calc(38% - 12px);}
+  .vk-karte{flex:0 0 62%;min-width:0;scroll-snap-align:start;display:flex;flex-direction:column;gap:6px;margin:0;padding:0;border:0;background:none;font:inherit;color:inherit;text-align:start;cursor:pointer;-webkit-tap-highlight-color:transparent;
+    --p:0;transform-origin:var(--ursprung);transform:scale(calc(.86 + .14 * var(--p)));opacity:calc(.6 + .4 * var(--p));will-change:transform,opacity;}
+  .vk-karte:first-child{--p:1;}
+  .vk-bild{display:block;position:relative;aspect-ratio:16/9;border-radius:var(--r-m);overflow:hidden;background:linear-gradient(160deg,var(--surface-strong,#EAE3D2),var(--surface-tint,#E3EADD));box-shadow:0 6px 16px rgba(30,28,20,.2),0 1px 3px rgba(30,28,20,.12);}
+  .vk-bild .ic{position:absolute;inset:0;margin:auto;width:34px;height:34px;opacity:.35;color:var(--muted);}
+  .vk-bild img{position:relative;display:block;width:100%;height:100%;object-fit:cover;filter:brightness(var(--hell,1)) blur(calc((1 - var(--p)) * 1.6px));}
+  .vk-gesperrt{--hell:.6;}
+  .vk-probe .vk-bild{box-shadow:0 0 0 2px var(--gold-rand),0 8px 22px rgba(217,149,76,.32);}
+  .vk-karte:focus-visible{outline:none;}
+  .vk-karte:focus-visible .vk-bild{outline:3px solid var(--gold-text);outline-offset:2px;}
+  .vk-fuss{display:flex;align-items:center;gap:6px;min-height:22px;padding-inline:2px;color:var(--muted);font-size:13px;font-weight:700;}
+  .vk-fuss .ic{width:15px;height:15px;flex:none;}
+  .vk-info{display:grid;width:100%;min-height:44px;margin:0;padding:6px 0 0;border:0;background:none;font:inherit;color:inherit;text-align:start;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  .vk-t{grid-area:1/1;display:flex;flex-direction:column;gap:5px;min-width:0;visibility:hidden;opacity:0;transition:opacity .28s ease,visibility 0s .28s;}
+  .vk-t.an{visibility:visible;opacity:1;transition:opacity .3s ease .08s,visibility 0s;}
+  .vk-t-kopf{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;}
+  .vk-t-titel{font-weight:700;font-size:17px;line-height:1.25;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere;}
+  .vk-t-kurz{color:var(--muted);font-size:14.5px;line-height:1.4;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;overflow-wrap:anywhere;}
+  .vk-t-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--faint);font-size:13px;font-weight:600;}
+  .vk-t-meta .ic{width:18px;height:18px;flex:none;}
+  [dir="rtl"] .vk-t-meta .ic{transform:scaleX(-1);}
+  @media (prefers-reduced-motion:reduce){ .vk-karte{transform:none;} .vk-bild img{filter:brightness(var(--hell,1));} .vk-t,.vk-t.an{transition:none;} }
   .vv-marke-frei{padding:2px 9px;border-radius:999px;background:var(--gold-schwach);border:1px solid var(--gold-rand);color:var(--gold-text);font-weight:700;}
   .vv-marke-zu{display:inline-flex;align-items:center;gap:4px;color:var(--muted);}
   .vv-marke-zu .ic{width:14px;height:14px;}
@@ -8642,21 +8664,35 @@ function renderVerkehrHtml(){
     return kopf + '<div class="leer-hinweis">' + esc(vvListeFehler ? t("vvFehler") : t("vvLaden")) + "</div>" +
       (vvListeFehler ? '<button type="button" class="btn-sekundaer" data-vv-oeffnen>' + esc(t("vvKachelKnopf")) + "</button>" : "");
   }
+  // Bild-Kacheln (06.10.2026): je Kategorie eine Wisch-Zeile, darunter die Kurzinfo der Kachel im Blick.
+  // Wischen, Verkleinern und Info-Wechsel macht verkehr/kacheln.js; ohne die Datei bleibt es eine einfache Wisch-Zeile.
+  const voll = !!(session && session.vollzugang);
   const gruppen = VV_KATEGORIEN.map(function(k){
-    const liste = vvListe.filter(function(s){ return s.kategorie === k[0]; });
+    let liste = vvListe.filter(function(s){ return s.kategorie === k[0]; });
     if(!liste.length) return "";
+    // Kostprobe (für alle frei) steht in ihrer Zeile vorn und ist hervorgehoben
+    if(!voll) liste = liste.filter(function(s){ return s.kostprobe; }).concat(liste.filter(function(s){ return !s.kostprobe; }));
+    const probe = function(s){ return !voll && s.frei && s.kostprobe; };
+    const marke = function(s){
+      return probe(s) ? '<span class="vv-marke-frei">' + esc(t("vvKostprobe")) + "</span>"
+        : (!s.frei ? '<span class="vv-marke-zu">' + icon("schloss") + esc(t("vvNurAnfang")) + "</span>" : "");
+    };
+    const karten = liste.map(function(s){
+      return '<button type="button" class="vk-karte' + (s.frei ? "" : " vk-gesperrt") + (probe(s) ? " vk-probe" : "") + '" data-vv-szene="' + esc(s.id) + '" aria-label="' + esc(s.titel) + '">' +
+        '<span class="vk-bild">' + icon("verkehr") + '<img src="verkehr/vorschau/' + esc(s.id) + '.webp?v=1" alt="" width="480" height="270" loading="lazy" decoding="async"></span>' +
+        '<span class="vk-fuss" aria-hidden="true">' + (!s.frei ? icon("schloss") : "") + "</span></button>";
+    }).join("");
+    const infos = liste.map(function(s, i){
+      return '<span class="vk-t' + (i ? "" : " an") + '" data-vk-id="' + esc(s.id) + '">' +
+        '<span class="vk-t-kopf"><span class="vk-t-titel">' + esc(s.titel) + "</span>" + marke(s) + "</span>" +
+        '<span class="vk-t-kurz">' + esc(s.kurz || "") + "</span>" +
+        '<span class="vk-t-meta"><span>' + esc(t("vvKapitel", { n: s.kapitel })) + " · " + Math.round(s.dauer || 0) + " s</span>" + icon("weiter") + "</span></span>";
+    }).join("");
     return '<h2 class="vv-gruppe">' + esc(t(k[1])) + '<span class="vv-zahl">' + liste.length + "</span></h2>" +
-      '<div class="vv-raster">' + liste.map(function(s){
-        const marke = s.frei ? (s.kostprobe && !(session && session.vollzugang) ? '<span class="vv-marke-frei">' + esc(t("vvKostprobe")) + "</span>" : "")
-          : '<span class="vv-marke-zu">' + icon("schloss") + esc(t("vvNurAnfang")) + "</span>";
-        return '<button type="button" class="karte vv-karte" data-vv-szene="' + esc(s.id) + '">' +
-          '<span class="vv-karte-titel">' + esc(s.titel) + "</span>" +
-          '<span class="vv-karte-kurz">' + esc(s.kurz || "") + "</span>" +
-          '<span class="vv-karte-fuss"><span>' + esc(t("vvKapitel", { n: s.kapitel })) + " · " + Math.round(s.dauer || 0) + " s</span>" + marke + "</span>" +
-        "</button>";
-      }).join("") + "</div>";
+      '<div class="vk-zeile" data-vk-zeile="' + esc(k[0]) + '"><div class="vk-reihe">' + karten + "</div>" +
+      '<button type="button" class="vk-info" data-vv-szene="' + esc(liste[0].id) + '">' + infos + "</button></div>";
   }).join("");
-  return kopf + '<div id="vf-platz"></div>' + gruppen;   // Erklärfilm „Vorfahrt“ als Überblick vor den Einzelszenen (verkehr/vorfahrt-film.js)
+  return kopf + '<div id="vf-platz"></div><div data-vk-wurzel>' + gruppen + "</div>";   // Erklärfilm „Vorfahrt“ als Überblick vor den Einzelszenen (verkehr/vorfahrt-film.js)
 }
 
 function renderVerkehrSzeneHtml(){
@@ -8686,6 +8722,7 @@ function renderVerkehrSzeneHtml(){
 
 function verkehrAufraeumen(){
   if(vvSpieler){ try{ vvSpieler.zerstoeren(); }catch(e){} vvSpieler = null; }
+  if(vvKacheln){ try{ vvKacheln.zerstoeren(); }catch(e){} vvKacheln = null; }
   if(vvFilm){ try{ vvFilmZustand = { z: vvFilm.zustand(), t: Date.now() }; vvFilm.zerstoeren(); }catch(e){} vvFilm = null; }
   vvMontiert = null;
 }
@@ -8693,6 +8730,19 @@ function verkehrAufraeumen(){
 // Erklärfilm „Vorfahrt“ (05.10.2026): eigene Datei, Animation läuft live, nur der Text wechselt die Sprache.
 // Er ist eine Zugabe: schlägt das Laden fehl, bleibt der Platz einfach leer.
 let vvFilm = null, vvFilmZustand = null;
+
+// Bild-Kacheln (06.10.2026): Wisch-Effekt und Kurzinfo in verkehr/kacheln.js. Schlägt das Laden fehl, bleiben es einfache Wisch-Zeilen.
+let vvKacheln = null;
+async function verkehrKachelnEinhaengen(){
+  const wurzel = document.querySelector("[data-vk-wurzel]");
+  if(!wurzel) return;
+  try{
+    const m = await import("./verkehr/kacheln.js");
+    if(!document.body.contains(wurzel) || vvKacheln) return; // inzwischen neu gezeichnet
+    vvKacheln = m.starte(wurzel);
+  } catch(e){}
+}
+
 async function vorfahrtFilmEinhaengen(){
   const platz = document.getElementById("vf-platz");
   if(!platz) return;
@@ -9246,6 +9296,7 @@ function renderCatalog(){
   });
   verkehrEinhaengen();
   vorfahrtFilmEinhaengen();
+  verkehrKachelnEinhaengen();
   spieleEinhaengen();
   // Zugangsanfrage (12.09.2026)
   document.querySelectorAll("[data-zugang-anfragen]").forEach(function(b){

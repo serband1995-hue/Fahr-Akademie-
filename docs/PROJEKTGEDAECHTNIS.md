@@ -198,6 +198,18 @@ Konto-Schlüssel, den die Functions nicht haben).
   öffentlicher Lesezugriff; nur Super-Admin liest/ändert Kostprobe/Aktiv).
   Ausgeliefert nur über `academy-szene`: Vollzugang, Kostprobe oder Gratis-Thema
   → ganze Szene, sonst nur Kapitel 1 (`teaser.gesperrt` = Titel der übrigen).
+- **Bild-Kacheln in „Verkehr verstehen“** (06.10.2026, Serban): je Kategorie eine Wisch-Zeile
+  (`.vk-reihe`, CSS scroll-snap, ca. 1,6 Kacheln sichtbar). Markup baut `renderVerkehrHtml()`,
+  das Wischen (Kachel vorn groß/scharf, abgehende klein/weich, Variable `--p` 0..1) und die
+  Kurzinfo darunter macht `verkehr/kacheln.js` (per `import()` beim Öffnen). Alle Infotexte einer
+  Zeile liegen übereinander im Raster (`.vk-t`), nur einer ist sichtbar → die Höhe springt nie.
+  Vorschaubilder: `verkehr/vorschau/<szenen-id>.webp` (480×270, je ~10 KB), Standbilder aus
+  den echten 3D-Szenen (Headless-Chromium mit Software-WebGL über den Spieler, Szenendaten mit
+  `werkzeuge/szenen-export.js` aus dem Kompass-Repo). Neue Szene = neues Bild gleichen Namens,
+  fehlt es, zeigt die Kachel eine ruhige Ersatzfläche. Kostprobe-Szenen stehen in ihrer Zeile
+  vorn (Gold-Rahmen); wer keinen Vollzugang hat, sieht gesperrte Bilder gedimmt, Schloss unter
+  dem Bild. Kostproben seit 06.10.2026: `ueberholen`, `zebra`, `rettungsgasse`.
+  Keine neuen Texte (Titel/Kurztext kommen aus `academy-szene`, Marken aus `vvKostprobe`/`vvNurAnfang`).
   Erzeugt werden die Daten mit `werkzeuge/szenen-export.js` (tastet die
   Kompass-Lernszenen und `werkzeuge/szenen/*.js` ab; Übersetzungen in
   `werkzeuge/szenen-texte/<sprache>.json`, gleiche Struktur wie `texte.de`). Paragraphen-Etiketten (`.vv-regel`, `.par`)
