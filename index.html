@@ -8793,10 +8793,14 @@ function tFett(schluessel){
 const SPIELE_FUER_ALLE = true;   // 06.10.2026: für alle Schüler freigegeben (Entscheidung Serban); false = nur Vorschau + ?spiele=1
 let spieleInstanz = null;
 
-function spieleSichtbar(){
-  if(SPIELE_FUER_ALLE) return true;
+/* Vorschau-Gerät: Vorschau der Verwaltung oder ?spiele=1 in der Adresse. Sieht auch Spiele mit nurVorschau (spiele/spiele.js). */
+function spieleGeraetVorschau(){
   if(session && session.vorschau) return true;
   try{ return localStorage.getItem("spiele_vorschau") === "1"; } catch(e){ return false; }
+}
+/* Menüpunkt „Spiele“: für alle (SPIELE_FUER_ALLE) oder nur auf Vorschau-Geräten. Welche Spiele darin stehen, entscheidet spiele/spiele.js je Spiel (nurVorschau). */
+function spieleSichtbar(){
+  return SPIELE_FUER_ALLE || spieleGeraetVorschau();
 }
 
 async function spieleAufruf(body){
@@ -8829,6 +8833,7 @@ function spieleEinhaengen(){
     spieleInstanz = mod.starte(platz, {
       sprache: sprache, spiel: spiel,
       vorschau: DEMO_MODE || !session || !!session.vorschau || !session.session_token,
+      vorschauGeraet: spieleGeraetVorschau(),
       api: spieleAufruf,
       offen: function(id){ go({ drawer: "spiele", spiel: id }); nachObenScrollen(); }
     });

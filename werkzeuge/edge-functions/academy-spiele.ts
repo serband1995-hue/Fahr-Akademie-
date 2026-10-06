@@ -7,7 +7,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 //   { aktion: "uebersicht" }                    -> Anzeigename, Sichtbarkeit, eigene Bestwerte
 //   { aktion: "profil", sichtbar: true|false }  -> im Ranking sichtbar / ausgeblendet
 //   { aktion: "start", spiel }                  -> neue Runde; liefert eine einmalige Runden-ID
-//   { aktion: "ergebnis", runde, wert }         -> Ergebnis einer Runde, prüft Plausibilität, speichert Bestwert
+//   { aktion: "ergebnis", runde, wert, tipps? } -> Ergebnis einer Runde, prüft Plausibilität, speichert Bestwert
+//                                                  (tipps nur bei Spielen, die sie brauchen: Tempo-Sprint)
 //   { aktion: "rangliste", spiel, limit }       -> beste Spieler (nur sichtbare), eigene Platzierung
 //
 // Der Name im Ranking kommt NIE vom Gerät, sondern aus dem Schülerkonto: Vorname + erster
@@ -30,11 +31,38 @@ function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 }
 
+// Tempo-Sprint (07.10.2026): dieselben Zahlen wie REGELN in spiele/tempo.js (die Prüfung pruefe-academy-spiele.mjs vergleicht beides).
+const TEMPO = { GAIN: 3.6, VTOP: 280, V0_MAX: 130, TAPS_MAX: 160 };
+// Höchste Geschwindigkeit, die mit n Tipps im Endspurt überhaupt möglich ist (ohne Rollverlust, ab V0_MAX).
+function tempoObergrenze(n: number): number {
+  let v = TEMPO.V0_MAX;
+  for (let i = 0; i < n; i++) v = Math.min(TEMPO.VTOP, v + TEMPO.GAIN * (1 - v / TEMPO.VTOP));
+  return v;
+}
+
 // Je Spiel: Richtung des Rankings und menschlich mögliche Grenzen.
-//  aufsteigend true  = kleiner ist besser (Reaktionszeit in ms)
-//  vorlauf_ms        = so lange dauert die Runde MINDESTENS, bevor der Wert entsteht (Lichter + kürzeste Wartezeit)
-const SPIELE: Record<string, { aufsteigend: boolean; min: number; max: number; vorlauf_ms: number }> = {
-  ampel: { aufsteigend: true, min: 120, max: 1500, vorlauf_ms: 4600 },
+//  aufsteigend true  = kleiner ist besser (Reaktionszeit in ms); false = größer ist besser (Höchsttempo in km/h)
+//  vorlauf_ms        = so lange dauert die Runde MINDESTENS, bevor der Wert entsteht
+//                      Ampel: Lichter + kürzeste Wartezeit; Tempo-Sprint: Countdown 3 s + Lernphase 30 s + Endspurt 10 s
+//  wert_ist_zeit     = true: der Wert (ms) kommt NACH dem Vorlauf dazu (Ampel); false: der Wert ist keine Zeit (Tempo-Sprint)
+//  pruefe            = zusätzliche Plausibilität; gibt einen Fehlernamen zurück oder null
+const SPIELE: Record<string, {
+  aufsteigend: boolean; min: number; max: number; vorlauf_ms: number; wert_ist_zeit: boolean;
+  pruefe?: (wert: number, body: Record<string, unknown>) => string | null;
+}> = {
+  ampel: { aufsteigend: true, min: 120, max: 1500, vorlauf_ms: 4600, wert_ist_zeit: true },
+  tempo: {
+    aufsteigend: false, min: 0, max: TEMPO.VTOP, vorlauf_ms: 43_000, wert_ist_zeit: false,
+    pruefe: (wert, body) => {
+      const tipps = body.tipps;
+      // Mehr als 16 Tipps pro Sekunde (160 im 10-s-Endspurt) schafft kein Mensch; ohne Angabe zählt die Runde nicht
+      if (typeof tipps !== "number" || !Number.isInteger(tipps) || tipps < 0) return "tipps_ungueltig";
+      if (tipps > TEMPO.TAPS_MAX) return "zu_viele_tipps";
+      // Das Tempo muss zur Spielregel passen: mit n Tipps ist höchstens tempoObergrenze(n) möglich (+1 für Rundung)
+      if (wert > Math.ceil(tempoObergrenze(tipps)) + 1) return "tempo_unmoeglich";
+      return null;
+    },
+  },
 };
 const RUNDE_MAX_MS = 120_000;          // länger offen gelassene Runde zählt nicht mehr
 const RUNDEN_PRO_10_MIN = 30;          // Bremse gegen Dauerfeuer
@@ -110,9 +138,13 @@ Deno.serve(async (req) => {
       const regel = SPIELE[r.spiel];
       if (!regel) return json({ error: "spiel_unbekannt", code: "eingabe_fehlt" }, 400);
       if (wert < regel.min || wert > regel.max) return json({ error: "wert_ausserhalb", code: "ergebnis_ungueltig" }, 400);
+      if (regel.pruefe) {
+        const fehler = regel.pruefe(wert, body);
+        if (fehler) return json({ error: fehler, code: "ergebnis_ungueltig" }, 400);
+      }
       const vergangen = Date.now() - new Date(r.gestartet_am).getTime();
-      // Der Wert kann erst NACH Lichtern + Wartezeit entstehen. 250 ms Luft für Uhren und Netz.
-      if (vergangen < regel.vorlauf_ms + wert - 250) return json({ error: "zu_schnell", code: "ergebnis_ungueltig" }, 400);
+      // Der Wert kann erst NACH dem Vorlauf entstehen (Ampel: Lichter + Wartezeit + Reaktion). 250 ms Luft für Uhren und Netz.
+      if (vergangen < regel.vorlauf_ms + (regel.wert_ist_zeit ? wert : 0) - 250) return json({ error: "zu_schnell", code: "ergebnis_ungueltig" }, 400);
       if (vergangen > RUNDE_MAX_MS) return json({ error: "runde_abgelaufen", code: "ergebnis_ungueltig" }, 400);
       // Runde genau einmal einlösen (atomar: nur der erste Aufruf bekommt die Zeile zurück)
       const { data: eingeloest, error: uErr } = await supa.from("academy_spiele_runden").update({ benutzt: true }).eq("id", r.id).eq("benutzt", false).select("id");
