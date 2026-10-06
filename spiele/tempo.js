@@ -18,7 +18,7 @@
    Aufräumen: Zeitgeber, Animationsbild und Listener werden in zerstoeren() entfernt; wer die App verlässt
    (Seite unsichtbar), bricht die Runde ab, wie bei der Ampel. */
 import { rankingKarte, profilKarte } from "./rahmen.js";
-import { zeichen274, zeichen282 } from "./schilder.js";
+import { zeichen274, zeichen282, schilderVorladen } from "./schilder.js";
 
 export const REGELN = {
   GAIN: 5, VTOP: 420, DECAY: 16,            // km/h je Tipp (bei v = 0), Höchsttempo-Grenze, km/h Verlust je Sekunde
@@ -64,11 +64,12 @@ export function lage(t) {
 }
 export function blitzer(v, limit) { return v > limit + REGELN.TOL; }
 
-/* Zeichen 274 und 282 (selbst gezeichnet, amtliche Form) liegen in schilder.js; hier nur wieder ausgegeben, damit die Prüfungen sie hier finden. */
+/* Zeichen 274 und 282 (amtliche Bilder) kommen aus schilder.js; hier nur wieder ausgegeben, damit die Prüfungen sie hier finden. */
 export { zeichen274, zeichen282 };
 
 export function starte(platz, k) {
   const R = REGELN;
+  schilderVorladen(["z274-" + 80 + ".svg", "z274-60.svg", "z274-100.svg", "z274-120.svg", "z282.svg"]);   // kein Nachladen beim Schildwechsel
   let zustand = "bereit";        // bereit | start | countdown | lauf | fertig
   let timer = [];
   let raf = 0;

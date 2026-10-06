@@ -129,7 +129,7 @@
 .sp-t-buehne{display:grid;gap:8px;padding:10px;scroll-margin-top:8px;}
 .sp-t-hud{display:grid;grid-template-columns:clamp(52px,16vw,68px) 1fr clamp(56px,17vw,72px);align-items:center;gap:var(--sp-m);}
 .sp-t-schild{width:100%;aspect-ratio:1;}
-.sp-t-schild svg,.sp-t-weg-schild svg{display:block;width:100%;height:100%;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35));}
+.sp-t-schild svg,.sp-t-schild img,.sp-t-weg-schild svg,.sp-t-weg-schild img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35));}
 .sp-t-tacho{display:flex;flex-direction:column;align-items:center;line-height:1;}
 .sp-t-zahl{font-family:var(--ff-titel);font-size:clamp(40px,13vw,56px);font-weight:700;font-variant-numeric:tabular-nums;}
 .sp-t-tacho small{font-size:13px;font-weight:700;color:var(--muted);margin-top:1px;}

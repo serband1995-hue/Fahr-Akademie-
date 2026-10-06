@@ -285,7 +285,7 @@ async function botStarten(s, o) {
   await s.evaluate((opt) => {
     const pad = document.querySelector(".sp-t-pad"), zahl = document.querySelector(".sp-t-zahl");
     const tippen = (n) => { for (let i = 0; i < n; i++) pad.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, pointerType: "touch", pointerId: 10 + i, isPrimary: i === 0 })); };
-    const limit = () => { const l = document.querySelector("[data-aktuell] svg"); const m = l && /(\d+) km\/h/.exec(l.getAttribute("aria-label") || ""); return m ? +m[1] : null; };
+    const limit = () => { const l = document.querySelector("[data-aktuell] img"); const m = l && /(\d+) km\/h/.exec(l.getAttribute("alt") || ""); return m ? +m[1] : null; };
     window.__bot = {
       lern: setInterval(() => {
         if (!pad.classList.contains("tippen") || pad.classList.contains("spurt")) return;
@@ -372,7 +372,8 @@ async function tempoPruefungen() {
   const tLauf = Date.now();
   await imBildPruefen(s, "Tempo-Sprint 360 im Lauf");
   pruefe("im Lauf ist die Anleitung ausgeblendet", !(await s.isVisible(".sp-t-anleitung")));
-  pruefe("Lernphase beginnt bei 50 km/h, Schild 80 im Blick", (await s.textContent(".sp-t-meldung")).includes("Erlaubt: 80 km/h") && (await s.getAttribute("[data-aktuell] svg", "aria-label")).includes("274") && (await s.getAttribute("[data-aktuell] svg", "aria-label")).includes("80 km/h"));
+  pruefe("Lernphase beginnt bei 50 km/h, Schild 80 im Blick", (await s.textContent(".sp-t-meldung")).includes("Erlaubt: 80 km/h") && (await s.getAttribute("[data-aktuell] img", "alt")).includes("274") && (await s.getAttribute("[data-aktuell] img", "alt")).includes("80 km/h"));
+  pruefe("Tempo-Schild im Anzeigefeld ist das geladene amtliche Bild (mind. 50 px)", await s.evaluate(() => { const i = document.querySelector("[data-aktuell] img"); const r = i.getBoundingClientRect(); return i.complete && i.naturalWidth > 0 && r.width >= 50; }));
   const v1 = await zahlJetzt(s);
   pruefe("Tacho beim Start im Bereich 40–50 (rollt ohne Tippen)", v1 >= 38 && v1 <= 50, "v=" + v1);
   await botStarten(s, { lernen: "halten", takt: 80 });
@@ -381,7 +382,7 @@ async function tempoPruefungen() {
   while (!(await s.locator(".sp-t-pad.spurt").count()) && Date.now() - tLauf < 36000) {
     const info = await s.evaluate(() => ({
       v: +document.querySelector(".sp-t-zahl").textContent, m: document.querySelector(".sp-t-meldung").textContent.trim(), warn: document.querySelector(".sp-t-meldung").classList.contains("warn"),
-      l: (/(\d+) km\/h/.exec(document.querySelector("[data-aktuell] svg")?.getAttribute("aria-label") || "") || [])[1], gesperrt: !!document.querySelector(".sp-t-pad.gesperrt"),
+      l: (/(\d+) km\/h/.exec(document.querySelector("[data-aktuell] img")?.getAttribute("alt") || "") || [])[1], gesperrt: !!document.querySelector(".sp-t-pad.gesperrt"),
       weg: document.querySelector("[data-weg]")?.dataset.wert || ""
     }));
     if (info.l !== letztesSchild) { letztesSchild = info.l; schildSeit = Date.now(); }
@@ -402,7 +403,7 @@ async function tempoPruefungen() {
   pruefe("Ankündigungen „Gleich: …“ vor dem Wechsel (100, 80, 60, 100, 120 und ‚keine Begrenzung‘)", ["Gleich: 100 km/h", "Gleich: 80 km/h", "Gleich: 60 km/h", "Gleich: 120 km/h"].every((a) => ankuendigungen.has(a)) , [...ankuendigungen].join(" | "));
   pruefe("Schilder laufen am Straßenrand heran (Zeichen 274 und am Ende 282)", padWorte.has("100") && padWorte.has("60") && padWorte.has("frei"), [...padWorte].join(","));
   pruefe("Lernphase dauert ~30 s (Endspurt nach 29–32 s)", Math.abs((Date.now() - tLauf) - 30000) < 2500, (Date.now() - tLauf) + " ms");
-  pruefe("Endspurt: Meldung ENDSPURT, Schild Zeichen 282, Pad goldfarben (Klasse spurt)", (await s.textContent(".sp-t-meldung")).includes("ENDSPURT") && (await s.getAttribute("[data-aktuell] svg", "aria-label")).includes("282"));
+  pruefe("Endspurt: Meldung ENDSPURT, Schild Zeichen 282, Pad goldfarben (Klasse spurt)", (await s.textContent(".sp-t-meldung")).includes("ENDSPURT") && (await s.getAttribute("[data-aktuell] img", "alt")).includes("282"));
   const v0Spurt = await zahlJetzt(s);
   pruefe("Tempo am Start des Endspurts: 100–135 (letztes Schild 120)", v0Spurt >= 95 && v0Spurt <= REGELN.V0_MAX + 1, "v=" + v0Spurt);
   await s.screenshot({ path: join(bilder, "tempo-spurt-360.png") });
@@ -548,7 +549,7 @@ async function tempoPruefungen() {
     await t.waitForTimeout(500);
     const info = await t.evaluate(() => ({
       alles: document.querySelector("#spiele-platz").textContent,
-      aria: document.querySelector("[data-aktuell] svg")?.getAttribute("aria-label") || "",
+      aria: document.querySelector("[data-aktuell] img")?.getAttribute("alt") || "",
       meld: document.querySelector(".sp-t-meldung").textContent.trim(), pad: document.querySelector(".sp-t-pad").textContent.trim()
     }));
     pruefe(sp + ": Lauf – kein roher Schlüsselname, kein offenes {v}", !/tempo[A-Z]\w+|vorschauMarke|\{v\}/.test(info.alles + info.aria + info.meld + info.pad), info.meld + " | " + info.aria);
@@ -572,6 +573,24 @@ async function memPaar(s, ks, paar) {   // Schild und Text eines Paares aufdecke
 }
 
 async function memoryPruefungen() {
+  console.log("Verkehrszeichen: alle amtlichen Bilder laden und werden angezeigt");
+  { const z = await neueSeite({ b: 360, h: 740 });
+    await zumMemory(z);
+    const r = await z.evaluate(async () => {
+      const m = await import("./spiele/schilder.js");
+      const fehl = [], gross = [];
+      await Promise.all(m.SCHILD_DATEIEN.map((n) => new Promise((ok) => {
+        const i = new Image(); i.onload = () => { if (i.naturalWidth < 50 || i.naturalHeight < 20) fehl.push(n + " winzig"); ok(); }; i.onerror = () => { fehl.push(n + " lädt nicht"); ok(); };
+        i.src = new URL("../verkehr/vorfahrt-zeichen/" + n, new URL("./spiele/schilder.js", location.href)).href;
+      })));
+      return { anzahl: m.SCHILD_DATEIEN.length, fehl: fehl };
+    });
+    pruefe("alle " + r.anzahl + " Zeichen-Dateien laden als Bild (keine 404, keine kaputten Dateien)", r.anzahl >= 19 && r.fehl.length === 0, JSON.stringify(r));
+    await z.tap(".sp-m-knopf"); await z.waitForSelector(".sp-m-feld:not(.aus)", { timeout: 9000 });
+    await z.waitForTimeout(600);
+    const karten = await z.evaluate(() => Array.from(document.querySelectorAll(".sp-m-schild img")).map((i) => ({ geladen: i.complete && i.naturalWidth > 0, alt: i.alt })));
+    pruefe("Memory: die 6 Schild-Karten haben geladene Bilder (verdeckt, aber fertig geladen)", karten.length === 6 && karten.every((k) => k.geladen), JSON.stringify(karten));
+    await z.context().close(); }
   console.log("Schilder-Memory: Layout in Ruhe");
   for (const g of [{ b: 360, h: 740, n: "360" }, { b: 412, h: 915, n: "412" }, { b: 320, h: 640, n: "320" }, { b: 412, h: 915, n: "412 dunkel", dunkel: true }, { b: 740, h: 360, n: "quer 740x360" }]) {
     const m = await neueSeite({ b: g.b, h: g.h, dunkel: g.dunkel });
@@ -611,6 +630,7 @@ async function memoryPruefungen() {
   await memPaar(m, ks, paare[0]);
   await m.waitForSelector(".sp-m-popup:not([hidden])");
   const sc0 = SCHILDER.find((x) => x.id === paare[0]);
+  pruefe("Erklärung: das Schild ist ein geladenes amtliches Bild und sichtbar groß (mind. 70 px)", await m.evaluate(() => { const i = document.querySelector(".sp-m-pop-schild img"); const r = i.getBoundingClientRect(); return i.complete && i.naturalWidth > 0 && r.width >= 70 && r.height >= 60; }));
   const pop = await m.evaluate(() => ({ kopf: document.querySelector(".sp-m-pop-kopf").textContent.trim(), nr: document.querySelector(".sp-m-pop-nr").textContent.trim(), name: document.querySelector(".sp-m-pop-name").textContent.trim(), text: document.querySelector(".sp-m-pop-text").textContent.trim(), bild: !!document.querySelector(".sp-m-pop-schild svg, .sp-m-pop-schild img"), weiter: document.querySelector(".sp-m-weiter").textContent.trim() }));
   pruefe("Erklärung nach dem Treffer: Treffer!, Zeichen-Nummer, Name, Erklärung nach StVO, Bild, Weiter", pop.kopf === "Treffer!" && pop.nr === "Zeichen " + sc0.nr && pop.name === TEXTE.de[paare[0] + "l"] && pop.text === TEXTE.de[paare[0] + "m"] && pop.bild && pop.weiter === "Weiter", JSON.stringify(pop));
   await layoutPruefen(m, "Memory Erklärung 360", 360);
