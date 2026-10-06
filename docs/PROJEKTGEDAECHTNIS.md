@@ -296,16 +296,12 @@ Spiel 3 **Schilder-Memory** und Spiel 4 **Rechts vor Links** (gebaut 07.10.2026,
 - Der Ampel-Bremsweg rechnet mit den Fahrschul-Faustformeln (Reaktionsweg (v/10)·3, Bremsweg (v/10)², Nässe Bremsweg ×2) und stellt die
   gemessene Handy-Reaktion daneben: Handy-Reaktionen sind kürzer als im Verkehr (~1 s), sonst entsteht falsche Sicherheit.
 
-**Tempo-Sprint (Spiel 2, 07.10.2026)** – `spiele/tempo.js`
-- Ablauf ab Tipp auf Start: Server-Runde anmelden, 3 s Countdown, 6 Schilder je 5 s (80, 100, 80, 60, 100, 120; Zeichen 274 als amtliches Bild), dann Zeichen 282
-  („Ende aller Streckenverbote“, fünf schräge Streifen) und 10 s Endspurt. Ranking = höchste Geschwindigkeit im Endspurt (km/h, größer ist besser).
-- Regeln (Konstanten `REGELN` in `tempo.js`; **Balance 07.10.2026, Wunsch Serban: wer richtig gut ist, wird SEHR schnell**): Tippen `v += 5 · (1 − v/420)`, ohne Tippen −16 km/h je Sekunde. Im Endspurt hält sich das Tempo bei `v* = 420 · (1 − 16/(5 · Tipps/s))`: 6 Tipps/s ≈ 160 km/h, 10/s ≈ 237, 14/s ≈ 287, 15,8/s (Grenze) ≈ 303. Blitzer wenn `v > Schild + 5` (erst 2,5 s nach einem neuen Schild – man muss
-  ja erst langsamer werden können; das Schild wird 2 s vorher am Straßenrand angekündigt), Blitzer = Tippen 2 s gesperrt und Tempo ×0,6 (Vorschlag Claude, von Serban nicht bestätigt, im Bericht genannt).
-  Ein Tipp zählt erst 63 ms nach dem letzten gezählten (Mehrfinger-Salven zählen nur bis ~16/s); nach dem Ende ist die Tippfläche 1,5 s gesperrt (sonst startet wildes Weitertippen sofort die nächste Runde).
-- **Server** (`academy-spiele.ts`, v2): `ergebnis` nimmt zusätzlich `tipps`. Der Eintrag `tempo` im `SPIELE`-Block hat `wert_ist_zeit:false`, `vorlauf_ms:43000` (3 + 30 + 10 s) und `pruefe`:
-  `tipps` ganze Zahl 0–160, Tempo höchstens `tempoObergrenze(tipps)` + 1 (n Tipps ab 130 km/h im dichtesten Abstand von 60 ms, MIT Rollverlust dazwischen; für 159 Tipps ≈ 309 km/h). Die Zahlen `TEMPO` im Server müssen gleich `REGELN` in `tempo.js` sein
-  (`pruefe-academy-spiele.mjs` vergleicht sie und rechnet ganze Läufe aus dem Spielmodell durch: ehrliche Läufe werden nie abgelehnt).
-- Layout: Tacho, Straße, Meldung UND Tippfläche müssen zusammen in ein Handy-Bild (über der Menüleiste, ~90 px): beim Start `scrollIntoView(start)` der Bühne, Tippfläche nach Bildschirmhöhe (`clamp(96px,21vh,170px)`), Anleitung unter der Tippfläche (im Lauf ausgeblendet).
+**Tempo-Sprint (Spiel 2, umgebaut 08.10.2026 nach Serbans Wünschen)** – `spiele/tempo.js`, Spiel-Id `sprint` (vorher `tempo`)
+- Reines Vergnügungsspiel, KEINE Schilder, KEIN Blitzer mehr. Ablauf: Server-Runde anmelden, 3 s Countdown, „Gas geben“: Auffahrt, 6 s Zeit für 60 km/h (sonst „zu langsam“, Runde zählt nicht), dann 10 s Autobahn. Ranking = **Strecke in Metern** (größer ist besser), dazu Höchsttempo und Tipps im Ergebnis.
+- Kein Tempolimit nach oben: Tippen `v += 9 · (1 − v/1400)`, ohne Tippen −40 km/h je Sekunde. Mensch (Tipps/s → Höchsttempo/Strecke nach 10 s): 6 → ~160 km/h, 10 → ~400/770 m, 14 → ~600, 15,8 (Grenze) → ~670 km/h/~1150 m. Ein Tipp zählt erst 63 ms nach dem letzten (Mehrfinger).
+- Rechnung als reine Funktionen (`neuerLauf`, `schritt`, `tippen`, `obergrenze`), von Spiel UND Prüfungen genutzt. Zeichnung: Schein-3D auf einer Zeichenfläche (Canvas, Zeile für Zeile, Bäume/Häuser/Autos als Sprites), Vorführung vor dem Start (Auto fährt auf die Autobahn auf).
+- **Server** (`academy-spiele.ts`, Eintrag `sprint`, Zahlen `SPRINT` = `REGELN`): `ergebnis` nimmt `tipps` (Autobahn), `tippsAuf` (7–100), `vmax`. Prüft: Tempo ≤ `sprintObergrenze(tipps).v`, Strecke ≤ `.m` (Start 70 km/h, alle Tipps zuerst im Abstand 60 ms, 3 % + 5 m Spielraum) und Strecke ≤ vmax·10 s. Vorlauf 13 s. Das alte Spiel `tempo` gibt es im Server nicht mehr; alte km/h-Bestwerte stehen noch unter `tempo` in `academy_spiele_bestwerte` (unbenutzt, auf Wunsch löschen).
+- Layout: Tacho, Straße, Meldung UND Tippfläche zusammen in ein Handy-Bild (über der Menüleiste ~90 px): `scrollIntoView(start)` beim Start, Tippfläche `clamp(88px,19vh,170px)`, Szene 16:7, Anleitung unter der Tippfläche (im Lauf ausgeblendet).
   Querformat: Bühne links, Tippfläche rechts.
 
 **Schilder-Memory (Spiel 3, 07.10.2026)** – `spiele/memory.js`, Zeichen in `spiele/schilder.js`

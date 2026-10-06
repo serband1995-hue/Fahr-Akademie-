@@ -6,8 +6,8 @@
 //     Ausblenden, Verlassen mitten in der Runde, Handy hoch/quer, alle 18 Sprachen (nichts abgeschnitten,
 //     nichts seitlich wischbar, Tippflächen >= 44 px, RTL), keine Fehler in der Konsole.
 //   - Einzel-Freigabe je Spiel (nurVorschau): normales Schülergerät sieht Spiel 1, aber NICHT Spiel 2; ?spiele=1 zeigt beide.
-//   - Tempo-Sprint (Spiel 2): ganze Läufe in ECHTER Zeit (je ca. 45 s): ehrlicher Lauf, Blitzer + Mehrfinger-Salven,
-//     Nachtippen nach dem Ende, Verlassen mitten im Lauf, alle 18 Sprachen.
+//   - Tempo-Sprint (Spiel 2, neu 08.10.2026: Auffahrt auf 60 km/h, dann 10 s Strecke, Schein-3D-Zeichenfläche): ganze Läufe in
+//     ECHTER Zeit (je ca. 20 s): ehrlicher Lauf, verpasste Auffahrt, Mehrfinger, Nachtippen nach dem Ende, Verlassen mitten im Lauf, alle 18 Sprachen.
 //   - Schilder-Memory (Spiel 3) und Rechts vor Links (Spiel 4): ganze Spiele mit echten Fingertipps, Uhr-Pause beim Lesen,
 //     falsche/richtige/abgelaufene Antworten, Regeltexte, Server-Ergebnis, alle 18 Sprachen.
 //   Nur einzelne Teile prüfen: NUR=bisherige,tempo,memory,vorfahrt node --experimental-strip-types werkzeuge/pruefe-spiele-im-browser.mjs
@@ -37,10 +37,10 @@ const inEinemJahr = new Date(Date.now() + 365 * 86_400_000).toISOString();
 const schueler = (id, name, extra) => db.academy_schueler.push({ id, name, aktiv: true, ablauf_am: inEinemJahr, schule_id: null, archiviert_am: null, ...extra });
 schueler("t", "Serban Dumitrescu");
 db.academy_sessions.push({ session_token: "tok-t", schueler_id: "t", expires_at: inEinemJahr });
-[["m1", "Mira Kaya", 231, 188, 14200, 1350], ["m2", "Jonas Weber", 262, 171, 18900, 1210], ["m3", "Ali Reza Karimi", 305, 160, 23100, 1100], ["m4", "Ayşe Yılmaz", 340, 150, 30500, 900]].forEach(([id, n, w, tempo, memory, vorf]) => {
+[["m1", "Mira Kaya", 231, 1050, 14200, 1350], ["m2", "Jonas Weber", 262, 980, 18900, 1210], ["m3", "Ali Reza Karimi", 305, 900, 23100, 1100], ["m4", "Ayşe Yılmaz", 340, 840, 30500, 900]].forEach(([id, n, w, tempo, memory, vorf]) => {
   schueler(id, n);
   db.academy_spiele_bestwerte.push({ schueler_id: id, spiel: "ampel", wert: w, erreicht_am: jetzt(), versuche: 3 });
-  db.academy_spiele_bestwerte.push({ schueler_id: id, spiel: "tempo", wert: tempo, erreicht_am: jetzt(), versuche: 2 });
+  db.academy_spiele_bestwerte.push({ schueler_id: id, spiel: "sprint", wert: tempo, erreicht_am: jetzt(), versuche: 2 });
   db.academy_spiele_bestwerte.push({ schueler_id: id, spiel: "memory", wert: memory, erreicht_am: jetzt(), versuche: 2 });
   db.academy_spiele_bestwerte.push({ schueler_id: id, spiel: "vorfahrt", wert: vorf, erreicht_am: jetzt(), versuche: 2 });
 });
@@ -273,30 +273,31 @@ async function bisherige() {
 
 /* =========================  Tempo-Sprint (Spiel 2)  ========================= */
 const warteMs = (ms) => new Promise((ok) => setTimeout(ok, ms));
-const zumTempo = async (s) => { await zumHub(s); await s.tap('.sp-karte[data-spiel="tempo"]'); await s.waitForSelector(".sp-t-pad"); };
+const zumTempo = async (s) => { await zumHub(s); await s.tap('.sp-karte[data-spiel="sprint"]'); await s.waitForSelector(".sp-t-pad"); };
 const padText = async (s) => (await s.textContent(".sp-t-pad")).trim();
 const zahlJetzt = async (s) => parseInt(await s.textContent(".sp-t-zahl"), 10);
 const SPRACHEN = ["de", "tr", "en", "ar", "es", "ru", "sr", "ckb", "kmr", "hi", "ur", "vi", "rif", "fa", "ps", "el", "am", "ti"];
 const RTL = ["ar", "ckb", "ur", "fa", "ps"];
 
-/* Mitspieler im Browser: tippt wie ein Mensch (Fingerereignisse auf die Tippfläche).
-   lernen: "halten" (knapp unter dem Schild) | "dauer" (immer) | "nichts"; salve: Finger gleichzeitig im Endspurt; takt: ms zwischen Salven */
+/* Mitspieler im Browser: tippt wie ein Mensch (Fingerereignisse auf die Tippfläche), sobald die Fläche „TIPPEN“ zeigt.
+   takt: ms zwischen Tipps (100 = 10 pro Sekunde); salve: Finger gleichzeitig (Mehrfinger) */
 async function botStarten(s, o) {
   await s.evaluate((opt) => {
-    const pad = document.querySelector(".sp-t-pad"), zahl = document.querySelector(".sp-t-zahl");
-    const tippen = (n) => { for (let i = 0; i < n; i++) pad.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, pointerType: "touch", pointerId: 10 + i, isPrimary: i === 0 })); };
-    const limit = () => { const l = document.querySelector("[data-aktuell] img"); const m = l && /(\d+) km\/h/.exec(l.getAttribute("alt") || ""); return m ? +m[1] : null; };
-    window.__bot = {
-      lern: setInterval(() => {
-        if (!pad.classList.contains("tippen") || pad.classList.contains("spurt")) return;
-        if (opt.lernen === "dauer") tippen(1);
-        else if (opt.lernen === "halten") { const l = limit(); if (l && +zahl.textContent < l - 8) tippen(1); }
-      }, 25),
-      spurt: setInterval(() => { if (pad.classList.contains("tippen") && pad.classList.contains("spurt")) tippen(opt.salve || 1); }, opt.takt || 80)
-    };
+    const pad = document.querySelector(".sp-t-pad");
+    window.__bot = { id: setInterval(() => {
+      if (!pad.classList.contains("tippen")) return;
+      for (let i = 0; i < (opt.salve || 1); i++) pad.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, pointerType: "touch", pointerId: 10 + i, isPrimary: i === 0 }));
+    }, opt.takt || 100) };
   }, o);
 }
-const botStoppen = (s) => s.evaluate(() => { if (window.__bot) { clearInterval(window.__bot.lern); clearInterval(window.__bot.spurt); } });
+const botStoppen = (s) => s.evaluate(() => { if (window.__bot) clearInterval(window.__bot.id); });
+
+/* Zeichenfläche: zeigt mehr als eine Farbe und ändert sich von einem Bild zum nächsten (die Szene läuft) */
+async function canvasLebt(s) {
+  const bild = () => s.evaluate(() => { const c = document.querySelector(".sp-t-canvas"); const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data; const farben = new Set(); let h = 0; for (let i = 0; i < d.length; i += 4 * 37) { farben.add((d[i] >> 5) + "," + (d[i + 1] >> 5) + "," + (d[i + 2] >> 5)); h = (h * 31 + d[i] + d[i + 1] * 3 + d[i + 2] * 7) >>> 0; } return { farben: farben.size, h: h }; });
+  const a = await bild(); await s.waitForTimeout(350); const b = await bild();
+  return a.farben >= 8 && b.farben >= 8 && a.h !== b.h;
+}
 
 /* Hochformat: Tacho, Straße, Meldung UND Tippfläche in einem Bild, über der Menüleiste (ca. 90 px) */
 async function imBildPruefen(s, name) {
@@ -325,8 +326,8 @@ async function tempoPruefungen() {
     await n.evaluate(() => go({ drawer: "spiele", spiel: "ampel" }));
     await n.waitForSelector(".sp-knopf", { timeout: 8000 });
     pruefe("Spiel 1 lässt sich weiterhin direkt öffnen", (await n.locator(".sp-knopf").count()) === 1);
-    if (sichtbarIds.includes("tempo")) {
-      await n.evaluate(() => go({ drawer: "spiele", spiel: "tempo" }));
+    if (sichtbarIds.includes("sprint")) {
+      await n.evaluate(() => go({ drawer: "spiele", spiel: "sprint" }));
       await n.waitForSelector(".sp-t-pad", { timeout: 8000 });
       pruefe("Spiel 2 ist für normale Schüler freigegeben und spielbar (Pad „Start“)", (await padText(n)) === "Start");
     }
@@ -339,8 +340,8 @@ async function tempoPruefungen() {
     const karten = await n.locator(".sp-karte").evaluateAll((els) => els.map((e) => e.dataset.spiel));
     pruefe("Gerät mit ?spiele=1 sieht alle Spiele", karten.join(",") === alleIds.join(","), karten.join(","));
     pruefe("Vorschau-Marke genau auf den versteckten Spielen", (await n.locator(".sp-karte-marke").count()) === verstecktIds.length && (await n.locator(".sp-karte[data-spiel] .sp-karte-marke").evaluateAll((els) => els.map((e) => e.closest(".sp-karte").dataset.spiel))).join(",") === verstecktIds.join(","));
-    await n.waitForFunction(() => /Noch nicht gespielt/.test(document.querySelector('[data-best="tempo"]')?.textContent || ""));
-    await n.tap('.sp-karte[data-spiel="tempo"]');
+    await n.waitForFunction(() => /Noch nicht gespielt/.test(document.querySelector('[data-best="sprint"]')?.textContent || ""));
+    await n.tap('.sp-karte[data-spiel="sprint"]');
     await n.waitForSelector(".sp-t-pad");
     pruefe("Tempo-Sprint öffnet auf dem Vorschau-Gerät", (await padText(n)) === "Start");
     await n.context().close();
@@ -350,212 +351,161 @@ async function tempoPruefungen() {
   for (const g of [{ b: 360, h: 740, n: "360" }, { b: 412, h: 915, n: "412" }, { b: 320, h: 640, n: "320" }, { b: 412, h: 915, n: "412 dunkel", dunkel: true }]) {
     const t = await neueSeite({ b: g.b, h: g.h, dunkel: g.dunkel });
     await zumTempo(t);
-    await t.waitForTimeout(800);
+    await t.waitForTimeout(1200);
     await layoutPruefen(t, "Tempo-Sprint bereit " + g.n, g.b);
+    await imBildPruefen(t, "Tempo-Sprint bereit " + g.n);
     await t.screenshot({ path: join(bilder, "tempo-bereit-" + g.n.replace(/\W+/g, "_") + ".png") });
+    pruefe("Tempo-Sprint " + g.n + ": Zeichenfläche zeigt eine Szene und bewegt sich (Vorführung)", await canvasLebt(t), "Fläche leer oder starr");
     pruefe("Tempo-Sprint " + g.n + ": keine Konsolenfehler", t.fehler.length === 0, t.fehler.join(" | "));
     await t.context().close();
   }
 
-  console.log("Tempo-Sprint: ehrlicher Lauf in echter Zeit (360 x 740, ca. 45 s)");
+  console.log("Tempo-Sprint: ehrlicher Lauf in echter Zeit (360 x 740, ca. 20 s)");
   let s = await neueSeite({ b: 360, h: 740 });
   await zumTempo(s);
-  pruefe("Startzustand: Anleitung unter der Tippfläche, Tacho 0, Pad „Start“", (await s.textContent(".sp-t-anleitung")).includes("Tippe auf Start") && (await s.isVisible(".sp-t-anleitung")) && (await zahlJetzt(s)) === 0 && (await padText(s)) === "Start");
-  pruefe("keine Ergebnis-Karte vor dem ersten Lauf", (await s.locator(".sp-erg:visible").count()) === 0);
-  await s.tap(".sp-t-pad");                                    // echter Fingertipp startet
-  await s.waitForSelector(".sp-t-pad.warte");
-  const ziffern = new Set();
-  const stufe = Date.now();
-  while (Date.now() - stufe < 3600 && !(await s.locator(".sp-t-pad.tippen").count())) { ziffern.add(await padText(s)); await s.waitForTimeout(60); }
-  pruefe("Countdown zeigt 3, 2, 1", ["3", "2", "1"].every((z) => ziffern.has(z)), [...ziffern].join(","));
-  await s.waitForSelector(".sp-t-pad.tippen", { timeout: 8000 });
-  const tLauf = Date.now();
-  await imBildPruefen(s, "Tempo-Sprint 360 im Lauf");
-  pruefe("im Lauf ist die Anleitung ausgeblendet", !(await s.isVisible(".sp-t-anleitung")));
-  pruefe("Lernphase beginnt bei 50 km/h, Schild 80 im Blick", (await s.textContent(".sp-t-meldung")).includes("Erlaubt: 80 km/h") && (await s.getAttribute("[data-aktuell] img", "alt")).includes("274") && (await s.getAttribute("[data-aktuell] img", "alt")).includes("80 km/h"));
-  pruefe("Tempo-Schild im Anzeigefeld ist das geladene amtliche Bild (mind. 50 px)", await s.evaluate(() => { const i = document.querySelector("[data-aktuell] img"); const r = i.getBoundingClientRect(); return i.complete && i.naturalWidth > 0 && r.width >= 50; }));
-  const v1 = await zahlJetzt(s);
-  pruefe("Tacho beim Start im Bereich 40–50 (rollt ohne Tippen)", v1 >= 38 && v1 <= 50, "v=" + v1);
-  await botStarten(s, { lernen: "halten", takt: 80 });
-  const proben = []; let blitzerGesehen = false, ankuendigungen = new Set(), schilder = new Set(), padWorte = new Set();
-  let layoutLern = false, bildLern = false, bildAnk = false, letztesSchild = null, schildSeit = Date.now();
-  while (!(await s.locator(".sp-t-pad.spurt").count()) && Date.now() - tLauf < 36000) {
-    const info = await s.evaluate(() => ({
-      v: +document.querySelector(".sp-t-zahl").textContent, m: document.querySelector(".sp-t-meldung").textContent.trim(), warn: document.querySelector(".sp-t-meldung").classList.contains("warn"),
-      l: (/(\d+) km\/h/.exec(document.querySelector("[data-aktuell] img")?.getAttribute("alt") || "") || [])[1], gesperrt: !!document.querySelector(".sp-t-pad.gesperrt"),
-      weg: document.querySelector("[data-weg]")?.dataset.wert || ""
-    }));
-    if (info.l !== letztesSchild) { letztesSchild = info.l; schildSeit = Date.now(); }
-    info.nachKulanz = Date.now() - schildSeit > REGELN.KULANZ_MS + 400;   // direkt nach einem neuen Schild darf man noch langsamer werden
-    proben.push(info);
-    if (info.warn || info.gesperrt) blitzerGesehen = true;
-    if (/^Gleich:/.test(info.m)) ankuendigungen.add(info.m);
-    if (info.l) schilder.add(info.l);
-    if (info.weg) padWorte.add(info.weg);
-    if (!layoutLern && Date.now() - tLauf > 4000) { layoutLern = true; await layoutPruefen(s, "Tempo-Sprint Lernphase 360", 360); await s.screenshot({ path: join(bilder, "tempo-lern-360.png") }); }
-    if (!bildAnk && /^Gleich:/.test(info.m) && info.weg && Date.now() - tLauf > 8000) { bildAnk = true; await warteMs(900); await s.screenshot({ path: join(bilder, "tempo-schild-naht-360.png") }); }
-    await s.waitForTimeout(150);
-  }
-  pruefe("Lernphase: Bot unter dem Schild -> nie Blitzer, nie gesperrt", !blitzerGesehen, "");
-  pruefe("Tacho nie mehr als 5 km/h über dem gezeigten Schild (nach der Kulanzzeit von 2,5 s)", proben.every((p) => !p.l || !p.nachKulanz || p.v <= +p.l + REGELN.TOL + 1), proben.filter((p) => p.l && p.nachKulanz && p.v > +p.l + REGELN.TOL + 1).slice(0, 3).map((p) => p.v + ">" + p.l).join(" "));
-  pruefe("direkt nach einem niedrigeren Schild darf der Tacho kurz darüber sein (Kulanz wird gebraucht und reicht)", proben.some((p) => p.l && !p.nachKulanz && p.v > +p.l + REGELN.TOL) && !blitzerGesehen);
-  pruefe("alle sechs Schilder 80, 100, 80, 60, 100, 120 wurden gezeigt", REGELN.LIMITS.every((l) => schilder.has(String(l))) && schilder.size === 4, [...schilder].join(","));
-  pruefe("Ankündigungen „Gleich: …“ vor dem Wechsel (100, 80, 60, 100, 120 und ‚keine Begrenzung‘)", ["Gleich: 100 km/h", "Gleich: 80 km/h", "Gleich: 60 km/h", "Gleich: 120 km/h"].every((a) => ankuendigungen.has(a)) , [...ankuendigungen].join(" | "));
-  pruefe("Schilder laufen am Straßenrand heran (Zeichen 274 und am Ende 282)", padWorte.has("100") && padWorte.has("60") && padWorte.has("frei"), [...padWorte].join(","));
-  pruefe("Lernphase dauert ~30 s (Endspurt nach 29–32 s)", Math.abs((Date.now() - tLauf) - 30000) < 2500, (Date.now() - tLauf) + " ms");
-  pruefe("Endspurt: Meldung ENDSPURT, Schild Zeichen 282, Pad goldfarben (Klasse spurt)", (await s.textContent(".sp-t-meldung")).includes("ENDSPURT") && (await s.getAttribute("[data-aktuell] img", "alt")).includes("282"));
-  const v0Spurt = await zahlJetzt(s);
-  pruefe("Tempo am Start des Endspurts: 100–135 (letztes Schild 120)", v0Spurt >= 95 && v0Spurt <= REGELN.V0_MAX + 1, "v=" + v0Spurt);
-  await s.screenshot({ path: join(bilder, "tempo-spurt-360.png") });
-  await layoutPruefen(s, "Tempo-Sprint Endspurt 360", 360);
-  await s.waitForSelector(".sp-erg", { timeout: 16000 });
+  pruefe("bereit: Fläche heißt „Start“, Tacho 0, Anleitung sichtbar", (await padText(s)) === "Start" && (await zahlJetzt(s)) === 0 && (await s.isVisible(".sp-t-anleitung")));
+  pruefe("bereit: Anleitung nennt 60 km/h und 10 Sekunden", /60 km\/h/.test(await s.textContent(".sp-t-anleitung")) && /10 Sekunden/.test(await s.textContent(".sp-t-anleitung")));
+  await s.tap(".sp-t-pad");
+  await s.waitForFunction(() => /^[123…]$/.test(document.querySelector(".sp-t-pad").textContent.trim()), null, { timeout: 8000 });
+  pruefe("Start: Anleitung verschwindet, Countdown läuft", !(await s.isVisible(".sp-t-anleitung")));
+  await imBildPruefen(s, "Tempo-Sprint Countdown 360");
+  await s.screenshot({ path: join(bilder, "tempo-countdown-360.png") });
+  await s.waitForSelector(".sp-t-pad.tippen", { timeout: 9000 });
+  pruefe("nach dem Countdown: Fläche heißt TIPPEN!, Meldung „GAS GEBEN“", (await padText(s)) === "TIPPEN!" && /GAS GEBEN/.test(await s.textContent(".sp-t-meldung")), await s.textContent(".sp-t-meldung"));
+  pruefe("Auffahrt: Restzeit läuft (höchstens 6 s) und Strecke steht auf 0", /^[0-6][,.]\d s$/.test((await s.textContent(".sp-t-rest")).trim()) && (await s.textContent(".sp-t-meter")).trim() === "0", await s.textContent(".sp-t-rest"));
+  await botStarten(s, { takt: 100 });
+  await s.waitForFunction(() => /Drauf auf die Autobahn/.test(document.querySelector(".sp-t-meldung").textContent), null, { timeout: 5000 });
+  pruefe("60 km/h erreicht: „Drauf auf die Autobahn“, Fläche wird golden", (await s.getAttribute(".sp-t-pad", "class")).includes("spurt"));
+  await s.waitForTimeout(2200);
+  const mitte = { tacho: await zahlJetzt(s), meter: parseInt(await s.textContent(".sp-t-meter"), 10), rest: (await s.textContent(".sp-t-rest")).trim() };
+  pruefe("auf der Autobahn: Tacho über 60, Strecke wächst, Restzeit unter 10 s", mitte.tacho > 60 && mitte.meter > 20 && /^[0-9][,.]\d s$/.test(mitte.rest), JSON.stringify(mitte));
+  await imBildPruefen(s, "Tempo-Sprint Autobahn 360");
+  await s.screenshot({ path: join(bilder, "tempo-autobahn-360.png") });
+  pruefe("Zeichenfläche lebt mitten im Lauf", await canvasLebt(s));
+  await s.waitForSelector(".sp-erg", { timeout: 20000 });
   await botStoppen(s);
-  const gesamt = Date.now() - tLauf;
-  pruefe("Endspurt dauert 10 s (Ergebnis nach 39,5–41,5 s)", gesamt > 39500 && gesamt < 41800, gesamt + " ms");
-  const wert = parseInt((await s.textContent(".sp-gross")).trim(), 10);
-  const zahlen = (await s.locator(".sp-t-zahlen b").allTextContents()).map((x) => parseInt(x, 10));
-  pruefe("Ergebnis: guter Spieler (12,5 Tipps/s) kommt SEHR schnell (240–300 km/h)", wert >= 240 && wert <= 300, "wert=" + wert);
-  pruefe("Tipps im Endspurt: ca. 12 pro Sekunde (90–135), Blitzer 0", zahlen[0] >= 90 && zahlen[0] <= 135 && zahlen[1] === 0, zahlen.join(","));
-  pruefe("Höchsttempo ist mit diesen Tipps möglich (<= Obergrenze)", wert <= Math.ceil(obergrenze(zahlen[0])) + 1, wert + " > " + obergrenze(zahlen[0]));
-  pruefe("Tacho zeigt am Ende das Höchsttempo", (await zahlJetzt(s)) === wert, (await zahlJetzt(s)) + " vs " + wert);
-  pruefe("Hinweis zur Richtgeschwindigkeit 130 steht da", (await s.textContent(".sp-hinweis-strasse")).includes("130 km/h") && (await s.textContent(".sp-hinweis-strasse")).includes("Richtgeschwindigkeit"));
-  await s.waitForSelector(".sp-badge.neu");
-  pruefe("erster Lauf: „Neues Höchsttempo!“ und Platz", (await s.textContent(".sp-speicher")).includes("Neues Höchsttempo") && /Platz \d+ von \d+/.test(await s.textContent(".sp-speicher")), await s.textContent(".sp-speicher"));
-  pruefe("Server hat das Höchsttempo gespeichert", db.academy_spiele_bestwerte.find((b) => b.schueler_id === "t" && b.spiel === "tempo")?.wert === wert);
-  await s.waitForSelector(".sp-zeile.ich");
-  const zeilen = await s.locator(".sp-zeile").evaluateAll((els) => els.map((e) => e.textContent.replace(/\s+/g, " ").trim()));
-  const nums = zeilen.map((z) => parseInt((/(\d+) km\/h/.exec(z) || [])[1], 10)).filter(Number.isFinite);
-  pruefe("Bestenliste: höchstes Tempo zuerst, Einheit km/h", nums.length >= 5 && nums.every((x, i) => i === 0 || x <= nums[i - 1]), zeilen.join(" | "));
-  pruefe("Bestenliste: Namen nur Vorname + 1 Buchstabe", (await s.locator(".sp-rname").allTextContents()).every((n) => /^[^\s]+( [^\s]\.)?( · Du)?$/.test(n.trim())));
+  const erg = await s.evaluate(() => ({ gross: document.querySelector(".sp-gross").textContent.replace(/\s+/g, " ").trim(), zahlen: Array.from(document.querySelectorAll(".sp-t-zahlen b")).map((b) => b.textContent.trim()), pad: document.querySelector(".sp-t-pad").textContent.trim() }));
+  const wert1 = parseInt(erg.gross, 10), vmax1 = parseInt(erg.zahlen[0], 10), tipps1 = parseInt(erg.zahlen[1], 10);
+  pruefe("Ergebnis: Strecke in m, Höchsttempo, Tipps – im menschlichen Bereich (10 Tipps/s ≈ 770 m, ≈ 400 km/h)", /m$/.test(erg.gross) && wert1 >= 500 && wert1 <= 1000 && vmax1 >= 300 && vmax1 <= 480 && tipps1 >= 70 && tipps1 <= 105, JSON.stringify(erg));
+  pruefe("Ergebnis: Strecke passt zum Höchsttempo (nie mehr als 10 s mit Höchsttempo)", wert1 <= vmax1 / 3.6 * 10 + 1);
+  pruefe("Fläche heißt wieder „Nochmal“", erg.pad === "Nochmal", erg.pad);
+  await s.waitForFunction(() => /Platz \d+ von \d+/.test(document.querySelector(".sp-speicher")?.textContent || ""), null, { timeout: 8000 });
+  pruefe("Server hat die Strecke als Bestwert gespeichert (Spiel „sprint“, größer ist besser)", db.academy_spiele_bestwerte.find((b) => b.schueler_id === "t" && b.spiel === "sprint")?.wert === wert1, JSON.stringify(db.academy_spiele_bestwerte.filter((b) => b.schueler_id === "t")));
+  pruefe("Ergebnis-Hinweis: nur im Spiel so schnell, im echten Leben Richtgeschwindigkeit", /130/.test(await s.textContent(".sp-hinweis-strasse")));
+  pruefe("Bestenliste in Metern, größte zuerst", await s.evaluate(() => { const w = Array.from(document.querySelectorAll(".sp-wert")).map((e) => parseInt(e.textContent, 10)); return w.length >= 2 && /m$/.test(document.querySelector(".sp-wert").textContent.trim()) && w.slice(0, -1).every((x, i) => i === w.length - 2 || x >= w[i + 1]); }));
+  await imBildPruefen(s, "Tempo-Sprint Ergebnis 360");
   await layoutPruefen(s, "Tempo-Sprint Ergebnis 360", 360);
   await s.screenshot({ path: join(bilder, "tempo-ergebnis-360.png"), fullPage: true });
-  console.log("Tempo-Sprint: Nachtippen nach dem Ende startet keine neue Runde");
-  await s.evaluate(() => { const p = document.querySelector(".sp-t-pad"); for (let i = 0; i < 6; i++) p.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, pointerType: "touch", pointerId: 20 + i })); });
-  await s.waitForTimeout(250);
-  pruefe("wildes Weitertippen direkt nach dem Ende: Ergebnis bleibt, keine neue Runde", (await padText(s)) === "Nochmal" && (await s.locator(".sp-erg:visible").count()) === 1 && !(await s.locator(".sp-t-pad.warte").count()));
   pruefe("Konsole ohne Fehler (ehrlicher Lauf)", s.fehler.length === 0, s.fehler.join(" | "));
-  await s.waitForTimeout(1500);
+
+  console.log("Tempo-Sprint: Auffahrt verpasst (nicht getippt)");
+  const vorher = db.academy_spiele_bestwerte.find((b) => b.schueler_id === "t" && b.spiel === "sprint").wert;
+  await s.waitForTimeout(1600);
   await s.tap(".sp-t-pad");
-  await s.waitForSelector(".sp-t-pad.warte");
-  pruefe("nach der Sperrzeit startet ein echter Tipp die nächste Runde (Ergebnis weg, Tacho 50)", (await s.locator(".sp-erg:visible").count()) === 0 && (await zahlJetzt(s)) === 50);
-  await s.tap("[data-nav-zurueck]");
-  await s.waitForSelector(".sp-karte");
-  pruefe("Startseite zeigt Höchsttempo an der Karte", (await s.textContent('[data-best="tempo"]')).includes("Dein Höchsttempo: " + wert + " km/h"), await s.textContent('[data-best="tempo"]'));
-  await s.waitForTimeout(5000);
-  pruefe("nach dem Verlassen mitten im Countdown keine Fehler / späten Zeitgeber", s.fehler.length === 0, s.fehler.join(" | "));
+  await s.waitForSelector(".sp-t-pad.tippen", { timeout: 9000 });
+  await s.waitForSelector(".sp-t-verpasst", { timeout: 9000 });
+  pruefe("zu langsam: Meldung „Du brauchst 60 km/h“, kein Ergebnis, Fläche „Nochmal“", /60 km\/h/.test(await s.textContent(".sp-t-verpasst")) && (await padText(s)) === "Nochmal" && (await s.locator(".sp-gross").count()) === 0);
+  pruefe("verpasste Auffahrt wird nicht gespeichert, Bestwert bleibt", db.academy_spiele_bestwerte.find((b) => b.schueler_id === "t" && b.spiel === "sprint").wert === vorher);
+  await s.screenshot({ path: join(bilder, "tempo-verpasst-360.png"), fullPage: true });
   await s.context().close();
 
-  console.log("Tempo-Sprint: Blitzer und Mehrfinger-Salven in echter Zeit (412 x 915, ca. 45 s)");
+  console.log("Tempo-Sprint: Nachtippen nach dem Ende startet keine neue Runde (412 x 915, ca. 20 s)");
   s = await neueSeite({ b: 412, h: 915 });
   await zumTempo(s);
   await s.tap(".sp-t-pad");
   await s.waitForSelector(".sp-t-pad.tippen", { timeout: 9000 });
-  const t2 = Date.now();
-  await imBildPruefen(s, "Tempo-Sprint 412 im Lauf");
-  await botStarten(s, { lernen: "dauer", salve: 4, takt: 70 });
-  let sperrProben = [], sperrGeprueft = false, sperrBlitze = 0, blitzSeen = 0, gesperrtVorher = false, fallGesehen = false, letzteV = null, spitze = 0;
-  while (!(await s.locator(".sp-t-pad.spurt").count()) && Date.now() - t2 < 36000) {
-    const i = await s.evaluate(() => ({ v: +document.querySelector(".sp-t-zahl").textContent, g: !!document.querySelector(".sp-t-pad.gesperrt"), warn: document.querySelector(".sp-t-meldung").classList.contains("warn"), m: document.querySelector(".sp-t-meldung").textContent.trim(), pad: document.querySelector(".sp-t-pad").textContent.trim() }));
-    if (i.g && !gesperrtVorher) { blitzSeen++; sperrProben = []; sperrGeprueft = false; }
-    if (i.g && !sperrGeprueft) sperrProben.push(i.v);
-    gesperrtVorher = i.g;
-    if (i.g && blitzSeen === 1 && sperrProben.length === 1) { pruefe("Blitzer: Meldung rot und Pad gesperrt mit Wort „Blitzer“", i.warn && i.m.includes("Blitzer") && i.pad.toLowerCase() === "blitzer", JSON.stringify(i)); await s.screenshot({ path: join(bilder, "tempo-blitzer-412.png") }); }
-    if (letzteV != null && !i.g) { spitze = Math.max(spitze, i.v); if (letzteV - i.v > 25) fallGesehen = true; }
-    letzteV = i.v;
-    await s.waitForTimeout(100);
-    if (!sperrGeprueft && sperrProben.length >= 8) { // während der Sperre trotz Dauer-Tippen nie schneller (je Blitzer einmal)
-      sperrGeprueft = true; sperrBlitze++;
-      pruefe("während der Blitzer-Sperre bringt Tippen nichts (Tacho steigt nicht, Blitzer " + sperrBlitze + ")", sperrProben.every((x, k) => k === 0 || x <= sperrProben[k - 1]), sperrProben.join(","));
-    }
-  }
-  pruefe("Dauertippen löst in der Lernphase mehrfach Blitzer aus", blitzSeen >= 3, "Blitzer: " + blitzSeen);
-  const v0b = await zahlJetzt(s);
-  pruefe("Tempo am Start des Endspurts bleibt unter V0_MAX", v0b <= REGELN.V0_MAX + 1, "v=" + v0b);
-  await s.waitForSelector(".sp-erg", { timeout: 16000 });
+  await botStarten(s, { takt: 80, salve: 1 });
+  await s.waitForSelector(".sp-erg", { timeout: 20000 });
   await botStoppen(s);
-  const w2 = parseInt((await s.textContent(".sp-gross")).trim(), 10);
-  const z2 = (await s.locator(".sp-t-zahlen b").allTextContents()).map((x) => parseInt(x, 10));
-  pruefe("Mehrfinger-Salven (4 Finger / 70 ms): höchstens 1 Tipp je 63 ms gezählt (100–160)", z2[0] >= 100 && z2[0] <= REGELN.TAPS_MAX, "Tipps " + z2[0]);
-  pruefe("Blitzer-Zahl im Ergebnis stimmt mit den beobachteten überein (>= 3)", z2[1] >= 3, "Ergebnis " + z2[1] + ", gesehen " + blitzSeen);
-  pruefe("Server nahm den Salven-Lauf an (Rekord/Platz sichtbar) – Tipps <= TAPS_MAX", (await s.locator(".sp-badge").count()) >= 1 && /Platz \d+ von \d+|Höchsttempo/.test(await s.textContent(".sp-speicher")), await s.textContent(".sp-speicher"));
-  pruefe("Tempo mit Salven nicht über der Obergrenze", w2 <= Math.ceil(obergrenze(z2[0])) + 1, w2 + " vs " + obergrenze(z2[0]));
-  pruefe("Salven-Lauf (~14 Tipps/s) kommt trotz Blitzer-Strafen über 250 km/h – wer richtig gut ist, wird sehr schnell", w2 >= 250 && w2 <= 320, "wert=" + w2);
-  await layoutPruefen(s, "Tempo-Sprint Ergebnis 412", 412);
-  pruefe("Konsole ohne Fehler (Blitzer-Lauf)", s.fehler.length === 0, s.fehler.join(" | "));
+  await s.evaluate(() => { const p = document.querySelector(".sp-t-pad"); for (let i = 0; i < 6; i++) p.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, pointerType: "touch", pointerId: 3 })); });
+  await s.waitForTimeout(300);
+  pruefe("wildes Weitertippen direkt nach dem Ende startet keine neue Runde (Ergebnis bleibt)", (await s.locator(".sp-erg").count()) === 1 && (await padText(s)) === "Nochmal");
+  await s.waitForTimeout(1500);
+  await s.tap(".sp-t-pad");
+  await s.waitForFunction(() => /^[123…]$/.test(document.querySelector(".sp-t-pad").textContent.trim()), null, { timeout: 6000 });
+  pruefe("nach der Sperre startet „Nochmal“ eine neue Runde", true);
   await s.context().close();
+
+  console.log("Tempo-Sprint: Mehrfinger zählen nicht mehr als einer, Mensch-Takt (ca. 20 s)");
+  { const m = await neueSeite({ b: 360, h: 740 });
+    await zumTempo(m);
+    await m.tap(".sp-t-pad");
+    await m.waitForSelector(".sp-t-pad.tippen", { timeout: 9000 });
+    await botStarten(m, { takt: 80, salve: 4 });          // vier Finger gleichzeitig, alle 80 ms
+    await m.waitForSelector(".sp-erg", { timeout: 20000 });
+    await botStoppen(m);
+    const z = await m.evaluate(() => Array.from(document.querySelectorAll(".sp-t-zahlen b")).map((b) => parseInt(b.textContent, 10)));
+    pruefe("vier Finger gleichzeitig: höchstens 16 Tipps pro Sekunde (≤ 160)", z[1] <= 160 && z[1] >= 40, JSON.stringify(z));
+    const grenze = await m.evaluate(() => document.querySelector(".sp-gross").textContent);
+    pruefe("Server nimmt auch den Mehrfinger-Lauf an (Ergebnis gespeichert)", db.academy_spiele_bestwerte.find((b) => b.schueler_id === "t" && b.spiel === "sprint") !== undefined, grenze);
+    await m.context().close(); }
 
   console.log("Tempo-Sprint: Verlassen mitten im Lauf / App in den Hintergrund");
-  s = await neueSeite({ b: 360, h: 740 });
-  await zumTempo(s);
-  await s.tap(".sp-t-pad");
-  await s.waitForSelector(".sp-t-pad.tippen", { timeout: 9000 });
-  await botStarten(s, { lernen: "halten" });
-  await s.waitForTimeout(1500);
-  await s.evaluate(() => { Object.defineProperty(document, "hidden", { configurable: true, get: () => true }); document.dispatchEvent(new Event("visibilitychange")); });
-  await s.waitForTimeout(300);
-  await botStoppen(s);
-  pruefe("App im Hintergrund: Runde abgebrochen, zurück auf „Start“, Tacho 0, kein Ergebnis", (await padText(s)) === "Start" && (await zahlJetzt(s)) === 0 && (await s.locator(".sp-erg:visible").count()) === 0);
-  await s.evaluate(() => { delete document.hidden; });
-  await s.tap(".sp-t-pad");
-  await s.waitForSelector(".sp-t-pad.tippen", { timeout: 9000 });
-  await s.waitForTimeout(800);
-  await s.tap("[data-nav-zurueck]");                 // mitten im Lauf zurück
-  await s.waitForSelector(".sp-karte");
-  await s.waitForTimeout(7000);
-  pruefe("nach dem Verlassen mitten im Lauf keine Fehler / späte Zeitgeber", s.fehler.length === 0, s.fehler.join(" | "));
-  await s.tap('.sp-karte[data-spiel="tempo"]');
-  await s.waitForSelector(".sp-t-pad");
-  pruefe("Spiel lässt sich erneut öffnen, Zustand frisch", (await padText(s)) === "Start" && (await zahlJetzt(s)) === 0 && (await s.locator(".sp-erg:visible").count()) === 0);
-  await s.context().close();
+  { const v = await neueSeite({ b: 360, h: 740 });
+    await zumTempo(v);
+    const runden0 = db.academy_spiele_runden.length;
+    await v.tap(".sp-t-pad");
+    await v.waitForSelector(".sp-t-pad.tippen", { timeout: 9000 });
+    await botStarten(v, { takt: 100 });
+    await v.waitForTimeout(1500);
+    await v.evaluate(() => { Object.defineProperty(document, "hidden", { configurable: true, get: () => true }); document.dispatchEvent(new Event("visibilitychange")); });
+    await botStoppen(v);
+    await v.evaluate(() => { Object.defineProperty(document, "hidden", { configurable: true, get: () => false }); });
+    pruefe("App in den Hintergrund: Runde bricht ab, Spiel wieder auf „Start“, nichts gespeichert", (await padText(v)) === "Start" && (await v.locator(".sp-erg:visible").count()) === 0);
+    await v.waitForTimeout(9000);
+    pruefe("keine späten Zeitgeber nach dem Abbruch (Fläche bleibt „Start“)", (await padText(v)) === "Start" && v.fehler.length === 0, v.fehler.join(" | "));
+    await v.tap(".sp-t-pad");
+    await v.waitForSelector(".sp-t-pad.tippen", { timeout: 9000 });
+    await v.tap("[data-nav-zurueck]");
+    await v.waitForSelector(".sp-karte");
+    await v.waitForTimeout(12000);
+    pruefe("Zurück mitten im Lauf: keine Fehler, keine späten Zeitgeber", v.fehler.length === 0, v.fehler.join(" | "));
+    await v.context().close(); }
 
-  console.log("Tempo-Sprint: kleiner Bildschirm 320 x 640 (mitten im Lauf)");
-  s = await neueSeite({ b: 320, h: 640 });
-  await zumTempo(s);
-  await s.tap(".sp-t-pad");
-  await s.waitForSelector(".sp-t-pad.tippen", { timeout: 9000 });
-  await s.waitForTimeout(700);
-  await imBildPruefen(s, "Tempo-Sprint 320 im Lauf");
-  await layoutPruefen(s, "Tempo-Sprint Lauf 320", 320);
-  await s.screenshot({ path: join(bilder, "tempo-lauf-320.png") });
-  await s.context().close();
-
-  console.log("Tempo-Sprint: Querformat 740 x 360 (mitten im Lauf)");
-  s = await neueSeite({ b: 740, h: 360 });
-  await zumTempo(s);
-  await s.waitForTimeout(900);
-  await s.tap(".sp-t-pad");
-  await s.waitForSelector(".sp-t-pad.tippen", { timeout: 9000 });
-  await s.waitForTimeout(700);
-  await layoutPruefen(s, "Tempo-Sprint Querformat", 740);
-  const rc = await s.evaluate(() => { const r = (q) => document.querySelector(q).getBoundingClientRect(); return { hud: r(".sp-t-hud").top, szeneU: r(".sp-t-szene").bottom, meldU: r(".sp-t-meldung").bottom, padO: r(".sp-t-pad").top, padU: r(".sp-t-pad").bottom, h: window.innerHeight, seitlich: document.documentElement.scrollWidth - window.innerWidth }; });
-  pruefe("Querformat: Tacho, Szene, Meldung und Tippfläche ohne eigenes Scrollen im Bild (über der Menüleiste)", rc.hud >= 0 && rc.meldU <= rc.h - 70 && rc.padO >= 0 && rc.padU <= rc.h - 70, JSON.stringify(rc));
-  await s.screenshot({ path: join(bilder, "tempo-quer-740x360.png") });
-  await s.context().close();
+  console.log("Tempo-Sprint: kleiner Bildschirm 320 x 640 und Querformat 740 x 360 (mitten im Lauf)");
+  for (const g of [{ b: 320, h: 640, n: "320" }, { b: 740, h: 360, n: "quer" }]) {
+    const t = await neueSeite({ b: g.b, h: g.h });
+    await zumTempo(t);
+    await t.waitForTimeout(700);
+    await t.tap(".sp-t-pad");
+    await t.waitForSelector(".sp-t-pad.tippen", { timeout: 9000 });
+    await botStarten(t, { takt: 100 });
+    await t.waitForFunction(() => /Drauf auf die Autobahn/.test(document.querySelector(".sp-t-meldung").textContent), null, { timeout: 6000 });
+    await t.waitForTimeout(1500);
+    await layoutPruefen(t, "Tempo Lauf " + g.n, g.b);
+    if (g.b > g.h) {
+      const rc = await t.evaluate(() => { const p = document.querySelector(".sp-t-pad").getBoundingClientRect(), h = document.querySelector(".sp-t-hud").getBoundingClientRect(); return { hudO: h.top, padO: p.top, padU: p.bottom, h: innerHeight }; });
+      pruefe("Querformat: Tacho und Tippfläche ohne Scrollen im Bild", rc.hudO >= 0 && rc.padO >= 0 && rc.padU <= rc.h - 70, JSON.stringify(rc));
+    } else await imBildPruefen(t, "Tempo Lauf 320");
+    await t.screenshot({ path: join(bilder, "tempo-lauf-" + g.n + ".png") });
+    await botStoppen(t);
+    pruefe("Tempo " + g.n + ": keine Konsolenfehler", t.fehler.length === 0, t.fehler.join(" | "));
+    await t.context().close();
+  }
 
   console.log("Tempo-Sprint: alle 18 Sprachen (360 x 740)");
   for (const sp of SPRACHEN) {
     const t = await neueSeite({ b: 360, h: 740, sprache: sp });
     await zumHub(t);
-    await t.waitForSelector('.sp-karte[data-spiel="tempo"]');
-    const titel = (await t.textContent('.sp-karte[data-spiel="tempo"] .sp-karte-titel')).trim();
+    await t.waitForSelector('.sp-karte[data-spiel="sprint"]');
+    const titel = (await t.textContent('.sp-karte[data-spiel="sprint"] .sp-karte-titel')).trim();
     pruefe(sp + ": Tempo-Sprint-Karte übersetzt", sp === "de" ? titel === "Tempo-Sprint" : titel !== "Tempo-Sprint" && !/^tempo[A-Z]/.test(titel), titel);
-    await layoutPruefen(t, sp + " Spieleliste mit zwei Karten", 360);
-    await t.tap('.sp-karte[data-spiel="tempo"]');
+    await layoutPruefen(t, sp + " Spieleliste", 360);
+    await t.tap('.sp-karte[data-spiel="sprint"]');
     await t.waitForSelector(".sp-t-pad");
     pruefe(sp + ": Richtung " + (RTL.includes(sp) ? "rtl" : "ltr"), (await t.getAttribute("#spiele-platz", "dir")) === (RTL.includes(sp) ? "rtl" : "ltr"));
     await layoutPruefen(t, sp + " Tempo bereit", 360);
     await t.tap(".sp-t-pad");
     await t.waitForSelector(".sp-t-pad.tippen", { timeout: 9000 });
+    await botStarten(t, { takt: 100 });
+    await t.waitForFunction(() => document.querySelector(".sp-t-pad").className.includes("spurt"), null, { timeout: 6000 });
     await t.waitForTimeout(500);
-    const info = await t.evaluate(() => ({
-      alles: document.querySelector("#spiele-platz").textContent,
-      aria: document.querySelector("[data-aktuell] img")?.getAttribute("alt") || "",
-      meld: document.querySelector(".sp-t-meldung").textContent.trim(), pad: document.querySelector(".sp-t-pad").textContent.trim()
-    }));
-    pruefe(sp + ": Lauf – kein roher Schlüsselname, kein offenes {v}", !/tempo[A-Z]\w+|vorschauMarke|\{v\}/.test(info.alles + info.aria + info.meld + info.pad), info.meld + " | " + info.aria);
-    pruefe(sp + ": Erlaubt-Text und Schildtext nennen 80", /80/.test(info.meld) && /80/.test(info.aria) && /274/.test(info.aria), info.meld + " | " + info.aria);
+    const info = await t.evaluate(() => ({ alles: document.querySelector("#spiele-platz").textContent, aria: document.querySelector(".sp-t-szene").getAttribute("aria-label") || "", meld: document.querySelector(".sp-t-meldung").textContent.trim(), pad: document.querySelector(".sp-t-pad").textContent.trim() }));
+    pruefe(sp + ": Lauf – kein roher Schlüsselname, kein offenes {…}", !/tempo[A-Z]\w+|vorschauMarke|\{[a-z]+\}/.test(info.alles + info.aria + info.meld + info.pad), info.meld + " | " + info.aria);
+    pruefe(sp + ": Szene hat einen Bildtext, Meldung und Fläche sind übersetzt", info.aria.length > 5 && info.meld.length > 3 && info.pad.length > 1 && (sp === "de" || (info.meld !== "Drauf auf die Autobahn! Jetzt so weit wie möglich!" && info.pad !== "TIPPEN!")), info.meld);
     await layoutPruefen(t, sp + " Tempo Lauf", 360);
     if (["ar", "am", "tr"].includes(sp)) { await t.waitForTimeout(500); await t.screenshot({ path: join(bilder, "tempo-sprache-" + sp + ".png"), fullPage: true }); }
+    await botStoppen(t);
     pruefe(sp + ": keine Konsolenfehler", t.fehler.length === 0, t.fehler.join(" | "));
     await t.context().close();
   }
