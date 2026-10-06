@@ -13,14 +13,14 @@ import { erzeugeK, cssLaden, esc, profilKarte } from "./rahmen.js";
 /* ein Spiel: id, Datei (für den Import), Schlüssel von Titel/Kurztext, Einheit des Bestwerts, Symbol.
    bestKey   Text-Schlüssel für „Dein Bestwert“ (Zeit bei Ampel, Höchsttempo beim Tempo-Sprint)
    nurVorschau  true = nur auf Vorschau-Geräten sichtbar und spielbar (neues Spiel erst selbst prüfen, dann auf false) */
-const SPIELE = [
+export const SPIELE = [
   {
     id: "ampel", name: "ampelName", kurz: "ampelKurz", einheit: "ms", bestKey: "bestzeit", nurVorschau: false,
     laden: function () { return import("./ampel.js"); },
     symbol: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="7.5" r="1.9" fill="currentColor"/><circle cx="12" cy="12" r="1.9" fill="currentColor" opacity=".45"/><circle cx="12" cy="16.5" r="1.9" fill="currentColor" opacity=".25"/></svg>'
   },
   {
-    id: "tempo", name: "tempoName", kurz: "tempoKurz", einheit: "km/h", bestKey: "tempoBestwert", nurVorschau: true,
+    id: "tempo", name: "tempoName", kurz: "tempoKurz", einheit: "km/h", bestKey: "tempoBestwert", nurVorschau: false,   // 07.10.2026: freigegeben (Serban: „Mach alles fertig“)
     laden: function () { return import("./tempo.js"); },
     symbol: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 17a8.5 8.5 0 1 1 17 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 17l4.2-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1.6" fill="currentColor"/></svg>'
   }
