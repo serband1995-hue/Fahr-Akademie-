@@ -1,0 +1,81 @@
+/* Gefahren finden (Spiel 7, 07.10.2026). Eigene Datei, wird von spiele/gefahren.js selbst geladen.
+   Nur Farb-/Abstandswerte der App (:root in index.html) -> Dunkelmodus. Bildfarben der Straßenbilder sind feste Zeichenfarben. */
+
+.sp-gefahren{display:grid;gap:var(--sp-m);}
+.sp-gefahren .sp-spieltitel{font-family:var(--ff-titel);font-size:22px;font-weight:600;margin:0;}
+.ge-buehne{position:relative;display:grid;gap:8px;padding:10px;scroll-margin-top:8px;min-width:0;}
+.ge-hud{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-m);font-weight:700;min-height:1.6em;}
+.ge-bild{font-size:14px;color:var(--muted);min-width:0;overflow-wrap:anywhere;}
+.ge-punkte{flex:none;}
+.ge-punkte b{font-size:20px;font-variant-numeric:tabular-nums;font-family:var(--ff-titel);}
+.ge-leiste{height:6px;border-radius:3px;background:var(--surface-strong);overflow:hidden;}
+.ge-leiste i{display:block;height:100%;width:0;background:var(--gruen-hell);}
+.ge-leiste i.knapp{background:var(--warn);}
+.ge-info{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-m);font-size:14px;font-weight:700;min-height:1.4em;}
+.ge-zaehler{min-width:0;overflow-wrap:anywhere;}
+.ge-zeit{flex:none;font-variant-numeric:tabular-nums;color:var(--muted);}
+.ge-frage{min-height:1.4em;text-align:center;font-weight:700;font-size:15px;}
+.ge-szene{position:relative;width:100%;aspect-ratio:3/2;border-radius:var(--r-m);overflow:hidden;background:var(--surface-strong);touch-action:manipulation;}
+.ge-szene.leer{background:repeating-linear-gradient(135deg,var(--surface-strong) 0 14px,var(--surface-tint) 14px 28px);}
+.ge-bildplatz,.ge-svg{display:block;width:100%;height:100%;}
+.ge-svg{user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;cursor:crosshair;}
+.ge-svg.fest{cursor:default;}
+.ge-svg image{pointer-events:none;}
+.ge-blink{fill:#ffb000;animation:ge-blink .7s steps(2,start) infinite;}
+@keyframes ge-blink{50%{opacity:.2;}}
+.ge-regen{pointer-events:none;}
+.ge-ring circle:first-child{stroke-width:3.5;fill:none;}
+.ge-ring.gefunden circle:first-child{stroke:#2ea84f;}
+.ge-ring.uebersehen circle:first-child{stroke:#f08a1c;stroke-dasharray:6 4;}
+.ge-ring.gefunden .ge-nr-bg{fill:#2ea84f;}
+.ge-ring.uebersehen .ge-nr-bg{fill:#c2620a;}
+.ge-nr{fill:#fff;font:700 11px sans-serif;}
+.ge-fehltipp path{stroke:#e0442a;stroke-width:3;stroke-linecap:round;animation:ge-weg .7s ease-out forwards;}
+@keyframes ge-weg{to{opacity:0;}}
+.ge-szene.wackeln{animation:ge-wackeln .22s linear;}
+@keyframes ge-wackeln{25%{transform:translateX(-3px);}75%{transform:translateX(3px);}}
+.ge-meldung{min-height:1.4em;text-align:center;font-size:13.5px;color:var(--muted);}
+.ge-knopf{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);width:min(82%,260px);min-height:62px;border:0;border-radius:var(--r-l);cursor:pointer;
+  font-family:inherit;font-size:22px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;touch-action:manipulation;-webkit-tap-highlight-color:transparent;box-shadow:0 6px 18px rgba(43,40,30,.22);}
+.ge-knopf[hidden]{display:none;}
+.ge-knopf.start{background:var(--gruen);color:var(--auf-tief);}
+.ge-knopf.warte{background:var(--surface-strong);color:var(--muted);cursor:default;}
+.ge-knopf:focus-visible,.ge-fertig:focus-visible,.ge-weiter:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.ge-fertig{justify-self:center;min-height:44px;padding:8px 18px;border:1.5px solid var(--hairline);border-radius:var(--r-l);background:var(--bg);color:var(--text);
+  font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;touch-action:manipulation;max-width:100%;}
+.ge-fertig[hidden]{display:none;}
+.ge-anleitung{margin:0;line-height:1.5;}
+.ge-antwort{display:grid;gap:8px;padding:10px;border-radius:var(--r-m);background:var(--surface-strong);min-width:0;}
+.ge-antwort[hidden]{display:none;}
+.ge-urteil{font-weight:800;font-size:18px;}
+.ge-urteil.ja{color:var(--gruen-text);}
+.ge-urteil.nein{color:var(--warn);}
+.ge-zahlen{font-weight:700;font-size:14.5px;}
+.ge-legende{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);}
+.ge-leg::before{content:"";display:inline-block;width:.85em;height:.85em;margin-inline-end:.45em;vertical-align:-.1em;border-radius:50%;border:3px solid #2ea84f;}
+.ge-leg.uebersehen::before{border-color:#f08a1c;border-style:dashed;}
+.ge-listentitel{margin:4px 0 0;font-family:var(--ff-titel);font-size:16px;font-weight:600;}
+.ge-liste{list-style:none;margin:0;padding:0;display:grid;gap:10px;}
+.ge-eintrag{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;align-items:start;}
+.ge-nummer{display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-weight:800;font-size:13px;color:#fff;background:#2ea84f;}
+.ge-eintrag.uebersehen .ge-nummer{background:#c2620a;}
+.ge-eintrag-kopf{font-size:15px;line-height:1.3;overflow-wrap:anywhere;}
+.ge-status{display:inline-block;margin-inline-start:.4em;padding:1px 8px;border-radius:var(--r-pill);font-size:12px;font-weight:700;background:var(--surface-tint);color:var(--gruen-text);}
+.ge-eintrag.uebersehen .ge-status{background:var(--gold);color:var(--auf-gold);}
+.ge-eintrag p{margin:3px 0 0;font-size:14.5px;line-height:1.45;overflow-wrap:anywhere;hyphens:auto;}
+.ge-weiter{margin-top:6px;width:100%;min-height:48px;border:0;border-radius:var(--r-l);background:var(--gruen);color:var(--auf-tief);
+  font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;touch-action:manipulation;}
+.ge-ergzeile{margin:0;font-weight:700;}
+@media (prefers-reduced-motion:reduce){.ge-blink{animation:none;}.ge-szene.wackeln{animation:none;}.ge-fehltipp path{animation:none;opacity:.6;}}
+
+/* Querformat am Handy: Bild links, Anzeigen und Erklärung rechts */
+@media (max-height:520px){
+  .sp-gefahren .sp-spieltitel{display:none;}
+  .ge-buehne{grid-template-columns:min(76vh,54%) minmax(0,1fr);grid-template-areas:"szene hud" "szene bar" "szene info" "szene frage" "szene meldung" "szene fertig" "szene antwort";
+    column-gap:12px;row-gap:6px;align-content:start;padding:8px;}
+  .ge-hud{grid-area:hud;}.ge-leiste{grid-area:bar;}.ge-info{grid-area:info;}.ge-frage{grid-area:frage;text-align:start;}
+  .ge-szene{grid-area:szene;align-self:start;position:sticky;top:8px;}.ge-meldung{grid-area:meldung;text-align:start;}.ge-fertig{grid-area:fertig;justify-self:start;}.ge-antwort{grid-area:antwort;}
+  .ge-anleitung{display:none;}
+  .ge-knopf{min-height:48px;font-size:18px;}
+  .ge-weiter{min-height:44px;}
+}
