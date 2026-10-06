@@ -12,6 +12,7 @@ import { erzeugeK, cssLaden, esc, profilKarte } from "./rahmen.js";
 
 /* ein Spiel: id, Datei (für den Import), Schlüssel von Titel/Kurztext, Einheit des Bestwerts, Symbol.
    bestKey   Text-Schlüssel für „Dein Bestwert“ (Zeit bei Ampel, Höchsttempo beim Tempo-Sprint)
+   format    (optional) wert, k -> Text für den Bestwert an der Karte (sonst „wert einheit“), z. B. Sekunden statt Millisekunden
    nurVorschau  true = nur auf Vorschau-Geräten sichtbar und spielbar (neues Spiel erst selbst prüfen, dann auf false) */
 export const SPIELE = [
   {
@@ -23,6 +24,19 @@ export const SPIELE = [
     id: "tempo", name: "tempoName", kurz: "tempoKurz", einheit: "km/h", bestKey: "tempoBestwert", nurVorschau: false,   // 07.10.2026: freigegeben (Serban: „Mach alles fertig“)
     laden: function () { return import("./tempo.js"); },
     symbol: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 17a8.5 8.5 0 1 1 17 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 17l4.2-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1.6" fill="currentColor"/></svg>'
+  }
+,
+  {
+    id: "memory", name: "memoryName", kurz: "memoryKurz", einheit: "s", bestKey: "bestzeit", nurVorschau: true,
+    format: function (ms, k) { return k.zahl(ms / 1000, 1) + " s"; },
+    laden: function () { return import("./memory.js"); },
+    symbol: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="8" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="10" width="8" height="10" rx="2" fill="currentColor" opacity=".25" stroke="currentColor" stroke-width="1.8"/><path d="M7 7.5l.01 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'
+  },
+  {
+    id: "vorfahrt", name: "vorName", kurz: "vorKurz", einheit: "", bestKey: "vorBestwert", nurVorschau: true,
+    format: function (w, k) { return w + " " + k.tx("vorPunkte"); },
+    laden: function () { return import("./vorfahrt.js"); },
+    symbol: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 2v7H2M15 2v7h7M9 22v-7H2M15 22v-7h7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/></svg>'
   }
 ];
 
@@ -69,7 +83,7 @@ export function starte(platz, opt) {
         const z = platz.querySelector('[data-best="' + s.id + '"]');
         if (!z) return;
         const w = p.bestwerte && p.bestwerte[s.id];
-        z.textContent = w ? k.tx(s.bestKey) + ": " + w + " " + s.einheit : k.tx("nochNicht");
+        z.textContent = w ? k.tx(s.bestKey) + ": " + (s.format ? s.format(w, k) : w + " " + s.einheit) : k.tx("nochNicht");
       });
     }).catch(function () {});
   }

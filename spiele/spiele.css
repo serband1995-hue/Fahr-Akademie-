@@ -180,3 +180,100 @@
 @media (prefers-reduced-motion:reduce){
   .sp-t-blitz.an{animation:none;opacity:.35;}
 }
+
+/* ================= Spiel 3: Schilder-Memory ================= */
+.sp-memory{display:grid;gap:10px;}
+.sp-m-buehne{position:relative;display:grid;gap:8px;padding:10px;scroll-margin-top:8px;}
+.sp-m-hud{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;}
+.sp-m-hud > div{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.sp-m-hud .sp-label{font-size:10px;letter-spacing:.03em;overflow-wrap:break-word;hyphens:auto;}
+.sp-m-hud b{font-size:20px;font-variant-numeric:tabular-nums;font-family:var(--ff-titel);}
+.sp-m-paare{text-align:center;font-size:13px;font-weight:600;color:var(--muted);min-height:1.3em;}
+.sp-m-brett{position:relative;}
+.sp-m-feld{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;transition:opacity .2s;}
+.sp-m-feld.aus{opacity:.45;pointer-events:none;}
+.sp-m-karte{position:relative;display:block;width:100%;aspect-ratio:1/1.02;min-height:84px;padding:0;overflow:hidden;
+  border:1.5px solid var(--hairline);border-radius:var(--r-m);background:var(--gruen);cursor:pointer;font-family:inherit;color:#1d1d1b;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;}
+.sp-m-karte:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.sp-m-back{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--gruen);color:var(--gold);}
+.sp-m-back i{font:italic 700 38px var(--ff-titel);}
+.sp-m-front{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:7px;background:#fff;}
+.sp-m-karte.offen .sp-m-back{display:none;}
+.sp-m-karte.offen .sp-m-front{display:flex;animation:sp-m-auf .18s ease-out;}
+@keyframes sp-m-auf{from{transform:scale(.85);opacity:.4;}to{transform:none;opacity:1;}}
+.sp-m-schild svg,.sp-m-schild img{display:block;width:100%;height:100%;object-fit:contain;}
+.sp-m-text{font-size:12px;font-weight:700;line-height:1.22;text-align:center;overflow-wrap:anywhere;hyphens:auto;color:#1d1d1b;background:#fff;}   /* lange Wörter: automatische Silbentrennung (html lang), im Deutschen zusätzlich weiche Trennstriche in texte.js */
+.sp-m-karte.gefunden{border-color:#2ea84f;box-shadow:inset 0 0 0 3px #2ea84f;cursor:default;}
+.sp-m-popup{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px;overflow:auto;
+  text-align:center;background:var(--surface);border-radius:var(--r-l);}
+.sp-m-popup[hidden]{display:none;}
+.sp-m-pop-schild{width:clamp(78px,24vw,104px);aspect-ratio:1;flex:none;}
+.sp-m-pop-schild svg,.sp-m-pop-schild img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3));}
+.sp-m-pop-nr{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);}
+.sp-m-pop-name{font-family:var(--ff-titel);font-size:19px;font-weight:600;line-height:1.2;}
+.sp-m-pop-text{margin:0;font-size:14.5px;line-height:1.45;max-width:34em;}
+.sp-m-weiter,.sp-v-weiter{margin-top:14px;width:100%;min-height:48px;border:0;border-radius:var(--r-l);background:var(--gruen);color:var(--auf-tief);
+  font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;touch-action:manipulation;}
+.sp-m-weiter:focus-visible,.sp-v-weiter:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.sp-m-knopf,.sp-v-knopf{width:100%;min-height:62px;border:0;border-radius:var(--r-l);cursor:pointer;font-family:inherit;font-size:22px;font-weight:800;
+  letter-spacing:.06em;text-transform:uppercase;touch-action:manipulation;-webkit-tap-highlight-color:transparent;box-shadow:0 6px 18px rgba(43,40,30,.22);}
+.sp-m-knopf[hidden],.sp-v-knopf[hidden]{display:none;}
+.sp-m-brett .sp-m-knopf{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);width:min(82%,260px);}
+.sp-m-knopf.start,.sp-v-knopf.start{background:var(--gruen);color:var(--auf-tief);}
+.sp-m-knopf.warte,.sp-v-knopf.warte{background:var(--surface-strong);color:var(--muted);cursor:default;}
+.sp-m-knopf:focus-visible,.sp-v-knopf:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.sp-m-anleitung,.sp-v-anleitung{margin:0;line-height:1.5;}
+
+/* ================= Spiel 4: Rechts vor Links ================= */
+.sp-vorfahrt{display:grid;gap:10px;}
+.sp-v-buehne{display:grid;gap:8px;padding:10px;scroll-margin-top:8px;}
+.sp-v-hud{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-m);font-weight:700;min-height:1.6em;}
+.sp-v-aufgabe{font-size:14px;color:var(--muted);}
+.sp-v-punkte b{font-size:20px;font-variant-numeric:tabular-nums;font-family:var(--ff-titel);}
+.sp-v-frage{min-height:1.4em;text-align:center;font-weight:700;font-size:15px;}
+.sp-v-szene{width:min(100%,52vh);margin-inline:auto;aspect-ratio:1;border-radius:var(--r-m);overflow:hidden;background:#6f9a5a;}
+.sp-v-svg{display:block;width:100%;height:100%;}
+.sp-v-auto{cursor:pointer;outline:none;touch-action:manipulation;}
+.sp-v-auto:focus-visible .sp-v-ring{stroke:var(--gold);stroke-width:3.5;}
+.sp-v-weg{stroke-width:3.5;stroke-dasharray:7 6;stroke-linecap:round;opacity:.9;}
+.sp-v-ring{stroke:transparent;stroke-width:3;}
+.sp-v-auto.fest{pointer-events:none;}
+.sp-v-auto.richtig .sp-v-ring{stroke:#2ea84f;stroke-width:4.5;}
+.sp-v-auto.falsch .sp-v-ring{stroke:#e0442a;stroke-width:4.5;}
+.sp-v-auto.blass{opacity:.5;}
+.sp-v-blink{fill:#ffb000;animation:sp-v-blink .7s steps(2,start) infinite;}
+@keyframes sp-v-blink{50%{opacity:.15;}}
+.sp-v-hinweis{text-align:center;font-size:12.5px;color:var(--muted);}
+.sp-v-antwort{display:grid;gap:8px;padding:10px;border-radius:var(--r-m);background:var(--surface-strong);}
+.sp-v-antwort[hidden]{display:none;}
+.sp-v-urteil{font-weight:800;font-size:18px;}
+.sp-v-urteil.ja{color:var(--gruen-text);}
+.sp-v-urteil.nein{color:var(--warn);}
+.sp-v-regel{margin:0;font-size:14.5px;line-height:1.45;}
+.sp-v-regel.warten{color:var(--muted);}
+/* Kleines Rahmenzeichen vor der Regel: grün = das richtige Auto im Bild, rot = das angetippte falsche Auto */
+.sp-v-regel.gruen::before,.sp-v-regel.rot::before{content:"";display:inline-block;width:.85em;height:.85em;margin-inline-end:.5em;vertical-align:-.1em;border-radius:3px;border:3px solid #2ea84f;}
+.sp-v-regel.rot::before{border-color:#e0442a;}
+.sp-v-richtigzahl{margin:0;font-weight:700;}
+@media (prefers-reduced-motion:reduce){.sp-v-blink{animation:none;}.sp-m-karte.offen .sp-m-front{animation:none;}}
+
+/* Querformat am Handy: Memory 6 x 2, Rechts vor Links Szene links / Aufgabe rechts, alles ohne Scrollen im Bild */
+@media (max-height:520px){
+  .sp-memory .sp-spieltitel,.sp-vorfahrt .sp-spieltitel{display:none;}
+  .sp-m-buehne{padding:8px;gap:6px;}
+  .sp-m-feld{grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;}
+  .sp-m-karte{aspect-ratio:1/.95;min-height:0;}
+  .sp-m-hud b{font-size:17px;}
+  .sp-m-popup{flex-direction:row;flex-wrap:wrap;justify-content:center;align-items:center;align-content:center;}
+  .sp-m-pop-schild{width:72px;}
+  .sp-m-pop-text{font-size:13.5px;}
+  .sp-m-weiter,.sp-v-weiter{margin-top:6px;min-height:44px;}
+  .sp-m-anleitung,.sp-v-anleitung{display:none;}
+  .sp-v-buehne{grid-template-columns:min(60vh,46%) minmax(0,1fr);grid-template-areas:"szene hud" "szene bar" "szene frage" "szene antwort" "szene hinweis";
+    column-gap:12px;row-gap:6px;align-content:start;padding:8px;}
+  .sp-v-hud{grid-area:hud;}.sp-v-leiste{grid-area:bar;}.sp-v-frage{grid-area:frage;text-align:start;}
+  .sp-v-szene{grid-area:szene;width:100%;}.sp-v-antwort{grid-area:antwort;}.sp-v-hinweis{grid-area:hinweis;text-align:start;}
+  .sp-v-regel{font-size:13px;}
+  .sp-v-knopf,.sp-m-knopf{min-height:48px;font-size:18px;}
+}

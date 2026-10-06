@@ -268,7 +268,7 @@ Verkehrskontrolle, Duell), C Bild antippen (Gefahren finden, Fahrzeug-Check), D 
 Reihenfolge: Ampel-Bremsweg, Tempo-Sprint, Schilder-Memory, Rechts vor Links, Fahrlehrer-Simulator, Verkehrskontrolle,
 Gefahren finden, Fahrzeug-Check, Schilder-Ninja, Duell. Fertig: **Ampel-Bremsweg** (Spiel 1, mit Rahmen, für alle live),
 **Tempo-Sprint** (Spiel 2, 07.10.2026 gebaut und noch am selben Tag für alle freigegeben, `nurVorschau: false`; Serban: „Mach alles fertig“).
-Memory (Spiel 3, noch nicht gebaut): Schild ↔ Kurzbedeutung, Pop-up mit Bedeutung nach StVO, nur gängige Schilder für Offenbach innerorts (Liste im Chat, noch nicht bestätigt).
+Spiel 3 **Schilder-Memory** und Spiel 4 **Rechts vor Links** (gebaut 07.10.2026, `nurVorschau: true` bis Serban abgenommen hat; siehe unten). Memory-Beschluss von Serban: Schild ↔ Kurzbedeutung, Pop-up mit Bedeutung nach StVO, nur gängige Schilder für Offenbach innerorts (Liste im Chat, noch nicht bestätigt).
 
 **Aufbau**
 - `spiele/` wird erst beim Öffnen geladen (wie `verkehr/`): `spiele.js` (Startseite + Weiche), `rahmen.js` (Rahmen für ALLE Spiele:
@@ -308,11 +308,24 @@ Memory (Spiel 3, noch nicht gebaut): Schild ↔ Kurzbedeutung, Pop-up mit Bedeut
 - Layout: Tacho, Straße, Meldung UND Tippfläche müssen zusammen in ein Handy-Bild (über der Menüleiste, ~90 px): beim Start `scrollIntoView(start)` der Bühne, Tippfläche nach Bildschirmhöhe (`clamp(96px,21vh,170px)`), Anleitung unter der Tippfläche (im Lauf ausgeblendet).
   Querformat: Bühne links, Tippfläche rechts.
 
+**Schilder-Memory (Spiel 3, 07.10.2026)** – `spiele/memory.js`, Zeichen in `spiele/schilder.js`
+- 12 Karten (3 × 4, quer 6 × 2): 6 von 14 Schildern (`SCHILDER`) als Paar „Schild + Name“, verdeckt gemischt. Nach jedem Treffer erscheint eine Karte mit Schild, Zeichen-Nummer, Name und Erklärung nach StVO (Lerneffekt); Weiter per Knopf.
+  Die Uhr steht NUR während der Erklärung, danach läuft sie sofort weiter (sonst wäre Nachdenken gratis). Falsche Karten drehen sich nach 0,9 s zurück (die Zeit läuft dabei).
+- Ranking: Zeit in ms, kleiner ist besser, Anzeige in Sekunden (`format` in `spiele.js`, `rankingKarte(…, format)`). Server `memory`: `zuege` und `fehler` (zuege = 6 + fehler), Zeit ≥ 100 ms je Zug + 900 ms je Fehlversuch, Runde darf bis 40 min offen sein (`runde_max_ms`).
+- Schilder: 205, 206, 306, 274.1 sind die amtlichen Bilder aus `verkehr/vorfahrt-zeichen/`. Die anderen 10 (274 mit 50, 267, 283, 286, 250, 220, 101, 237, 350, 215) und Zeichen 282 sind in `schilder.js` SELBST GEZEICHNET (amtliche Form, Bildzeichen vereinfacht), weil Wikimedia aus der Cloud nicht abrufbar ist (HTTP 429). Wenn Serban echte Bilder will: Dateien in `verkehr/vorfahrt-zeichen/` ablegen und in `schilder.js` auf `img(...)` umstellen.
+  Keine ids/clipPath in den SVGs (dasselbe Zeichen steht mehrfach auf der Seite).
+
+**Rechts vor Links (Spiel 4, 07.10.2026)** – `spiele/vorfahrt.js`
+- Kreuzung von oben ohne Schilder/Ampel, 2–4 Autos (Aufgabe 1–3: 2, 4–7: 3, 8–10: 4), tippe das Auto, das zuerst fahren darf. Pfeil-Linie und Blinker zeigen den Weg. 15 s Limit, Bonus bis 8 s (100–150 Punkte je richtig). Nach jeder Antwort steht die Regel dabei (grün = richtiges Auto, rot = angetipptes falsches).
+- Regeln als reine Rechnung (`konflikt`, `vorrang`, `freieAutos`): Konflikt bei gekreuzten Wegen oder gleicher Ausfahrt; Vorrang = von rechts (auch beim Abbiegen); Ausnahme: Linksabbieger lässt Gegenverkehr (geradeaus/rechts) durch; zwei entgegenkommende Linksabbieger behindern sich nicht (Regel, nicht Zeichnung). Jede Aufgabe hat genau EIN freies Auto; jeder Satz hat ≥ 2 „Gegenverkehr“- und ≥ 3 „von rechts“-Aufgaben.
+- Server `vorfahrt`: `richtig` 0–10, Punkte zwischen 100 und 150 je richtiger Aufgabe, Vorlauf 5 s, Runde bis 30 min.
+- Prüfungen: Hand-Fälle, ALLE 256 Kreuzungs-Konstellationen (Drehung ändert nichts), 400 zufällige Aufgabensätze.
+
 **Prüfen (vor jeder Änderung an Spielen laufen lassen, jedes neue Spiel bekommt Fälle dazu)**
-- `node --experimental-strip-types werkzeuge/edge-functions/pruefe-academy-spiele.mjs` – Logik der Function gegen eine Datenbank im Speicher (46 Fälle, davon Spielregeln und Server des Tempo-Sprints).
+- `node --experimental-strip-types werkzeuge/edge-functions/pruefe-academy-spiele.mjs` – Logik der Function gegen eine Datenbank im Speicher (67 Fälle: Ampel, Tempo-Sprint, Memory, Rechts vor Links inkl. Regeln).
 - `node --experimental-strip-types werkzeuge/pruefe-spiele-im-browser.mjs` – echte App im Chromium mit Fingertipp: Menü, Spiel, Fehlstart, Rechnung,
   Bestenliste, Ausblenden, Verlassen mitten in der Runde, Handy hoch/quer/klein/dunkel, alle 18 Sprachen, Einzel-Freigabe, Tempo-Sprint in ECHTER Zeit (ca. 8 min gesamt;
-  nur Spiel 2: `NUR_TEMPO=1`). Bilder: `$SPIELE_BILDER`.
+  einzelne Spiele: `NUR=tempo,memory,vorfahrt`). Bilder: `$SPIELE_BILDER`.
 - Beide Prüfungen wurden selbst geprüft: mit absichtlich eingebauten Fehlern (Zeitprüfung, Einmal-Einlösung, Wertgrenzen, fremde Runde, Bremse, Rechenfehler) schlagen sie an.
 
 **Gelernt bei Spiel 1 (fließt in jedes weitere Spiel)**
@@ -322,6 +335,7 @@ Memory (Spiel 3, noch nicht gebaut): Schild ↔ Kurzbedeutung, Pop-up mit Bedeut
 - Messen erst nach Überblendung/Scrollen der App (sonst falsche Layout-Befunde und Geisterbilder auf Fotos). Querformat am Handy: die Bühne zuerst und von selbst ins Bild
   scrollen, sonst deckt die Menüleiste den Knopf zur Hälfte ab.
 - Spielnamen vom Gerät mit `hasOwnProperty` prüfen (`__proto__`, `constructor`). Späte Server-Antworten mit einem Zähler verwerfen (`ergId`), sonst überschreiben sie neuere Ergebnisse.
+- **Gelernt bei Spiel 3/4:** (1) Start-Knopf eines Spiels MITTEN über das abgeblendete Brett legen (sonst liegt er auf dem 360-px-Handy unter der Menüleiste); (2) die Uhr nie „beim Lesen“ anhalten und dann bis zum nächsten Tipp stehen lassen (sofort nach dem Lesen weiter); (3) Geometrie allein reicht für Verkehrsregeln nicht: zwei entgegenkommende Linksabbieger kreuzen sich in der Zeichnung, dürfen aber voreinander abbiegen → solche Regeln ausdrücklich im Code festlegen und mit allen Konstellationen testen; (4) Erklärungen mit mehreren „Dieses Auto“ brauchen eine Farbmarkierung; (5) neue Server-Spiele brauchen eigene `runde_max_ms` (2 Minuten reichen für Lesespiele nicht); (6) Übersetzungen mit Helfern parallel erzeugen und Platzhalter/Schlüssel automatisch prüfen.
 - **Gelernt bei Spiel 2 (Tipp-Spiele, Familie A):** (1) Bei Spielen, in denen man schnell tippt, MUSS die Tippfläche zusammen mit der Anzeige im Bild bleiben – sonst scrollt der Spieler; (2) nach dem Ende
   die Tippfläche kurz sperren (Nachtippen startet sonst sofort eine neue Runde); (3) Mehrfinger/Salven: Mindestabstand zwischen gezählten Tipps im Spiel UND Obergrenze im Server;
   (4) die Obergrenze im Server aus der Spielregel ableiten und mit dem Spielmodell testen, nicht schätzen; (5) Prüfskripte nicht mit Sentinel-Werten (-1e9) bauen – das gab falsche Fehlalarme;
