@@ -54,10 +54,10 @@ async function neueSeite(opt) {
   await ctx.addInitScript((d) => {
     try {
       localStorage.setItem("academy_session", JSON.stringify({ name: "Serban Dumitrescu", session_token: "tok-t", vollzugang: true, agb_akzeptiert_am: "2026-01-01T00:00:00Z", ablauf_am: d.ablauf, klasse: "B", telefon: "0100" }));
-      localStorage.setItem("spiele_vorschau", "1");
+      if (!d.ohneFlag) localStorage.setItem("spiele_vorschau", "1");
       localStorage.setItem("academy_sprache", d.sprache);
     } catch (e) {}
-  }, { ablauf: inEinemJahr, sprache: opt.sprache || "de" });
+  }, { ablauf: inEinemJahr, sprache: opt.sprache || "de", ohneFlag: !!opt.ohneFlag });
   const seite = await ctx.newPage();
   seite.fehler = [];
   seite.on("pageerror", (e) => seite.fehler.push("pageerror: " + e.message));
@@ -208,6 +208,12 @@ try {
   pruefe("Spiel lässt sich erneut öffnen, Zustand frisch", (await s.textContent(".sp-knopf")).trim() === "Start" && (await s.locator(".sp-erg:visible").count()) === 0);
   pruefe("Konsole ohne Fehler (Teil 1)", s.fehler.length === 0, s.fehler.join(" | "));
   await s.context().close();
+
+  console.log("Freigabe für alle: normales Schülergerät ohne ?spiele=1");
+  { const n = await neueSeite({ b: 360, h: 740, ohneFlag: true });
+    await zumHub(n);
+    pruefe("Schüler ohne Vorschau-Flag sieht Menüpunkt und Spiele-Startseite", (await n.textContent(".sp-titel")).trim() === "Spiele");
+    await n.context().close(); }
 
   console.log("Weitere Bildschirmgrößen und Dunkelmodus");
   for (const g of [{ b: 412, h: 915, n: "412 hoch" }, { b: 740, h: 360, n: "quer 740x360" }, { b: 320, h: 640, n: "klein 320" }, { b: 412, h: 915, n: "412 dunkel", dunkel: true }]) {

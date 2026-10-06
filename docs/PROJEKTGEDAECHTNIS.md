@@ -277,8 +277,9 @@ Memory: Schild ↔ Kurzbedeutung, Pop-up mit Bedeutung nach StVO, nur gängige S
   Block wie `UI` in `verkehr/spieler.js`), `spiele.css`. Ein neues Spiel = Datei mit `starte(platz, k)` + Eintrag in `SPIELE`
   in `spiele.js` + Schlüssel in ALLEN Sprachen in `texte.js` + Spiel-Eintrag im `SPIELE`-Block der Function.
 - In `index.html` nur: Menüpunkt (`spieleSichtbar()`), Navigationsfeld `spiel` im Stapel, `spieleAufruf()`, `spieleEinhaengen()/spieleAufraeumen()`.
-- **Sichtbarkeit:** `SPIELE_FUER_ALLE = false` → nur die Vorschau der Verwaltung und Geräte mit `?spiele=1` in der Adresse
-  (`?spiele=0` schaltet aus; im Browser-Speicher des Geräts, die installierte iPhone-App hat einen eigenen Speicher). Für alle Schüler: Konstante auf `true`.
+- **Sichtbarkeit:** seit 06.10.2026 `SPIELE_FUER_ALLE = true` (Serban: für alle Schüler freigegeben). Mit `false` sähen den Bereich nur die Vorschau der Verwaltung und Geräte mit `?spiele=1`
+  in der Adresse (`?spiele=0` schaltet aus; im Browser-Speicher des Geräts, die installierte iPhone-App hat einen eigenen Speicher) – nützlich, um ein NEUES Spiel erst selbst zu prüfen.
+  Beim Einbau weiterer Spiele: erst sichtbar machen, wenn Serban abgenommen hat (z. B. Eintrag in `SPIELE` in `spiele.js` mit einer Vorschau-Bedingung versehen).
 - **Server:** Edge Function `academy-spiele` (Quelle `werkzeuge/edge-functions/academy-spiele.ts`, `verify_jwt` false, prüft die Schüler-Session
   wie `academy-szene`). Tabellen `academy_spiele_runden`, `academy_spiele_bestwerte`, `academy_spiele_profil` (RLS an, absichtlich ohne Policy: Zugriff nur über
   die Function; `on delete cascade` am Schüler). SQL-Funktionen `academy_spiele_anzeigename`, `academy_spiele_rangliste` (nur service_role).
