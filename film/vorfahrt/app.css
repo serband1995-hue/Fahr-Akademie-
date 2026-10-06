@@ -1,0 +1,52 @@
+/* Erklärfilm „Vorfahrt“ in der App: Bild oben, Text darunter, Steuerung darunter (keine Knöpfe auf dem Bild).
+   Handy zuerst (360–412 px). Ab ~660 px Breite (Querformat/Tablet) steht der Text neben dem Bild. */
+.vf { --vf-titel:var(--ff-titel,'Playfair Display',Georgia,serif); --vf-text:var(--ff-body,'Barlow',sans-serif); --vf-gold:var(--gold,#D9954C); margin:var(--sp-m,12px) 0 var(--sp-l,18px); }
+.vf-kopf { font-family:var(--vf-titel); font-weight:600; font-size:19px; margin:0 0 4px; }
+.vf-intro { color:var(--muted,#6F6857); font-size:14.5px; line-height:1.45; margin:0 0 10px; }
+.vf-kasten { background:var(--surface,#EEE6D3); border:1px solid var(--border,rgba(43,40,30,.16)); border-radius:var(--r-l,16px); padding:10px; overflow:hidden; }
+.vf-szenen { display:grid; position:relative; }
+.vf-szenen .scene { grid-area:1 / 1; display:flex; flex-direction:column; gap:12px; min-width:0; pointer-events:none; direction:ltr; }
+.vf-szenen .stagewrap { width:100%; aspect-ratio:1 / 1; border-radius:var(--r-m,12px); overflow:hidden; flex:none; background:#E8E0CB; }
+.vf-szenen .stage { transform-origin:0 0; transform:scale(var(--vf-s,.3)); }
+.vf-szenen .panel { min-width:0; padding:2px 4px 4px; }
+.vf-szenen .dots, .vf-szenen .foot { display:none; }
+.vf-szenen .kicker { font-size:12.5px; line-height:1.3; letter-spacing:.12em; }
+.vf-szenen .ttl { font-size:24px; line-height:1.15; margin:4px 0 0; }
+.vf-szenen .sub { font-size:16px; line-height:1.4; margin-top:8px; }
+.vf-szenen .pts { margin-top:12px; }
+.vf-szenen .pt .tx { font-size:18px; line-height:1.42; }
+.vf-szenen .pt .rf { font-size:13px; line-height:1.35; margin-top:6px; }
+.vf-szenen .step .nr { font-size:36px; }
+.vf-szenen .step .nm { font-size:22px; line-height:1.2; margin-top:2px; }
+.vf-szenen .step .tx { font-size:17px; line-height:1.42; margin-top:8px; }
+.vf-szenen .step .px { font-size:15px; line-height:1.4; margin-top:8px; }
+.vf-szenen .step .rf { font-size:13px; line-height:1.35; margin-top:6px; }
+.vf-szenen .merk { padding:14px 16px; font-size:20px; line-height:1.3; border-left-width:8px; }
+.vf-breit .vf-szenen .scene { flex-direction:row; align-items:flex-start; gap:20px; }
+.vf-breit .vf-szenen .stagewrap { flex:0 0 46%; }
+.vf-breit .vf-szenen .panel { flex:1; }
+.vf-rtl .vf-szenen .panel, .vf-rtl .vf-text, .vf-rtl .vf-intro, .vf-rtl .vf-kopf { direction:rtl; text-align:right; }
+.vf-steuer { display:flex; flex-direction:column; gap:10px; margin-top:12px; }
+.vf-reihe { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.vf-knopf { min-height:44px; padding:0 16px; border-radius:999px; border:1px solid var(--border,rgba(43,40,30,.16)); background:var(--bg,#FAF6EC); color:var(--text,#2B2A22); font:600 15px/1.2 var(--vf-text); display:inline-flex; align-items:center; gap:8px; cursor:pointer; }
+.vf-knopf svg { width:18px; height:18px; flex:none; fill:currentColor; }
+.vf-play { background:var(--vf-gold); color:var(--auf-gold,#2B2A22); border-color:transparent; }
+.vf-zeit { margin-inline-start:auto; font-size:13px; color:var(--muted,#6F6857); font-variant-numeric:tabular-nums; direction:ltr; }
+.vf-regler { width:100%; height:28px; margin:0; accent-color:var(--gold-text,#8F5A14); direction:ltr; }
+.vf-kapitel { display:flex; gap:8px; direction:ltr; }
+.vf-kap { flex:1; min-width:44px; min-height:44px; border-radius:12px; border:1px solid var(--border,rgba(43,40,30,.16)); background:var(--bg,#FAF6EC); color:var(--text,#2B2A22); font:700 15px/1 var(--vf-text); cursor:pointer; }
+.vf-kap[aria-current="true"] { background:var(--gruen,#2F4A34); color:var(--auf-tief,#fff); border-color:transparent; }
+.vf-knopf:focus-visible, .vf-kap:focus-visible, .vf-regler:focus-visible, .vf-text summary:focus-visible { outline:3px solid var(--gold-text,#8F5A14); outline-offset:2px; }
+.vf-text { margin-top:12px; font-size:15px; line-height:1.5; }
+.vf-text summary { min-height:44px; display:flex; align-items:center; cursor:pointer; font-weight:600; }
+.vf-text h3 { font-family:var(--vf-titel); font-size:16px; margin:14px 0 4px; }
+.vf-text p { margin:0 0 6px; }
+.vf-text .vf-ref { color:var(--muted,#6F6857); font-size:13px; }
+@media (prefers-reduced-motion: reduce) { .vf-szenen .stage { transition:none; } }
+/* Paragrafen-Verweise nie verdrehen (RTL-Sprachen), Regel 8 der Sprachen-Notiz */
+.vf-szenen .rf, .vf-szenen .step .rf, .vf-text .vf-ref { unicode-bidi:plaintext; }
+/* Schriften ohne Playfair-Zeichen (ar, ckb, ur, hi, fa, ps, el, am, ti): Überschriften in Barlow, mehr Zeilenhöhe */
+.vf-barlow { --vf-titel:var(--ff-body,'Barlow',sans-serif); }
+.vf-barlow .ttl, .vf-barlow .nm, .vf-barlow .merk, .vf-barlow .bigcard, .vf-barlow .vf-kopf, .vf-barlow .vf-text h3 { font-weight:700; }
+.vf[lang="ur"] .vf-szenen :is(.pt .tx,.step .tx,.step .px,.sub,.merk,.ttl,.step .nm), .vf[lang="ur"] .vf-text, .vf[lang="ur"] .vf-intro { line-height:1.7; }
+.vf[lang="ps"] .vf-szenen :is(.pt .tx,.step .tx,.step .px,.sub,.merk,.ttl,.step .nm), .vf[lang="ps"] .vf-text, .vf[lang="ps"] .vf-intro { line-height:1.55; }

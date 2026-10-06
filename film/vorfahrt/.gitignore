@@ -1,0 +1,5 @@
+out/*.mp4
+snapshots/
+renders/
+out/work-*/
+out/.*transaction*/

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1920, height=1080" />
+<title>Vorfahrt – wer fährt zuerst?</title>
+<link rel="stylesheet" href="buehne.css" />
+<script src="assets/lib/gsap.min.js"></script>
+<style>
+@font-face{font-family:'Barlow';font-weight:400;font-style:normal;src:url('assets/fonts/Barlow-400.ttf') format('truetype');}
+@font-face{font-family:'Barlow';font-weight:500;font-style:normal;src:url('assets/fonts/Barlow-500.ttf') format('truetype');}
+@font-face{font-family:'Barlow';font-weight:600;font-style:normal;src:url('assets/fonts/Barlow-600.ttf') format('truetype');}
+@font-face{font-family:'Barlow';font-weight:700;font-style:normal;src:url('assets/fonts/Barlow-700.ttf') format('truetype');}
+@font-face{font-family:'Playfair Display';font-weight:600;font-style:normal;src:url('assets/fonts/PlayfairDisplay-600.ttf') format('truetype');}
+@font-face{font-family:'Playfair Display';font-weight:700;font-style:normal;src:url('assets/fonts/PlayfairDisplay-700.ttf') format('truetype');}
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --paper:#FAF6EC; --ink:#2F4A34; --green:#3F6B4B; --gold:#D9954C; --gold-text:#8F5A14; --text:#2B2A22; --muted:#6F6857; --hair:rgba(43,42,34,.16); --vf-titel:'Playfair Display',serif; --vf-text:'Barlow',sans-serif; }
+  html, body { width:1920px; height:1080px; overflow:hidden; background:var(--paper); font-family:'Barlow',sans-serif; color:var(--text); }
+  #root { position:relative; width:1920px; height:1080px; overflow:hidden; background:var(--paper); }
+  .scene { position:absolute; left:0; top:0; width:1920px; height:1080px; }
+  .stagewrap { position:absolute; left:0; top:0; width:1080px; height:1080px; }
+  /* Text-Feld rechts (nur MP4-Layout; die App legt es unter das Bild, siehe app.css) */
+  .panel { position:absolute; left:1080px; top:0; width:840px; height:1080px; padding:78px 70px 0 70px; background:var(--paper); border-left:2px solid var(--hair); }
+  .dots { display:flex; gap:10px; margin-bottom:38px; }
+  .dots i { display:block; width:14px; height:14px; border-radius:7px; background:rgba(47,74,52,.22); }
+  .dots i.on { width:46px; background:var(--gold); }
+  .kicker { font-size:30px; line-height:1.2; }
+  .ttl { font-size:72px; line-height:1.06; margin-top:14px; }
+  .ttl.lang { font-size:60px; }
+  .sub { font-size:40px; line-height:1.3; margin-top:22px; }
+  .pts { margin-top:34px; }
+  .pt .tx { font-size:46px; line-height:1.26; }
+  .pt.intro .tx { font-size:54px; line-height:1.24; }
+  .pt .rf { font-size:30px; line-height:1.3; margin-top:12px; }
+  .step .nr { font-size:110px; }
+  .step .nm { font-size:62px; line-height:1.1; margin-top:4px; }
+  .step .tx { font-size:42px; line-height:1.26; margin-top:18px; }
+  .step .px { font-size:36px; line-height:1.3; margin-top:14px; }
+  .step .rf { font-size:28px; line-height:1.3; margin-top:12px; }
+  .merk { padding:30px 38px; font-size:56px; line-height:1.22; }
+  .foot { position:absolute; left:70px; bottom:50px; display:flex; align-items:center; gap:20px; font:600 30px/1 'Barlow',sans-serif; color:var(--muted); }
+  .foot img { width:84px; height:84px; border-radius:20px; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="319" data-width="1920" data-height="1080">
+  <section id="s1" class="scene clip" data-start="0"   data-duration="29" data-track-index="0"></section>
+  <section id="s2" class="scene clip" data-start="29"  data-duration="73" data-track-index="0"></section>
+  <section id="s3" class="scene clip" data-start="102" data-duration="60" data-track-index="0"></section>
+  <section id="s4" class="scene clip" data-start="162" data-duration="55" data-track-index="0"></section>
+  <section id="s5" class="scene clip" data-start="217" data-duration="42" data-track-index="0"></section>
+  <section id="s6" class="scene clip" data-start="259" data-duration="60" data-track-index="0"></section>
+</div>
+<script src="text.js"></script>
+<script src="baukasten.js"></script>
+<script src="szenen.js"></script>
+<script>
+(function () {
+  const T = window.FILM_TEXT;
+  const tl = gsap.timeline({ paused: true });
+  window.__timelines = window.__timelines || {};
+  window.__timelines["main"] = tl;
+  const r = window.VFSzenen.bauen({
+    tl: tl, T: T, tx: function (k) { return T.de[k]; },
+    scenes: T.kapitel.map(function (_, i) { return document.getElementById("s" + (i + 1)); }),
+    logo: "assets/logo-264.jpg"
+  });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(r.refit);
+  tl.seek(0);
+})();
+</script>
+</body>
+</html>
