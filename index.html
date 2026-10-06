@@ -8787,10 +8787,10 @@ function tFett(schluessel){
    Spiele (06.10.2026): Mini-Spiele rund um den Verkehr mit Bestenliste.
    Alles Spielerische liegt in spiele/ (wird erst beim Öffnen geladen). Hier nur Menü, Navigation und der
    Server-Aufruf academy-spiele. Der Name im Ranking kommt vom Server aus dem Konto (Vorname + 1 Buchstabe).
-   Sichtbar ist der Bereich erst für die Vorschau der Verwaltung und für Geräte mit ?spiele=1 (unten in init());
-   für alle Schüler: SPIELE_FUER_ALLE auf true setzen.
+   Seit 06.10.2026 für alle Schüler sichtbar (SPIELE_FUER_ALLE = true). Mit false wäre der Bereich nur in der Vorschau der
+   Verwaltung und auf Geräten mit ?spiele=1 (unten in init()) zu sehen -- praktisch, um ein NEUES Spiel erst selbst zu prüfen.
    --------------------------------------------------------------------------- */
-const SPIELE_FUER_ALLE = false;
+const SPIELE_FUER_ALLE = true;   // 06.10.2026: für alle Schüler freigegeben (Entscheidung Serban); false = nur Vorschau + ?spiele=1
 let spieleInstanz = null;
 
 function spieleSichtbar(){
