@@ -8,7 +8,8 @@
    k.vorschau                true = nichts wird gespeichert, kein Server-Aufruf
    k.zahl(n, stellen)        Zahl mit Komma/Punkt der Sprache, immer lateinische Ziffern
    profilKarte(k, el, nachAenderung)   Name im Ranking + Schalter "sichtbar"
-   rankingKarte(k, spiel, einheit, el) Bestenliste; gibt { aktualisieren() } zurück               */
+   rankingKarte(k, spiel, einheit, el, format) Bestenliste; gibt { aktualisieren() } zurück
+                                     format(wert) -> Text (optional; sonst „wert einheit“, z. B. Sekunden statt Millisekunden) */
 import { tx, RTL } from "./texte.js";
 
 export function esc(s) {
@@ -101,7 +102,8 @@ export function profilKarte(k, el, nachAenderung) {
 }
 
 /* Bestenliste: die Besten (nur sichtbare Schüler) und, falls man nicht darunter ist, die eigene Platzierung. */
-export function rankingKarte(k, spiel, einheit, el) {
+export function rankingKarte(k, spiel, einheit, el, format) {
+  const zeige = function (w) { return format ? format(w) : w + " " + einheit; };
   el.className = "karte sp-ranking";
   if (k.vorschau) { el.hidden = true; return { aktualisieren: function () {} }; }
   let nr = 0; // nur die jüngste Antwort zeichnet (schnelles Hin und Her)
@@ -109,14 +111,14 @@ export function rankingKarte(k, spiel, einheit, el) {
     const zeilen = (d.top || []).map(function (z) {
       return '<li class="sp-zeile' + (z.ich ? " ich" : "") + '"><span class="sp-platz">' + esc(z.platz) + "</span>" +
         '<span class="sp-rname" dir="auto">' + esc(z.name) + (z.ich ? ' <span class="sp-du">· ' + esc(k.tx("du")) + "</span>" : "") + "</span>" +
-        '<span class="sp-wert" dir="ltr">' + esc(z.wert) + " " + esc(einheit) + "</span></li>";
+        '<span class="sp-wert" dir="ltr">' + esc(zeige(z.wert)) + "</span></li>";
     });
     const eigenInTop = (d.top || []).some(function (z) { return z.ich; });
     if (d.ich && !eigenInTop) {
       zeilen.push('<li class="sp-zeile sp-luecke" aria-hidden="true"><span>…</span></li>');
       zeilen.push('<li class="sp-zeile ich"><span class="sp-platz">' + esc(d.ich.platz) + "</span>" +
         '<span class="sp-rname">' + esc(k.tx("du")) + "</span>" +
-        '<span class="sp-wert" dir="ltr">' + esc(d.ich.wert) + " " + esc(einheit) + "</span></li>");
+        '<span class="sp-wert" dir="ltr">' + esc(zeige(d.ich.wert)) + "</span></li>");
     }
     el.innerHTML = '<h3 class="sp-ueberschrift">' + esc(k.tx("rankingTitel")) + "</h3>" +
       (zeilen.length ? '<ol class="sp-liste">' + zeilen.join("") + "</ol>" : '<div class="admin-sub">' + esc(k.tx("rankingLeer")) + "</div>");

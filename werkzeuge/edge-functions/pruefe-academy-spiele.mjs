@@ -8,6 +8,11 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { db, rufe, warte, hier } from "./spiele-im-speicher.mjs";
 import { REGELN, LERN_MS, GESAMT_MS, lage, tipp, rollen, blitzer, obergrenze } from "../../spiele/tempo.js";
+import { SCHILDER, PAARE, ZURUECK_MS, ZUG_MIN_MS, mischen, neueKarten, passen } from "../../spiele/memory.js";
+import * as V from "../../spiele/vorfahrt.js";
+import { SCHILD_IDS, schildBild } from "../../spiele/schilder.js";
+import { TEXTE } from "../../spiele/texte.js";
+import { existsSync } from "node:fs";
 
 // ---- Grundausstattung ----
 const inEinerStunde = new Date(Date.now() + 3_600_000).toISOString();
@@ -215,6 +220,223 @@ await pruefe("tipps bei der Ampel werden ignoriert (kein Einfluss), Ampel-Regeln
 await pruefe("tempo-Runde wird nicht als ampel-Ergebnis verbucht (Wert 150 als Ampel wäre erlaubt, als Tempo gilt tempo-Grenze)", async () => {
   const r = await tempoRunde(); warte(43_000);
   assert.equal((await tempoErg(r, 150, undefined)).error, "tipps_ungueltig");
+});
+
+/* ===================== Spiel 3: Schilder-Memory ===================== */
+console.log("Schilder-Memory: Logik");
+const kette = (a) => a.map((x) => JSON.stringify(x)).join("|");
+const zufallsquelle = (seed) => () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };   // gleichmäßig verteilt, gleiche Folge je Startwert
+await pruefe("Zahlen im Server = Zahlen im Spiel (PAARE, ZUG_MIN_MS, ZURUECK_MS)", async () => {
+  const q = readFileSync(join(hier, "academy-spiele.ts"), "utf8");
+  const m = q.match(/const MEMORY = \{ PAARE: (\d+), ZUG_MIN_MS: (\d+), ZURUECK_MS: (\d+) \};/);
+  assert.ok(m, "MEMORY-Zeile nicht gefunden");
+  assert.deepEqual([+m[1], +m[2], +m[3]], [PAARE, ZUG_MIN_MS, ZURUECK_MS]);
+});
+await pruefe("14 Schilder, jedes mit Bild und Texten (Name + Erklärung) in allen 18 Sprachen", async () => {
+  assert.equal(SCHILDER.length, 14);
+  assert.equal(new Set(SCHILDER.map((x) => x.id)).size, 14, "doppelte Schild-id");
+  for (const sc of SCHILDER) {
+    assert.ok(SCHILD_IDS.includes(sc.id), "kein Bild für " + sc.id);
+    assert.ok(schildBild(sc.id, { beschriftung: "x", zahl: sc.zahl }).length > 50, "leeres Bild " + sc.id);
+    for (const l of Object.keys(TEXTE)) for (const suffix of ["l", "m"]) assert.ok(TEXTE[l][sc.id + suffix] && TEXTE[l][sc.id + suffix].trim(), l + " " + sc.id + suffix);
+    assert.ok(/^\d{3}(\.\d)?$/.test(sc.nr), "Zeichennummer " + sc.nr);
+  }
+  for (const f of ["z205.svg", "z206.svg", "z306.svg", "z2741.svg"]) assert.ok(existsSync(join(hier, "../../verkehr/vorfahrt-zeichen", f)), f);
+});
+await pruefe("Karten: 12 Stück, je Schild genau eine Schild-Karte und eine Text-Karte, 6 verschiedene Paare, gemischt", async () => {
+  const zufall = zufallsquelle(7);
+  const verschieden = new Set();
+  for (let i = 0; i < 300; i++) {
+    const ks = neueKarten(zufall);
+    assert.equal(ks.length, 2 * PAARE);
+    const nachPaar = {};
+    ks.forEach((c, idx) => { assert.equal(c.i, idx); (nachPaar[c.paar] = nachPaar[c.paar] || []).push(c.art); });
+    assert.equal(Object.keys(nachPaar).length, PAARE);
+    for (const arten of Object.values(nachPaar)) assert.deepEqual(arten.slice().sort(), ["schild", "text"]);
+    verschieden.add(kette(ks.map((c) => c.paar + c.art)));
+  }
+  assert.ok(verschieden.size > 250, "kaum gemischt: " + verschieden.size);
+  const alle = new Set(); for (let i = 0; i < 200; i++) neueKarten(zufall).forEach((c) => alle.add(c.paar)); assert.equal(alle.size, 14, "nicht alle Schilder kommen vor");
+  const p = mischen([1, 2, 3, 4, 5, 6, 7], zufall); assert.deepEqual(p.slice().sort(), [1, 2, 3, 4, 5, 6, 7]);
+});
+await pruefe("Treffer: nur Schild + passender Text; zwei Schilder, zwei Texte, dieselbe Karte und verschiedene Paare passen nicht", async () => {
+  const a = { paar: "z205", art: "schild" }, b = { paar: "z205", art: "text" }, c = { paar: "z206", art: "text" }, d = { paar: "z205", art: "schild" };
+  assert.equal(passen(a, b), true); assert.equal(passen(b, a), true);
+  assert.equal(passen(a, c), false); assert.equal(passen(a, d), false); assert.equal(passen(a, a), false); assert.equal(passen(b, { paar: "z205", art: "text" }), false);
+});
+
+console.log("Schilder-Memory: Server");
+warte(700_000);
+const memRunde = async (token = "tok-a") => { const s = await rufe({ session_token: token, aktion: "start", spiel: "memory" }); assert.equal(s.ok, true); return s.runde; };
+const memErg = (runde, wert, zuege, fehler, token = "tok-a") => rufe({ session_token: token, aktion: "ergebnis", runde, wert, ...(zuege === undefined ? {} : { zuege }), ...(fehler === undefined ? {} : { fehler }) });
+let mr;
+await pruefe("start memory liefert Runden-ID; sofort melden -> zu_schnell (Wert ist eine Zeit)", async () => {
+  mr = await memRunde(); const r = await memErg(mr, 20_000, 8, 2); assert.equal(r.status, 400); assert.equal(r.error, "zu_schnell");
+});
+await pruefe("zuege/fehler: fehlen, falscher Typ, zuege != 6 + fehler, negativ", async () => {
+  warte(30_000);
+  for (const [z, f, fehler] of [[undefined, 2, "zuege_ungueltig"], [8, undefined, "zuege_ungueltig"], ["8", 2, "zuege_ungueltig"], [8, 2.5, "zuege_ungueltig"], [8, -1, "zuege_ungueltig"], [8, 501, "zuege_ungueltig"], [9, 2, "zuege_passen_nicht"], [7, 2, "zuege_passen_nicht"], [6, 2, "zuege_passen_nicht"]]) {
+    const r = await memErg(mr, 20_000, z, f); assert.equal(r.status, 400, [z, f].join()); assert.equal(r.error, fehler, [z, f].join());
+  }
+});
+await pruefe("Zeit zu kurz für die Züge (je Zug 100 ms, je Fehlversuch 900 ms) -> zu_schnell_fuer_zuege; genau an der Grenze ok", async () => {
+  const r = await memErg(mr, 4_599, 10, 4); assert.equal(r.error, "zu_schnell_fuer_zuege");   // 10*100 + 4*900 = 4600
+  const ok = await memErg(mr, 4_600, 10, 4); assert.equal(ok.ok, true, JSON.stringify(ok)); assert.equal(ok.rekord, true);
+});
+await pruefe("Wert unter 1500 ms oder über 30 min -> wert_ausserhalb", async () => {
+  const r2 = await memRunde(); warte(30_000);
+  assert.equal((await memErg(r2, 1_499, 6, 0)).error, "wert_ausserhalb"); assert.equal((await memErg(r2, 1_800_001, 6, 0)).error, "wert_ausserhalb");
+});
+await pruefe("Ranking: kleinere Zeit ist besser (aufsteigend); schlechtere Zeit ist kein Rekord", async () => {
+  const r2 = await memRunde(); warte(40_000);
+  const a = await memErg(r2, 30_000, 8, 2); assert.equal(a.rekord, false); assert.equal(a.bestwert, 4_600);
+  const r3 = await memRunde(); warte(40_000);
+  const b = await memErg(r3, 3_000, 6, 0); assert.equal(b.rekord, true); assert.equal(b.bestwert, 3_000);
+  const bb = await memRunde("tok-b"); warte(40_000);
+  assert.equal((await memErg(bb, 9_000, 7, 1, "tok-b")).platz, 2);
+  const liste = await rufe({ session_token: "tok-a", aktion: "rangliste", spiel: "memory" });
+  assert.deepEqual(liste.top.map((z) => z.wert), [3_000, 9_000]);
+});
+await pruefe("Memory darf lange dauern: nach 20 min noch gültig, nach über 40 min nicht (Tempo/Ampel bleiben bei 2 min)", async () => {
+  const lang = await memRunde(); warte(1_200_000);
+  assert.equal((await memErg(lang, 1_000_000, 8, 2)).ok, true);
+  const zulang = await memRunde(); warte(2_500_000);
+  assert.equal((await memErg(zulang, 50_000, 8, 2)).error, "runde_abgelaufen");
+});
+
+/* ===================== Spiel 4: Rechts vor Links ===================== */
+console.log("Rechts vor Links: Regeln (reine Rechnung)");
+const auto = (arm, richtung) => ({ arm, richtung });
+const frei = (...autos) => V.freieAutos(autos).map((c) => c.arm).sort();
+await pruefe("Zahlen im Server = Zahlen im Spiel (10 Aufgaben, 100–150 Punkte)", async () => {
+  const q = readFileSync(join(hier, "academy-spiele.ts"), "utf8");
+  const m = q.match(/const VORFAHRT = \{ AUFGABEN: (\d+), MIN_PUNKTE: (\d+), MAX_PUNKTE: (\d+) \};/);
+  assert.ok(m, "VORFAHRT-Zeile nicht gefunden");
+  assert.deepEqual([+m[1], +m[2], +m[3]], [V.ANZAHL_AUFGABEN, V.punkteFuer(V.BONUS_MS), V.punkteFuer(0)]);
+});
+await pruefe("Punkte: sofort 150, nach 4 s 125, ab 8 s 100, nie unter 100", async () => {
+  assert.equal(V.punkteFuer(0), 150); assert.equal(V.punkteFuer(4_000), 125); assert.equal(V.punkteFuer(8_000), 100); assert.equal(V.punkteFuer(15_000), 100); assert.equal(V.punkteFuer(1_000), 144);
+});
+await pruefe("Grundfälle von Hand (Arme: 0 unten, 1 links, 2 oben, 3 rechts): rechts vor links, Linksabbieger, Zusammenführung", async () => {
+  // rechts vor links: das Auto von rechts fährt zuerst
+  assert.deepEqual(frei(auto(0, "gerade"), auto(3, "gerade")), [3], "unten gerade / rechts gerade: rechts zuerst");
+  assert.deepEqual(frei(auto(0, "gerade"), auto(1, "gerade")), [0], "unten gerade / links gerade: unten (von rechts gesehen vom linken Auto) zuerst");
+  assert.deepEqual(frei(auto(2, "gerade"), auto(1, "gerade")), [1], "oben / links: links ist rechts von oben");
+  assert.deepEqual(frei(auto(1, "gerade"), auto(2, "gerade")), [1]);
+  // Gegenverkehr geradeaus: kein Konflikt, beide frei
+  assert.deepEqual(frei(auto(0, "gerade"), auto(2, "gerade")), [0, 2]);
+  // Linksabbieger lässt Gegenverkehr durch (geradeaus oder rechts)
+  assert.deepEqual(frei(auto(0, "links"), auto(2, "gerade")), [2]);
+  assert.deepEqual(frei(auto(0, "links"), auto(2, "rechts")), [2], "gleiche Ausfahrt, Linksabbieger wartet");
+  assert.deepEqual(frei(auto(2, "links"), auto(0, "gerade")), [0]);
+  assert.deepEqual(frei(auto(1, "links"), auto(3, "gerade")), [3]);
+  // zwei entgegenkommende Linksabbieger behindern sich nicht
+  assert.deepEqual(frei(auto(0, "links"), auto(2, "links")), [0, 2]);
+  // Rechtsabbieger und das Auto von rechts, das geradeaus fährt: kein Konflikt
+  assert.deepEqual(frei(auto(0, "rechts"), auto(3, "gerade")), [0, 3]);
+  // von rechts biegt rechts in dieselbe Ausfahrt wie mein Geradeausweg: das Auto von rechts hat Vorrang
+  assert.deepEqual(frei(auto(0, "gerade"), auto(3, "rechts")), [3]);
+  // von rechts biegt links ab und kreuzt meinen Weg: Vorrang für das Auto von rechts
+  assert.deepEqual(frei(auto(0, "gerade"), auto(3, "links")), [3]);
+  // mein Linksabbiegen in dieselbe Ausfahrt wie ein Auto von rechts, das geradeaus fährt (rechts, Ausfahrt oben/unten …)
+  assert.deepEqual(frei(auto(0, "gerade"), auto(1, "links")), [0], "links biegt links ab und mündet in meine Ausfahrt: ich (von rechts) zuerst");
+  // links-rechts-Mischungen
+  assert.deepEqual(frei(auto(0, "gerade"), auto(1, "gerade"), auto(2, "gerade")), [0], "drei Autos: nur unten ist frei");
+  // alle vier geradeaus: niemand ist frei (Vorfahrt nicht geklärt)
+  assert.deepEqual(frei(auto(0, "gerade"), auto(1, "gerade"), auto(2, "gerade"), auto(3, "gerade")), []);
+  // ein Auto allein ist immer frei
+  for (let a = 0; a < 4; a++) for (const r of V.RICHTUNGEN) assert.deepEqual(frei(auto(a, r)), [a]);
+});
+await pruefe("Wege: Ausfahrten und Konflikte stimmen mit der Geometrie (alle 12 Wege gegen alle)", async () => {
+  assert.equal(V.ausfahrt(0, "gerade"), 2); assert.equal(V.ausfahrt(0, "rechts"), 3); assert.equal(V.ausfahrt(0, "links"), 1);
+  assert.equal(V.ausfahrt(3, "rechts"), 2); assert.equal(V.ausfahrt(3, "links"), 0); assert.equal(V.ausfahrt(1, "links"), 2);
+  // Drehung: das Konfliktbild ist für jede Drehung um 90° gleich
+  for (let a = 0; a < 4; a++) for (const ra of V.RICHTUNGEN) for (let b = 0; b < 4; b++) for (const rb of V.RICHTUNGEN) {
+    if (a === b) continue;
+    const k0 = V.konflikt(auto(a, ra), auto(b, rb));
+    for (let d = 1; d < 4; d++) assert.equal(V.konflikt(auto((a + d) % 4, ra), auto((b + d) % 4, rb)), k0, "Drehung " + a + ra + " " + b + rb);
+    assert.equal(V.konflikt(auto(a, ra), auto(b, rb)), V.konflikt(auto(b, rb), auto(a, ra)), "Konflikt ist symmetrisch");
+    // genau eines von beiden hat Vorrang (oder keins, bei zwei Linksabbiegern gegenüber, die nicht im Konflikt stehen)
+    if (k0) assert.ok(V.vorrang(auto(a, ra), auto(b, rb)) !== V.vorrang(auto(b, rb), auto(a, ra)), "Vorrang eindeutig " + a + ra + " " + b + rb);
+  }
+  // typische Nicht-Konflikte
+  assert.equal(V.konflikt(auto(0, "gerade"), auto(2, "gerade")), false);
+  assert.equal(V.konflikt(auto(0, "links"), auto(2, "links")), false);
+  assert.equal(V.konflikt(auto(0, "rechts"), auto(3, "gerade")), false);
+  assert.equal(V.konflikt(auto(0, "rechts"), auto(1, "gerade")), true, "gleiche Ausfahrt (rechts)");
+});
+await pruefe("alle 256 Kreuzungen: Drehen ändert nichts an der Zahl der freien Autos; keine Kreuzung ohne freies Auto außer dem Kreis aus Wartenden", async () => {
+  const optionen = [null, ...V.RICHTUNGEN];
+  let ohneFrei = 0, einFrei = 0, mehr = 0;
+  for (let n = 0; n < 256; n++) {
+    const autos = [];
+    for (let arm = 0; arm < 4; arm++) { const o = optionen[Math.floor(n / Math.pow(4, arm)) % 4]; if (o) autos.push(auto(arm, o)); }
+    if (!autos.length) continue;
+    const f = V.freieAutos(autos).length;
+    for (let d = 1; d < 4; d++) assert.equal(V.freieAutos(autos.map((c) => auto((c.arm + d) % 4, c.richtung))).length, f);
+    if (f === 0) ohneFrei++; else if (f === 1) einFrei++; else mehr++;
+  }
+  assert.ok(einFrei > 60 && mehr > 20 && ohneFrei >= 1, [ohneFrei, einFrei, mehr].join("/"));
+});
+await pruefe("Aufgaben: genau EIN Auto darf zuerst, Gründe passen, 10 Aufgaben mit steigender Schwierigkeit, beide Regeln kommen vor", async () => {
+  const zufall = zufallsquelle(42);
+  let nGegen = 0, nRechts = 0, nFrei = 0;
+  for (let i = 0; i < 400; i++) {
+    const satz = V.aufgabenSatz(zufall);
+    assert.equal(satz.length, V.ANZAHL_AUFGABEN);
+    assert.deepEqual(satz.map((a) => a.autos.length), [2, 2, 2, 3, 3, 3, 3, 4, 4, 4]);
+    satz.forEach((a, j) => {
+      const fr = V.freieAutos(a.autos); assert.equal(fr.length, 1, "genau ein freies Auto");
+      assert.equal(fr[0], a.sieger); assert.ok(a.autos.includes(a.sieger));
+      assert.equal(new Set(a.autos.map((c) => c.arm)).size, a.autos.length, "ein Auto je Arm");
+      assert.ok(["frei", "rechts", "gegen"].includes(a.grund));
+      for (const c of a.autos) if (c !== a.sieger) { assert.ok(V.grundWarten(a.autos, c), "jedes wartende Auto hat einen Grund"); assert.ok(["rechts", "gegen"].includes(V.grundWarten(a.autos, c))); }
+      if (j > 0) assert.notEqual(V.schluessel(a.autos), V.schluessel(satz[j - 1].autos), "keine Aufgabe zweimal hintereinander");
+      if (a.grund === "gegen") nGegen++; else if (a.grund === "rechts") nRechts++; else nFrei++;
+    });
+    assert.ok(satz.filter((a) => V.hatGegenverkehrKonflikt(a.autos)).length >= 2);
+    assert.ok(satz.filter((a) => a.grund === "rechts").length >= 3);
+  }
+  assert.ok(nGegen > 100 && nRechts > 600 && nFrei > 20, [nGegen, nRechts, nFrei].join("/"));
+});
+await pruefe("Texte: alle Regel-Erklärungen und Beschriftungen in allen 18 Sprachen vorhanden, Platzhalter stimmen", async () => {
+  const schluessel = ["vorName", "vorKurz", "vorBereit", "vorKeineSchilder", "vorFrage", "vorAufgabe", "vorRichtig", "vorFalsch", "vorZeitAus", "vorWeiter", "vorErgebnisZeigen", "vorPunkte", "vorRichtigVon", "vorBestwert", "vorNeu", "vorHinweis",
+    "vorGFrei", "vorGRechts", "vorGGegen", "vorWRechts", "vorWGegen", "vorGerade", "vorRechtsAb", "vorLinksAb", "vorPosUnten", "vorPosLinks", "vorPosOben", "vorPosRechts", "vorAuto"];
+  for (const l of Object.keys(TEXTE)) for (const k of schluessel) assert.ok(TEXTE[l][k] && TEXTE[l][k].trim(), l + " " + k);
+  for (const l of Object.keys(TEXTE)) { assert.ok(/\{pos\}/.test(TEXTE[l].vorAuto) && /\{richtung\}/.test(TEXTE[l].vorAuto), l + " vorAuto"); assert.ok(/\{n\}/.test(TEXTE[l].vorAufgabe) && /\{m\}/.test(TEXTE[l].vorAufgabe), l + " vorAufgabe"); }
+});
+
+console.log("Rechts vor Links: Server");
+warte(700_000);
+const vorRunde = async (token = "tok-a") => { const s = await rufe({ session_token: token, aktion: "start", spiel: "vorfahrt" }); assert.equal(s.ok, true); return s.runde; };
+const vorErg = (runde, wert, richtig, token = "tok-a") => rufe({ session_token: token, aktion: "ergebnis", runde, wert, ...(richtig === undefined ? {} : { richtig }) });
+let vr;
+await pruefe("start vorfahrt; nach 4 s zu früh (10 Aufgaben brauchen mindestens 5 s), nach 5 s möglich", async () => {
+  vr = await vorRunde(); warte(4_000);
+  assert.equal((await vorErg(vr, 1_000, 8)).error, "zu_schnell"); warte(1_000);
+  const r = await vorErg(vr, 1_000, 8); assert.equal(r.ok, true, JSON.stringify(r)); assert.equal(r.rekord, true); assert.equal(r.platz, 1);
+});
+await pruefe("richtig: fehlt / falsch / über 10 -> richtig_ungueltig; Punkte passen nicht zu richtig -> punkte_passen_nicht", async () => {
+  const r2 = await vorRunde(); warte(6_000);
+  for (const z of [undefined, null, "8", 8.5, -1, 11]) assert.equal((await vorErg(r2, 1_000, z)).error, "richtig_ungueltig", String(z));
+  for (const [w, z] of [[799, 8], [1_201, 8], [10, 0], [101, 0], [99, 1], [151, 1], [1_501, 10]]) assert.equal((await vorErg(r2, w, z)).error, w > 1_500 ? "wert_ausserhalb" : "punkte_passen_nicht", w + "/" + z);
+  assert.equal((await vorErg(r2, 0, 0)).ok, true, "alles falsch = 0 Punkte ist ein gültiges Ergebnis");
+});
+await pruefe("Ranking: mehr Punkte sind besser (absteigend); schlechteres Ergebnis ändert den Bestwert nicht; Höchstwert 1500 geht", async () => {
+  const r2 = await vorRunde(); warte(6_000);
+  const a = await vorErg(r2, 900, 7); assert.equal(a.rekord, false); assert.equal(a.bestwert, 1_000);
+  const r3 = await vorRunde(); warte(6_000);
+  const b = await vorErg(r3, 1_500, 10); assert.equal(b.rekord, true); assert.equal(b.bestwert, 1_500);
+  const bb = await vorRunde("tok-b"); warte(6_000);
+  assert.equal((await vorErg(bb, 1_100, 9, "tok-b")).platz, 2);
+  const liste = await rufe({ session_token: "tok-a", aktion: "rangliste", spiel: "vorfahrt" });
+  assert.deepEqual(liste.top.map((z) => z.wert), [1_500, 1_100]);
+});
+await pruefe("Rechts vor Links darf länger als 2 Minuten dauern (Lesen der Regeln), aber höchstens 30 min", async () => {
+  const lang = await vorRunde(); warte(600_000);
+  assert.equal((await vorErg(lang, 1_000, 8)).ok, true);
+  const zulang = await vorRunde(); warte(1_900_000);
+  assert.equal((await vorErg(zulang, 1_000, 8)).error, "runde_abgelaufen");
 });
 
 console.log("Bremse und Profil");

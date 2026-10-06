@@ -8,7 +8,10 @@
 //   - Einzel-Freigabe je Spiel (nurVorschau): normales Schülergerät sieht Spiel 1, aber NICHT Spiel 2; ?spiele=1 zeigt beide.
 //   - Tempo-Sprint (Spiel 2): ganze Läufe in ECHTER Zeit (je ca. 45 s): ehrlicher Lauf, Blitzer + Mehrfinger-Salven,
 //     Nachtippen nach dem Ende, Verlassen mitten im Lauf, alle 18 Sprachen.
-//   Nur Tempo-Sprint prüfen: NUR_TEMPO=1 node --experimental-strip-types werkzeuge/pruefe-spiele-im-browser.mjs
+//   - Schilder-Memory (Spiel 3) und Rechts vor Links (Spiel 4): ganze Spiele mit echten Fingertipps, Uhr-Pause beim Lesen,
+//     falsche/richtige/abgelaufene Antworten, Regeltexte, Server-Ergebnis, alle 18 Sprachen.
+//   Nur einzelne Teile prüfen: NUR=bisherige,tempo,memory,vorfahrt node --experimental-strip-types werkzeuge/pruefe-spiele-im-browser.mjs
+//   (NUR_TEMPO=1 gilt weiter für nur den Tempo-Sprint)
 // Aufruf:  node --experimental-strip-types werkzeuge/pruefe-spiele-im-browser.mjs
 //   (Playwright liegt global: PLAYWRIGHT_PFAD=/opt/node22/lib/node_modules; Browser: PLAYWRIGHT_BROWSERS_PATH)
 // Bilder landen in $SPIELE_BILDER (Standard: ./spiele-bilder, nicht einchecken).
@@ -20,6 +23,9 @@ import { fileURLToPath } from "node:url";
 import { db, rufe, jetzt } from "./edge-functions/spiele-im-speicher.mjs";
 import { REGELN, obergrenze } from "../spiele/tempo.js";
 import { SPIELE } from "../spiele/spiele.js";
+import * as V from "../spiele/vorfahrt.js";
+import { SCHILDER } from "../spiele/memory.js";
+import { TEXTE } from "../spiele/texte.js";
 
 const wurzel = join(dirname(fileURLToPath(import.meta.url)), "..");
 const { chromium } = createRequire((process.env.PLAYWRIGHT_PFAD || "/opt/node22/lib/node_modules") + "/")("playwright");
@@ -31,10 +37,12 @@ const inEinemJahr = new Date(Date.now() + 365 * 86_400_000).toISOString();
 const schueler = (id, name, extra) => db.academy_schueler.push({ id, name, aktiv: true, ablauf_am: inEinemJahr, schule_id: null, archiviert_am: null, ...extra });
 schueler("t", "Serban Dumitrescu");
 db.academy_sessions.push({ session_token: "tok-t", schueler_id: "t", expires_at: inEinemJahr });
-[["m1", "Mira Kaya", 231, 188], ["m2", "Jonas Weber", 262, 171], ["m3", "Ali Reza Karimi", 305, 160], ["m4", "Ayşe Yılmaz", 340, 150]].forEach(([id, n, w, tempo]) => {
+[["m1", "Mira Kaya", 231, 188, 14200, 1350], ["m2", "Jonas Weber", 262, 171, 18900, 1210], ["m3", "Ali Reza Karimi", 305, 160, 23100, 1100], ["m4", "Ayşe Yılmaz", 340, 150, 30500, 900]].forEach(([id, n, w, tempo, memory, vorf]) => {
   schueler(id, n);
   db.academy_spiele_bestwerte.push({ schueler_id: id, spiel: "ampel", wert: w, erreicht_am: jetzt(), versuche: 3 });
   db.academy_spiele_bestwerte.push({ schueler_id: id, spiel: "tempo", wert: tempo, erreicht_am: jetzt(), versuche: 2 });
+  db.academy_spiele_bestwerte.push({ schueler_id: id, spiel: "memory", wert: memory, erreicht_am: jetzt(), versuche: 2 });
+  db.academy_spiele_bestwerte.push({ schueler_id: id, spiel: "vorfahrt", wert: vorf, erreicht_am: jetzt(), versuche: 2 });
 });
 
 // ---- Static-Server für die App ----
@@ -57,6 +65,7 @@ const pruefe = (name, bedingung, detail) => {
 
 const CORS = { "access-control-allow-origin": "*", "access-control-allow-headers": "authorization, x-client-info, apikey, content-type", "access-control-allow-methods": "POST, OPTIONS" };
 async function neueSeite(opt) {
+  db.academy_spiele_runden = [];   // Testaufbau: jede neue Seite beginnt mit leerem Rundenzähler (sonst greift nach 30 Runden in 10 min die Bremse des Servers)
   const ctx = await browser.newContext({ viewport: { width: opt.b, height: opt.h }, hasTouch: true, isMobile: true, deviceScaleFactor: 2, colorScheme: opt.dunkel ? "dark" : "light" });
   await ctx.addInitScript((d) => {
     try {
@@ -108,7 +117,7 @@ async function layoutPruefen(s, name, breite) {
       if (rc.right > window.innerWidth + 1 || rc.left < -1) probleme.push("ragt raus: " + el.className + " " + Math.round(rc.left) + ".." + Math.round(rc.right));
       if (el.children.length === 0 && el.scrollWidth > el.clientWidth + 2 && getComputedStyle(el).overflow !== "visible") probleme.push("abgeschnitten: " + el.className);
     });
-    document.querySelectorAll(".sp-tempo-knopf,.sp-schalter,.sp-knopf,.sp-karte,.sp-t-pad").forEach((el) => {
+    document.querySelectorAll(".sp-tempo-knopf,.sp-schalter,.sp-knopf,.sp-karte,.sp-t-pad,.sp-m-karte,.sp-m-knopf,.sp-v-knopf,.sp-m-weiter,.sp-v-weiter,.sp-v-treffer").forEach((el) => {
       const rc = el.getBoundingClientRect();
       if (rc.height > 0 && (rc.height < 43.5 || rc.width < 43.5)) probleme.push("Tippfläche klein: " + el.className + " " + Math.round(rc.width) + "x" + Math.round(rc.height));
     });
@@ -125,7 +134,6 @@ async function runde(s, reaktionsPause) {
   await s.tap(".sp-knopf");
 }
 
-const nurTempo = !!process.env.NUR_TEMPO;
 async function bisherige() {
   console.log("Menü und Startseite (360 x 740)");
   let s = await neueSeite({ b: 360, h: 740 });
@@ -552,9 +560,309 @@ async function tempoPruefungen() {
   }
 }
 
+/* =========================  Schilder-Memory (Spiel 3)  ========================= */
+const zumMemory = async (s) => { await zumHub(s); await s.tap('.sp-karte[data-spiel="memory"]'); await s.waitForSelector(".sp-m-knopf"); };
+const sekunden = (txt) => parseFloat(String(txt).replace(",", ".").replace(/[^\d.]/g, ""));
+const memKarten = (s) => s.locator(".sp-m-karte").evaluateAll((els) => els.map((e) => ({ i: +e.dataset.i, paar: e.dataset.paar, art: e.dataset.art })));
+const zeitLesen = async (s) => sekunden(await s.textContent(".sp-m-zeit"));
+async function memTippen(s, i) { await s.tap('.sp-m-karte[data-i="' + i + '"]'); }
+async function memPaar(s, ks, paar) {   // Schild und Text eines Paares aufdecken (echte Fingertipps)
+  const a = ks.find((c) => c.paar === paar && c.art === "schild"), b = ks.find((c) => c.paar === paar && c.art === "text");
+  await memTippen(s, a.i); await memTippen(s, b.i);
+}
+
+async function memoryPruefungen() {
+  console.log("Schilder-Memory: Layout in Ruhe");
+  for (const g of [{ b: 360, h: 740, n: "360" }, { b: 412, h: 915, n: "412" }, { b: 320, h: 640, n: "320" }, { b: 412, h: 915, n: "412 dunkel", dunkel: true }, { b: 740, h: 360, n: "quer 740x360" }]) {
+    const m = await neueSeite({ b: g.b, h: g.h, dunkel: g.dunkel });
+    await zumMemory(m);
+    await m.waitForTimeout(800);
+    await layoutPruefen(m, "Memory bereit " + g.n, g.b);
+    pruefe("Memory " + g.n + ": 12 verdeckte Karten, Start-Knopf, Anleitung", (await m.locator(".sp-m-karte").count()) === 12 && (await padStart(m)) && (await m.isVisible(".sp-m-anleitung")) === (g.b <= g.h));
+    await m.screenshot({ path: join(bilder, "memory-bereit-" + g.n.replace(/\W+/g, "_") + ".png") });
+    pruefe("Memory " + g.n + ": keine Konsolenfehler", m.fehler.length === 0, m.fehler.join(" | "));
+    await m.context().close();
+  }
+
+  console.log("Schilder-Memory: ein ganzes Spiel (360 x 740)");
+  let m = await neueSeite({ b: 360, h: 740 });
+  await zumMemory(m);
+  pruefe("Startzustand: Start-Knopf, Zeit 0, Brett abgeblendet, Karten nicht antippbar", (await m.textContent(".sp-m-knopf")).trim() === "Start" && sekunden(await m.textContent(".sp-m-zeit")) === 0 && (await m.locator(".sp-m-feld.aus").count()) === 1);
+  await m.tap(".sp-m-knopf");                                   // echter Fingertipp
+  await m.waitForSelector(".sp-m-feld:not(.aus)", { timeout: 9000 });
+  await m.waitForTimeout(500);
+  const rcBrett = await m.evaluate(() => { const g = (q) => document.querySelector(q).getBoundingClientRect(); return { hudO: g(".sp-m-hud").top, feldU: g(".sp-m-feld").bottom, h: window.innerHeight }; });
+  pruefe("Memory 360 im Lauf: Anzeige und ganzes Brett im Bild, über der Menüleiste", rcBrett.hudO >= 0 && rcBrett.feldU <= rcBrett.h - 80, JSON.stringify(rcBrett));
+  pruefe("im Lauf: Anleitung und Start-Knopf ausgeblendet", !(await m.isVisible(".sp-m-anleitung")) && !(await m.isVisible(".sp-m-knopf")));
+  await layoutPruefen(m, "Memory Lauf 360", 360);
+  const ks = await memKarten(m);
+  pruefe("12 Karten: 6 Paare, je ein Schild und ein Text", ks.length === 12 && new Set(ks.map((c) => c.paar)).size === 6 && ks.every((c) => ks.filter((d) => d.paar === c.paar && d.art !== c.art).length === 1));
+  // Fehlversuch mit zwei Karten verschiedener Paare
+  const erste = ks[0], zweite = ks.find((c) => c.paar !== erste.paar);
+  const t0 = Date.now();
+  await memTippen(m, erste.i); await memTippen(m, zweite.i);
+  pruefe("zwei falsche Karten: beide offen, Züge 1, Fehlversuche 1", (await m.locator(".sp-m-karte.offen").count()) === 2 && (await m.textContent(".sp-m-zuege")).trim() === "1" && (await m.textContent(".sp-m-fehler")).trim() === "1");
+  await m.tap('.sp-m-karte:not(.offen)');                        // während der Sperre: dritte Karte darf nicht aufgehen
+  pruefe("während der Sperre geht keine dritte Karte auf", (await m.locator(".sp-m-karte.offen").count()) === 2);
+  await m.waitForFunction(() => document.querySelectorAll(".sp-m-karte.offen").length === 0, null, { timeout: 3000 });
+  pruefe("falsche Karten drehen sich nach ca. 0,9 s zurück", Date.now() - t0 >= 850 && Date.now() - t0 < 2200, (Date.now() - t0) + " ms");
+  // erstes Paar: Treffer, Erklärung, Uhr steht
+  const paare = [...new Set(ks.map((c) => c.paar))];
+  await memPaar(m, ks, paare[0]);
+  await m.waitForSelector(".sp-m-popup:not([hidden])");
+  const sc0 = SCHILDER.find((x) => x.id === paare[0]);
+  const pop = await m.evaluate(() => ({ kopf: document.querySelector(".sp-m-pop-kopf").textContent.trim(), nr: document.querySelector(".sp-m-pop-nr").textContent.trim(), name: document.querySelector(".sp-m-pop-name").textContent.trim(), text: document.querySelector(".sp-m-pop-text").textContent.trim(), bild: !!document.querySelector(".sp-m-pop-schild svg, .sp-m-pop-schild img"), weiter: document.querySelector(".sp-m-weiter").textContent.trim() }));
+  pruefe("Erklärung nach dem Treffer: Treffer!, Zeichen-Nummer, Name, Erklärung nach StVO, Bild, Weiter", pop.kopf === "Treffer!" && pop.nr === "Zeichen " + sc0.nr && pop.name === TEXTE.de[paare[0] + "l"] && pop.text === TEXTE.de[paare[0] + "m"] && pop.bild && pop.weiter === "Weiter", JSON.stringify(pop));
+  await layoutPruefen(m, "Memory Erklärung 360", 360);
+  await m.screenshot({ path: join(bilder, "memory-erklaerung-360.png") });
+  const z1 = await zeitLesen(m); await m.waitForTimeout(1300); const z2 = await zeitLesen(m);
+  pruefe("beim Lesen der Erklärung steht die Uhr", z1 === z2, z1 + " vs " + z2);
+  const bedeckt = await m.evaluate(() => { const k = document.querySelector(".sp-m-karte:not(.gefunden)").getBoundingClientRect(); const x = document.elementFromPoint(k.left + k.width / 2, k.top + k.height / 2); return !!x.closest(".sp-m-popup"); });
+  pruefe("die Erklärung deckt das Brett ab (ein Fingertipp trifft keine Karte)", bedeckt);
+  await m.evaluate(() => document.querySelector(".sp-m-karte:not(.gefunden)").click());   // auch ein Klick per Skript deckt nichts auf
+  pruefe("während der Erklärung lässt sich keine Karte aufdecken", (await m.locator(".sp-m-karte.offen:not(.gefunden)").count()) === 0);
+  pruefe("das gefundene Paar bleibt offen und ist grün markiert", (await m.locator(".sp-m-karte.gefunden").count()) === 2 && (await m.textContent(".sp-m-paare")).includes("1 von 6"), await m.textContent(".sp-m-paare"));
+  await m.tap(".sp-m-weiter");
+  pruefe("nach „Weiter“ ist die Erklärung weg", await m.locator(".sp-m-popup").isHidden());
+  const vorWarten = await zeitLesen(m); await m.waitForTimeout(1500); const nachWarten = await zeitLesen(m);
+  pruefe("nach der Erklärung läuft die Uhr sofort weiter (Nachdenken ist nicht gratis)", nachWarten - vorWarten >= 1.2, vorWarten + " -> " + nachWarten);
+  // übrige fünf Paare
+  for (let j = 1; j < 6; j++) {
+    await memPaar(m, ks, paare[j]);
+    await m.waitForSelector(".sp-m-popup:not([hidden])");
+    if (j < 5) { pruefe("Erklärung für Paar " + (j + 1) + " zeigt den passenden Text", (await m.textContent(".sp-m-pop-text")).trim() === TEXTE.de[paare[j] + "m"]); await m.tap(".sp-m-weiter"); }
+  }
+  pruefe("letzte Erklärung: Knopf heißt „Geschafft!“", (await m.textContent(".sp-m-weiter")).trim() === "Geschafft!");
+  const zEnde = await zeitLesen(m);
+  await m.tap(".sp-m-weiter");
+  await m.waitForSelector(".sp-erg", { timeout: 6000 });
+  const erg = await m.evaluate(() => ({ gross: document.querySelector(".sp-gross").textContent.trim(), zahlen: Array.from(document.querySelectorAll(".sp-t-zahlen b")).map((b) => b.textContent.trim()), knopf: document.querySelector(".sp-m-knopf").textContent.trim(), sichtbar: !document.querySelector(".sp-m-knopf").hidden }));
+  pruefe("Ergebnis: Zeit = Anzeige beim letzten Treffer, Züge 7 (6 + 1 Fehlversuch), Fehlversuche 1, Knopf „Nochmal“", sekunden(erg.gross) === zEnde && erg.zahlen[0] === "7" && erg.zahlen[1] === "1" && erg.knopf === "Nochmal" && erg.sichtbar, JSON.stringify(erg) + " / " + zEnde);
+  await m.waitForSelector(".sp-badge.neu");
+  const gespeichert = db.academy_spiele_bestwerte.find((b) => b.schueler_id === "t" && b.spiel === "memory");
+  pruefe("Server hat die Zeit gespeichert (Millisekunden, passt zur Anzeige)", !!gespeichert && Math.abs(gespeichert.wert / 1000 - zEnde) < 0.06, JSON.stringify(gespeichert));
+  pruefe("neue Bestzeit + Platz", (await m.textContent(".sp-speicher")).includes("Neue Bestzeit") && /Platz \d+ von \d+/.test(await m.textContent(".sp-speicher")), await m.textContent(".sp-speicher"));
+  await m.waitForSelector(".sp-zeile.ich");
+  const werte = (await m.locator(".sp-zeile .sp-wert").allTextContents()).map(sekunden);
+  pruefe("Bestenliste: schnellste Zeit zuerst, Anzeige in Sekunden", werte.length >= 5 && werte.every((x, i) => i === 0 || x >= werte[i - 1]) && (await m.locator(".sp-zeile .sp-wert").first().textContent()).includes(" s"), werte.join(","));
+  await layoutPruefen(m, "Memory Ergebnis 360", 360);
+  await m.screenshot({ path: join(bilder, "memory-ergebnis-360.png"), fullPage: true });
+  pruefe("Konsole ohne Fehler (Memory-Lauf)", m.fehler.length === 0, m.fehler.join(" | "));
+  // Nochmal: neu gemischt, alles zurückgesetzt
+  const alt = (await memKarten(m)).map((c) => c.paar + c.art).join();
+  await m.tap(".sp-m-knopf");
+  await m.waitForSelector(".sp-m-feld:not(.aus)", { timeout: 9000 });
+  pruefe("Nochmal: neue Runde, Zähler auf 0, Ergebnis weg", (await m.textContent(".sp-m-zuege")).trim() === "0" && (await m.locator(".sp-erg:visible").count()) === 0 && sekunden(await m.textContent(".sp-m-zeit")) === 0);
+  // App in den Hintergrund mitten im Spiel
+  const ks2 = await memKarten(m);
+  await memTippen(m, ks2[0].i);
+  await m.evaluate(() => { Object.defineProperty(document, "hidden", { configurable: true, get: () => true }); document.dispatchEvent(new Event("visibilitychange")); });
+  await m.waitForTimeout(300);
+  pruefe("App im Hintergrund: Spiel abgebrochen, neu gemischt, zurück auf „Start“", (await m.locator(".sp-m-karte.offen").count()) === 0 && (await m.textContent(".sp-m-knopf")).trim() === "Start" && (await m.locator(".sp-m-feld.aus").count()) === 1);
+  await m.evaluate(() => { delete document.hidden; });
+  await m.tap(".sp-m-knopf"); await m.waitForSelector(".sp-m-feld:not(.aus)", { timeout: 9000 });
+  await m.waitForTimeout(500);
+  await m.tap("[data-nav-zurueck]");                                  // mitten im Spiel zurück
+  await m.waitForSelector(".sp-karte");
+  await m.waitForTimeout(3000);
+  pruefe("nach dem Verlassen mitten im Spiel keine Fehler", m.fehler.length === 0, m.fehler.join(" | "));
+  pruefe("Startseite zeigt die Bestzeit in Sekunden", /Deine Bestzeit: \d+(,\d)? s/.test(await m.textContent('[data-best="memory"]')), await m.textContent('[data-best="memory"]'));
+  await m.context().close();
+
+  console.log("Schilder-Memory: alle 18 Sprachen (360 x 740)");
+  for (const sp of SPRACHEN) {
+    const t = await neueSeite({ b: 360, h: 740, sprache: sp });
+    await zumHub(t);
+    await t.waitForSelector('.sp-karte[data-spiel="memory"]');
+    const titel = (await t.textContent('.sp-karte[data-spiel="memory"] .sp-karte-titel')).trim();
+    pruefe(sp + ": Memory-Karte übersetzt", titel === TEXTE[sp].memoryName, titel);
+    await t.tap('.sp-karte[data-spiel="memory"]');
+    await t.waitForSelector(".sp-m-knopf");
+    pruefe(sp + ": Memory Richtung " + (RTL.includes(sp) ? "rtl" : "ltr"), (await t.getAttribute("#spiele-platz", "dir")) === (RTL.includes(sp) ? "rtl" : "ltr"));
+    await layoutPruefen(t, sp + " Memory bereit", 360);
+    // alle 14 Kartentexte dieser Sprache in einer Karte (so groß wie im Spiel): nichts abgeschnitten
+    const zu = await t.evaluate(async (arg) => {
+      const texte = (await import("./spiele/texte.js")).TEXTE;
+      const erste = document.querySelector(".sp-m-feld .sp-m-karte"), br = erste.getBoundingClientRect();
+      const probe = document.createElement("div");
+      probe.style.cssText = "position:absolute;left:-9999px;top:0;width:" + br.width + "px;height:" + br.height + "px";
+      probe.setAttribute("dir", document.querySelector("#spiele-platz").getAttribute("dir"));
+      document.body.appendChild(probe);
+      const zu = [];
+      for (const id of arg.ids) {
+        const k = document.createElement("div"); k.className = "sp-m-karte offen"; k.style.cssText = "width:100%;height:100%;position:relative;display:block";
+        const f = document.createElement("span"); f.className = "sp-m-front sp-m-text"; f.setAttribute("dir", "auto"); f.textContent = texte[arg.sp][id + "l"];
+        k.appendChild(f); probe.innerHTML = ""; probe.appendChild(k);
+        if (f.scrollHeight > f.clientHeight + 1 || f.scrollWidth > f.clientWidth + 1) zu.push(id + " (" + f.scrollWidth + "x" + f.scrollHeight + " > " + f.clientWidth + "x" + f.clientHeight + ")");
+      }
+      probe.remove();
+      return zu;
+    }, { ids: SCHILDER.map((x) => x.id), sp: sp }).catch((e) => ["Fehler im Test: " + e.message]);
+    pruefe(sp + ": alle 14 Schildnamen passen auf eine Karte (nichts abgeschnitten)", Array.isArray(zu) && zu.length === 0, JSON.stringify(zu).slice(0, 300));
+    await t.tap(".sp-m-knopf");
+    await t.waitForSelector(".sp-m-feld:not(.aus)", { timeout: 9000 });
+    const k2 = await memKarten(t);
+    await memPaar(t, k2, k2[0].paar);
+    await t.waitForSelector(".sp-m-popup:not([hidden])");
+    const pi = await t.evaluate(() => ({ alles: document.querySelector("#spiele-platz").textContent, text: document.querySelector(".sp-m-pop-text").textContent.trim(), name: document.querySelector(".sp-m-pop-name").textContent.trim(), nr: document.querySelector(".sp-m-pop-nr").textContent.trim(), weiter: document.querySelector(".sp-m-weiter").textContent.trim(), kopf: document.querySelector(".sp-m-pop-kopf").textContent.trim() }));
+    pruefe(sp + ": Erklärung in der Sprache, kein roher Schlüssel", pi.text === TEXTE[sp][k2[0].paar + "m"] && pi.name === TEXTE[sp][k2[0].paar + "l"] && pi.kopf === TEXTE[sp].memoryTreffer && pi.weiter === TEXTE[sp].memoryWeiter && !/memory[A-Z]|z\d+[lm]\b|\{n\}/.test(pi.alles), JSON.stringify(pi).slice(0, 200));
+    await layoutPruefen(t, sp + " Memory Erklärung", 360);
+    if (["ar", "am", "tr"].includes(sp)) { await t.waitForTimeout(400); await t.screenshot({ path: join(bilder, "memory-sprache-" + sp + ".png"), fullPage: true }); }
+    pruefe(sp + ": Memory keine Konsolenfehler", t.fehler.length === 0, t.fehler.join(" | "));
+    await t.context().close();
+  }
+}
+const padStart = async (s) => (await s.textContent(".sp-m-knopf")).trim() === "Start";
+
+/* =========================  Rechts vor Links (Spiel 4)  ========================= */
+const zumVorfahrt = async (s) => { await zumHub(s); await s.tap('.sp-karte[data-spiel="vorfahrt"]'); await s.waitForSelector(".sp-v-knopf"); };
+const vorAutos = (s) => s.locator(".sp-v-auto").evaluateAll((els) => els.map((e) => ({ arm: +e.dataset.arm, richtung: e.dataset.richtung })));
+const GRUND_TEXT = { frei: "vorGFrei", rechts: "vorGRechts", gegen: "vorGGegen" };
+async function vorTippen(s, arm) { await s.tap('.sp-v-auto[data-arm="' + arm + '"] .sp-v-treffer'); }
+
+async function vorfahrtPruefungen() {
+  console.log("Rechts vor Links: Layout in Ruhe");
+  for (const g of [{ b: 360, h: 740, n: "360" }, { b: 412, h: 915, n: "412" }, { b: 320, h: 640, n: "320" }, { b: 412, h: 915, n: "412 dunkel", dunkel: true }, { b: 740, h: 360, n: "quer 740x360" }]) {
+    const v = await neueSeite({ b: g.b, h: g.h, dunkel: g.dunkel });
+    await zumVorfahrt(v);
+    await v.waitForTimeout(800);
+    await layoutPruefen(v, "Vorfahrt bereit " + g.n, g.b);
+    pruefe("Vorfahrt " + g.n + ": Kreuzung ohne Autos, Start-Knopf", (await v.locator(".sp-v-svg").count()) === 1 && (await v.locator(".sp-v-auto").count()) === 0 && (await v.textContent(".sp-v-knopf")).trim() === "Start");
+    await v.screenshot({ path: join(bilder, "vorfahrt-bereit-" + g.n.replace(/\W+/g, "_") + ".png") });
+    pruefe("Vorfahrt " + g.n + ": keine Konsolenfehler", v.fehler.length === 0, v.fehler.join(" | "));
+    await v.context().close();
+  }
+
+  console.log("Rechts vor Links: ein ganzes Spiel in echter Zeit (360 x 740, ca. 30 s)");
+  let v = await neueSeite({ b: 360, h: 740 });
+  await zumVorfahrt(v);
+  await v.tap(".sp-v-knopf");
+  await v.waitForSelector(".sp-v-auto", { timeout: 9000 });
+  let erwartetPunkteMin = 0, erwartetRichtig = 0, protokoll = [];
+  for (let runde = 0; runde < 10; runde++) {
+    const autos = await vorAutos(v);
+    const frei = V.freieAutos(autos);
+    pruefe("Aufgabe " + (runde + 1) + ": " + autos.length + " Autos, genau ein Auto darf zuerst", frei.length === 1 && autos.length === [2, 2, 2, 3, 3, 3, 3, 4, 4, 4][runde], JSON.stringify(autos));
+    pruefe("Aufgabe " + (runde + 1) + ": Anzeige „Aufgabe " + (runde + 1) + " von 10“ und Frage", (await v.textContent(".sp-v-aufgabe")).trim() === "Aufgabe " + (runde + 1) + " von 10" && (await v.textContent(".sp-v-frage")).includes("Welches Auto darf zuerst fahren?"));
+    if (runde === 0) {
+      await v.waitForTimeout(500);
+      const rc = await v.evaluate(() => { const g = (q) => document.querySelector(q).getBoundingClientRect(); return { hudO: g(".sp-v-hud").top, szeneU: g(".sp-v-szene").bottom, szeneB: g(".sp-v-szene").width, h: window.innerHeight }; });
+      pruefe("360: Anzeige, Frage und ganze Kreuzung im Bild, über der Menüleiste", rc.hudO >= 0 && rc.szeneU <= rc.h - 80 && rc.szeneB >= 240, JSON.stringify(rc));
+      const aria = await v.locator(".sp-v-auto").evaluateAll((els) => els.map((e) => e.getAttribute("aria-label")));
+      pruefe("jedes Auto hat eine Beschreibung (Seite und Richtung)", aria.every((a) => /^Auto von (unten|links|oben|rechts), (fährt geradeaus|biegt rechts ab|biegt links ab)$/.test(a)), aria.join(" | "));
+      pruefe("Blinker nur bei Autos, die abbiegen", (await v.locator(".sp-v-blink").count()) === autos.filter((c) => c.richtung !== "gerade").length);
+      await layoutPruefen(v, "Vorfahrt Aufgabe 1 (360)", 360);
+      await v.screenshot({ path: join(bilder, "vorfahrt-aufgabe-360.png") });
+    }
+    const falsch = autos.find((c) => c.arm !== frei[0].arm);
+    const wrongRound = runde === 1, timeoutRound = runde === 2;
+    if (timeoutRound) {
+      await v.waitForSelector(".sp-v-antwort:not([hidden])", { timeout: 17500 });
+      pruefe("Aufgabe 3: ohne Antwort nach 15 s „Die Zeit ist abgelaufen.“", (await v.textContent(".sp-v-urteil")).trim() === "Die Zeit ist abgelaufen." && (await v.locator(".sp-v-auto.richtig").count()) === 1);
+    } else {
+      await vorTippen(v, wrongRound ? falsch.arm : frei[0].arm);
+      await v.waitForSelector(".sp-v-antwort:not([hidden])");
+      const info = await v.evaluate(() => ({ urteil: document.querySelector(".sp-v-urteil").textContent.trim(), cls: document.querySelector(".sp-v-urteil").className, regeln: Array.from(document.querySelectorAll(".sp-v-regel")).map((r) => r.textContent.trim()), punkte: +document.querySelector(".sp-v-punkte b").textContent, richtig: document.querySelectorAll(".sp-v-auto.richtig").length, falsch: document.querySelectorAll(".sp-v-auto.falsch").length, blass: document.querySelectorAll(".sp-v-auto.blass").length }));
+      const reasonKey = GRUND_TEXT[V.grundFuerSieger(autos, frei[0])];
+      pruefe("Aufgabe " + (runde + 1) + ": richtiges Auto grün markiert, die Regel dazu steht da", info.richtig === 1 && info.regeln[0] === TEXTE.de[reasonKey], JSON.stringify(info.regeln));
+      if (wrongRound) {
+        const w = V.grundWarten(autos, falsch);
+        pruefe("Aufgabe 2 (falsch getippt): „Leider falsch.“, gewähltes Auto rot, Erklärung warum es warten muss", info.urteil === "Leider falsch." && info.cls.includes("nein") && info.falsch === 1 && info.regeln[1] === TEXTE.de[w === "rechts" ? "vorWRechts" : "vorWGegen"] && info.punkte === erwartetPunkteMin, JSON.stringify(info));
+        await v.screenshot({ path: join(bilder, "vorfahrt-falsch-360.png"), fullPage: true });
+      } else {
+        const m = /^Richtig! \+(\d+)$/.exec(info.urteil);
+        pruefe("Aufgabe " + (runde + 1) + ": „Richtig! +Punkte“ mit 100–150 Punkten, Anzeige zählt hoch", !!m && +m[1] >= 100 && +m[1] <= 150 && info.punkte === erwartetPunkteMin + +m[1], info.urteil + " / " + info.punkte);
+        erwartetPunkteMin += +m[1]; erwartetRichtig++;
+        if (+m[1] < 140) protokoll.push("langsam " + m[1]);
+      }
+    }
+    if (runde === 0) {
+      const rc2 = await v.evaluate(() => { const g = (q) => document.querySelector(q).getBoundingClientRect(); return { weiter: g(".sp-v-weiter").bottom, h: window.innerHeight }; });
+      pruefe("360: „Weiter“-Knopf ist nach der Antwort erreichbar (im Bild oder durch kurzes Wischen)", rc2.weiter > 0, JSON.stringify(rc2));
+      await layoutPruefen(v, "Vorfahrt Antwort (360)", 360);
+      await v.screenshot({ path: join(bilder, "vorfahrt-richtig-360.png"), fullPage: true });
+    }
+    await v.tap(".sp-v-weiter");
+    if (runde < 9) await v.waitForFunction((n) => /Aufgabe/.test(document.querySelector(".sp-v-aufgabe")?.textContent || "") && document.querySelector(".sp-v-aufgabe").textContent.includes("Aufgabe " + n + " "), runde + 2, { timeout: 5000 });
+  }
+  await v.waitForSelector(".sp-erg", { timeout: 6000 });
+  const ge = await v.evaluate(() => ({ gross: +document.querySelector(".sp-gross").textContent, richtig: document.querySelector(".sp-v-richtigzahl").textContent.trim(), hinweis: document.querySelector(".sp-hinweis-strasse").textContent.trim(), knopf: document.querySelector(".sp-v-knopf").textContent.trim() }));
+  pruefe("Ergebnis: Punkte = Summe der Runden, „8 von 10 richtig“, Hinweis, Knopf „Nochmal“", ge.gross === erwartetPunkteMin && ge.richtig === "8 von 10 richtig" && ge.hinweis.startsWith("Im echten Leben fährt ohne Schilder und Ampel zuerst, wer von rechts kommt") && ge.knopf === "Nochmal", JSON.stringify(ge) + " / " + erwartetPunkteMin);
+  await v.waitForSelector(".sp-badge.neu");
+  const gesp = db.academy_spiele_bestwerte.find((b) => b.schueler_id === "t" && b.spiel === "vorfahrt");
+  pruefe("Server hat die Punkte gespeichert (8 richtig: 800–1200 Punkte)", !!gesp && gesp.wert === erwartetPunkteMin && gesp.wert >= 800 && gesp.wert <= 1200, JSON.stringify(gesp));
+  pruefe("Rekord-Marke + Platz", (await v.textContent(".sp-speicher")).includes("Neue Bestpunktzahl") && /Platz \d+ von \d+/.test(await v.textContent(".sp-speicher")), await v.textContent(".sp-speicher"));
+  await v.waitForSelector(".sp-zeile.ich");
+  const pw = (await v.locator(".sp-zeile .sp-wert").allTextContents()).map((x) => parseInt(x, 10));
+  pruefe("Bestenliste: meiste Punkte zuerst, Einheit „Punkte“", pw.length >= 5 && pw.every((x, i) => i === 0 || x <= pw[i - 1]) && (await v.locator(".sp-zeile .sp-wert").first().textContent()).includes("Punkte"), pw.join(","));
+  await layoutPruefen(v, "Vorfahrt Ergebnis 360", 360);
+  await v.screenshot({ path: join(bilder, "vorfahrt-ergebnis-360.png"), fullPage: true });
+  pruefe("Konsole ohne Fehler (Vorfahrt-Lauf)", v.fehler.length === 0, v.fehler.join(" | "));
+  // Hintergrund / Verlassen
+  await v.tap(".sp-v-knopf"); await v.waitForSelector(".sp-v-auto", { timeout: 9000 });
+  await v.evaluate(() => { Object.defineProperty(document, "hidden", { configurable: true, get: () => true }); document.dispatchEvent(new Event("visibilitychange")); });
+  await v.waitForTimeout(300);
+  pruefe("App im Hintergrund: Spiel abgebrochen, leere Kreuzung, „Start“", (await v.locator(".sp-v-auto").count()) === 0 && (await v.textContent(".sp-v-knopf")).trim() === "Start");
+  await v.evaluate(() => { delete document.hidden; });
+  await v.tap(".sp-v-knopf"); await v.waitForSelector(".sp-v-auto", { timeout: 9000 });
+  await v.tap("[data-nav-zurueck]");
+  await v.waitForSelector(".sp-karte");
+  await v.waitForTimeout(3500);
+  pruefe("nach dem Verlassen mitten im Spiel keine Fehler / späten Zeitgeber", v.fehler.length === 0, v.fehler.join(" | "));
+  pruefe("Startseite zeigt die Bestpunktzahl", (await v.textContent('[data-best="vorfahrt"]')).includes("Deine Bestpunktzahl: " + erwartetPunkteMin + " Punkte"), await v.textContent('[data-best="vorfahrt"]'));
+  await v.context().close();
+
+  console.log("Rechts vor Links: Querformat 740 x 360 (Aufgabe)");
+  v = await neueSeite({ b: 740, h: 360 });
+  await zumVorfahrt(v);
+  await v.waitForTimeout(700);
+  await v.tap(".sp-v-knopf");
+  await v.waitForSelector(".sp-v-auto", { timeout: 9000 });
+  await v.waitForTimeout(700);
+  await layoutPruefen(v, "Vorfahrt Querformat", 740);
+  const rq = await v.evaluate(() => { const g = (q) => document.querySelector(q).getBoundingClientRect(); return { hudO: g(".sp-v-hud").top, szeneO: g(".sp-v-szene").top, szeneU: g(".sp-v-szene").bottom, szeneB: g(".sp-v-szene").width, frageU: g(".sp-v-frage").bottom, h: window.innerHeight }; });
+  pruefe("Querformat: Kreuzung (mind. 190 px) und Frage ohne eigenes Scrollen im Bild, über der Menüleiste", rq.hudO >= 0 && rq.szeneO >= 0 && rq.szeneU <= rq.h - 70 && rq.szeneB >= 190, JSON.stringify(rq));
+  const aq = await vorAutos(v);
+  await vorTippen(v, V.freieAutos(aq)[0].arm);
+  await v.waitForSelector(".sp-v-antwort:not([hidden])");
+  await layoutPruefen(v, "Vorfahrt Querformat Antwort", 740);
+  await v.screenshot({ path: join(bilder, "vorfahrt-quer-antwort.png") });
+  await v.context().close();
+
+  console.log("Rechts vor Links: alle 18 Sprachen (360 x 740)");
+  for (const sp of SPRACHEN) {
+    const t = await neueSeite({ b: 360, h: 740, sprache: sp });
+    await zumHub(t);
+    await t.waitForSelector('.sp-karte[data-spiel="vorfahrt"]');
+    pruefe(sp + ": Vorfahrt-Karte übersetzt", (await t.textContent('.sp-karte[data-spiel="vorfahrt"] .sp-karte-titel')).trim() === TEXTE[sp].vorName);
+    await t.tap('.sp-karte[data-spiel="vorfahrt"]');
+    await t.waitForSelector(".sp-v-knopf");
+    pruefe(sp + ": Vorfahrt Richtung " + (RTL.includes(sp) ? "rtl" : "ltr"), (await t.getAttribute("#spiele-platz", "dir")) === (RTL.includes(sp) ? "rtl" : "ltr"));
+    await layoutPruefen(t, sp + " Vorfahrt bereit", 360);
+    await t.tap(".sp-v-knopf");
+    await t.waitForSelector(".sp-v-auto", { timeout: 9000 });
+    const autos = await vorAutos(t), frei = V.freieAutos(autos)[0], falsch = autos.find((c) => c.arm !== frei.arm);
+    await vorTippen(t, falsch.arm);
+    await t.waitForSelector(".sp-v-antwort:not([hidden])");
+    const info = await t.evaluate(() => ({ alles: document.querySelector("#spiele-platz").textContent, aria: Array.from(document.querySelectorAll(".sp-v-auto")).map((e) => e.getAttribute("aria-label")), urteil: document.querySelector(".sp-v-urteil").textContent.trim(), regeln: Array.from(document.querySelectorAll(".sp-v-regel")).map((r) => r.textContent.trim()), weiter: document.querySelector(".sp-v-weiter").textContent.trim(), frage: document.querySelector(".sp-v-frage").textContent.trim(), aufgabe: document.querySelector(".sp-v-aufgabe").textContent.trim() }));
+    const w = V.grundWarten(autos, falsch);
+    const erwartet = [TEXTE[sp][GRUND_TEXT[V.grundFuerSieger(autos, frei)]], w ? TEXTE[sp][w === "rechts" ? "vorWRechts" : "vorWGegen"] : null].filter(Boolean);
+    pruefe(sp + ": Urteil, Frage, Regel und Warte-Grund in der Sprache", info.urteil === TEXTE[sp].vorFalsch && info.frage === TEXTE[sp].vorFrage && info.aufgabe === TEXTE[sp].vorAufgabe.replace("{n}", "1").replace("{m}", "10") && JSON.stringify(info.regeln) === JSON.stringify(erwartet) && info.weiter === TEXTE[sp].vorWeiter, JSON.stringify(info).slice(0, 260));
+    pruefe(sp + ": Autobeschreibungen vollständig, kein roher Schlüssel", info.aria.every((a) => a && !/\{|vor[A-Z]/.test(a)) && !/vor[A-Z]\w+|\{[nm]\}/.test(info.alles), info.aria.join(" | "));
+    await layoutPruefen(t, sp + " Vorfahrt Antwort", 360);
+    if (["ar", "am", "tr"].includes(sp)) { await t.waitForTimeout(400); await t.screenshot({ path: join(bilder, "vorfahrt-sprache-" + sp + ".png"), fullPage: true }); }
+    pruefe(sp + ": Vorfahrt keine Konsolenfehler", t.fehler.length === 0, t.fehler.join(" | "));
+    await t.context().close();
+  }
+}
+
 try {
-  if (!nurTempo) await bisherige();
-  await tempoPruefungen();
+  const nurListe = (process.env.NUR || (process.env.NUR_TEMPO ? "tempo" : "")).split(",").filter(Boolean);
+  const dran = (name) => !nurListe.length || nurListe.includes(name);
+  if (dran("bisherige")) await bisherige();
+  if (dran("tempo")) await tempoPruefungen();
+  if (dran("memory")) await memoryPruefungen();
+  if (dran("vorfahrt")) await vorfahrtPruefungen();
 } finally {
   await browser.close();
   server.close();

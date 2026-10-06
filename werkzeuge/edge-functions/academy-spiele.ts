@@ -7,8 +7,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 //   { aktion: "uebersicht" }                    -> Anzeigename, Sichtbarkeit, eigene Bestwerte
 //   { aktion: "profil", sichtbar: true|false }  -> im Ranking sichtbar / ausgeblendet
 //   { aktion: "start", spiel }                  -> neue Runde; liefert eine einmalige Runden-ID
-//   { aktion: "ergebnis", runde, wert, tipps? } -> Ergebnis einer Runde, prüft Plausibilität, speichert Bestwert
-//                                                  (tipps nur bei Spielen, die sie brauchen: Tempo-Sprint)
+//   { aktion: "ergebnis", runde, wert, … }    -> Ergebnis einer Runde, prüft Plausibilität, speichert Bestwert
+//                                                  (zusätzlich je Spiel: tipps = Tempo-Sprint, zuege + fehler = Memory, richtig = Rechts vor Links)
 //   { aktion: "rangliste", spiel, limit }       -> beste Spieler (nur sichtbare), eigene Platzierung
 //
 // Der Name im Ranking kommt NIE vom Gerät, sondern aus dem Schülerkonto: Vorname + erster
@@ -44,14 +44,21 @@ function tempoObergrenze(n: number): number {
   return v;
 }
 
+// Schilder-Memory (07.10.2026): dieselben Zahlen wie PAARE / ZUG_MIN_MS / ZURUECK_MS in spiele/memory.js (die Prüfung vergleicht sie).
+const MEMORY = { PAARE: 6, ZUG_MIN_MS: 100, ZURUECK_MS: 900 };
+// Rechts vor Links (07.10.2026): 10 Aufgaben, je richtig 100 bis 150 Punkte (siehe punkteFuer in spiele/vorfahrt.js).
+const VORFAHRT = { AUFGABEN: 10, MIN_PUNKTE: 100, MAX_PUNKTE: 150 };
+const istGanz = (x: unknown): x is number => typeof x === "number" && Number.isInteger(x);
+
 // Je Spiel: Richtung des Rankings und menschlich mögliche Grenzen.
 //  aufsteigend true  = kleiner ist besser (Reaktionszeit in ms); false = größer ist besser (Höchsttempo in km/h)
 //  vorlauf_ms        = so lange dauert die Runde MINDESTENS, bevor der Wert entsteht
 //                      Ampel: Lichter + kürzeste Wartezeit; Tempo-Sprint: Countdown 3 s + Lernphase 30 s + Endspurt 10 s
 //  wert_ist_zeit     = true: der Wert (ms) kommt NACH dem Vorlauf dazu (Ampel); false: der Wert ist keine Zeit (Tempo-Sprint)
+//  runde_max_ms      = so lange darf eine Runde offen sein (Standard RUNDE_MAX_MS); Memory und Rechts vor Links dauern länger
 //  pruefe            = zusätzliche Plausibilität; gibt einen Fehlernamen zurück oder null
 const SPIELE: Record<string, {
-  aufsteigend: boolean; min: number; max: number; vorlauf_ms: number; wert_ist_zeit: boolean;
+  aufsteigend: boolean; min: number; max: number; vorlauf_ms: number; wert_ist_zeit: boolean; runde_max_ms?: number;
   pruefe?: (wert: number, body: Record<string, unknown>) => string | null;
 }> = {
   ampel: { aufsteigend: true, min: 120, max: 1500, vorlauf_ms: 4600, wert_ist_zeit: true },
@@ -64,6 +71,29 @@ const SPIELE: Record<string, {
       if (tipps > TEMPO.TAPS_MAX) return "zu_viele_tipps";
       // Das Tempo muss zur Spielregel passen: mit n Tipps ist höchstens tempoObergrenze(n) möglich (+1 für Rundung)
       if (wert > Math.ceil(tempoObergrenze(tipps)) + 1) return "tempo_unmoeglich";
+      return null;
+    },
+  },
+  // Schilder-Memory: Wert = Zeit in ms mit laufender Uhr (ohne Lesen der Erklärungen), kleiner ist besser.
+  // Jeder Zug (zwei aufgedeckte Karten) ist ein Treffer oder ein Fehlversuch: zuege = PAARE + fehler. Nach jedem Fehlversuch bleibt die
+  // Uhr mindestens ZURUECK_MS an, bevor wieder aufgedeckt werden darf.
+  memory: {
+    aufsteigend: true, min: 1500, max: 1_800_000, vorlauf_ms: 0, wert_ist_zeit: true, runde_max_ms: 2_400_000,
+    pruefe: (wert, body) => {
+      const { zuege, fehler } = body;
+      if (!istGanz(zuege) || !istGanz(fehler) || fehler < 0 || fehler > 500) return "zuege_ungueltig";
+      if (zuege !== MEMORY.PAARE + fehler) return "zuege_passen_nicht";
+      if (wert < zuege * MEMORY.ZUG_MIN_MS + fehler * MEMORY.ZURUECK_MS) return "zu_schnell_fuer_zuege";
+      return null;
+    },
+  },
+  // Rechts vor Links: Wert = Punkte 0–1500; richtig = Anzahl richtiger Aufgaben (0–10), je richtig 100–150 Punkte.
+  vorfahrt: {
+    aufsteigend: false, min: 0, max: VORFAHRT.AUFGABEN * VORFAHRT.MAX_PUNKTE, vorlauf_ms: 5000, wert_ist_zeit: false, runde_max_ms: 1_800_000,
+    pruefe: (wert, body) => {
+      const r = body.richtig;
+      if (!istGanz(r) || r < 0 || r > VORFAHRT.AUFGABEN) return "richtig_ungueltig";
+      if (wert < r * VORFAHRT.MIN_PUNKTE || wert > r * VORFAHRT.MAX_PUNKTE) return "punkte_passen_nicht";
       return null;
     },
   },
@@ -149,7 +179,7 @@ Deno.serve(async (req) => {
       const vergangen = Date.now() - new Date(r.gestartet_am).getTime();
       // Der Wert kann erst NACH dem Vorlauf entstehen (Ampel: Lichter + Wartezeit + Reaktion). 250 ms Luft für Uhren und Netz.
       if (vergangen < regel.vorlauf_ms + (regel.wert_ist_zeit ? wert : 0) - 250) return json({ error: "zu_schnell", code: "ergebnis_ungueltig" }, 400);
-      if (vergangen > RUNDE_MAX_MS) return json({ error: "runde_abgelaufen", code: "ergebnis_ungueltig" }, 400);
+      if (vergangen > (regel.runde_max_ms ?? RUNDE_MAX_MS)) return json({ error: "runde_abgelaufen", code: "ergebnis_ungueltig" }, 400);
       // Runde genau einmal einlösen (atomar: nur der erste Aufruf bekommt die Zeile zurück)
       const { data: eingeloest, error: uErr } = await supa.from("academy_spiele_runden").update({ benutzt: true }).eq("id", r.id).eq("benutzt", false).select("id");
       if (uErr) return json({ error: "datenbankfehler", code: "voruebergehend" }, 503);

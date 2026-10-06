@@ -18,6 +18,7 @@
    Aufräumen: Zeitgeber, Animationsbild und Listener werden in zerstoeren() entfernt; wer die App verlässt
    (Seite unsichtbar), bricht die Runde ab, wie bei der Ampel. */
 import { rankingKarte, profilKarte } from "./rahmen.js";
+import { zeichen274, zeichen282 } from "./schilder.js";
 
 export const REGELN = {
   GAIN: 5, VTOP: 420, DECAY: 16,            // km/h je Tipp (bei v = 0), Höchsttempo-Grenze, km/h Verlust je Sekunde
@@ -63,33 +64,8 @@ export function lage(t) {
 }
 export function blitzer(v, limit) { return v > limit + REGELN.TOL; }
 
-/* ---- Verkehrszeichen als SVG (selbst gezeichnet, amtliche Form) ---- */
-/* Zeichen 274: Höchstgeschwindigkeit (weiß, roter Rand, schwarze Zahl) */
-export function zeichen274(v, beschriftung) {
-  const z = String(v), gross = z.length <= 2;
-  return '<svg viewBox="0 0 100 100" role="img" aria-label="' + beschriftung + '" focusable="false">' +
-    '<circle cx="50" cy="50" r="49" fill="#fff"/>' +
-    '<circle cx="50" cy="50" r="42.4" fill="none" stroke="#cc1f26" stroke-width="14.4"/>' +
-    '<text x="50" y="' + (gross ? 64 : 61) + '" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="' + (gross ? 40 : 29) + '" fill="#111">' + z + "</text></svg>";
-}
-/* Zeichen 282: Ende sämtlicher streckenbezogener Geschwindigkeitsbeschränkungen und Überholverbote
-   (weiße Scheibe, schmaler dunkler Rand, fünf schräge Streifen von links unten nach rechts oben).
-   Ohne id/clipPath gezeichnet: dasselbe Zeichen steht mehrfach auf der Seite (Anzeige + Straßenrand), doppelte ids wären fehleranfällig.
-   Jeder Streifen endet innerhalb des dunklen Randes, so fällt kein Rest über die Scheibe hinaus. */
-export function zeichen282(beschriftung) {
-  const R = 46;                       // innerer Rand der Scheibe
-  let streifen = "";
-  for (let i = -2; i <= 2; i++) {
-    const o = i * 13;                 // Abstand der Streifenmitte von der Mitte, quer zur Streifenrichtung
-    const h = Math.sqrt(R * R - o * o);   // halbe Sehnenlänge bis zum Rand
-    const mx = 50 + o / Math.SQRT2, my = 50 + o / Math.SQRT2;   // Mitte der Sehne
-    const dx = h / Math.SQRT2;
-    streifen += '<line x1="' + (mx - dx).toFixed(2) + '" y1="' + (my + dx).toFixed(2) + '" x2="' + (mx + dx).toFixed(2) + '" y2="' + (my - dx).toFixed(2) + '" stroke="#2b2b2b" stroke-width="5.2"/>';
-  }
-  return '<svg viewBox="0 0 100 100" role="img" aria-label="' + beschriftung + '" focusable="false">' +
-    '<circle cx="50" cy="50" r="49" fill="#fff"/>' + streifen +
-    '<circle cx="50" cy="50" r="47.5" fill="none" stroke="#2b2b2b" stroke-width="3"/></svg>';
-}
+/* Zeichen 274 und 282 (selbst gezeichnet, amtliche Form) liegen in schilder.js; hier nur wieder ausgegeben, damit die Prüfungen sie hier finden. */
+export { zeichen274, zeichen282 };
 
 export function starte(platz, k) {
   const R = REGELN;
