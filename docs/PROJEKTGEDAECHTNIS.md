@@ -247,6 +247,53 @@ haben `unicode-bidi:plaintext`, sonst wird „§ 11 Abs. 2 StVO“ in RTL-Sprach
   ein separates Projekt mit eigenem Chat. Hier nur als Bridge-Partner
   relevant — nicht versehentlich hineinschreiben.
 
+## Spiele (06.10.2026)
+
+Mini-Spiele rund um den Verkehr mit Bestenliste. Beschluss Serban: 10 Spiele, **eines nach dem anderen**, nach jedem
+Spiel Abnahme durch ihn, Erfahrungen fließen ins nächste. Gleiche Spieldynamik = gemeinsame Grundlage:
+A Reaktion/Tippen (Ampel-Bremsweg, Tempo-Sprint), B Szene+Auswahl (Rechts vor Links, Fahrlehrer-Simulator,
+Verkehrskontrolle, Duell), C Bild antippen (Gefahren finden, Fahrzeug-Check), D einzeln (Schilder-Memory, Schilder-Ninja).
+Reihenfolge: Ampel-Bremsweg, Tempo-Sprint, Schilder-Memory, Rechts vor Links, Fahrlehrer-Simulator, Verkehrskontrolle,
+Gefahren finden, Fahrzeug-Check, Schilder-Ninja, Duell. Fertig: **Ampel-Bremsweg** (Spiel 1, mit Rahmen).
+Beschlossen (noch nicht gebaut): Tempo-Sprint = Autobahn, Tippen beschleunigt, nie schneller als das Schild, am Ende „keine
+Begrenzung“, 10 s Endspurt, Ranking = Höchstgeschwindigkeit; Strafe bei zu schnell = Blitzer + 2 s Zeitstrafe (Vorschlag, offen);
+Memory: Schild ↔ Kurzbedeutung, Pop-up mit Bedeutung nach StVO, nur gängige Schilder für Offenbach innerorts (Liste im Chat, noch nicht bestätigt).
+
+**Aufbau**
+- `spiele/` wird erst beim Öffnen geladen (wie `verkehr/`): `spiele.js` (Startseite + Weiche), `rahmen.js` (Rahmen für ALLE Spiele:
+  Texte, Server-Aufruf, Name/Sichtbarkeit, Bestenliste), `ampel.js` (Spiel 1), `texte.js` (Texte in allen 18 Sprachen, eigener
+  Block wie `UI` in `verkehr/spieler.js`), `spiele.css`. Ein neues Spiel = Datei mit `starte(platz, k)` + Eintrag in `SPIELE`
+  in `spiele.js` + Schlüssel in ALLEN Sprachen in `texte.js` + Spiel-Eintrag im `SPIELE`-Block der Function.
+- In `index.html` nur: Menüpunkt (`spieleSichtbar()`), Navigationsfeld `spiel` im Stapel, `spieleAufruf()`, `spieleEinhaengen()/spieleAufraeumen()`.
+- **Sichtbarkeit:** `SPIELE_FUER_ALLE = false` → nur die Vorschau der Verwaltung und Geräte mit `?spiele=1` in der Adresse
+  (`?spiele=0` schaltet aus; im Browser-Speicher des Geräts, die installierte iPhone-App hat einen eigenen Speicher). Für alle Schüler: Konstante auf `true`.
+- **Server:** Edge Function `academy-spiele` (Quelle `werkzeuge/edge-functions/academy-spiele.ts`, `verify_jwt` false, prüft die Schüler-Session
+  wie `academy-szene`). Tabellen `academy_spiele_runden`, `academy_spiele_bestwerte`, `academy_spiele_profil` (RLS an, absichtlich ohne Policy: Zugriff nur über
+  die Function; `on delete cascade` am Schüler). SQL-Funktionen `academy_spiele_anzeigename`, `academy_spiele_rangliste` (nur service_role).
+- **Name im Ranking kommt NIE vom Gerät**, sondern aus dem Schülerkonto: Vorname + erster Buchstabe des letzten Namensteils („Serban D.“).
+  Ausblenden per Schalter (`academy_spiele_profil.sichtbar`, Standard sichtbar). Ranking gilt über ALLE Schulen. Archivierte/gesperrte Schüler fehlen.
+  **Datenschutzerklärung der App muss um die Bestenliste ergänzt werden** (Vorschlag steht im Bericht vom 06.10.2026).
+- **Schutz vor erfundenen Ergebnissen:** jede Runde startet auf dem Server (`start`), ein Ergebnis zählt genau einmal, nur im Wertebereich (Ampel 120–1500 ms),
+  nur wenn seit dem Start genug Zeit verging (`vorlauf_ms`, hängt an den Lichtzeiten in `ampel.js`), höchstens 30 Runden/10 min. Ein manipuliertes
+  Gerät kann trotzdem einen erlaubten Wert melden – bei Reaktionsspielen nicht ganz zu verhindern.
+- Der Ampel-Bremsweg rechnet mit den Fahrschul-Faustformeln (Reaktionsweg (v/10)·3, Bremsweg (v/10)², Nässe Bremsweg ×2) und stellt die
+  gemessene Handy-Reaktion daneben: Handy-Reaktionen sind kürzer als im Verkehr (~1 s), sonst entsteht falsche Sicherheit.
+
+**Prüfen (vor jeder Änderung an Spielen laufen lassen, jedes neue Spiel bekommt Fälle dazu)**
+- `node --experimental-strip-types werkzeuge/edge-functions/pruefe-academy-spiele.mjs` – Logik der Function gegen eine Datenbank im Speicher (24 Fälle).
+- `node --experimental-strip-types werkzeuge/pruefe-spiele-im-browser.mjs` – echte App im Chromium mit Fingertipp: Menü, Spiel, Fehlstart, Rechnung,
+  Bestenliste, Ausblenden, Verlassen mitten in der Runde, Handy hoch/quer/klein/dunkel, alle 18 Sprachen (124 Prüfungen). Bilder: `$SPIELE_BILDER`.
+- Beide Prüfungen wurden selbst geprüft: mit absichtlich eingebauten Fehlern (Zeitprüfung, Einmal-Einlösung, Wertgrenzen, fremde Runde, Bremse, Rechenfehler) schlagen sie an.
+
+**Gelernt bei Spiel 1 (fließt in jedes weitere Spiel)**
+- **Nie einen Testschüler in der echten Datenbank anlegen:** der Trigger `academy_verkauf_buchen` schreibt ins unveränderliche Verkaufsbuch. Stattdessen die
+  Function gegen die Nachbildung prüfen (`spiele-im-speicher.mjs`); für einen echten Durchlauf eine Test-Sitzung für ein vorhandenes aktives Konto anlegen, nur
+  `start`/`ergebnis` aufrufen (liefern keine Namen), danach Sitzung und Spiel-Zeilen löschen und die Zählung prüfen.
+- Messen erst nach Überblendung/Scrollen der App (sonst falsche Layout-Befunde und Geisterbilder auf Fotos). Querformat am Handy: die Bühne zuerst und von selbst ins Bild
+  scrollen, sonst deckt die Menüleiste den Knopf zur Hälfte ab.
+- Spielnamen vom Gerät mit `hasOwnProperty` prüfen (`__proto__`, `constructor`). Späte Server-Antworten mit einem Zähler verwerfen (`ergId`), sonst überschreiben sie neuere Ergebnisse.
+- Tarifit: `lfiṛu` heißt Ampel (nicht Bremse; Bremse = `lfrinu`). Sprachen rif, ckb, kmr, ps, am, ti sind von mir übersetzt, NICHT von Muttersprachlern geprüft.
+
 ## Bekannte Fehlerquellen
 
 - `academy_schueler.klasse` ist NOT NULL mit Default `'B'`. Ein explizit

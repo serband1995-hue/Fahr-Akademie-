@@ -1,0 +1,118 @@
+/* Spiele-Bereich (06.10.2026). Greift nur auf die Farb-/Abstandswerte der App zu (:root in index.html),
+   deshalb passt es sich dem Dunkelmodus an. Handy zuerst (360–412 px), dann Querformat. */
+
+.sp-wurzel{padding-bottom:var(--sp-l);}
+.sp-titel{font-size:20px;margin-bottom:4px;}
+.sp-intro{margin-bottom:14px;}
+.sp-label{font-size:var(--fs-mikro);text-transform:uppercase;letter-spacing:var(--ls-label);color:var(--faint);font-weight:700;}
+.sp-hinweis{margin-top:8px;line-height:1.45;}
+.sp-hinweis-klein{font-size:13px;color:var(--muted);}
+.sp-fehler{font-size:13px;color:var(--warn);line-height:1.4;}
+.sp-profil-platz:empty,.sp-rank-platz:empty{display:none;}
+
+/* ---- Name im Ranking + Schalter ---- */
+.sp-profil{margin:0 0 var(--sp-m);}
+.sp-profil-zeile{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-m);}
+.sp-profil-text{min-width:0;}
+.sp-name{font-family:var(--ff-titel);font-size:20px;font-weight:600;margin-top:2px;overflow-wrap:anywhere;}
+.sp-schalter{position:relative;flex:none;width:56px;height:44px;background:none;border:0;padding:0;cursor:pointer;touch-action:manipulation;}
+.sp-schalter::before{content:"";position:absolute;top:7px;left:2px;right:2px;height:30px;border-radius:15px;
+  background:var(--surface-strong);border:1.5px solid var(--hairline);transition:background .18s ease;}
+.sp-schalter span{position:absolute;top:10px;inset-inline-start:6px;width:24px;height:24px;border-radius:50%;
+  background:var(--text);transition:transform .18s var(--ez-standard);}
+.sp-schalter[aria-checked="true"]::before{background:var(--gruen-hell);border-color:var(--gruen-hell);}
+.sp-schalter[aria-checked="true"] span{background:#fff;transform:translateX(22px);}
+[dir="rtl"] .sp-schalter[aria-checked="true"] span{transform:translateX(-22px);}
+.sp-schalter:disabled{opacity:.6;}
+.sp-schalter:focus-visible{outline:2px solid var(--gruen-hell);outline-offset:2px;border-radius:14px;}
+
+/* ---- Spielkarten der Startseite ---- */
+.sp-karten{display:grid;gap:var(--sp-m);}
+.sp-karte{display:flex;align-items:flex-start;gap:var(--sp-m);width:100%;text-align:start;cursor:pointer;
+  font-family:inherit;color:var(--text);touch-action:manipulation;}
+.sp-karte:active{transform:scale(.99);}
+.sp-karte-symbol{flex:none;width:48px;height:48px;border-radius:50%;background:var(--surface-tint);color:var(--gruen-text);
+  display:flex;align-items:center;justify-content:center;}
+.sp-karte-symbol svg{width:26px;height:26px;}
+.sp-karte-text{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1;}
+.sp-karte-titel{font-family:var(--ff-titel);font-size:18px;font-weight:600;}
+.sp-karte-kurz{font-size:14px;color:var(--muted);line-height:1.4;}
+.sp-karte-best{font-size:13px;color:var(--gruen-text);font-weight:700;margin-top:3px;}
+.sp-karte-best:empty{display:none;}
+
+/* ---- Spiel: Ampel-Bremsweg ---- */
+.sp-ampel{display:grid;gap:var(--sp-m);}
+.sp-spieltitel{font-family:var(--ff-titel);font-size:22px;font-weight:600;margin:0;}
+.sp-uebung{margin:-4px 0 0;}
+.sp-tempo{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;}
+.sp-tempo-knopf{min-height:48px;border-radius:var(--r-m);border:1.5px solid var(--hairline);background:var(--bg);color:var(--text);
+  font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;touch-action:manipulation;}
+.sp-tempo-knopf[aria-checked="true"]{background:var(--gruen);border-color:var(--gruen);color:var(--auf-tief);}
+.sp-tempo-knopf:disabled{opacity:.55;cursor:default;}
+.sp-tempo-knopf:focus-visible,.sp-knopf:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+
+.sp-buehne{display:grid;gap:var(--sp-m);}
+.sp-gantry{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(6px,2.5vw,12px);padding:clamp(10px,3vw,16px);
+  border-radius:var(--r-l);background:#17181c;box-shadow:inset 0 0 0 2px #2b2d33;transition:box-shadow .1s;}
+.sp-gantry.frei{box-shadow:inset 0 0 0 2px #2b2d33,inset 0 -6px 0 #2ea84f;}
+.sp-licht{aspect-ratio:1;border-radius:50%;background:#3b2124;box-shadow:inset 0 3px 8px rgba(0,0,0,.55);}
+.sp-licht.an{background:#ff3131;box-shadow:0 0 18px 4px rgba(255,49,49,.55),inset 0 -3px 6px rgba(120,0,0,.45);}
+.sp-status{min-height:2.7em;text-align:center;font-size:15px;line-height:1.35;color:var(--muted);display:flex;align-items:center;justify-content:center;}
+.sp-status.go{color:#1c7a38;font-weight:800;font-size:28px;letter-spacing:.04em;}
+.sp-status.warn{color:var(--warn);font-weight:700;}
+.sp-knopf{width:100%;min-height:clamp(92px,22vh,150px);border:0;border-radius:var(--r-l);cursor:pointer;
+  font-family:inherit;font-size:26px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+  box-shadow:0 6px 18px rgba(43,40,30,.22);}
+.sp-knopf.start{background:var(--gruen);color:var(--auf-tief);}
+.sp-knopf.bremse{background:var(--warn);color:var(--auf-warn);}
+.sp-knopf:active{transform:scale(.985);}
+
+/* ---- Ergebnis ---- */
+.sp-erg{display:grid;gap:var(--sp-m);}
+.sp-erg-kopf{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-m);flex-wrap:wrap;}
+.sp-gross{font-family:var(--ff-titel);font-size:44px;font-weight:700;line-height:1;}
+.sp-gross span{font-size:18px;font-weight:600;color:var(--muted);}
+.sp-speicher{min-height:1.6em;display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
+.sp-speicher:empty{display:none;}
+.sp-badge{display:inline-block;padding:5px 12px;border-radius:var(--r-pill);background:var(--surface-tint);color:var(--gruen-text);
+  font-size:13.5px;font-weight:700;}
+.sp-badge.neu{background:var(--gold);color:var(--auf-gold);}
+.sp-bz-liste{display:grid;gap:var(--sp-m);}
+.sp-bz-kopf{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sp-m);}
+.sp-bz-text{display:flex;flex-direction:column;min-width:0;}
+.sp-bz-text b{font-size:15px;}
+.sp-bz-text small{font-size:12.5px;color:var(--muted);line-height:1.35;}
+.sp-bz-wert{flex:none;font-weight:800;font-size:17px;}
+.sp-bz-balken{display:flex;height:16px;margin-top:6px;border-radius:8px;overflow:hidden;background:var(--surface-strong);}
+.sp-bz-balken i{display:block;height:100%;}
+.sp-bz-balken i.r,.sp-chip.r{background:var(--gold);}
+.sp-bz-balken i.b,.sp-chip.b{background:var(--gruen-hell);}
+.sp-legende{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);}
+.sp-legende span{display:inline-flex;align-items:center;gap:6px;}
+.sp-chip{display:inline-block;width:12px;height:12px;border-radius:3px;}
+.sp-hinweis-strasse{margin:0;line-height:1.5;}
+
+/* ---- Bestenliste ---- */
+.sp-ueberschrift{font-family:var(--ff-titel);font-size:18px;font-weight:600;margin:0 0 8px;}
+.sp-liste{list-style:none;margin:0;padding:0;display:grid;gap:4px;}
+.sp-zeile{display:grid;grid-template-columns:32px 1fr auto;align-items:center;gap:8px;min-height:40px;padding:4px 10px;border-radius:var(--r-m);}
+.sp-zeile.ich{background:var(--surface-tint);font-weight:700;}
+.sp-zeile.sp-luecke{display:block;text-align:center;color:var(--faint);min-height:0;padding:0;}
+.sp-platz{font-weight:800;color:var(--muted);text-align:center;}
+.sp-rname{min-width:0;overflow-wrap:anywhere;}
+.sp-du{font-weight:600;color:var(--gruen-text);font-size:13px;}
+.sp-wert{font-weight:800;white-space:nowrap;}
+
+/* ---- Querformat am Handy: weniger Höhe, nichts abgeschnitten ---- */
+@media (max-height:520px){
+  .sp-spieltitel{display:none;}
+  .sp-buehne{order:-1;}          /* Bühne zuerst: der Knopf liegt sonst unter der Menüleiste */
+  .sp-knopf{min-height:76px;font-size:22px;}
+  .sp-gantry{padding:8px;}
+  .sp-licht{width:clamp(28px,9vh,44px);justify-self:center;}
+  .sp-status{min-height:2em;}
+}
+@media (prefers-reduced-motion:reduce){
+  .sp-schalter span,.sp-schalter::before{transition:none;}
+}
