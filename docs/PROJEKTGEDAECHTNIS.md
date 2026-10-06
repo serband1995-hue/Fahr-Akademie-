@@ -267,7 +267,7 @@ A Reaktion/Tippen (Ampel-Bremsweg, Tempo-Sprint), B Szene+Auswahl (Rechts vor Li
 Verkehrskontrolle, Duell), C Bild antippen (Gefahren finden, Fahrzeug-Check), D einzeln (Schilder-Memory, Schilder-Ninja).
 Reihenfolge: Ampel-Bremsweg, Tempo-Sprint, Schilder-Memory, Rechts vor Links, Fahrlehrer-Simulator, Verkehrskontrolle,
 Gefahren finden, Fahrzeug-Check, Schilder-Ninja, Duell. Fertig: **Ampel-Bremsweg** (Spiel 1, mit Rahmen, für alle live),
-**Tempo-Sprint** (Spiel 2, 07.10.2026 gebaut, `nurVorschau: true` bis Serban „ok“ sagt, siehe unten).
+**Tempo-Sprint** (Spiel 2, 07.10.2026 gebaut und noch am selben Tag für alle freigegeben, `nurVorschau: false`; Serban: „Mach alles fertig“).
 Memory (Spiel 3, noch nicht gebaut): Schild ↔ Kurzbedeutung, Pop-up mit Bedeutung nach StVO, nur gängige Schilder für Offenbach innerorts (Liste im Chat, noch nicht bestätigt).
 
 **Aufbau**

@@ -19,6 +19,7 @@ import { join, extname, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { db, rufe, jetzt } from "./edge-functions/spiele-im-speicher.mjs";
 import { REGELN, obergrenze } from "../spiele/tempo.js";
+import { SPIELE } from "../spiele/spiele.js";
 
 const wurzel = join(dirname(fileURLToPath(import.meta.url)), "..");
 const { chromium } = createRequire((process.env.PLAYWRIGHT_PFAD || "/opt/node22/lib/node_modules") + "/")("playwright");
@@ -297,32 +298,43 @@ async function imBildPruefen(s, name) {
 
 async function tempoPruefungen() {
   console.log("Einzel-Freigabe je Spiel");
-  { // normales Schülergerät (ohne Flag): nur Spiel 1
+  // Datengetrieben: welche Spiele sichtbar/versteckt sind, steht in SPIELE (spiele/spiele.js, Feld nurVorschau)
+  const alleIds = SPIELE.map((x) => x.id), sichtbarIds = SPIELE.filter((x) => !x.nurVorschau).map((x) => x.id), verstecktIds = SPIELE.filter((x) => x.nurVorschau).map((x) => x.id);
+  console.log("  (alle: " + alleIds.join(",") + " | für alle: " + sichtbarIds.join(",") + " | nur Vorschau: " + (verstecktIds.join(",") || "–") + ")");
+  { // normales Schülergerät (ohne Flag): nur die freigegebenen Spiele
     const n = await neueSeite({ b: 360, h: 740, ohneFlag: true });
     await zumHub(n);
     const karten = await n.locator(".sp-karte").evaluateAll((els) => els.map((e) => e.dataset.spiel));
-    pruefe("Schüler ohne Flag sieht Spiel 1, aber NICHT Spiel 2", karten.length === 1 && karten[0] === "ampel", karten.join(","));
+    pruefe("Schüler ohne Flag sieht genau die freigegebenen Spiele (" + sichtbarIds.join(", ") + ")", karten.join(",") === sichtbarIds.join(","), karten.join(","));
     pruefe("Schüler ohne Flag: keine Vorschau-Marke auf der Startseite", (await n.locator(".sp-karte-marke").count()) === 0);
-    await n.evaluate(() => go({ drawer: "spiele", spiel: "tempo" }));
-    await n.waitForSelector(".sp-karte", { timeout: 8000 });
-    await n.waitForTimeout(600);
-    pruefe("direkt aufgerufenes Spiel 2 öffnet für normale Schüler NICHT (Startseite statt Spiel)", (await n.locator(".sp-t-pad").count()) === 0 && (await n.locator(".sp-karte").count()) === 1);
+    for (const id of verstecktIds) {
+      await n.evaluate((x) => go({ drawer: "spiele", spiel: x }), id);
+      await n.waitForSelector(".sp-karte", { timeout: 8000 });
+      await n.waitForTimeout(600);
+      pruefe("direkt aufgerufenes verstecktes Spiel „" + id + "“ öffnet für normale Schüler NICHT (Startseite statt Spiel)", (await n.locator(".sp-karte").count()) === sichtbarIds.length && (await n.locator("#spiele-platz .sp-knopf, #spiele-platz .sp-t-pad, #spiele-platz .sp-m-feld, #spiele-platz .sp-v-szene").count()) === 0);
+    }
+    if (!verstecktIds.length) console.log("  (kein verstecktes Spiel in dieser Version: der Mechanismus wurde mit Spiel 2 geprüft und kommt mit dem nächsten neuen Spiel wieder dran)");
     await n.evaluate(() => go({ drawer: "spiele", spiel: "ampel" }));
     await n.waitForSelector(".sp-knopf", { timeout: 8000 });
     pruefe("Spiel 1 lässt sich weiterhin direkt öffnen", (await n.locator(".sp-knopf").count()) === 1);
+    if (sichtbarIds.includes("tempo")) {
+      await n.evaluate(() => go({ drawer: "spiele", spiel: "tempo" }));
+      await n.waitForSelector(".sp-t-pad", { timeout: 8000 });
+      pruefe("Spiel 2 ist für normale Schüler freigegeben und spielbar (Pad „Start“)", (await padText(n)) === "Start");
+    }
     pruefe("keine Konsolenfehler (Freigabe)", n.fehler.length === 0, n.fehler.join(" | "));
     await n.context().close();
   }
-  { // ?spiele=1 in der Adresse: Vorschau-Gerät
+  { // ?spiele=1 in der Adresse: Vorschau-Gerät sieht alle Spiele
     const n = await neueSeite({ b: 360, h: 740, ohneFlag: true, suche: "?spiele=1" });
     await zumHub(n);
     const karten = await n.locator(".sp-karte").evaluateAll((els) => els.map((e) => e.dataset.spiel));
-    pruefe("Gerät mit ?spiele=1 sieht beide Spiele", karten.join(",") === "ampel,tempo", karten.join(","));
-    pruefe("Vorschau-Marke nur auf Spiel 2", (await n.locator(".sp-karte-marke").count()) === 1 && (await n.locator('.sp-karte[data-spiel="tempo"] .sp-karte-marke').count()) === 1 && (await n.locator('.sp-karte[data-spiel="ampel"] .sp-karte-marke').count()) === 0);
+    pruefe("Gerät mit ?spiele=1 sieht alle Spiele", karten.join(",") === alleIds.join(","), karten.join(","));
+    pruefe("Vorschau-Marke genau auf den versteckten Spielen", (await n.locator(".sp-karte-marke").count()) === verstecktIds.length && (await n.locator(".sp-karte[data-spiel] .sp-karte-marke").evaluateAll((els) => els.map((e) => e.closest(".sp-karte").dataset.spiel))).join(",") === verstecktIds.join(","));
     await n.waitForFunction(() => /Noch nicht gespielt/.test(document.querySelector('[data-best="tempo"]')?.textContent || ""));
     await n.tap('.sp-karte[data-spiel="tempo"]');
     await n.waitForSelector(".sp-t-pad");
-    pruefe("Spiel 2 öffnet auf dem Vorschau-Gerät", (await padText(n)) === "Start");
+    pruefe("Tempo-Sprint öffnet auf dem Vorschau-Gerät", (await padText(n)) === "Start");
     await n.context().close();
   }
 
