@@ -7,7 +7,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { db, rufe, warte, hier } from "./spiele-im-speicher.mjs";
-import { REGELN, LERN_MS, GESAMT_MS, lage, tipp, rollen, blitzer, obergrenze } from "../../spiele/tempo.js";
+import { REGELN, GESAMT_MIN_MS, tipp, rollen, neuerLauf, schritt, tippen, obergrenze } from "../../spiele/tempo.js";
 import { SCHILDER, PAARE, ZURUECK_MS, ZUG_MIN_MS, mischen, neueKarten, passen } from "../../spiele/memory.js";
 import * as V from "../../spiele/vorfahrt.js";
 import { SCHILD_IDS, SCHILD_DATEIEN, TEMPO_ZAHLEN, schildBild, zeichen274, zeichen282 } from "../../spiele/schilder.js";
@@ -77,139 +77,159 @@ await pruefe("zu lange offene Runde (über 2 Minuten) zählt nicht", async () =>
 await pruefe("Runden-ID ohne gültige Form wird abgelehnt", async () => { const r = await rufe(A({ aktion: "ergebnis", runde: "'; drop table x; --", wert: 200 })); assert.equal(r.status, 400); });
 
 console.log("Tempo-Sprint: Spielregeln (Zahlen im Spiel und im Server)");
-await pruefe("Zahlen im Server = Zahlen im Spiel (GAIN, VTOP, V0_MAX, TAPS_MAX, Vorlauf)", async () => {
+await pruefe("Zahlen im Server = Zahlen im Spiel (GAIN, VTOP, DECAY, V0_MAX, V_AUF, TAPS_MAX, Abstand, Strecke, Spielraum, Vorlauf)", async () => {
   const q = readFileSync(join(hier, "academy-spiele.ts"), "utf8");
-  const m = q.match(/const TEMPO = \{ GAIN: ([\d.]+), VTOP: (\d+), DECAY: (\d+), V0_MAX: (\d+), TAPS_MAX: (\d+), ABSTAND_MS: (\d+) \};/);
-  assert.ok(m, "TEMPO-Zeile nicht gefunden");
-  assert.deepEqual([+m[1], +m[2], +m[3], +m[4], +m[5], +m[6]], [REGELN.GAIN, REGELN.VTOP, REGELN.DECAY, REGELN.V0_MAX, REGELN.TAPS_MAX, REGELN.OBERGRENZE_ABSTAND_MS]);
+  const m = q.match(/const SPRINT = \{ GAIN: ([\d.]+), VTOP: (\d+), DECAY: (\d+), V0_MAX: (\d+), V_AUF: (\d+), TAPS_MAX: (\d+), TIPPS_AUF_MIN: (\d+), TIPPS_AUF_MAX: (\d+), ABSTAND_MS: (\d+), STRECKE_MS: ([\d_]+), MARGE: ([\d.]+), MARGE_M: (\d+) \};/);
+  assert.ok(m, "SPRINT-Zeile nicht gefunden");
+  const w = m.slice(1).map((x) => +x.replace(/_/g, ""));
+  assert.deepEqual([w[0], w[1], w[2], w[3], w[4], w[5], w[8], w[9], w[10], w[11]], [REGELN.GAIN, REGELN.VTOP, REGELN.DECAY, REGELN.V0_MAX, REGELN.V_AUF, REGELN.TAPS_MAX, REGELN.OBERGRENZE_ABSTAND_MS, REGELN.STRECKE_MS, REGELN.MARGE, REGELN.MARGE_M]);
   assert.ok(REGELN.OBERGRENZE_ABSTAND_MS <= REGELN.TAP_ABSTAND_MS, "Obergrenze rechnet mit dichterem Abstand als das Spiel erlaubt");
-  assert.match(q, new RegExp("tempo: \\{\\s*aufsteigend: false, min: 0, max: TEMPO.VTOP, vorlauf_ms: " + String(GESAMT_MS).replace(/(\d)(\d{3})$/, "$1_$2") + ","));
-  assert.equal(GESAMT_MS, 43_000);
-  const mehrAlsMoeglich = Math.floor((REGELN.SPURT_MS - 1) / REGELN.TAP_ABSTAND_MS) + 1;   // so viele Tipps passen bei Mindestabstand höchstens in den Endspurt
+  assert.match(q, /sprint: \{\s*aufsteigend: false, min: 5, max: Math\.ceil\(sprintObergrenze\(SPRINT\.TAPS_MAX\)\.m\), vorlauf_ms: 13_000,/);
+  assert.equal(GESAMT_MIN_MS, 13_400);
+  assert.ok(13_000 - 250 <= GESAMT_MIN_MS, "Server-Vorlauf (13 s minus 250 ms Luft) darf nie über der kürzesten ehrlichen Runde liegen");
+  const mehrAlsMoeglich = Math.floor((REGELN.STRECKE_MS - 1) / REGELN.TAP_ABSTAND_MS) + 1;   // so viele Tipps passen bei Mindestabstand höchstens auf die Autobahn
   assert.ok(REGELN.TAPS_MAX >= mehrAlsMoeglich && REGELN.TAPS_MAX <= mehrAlsMoeglich + 2, "TAPS_MAX " + REGELN.TAPS_MAX + " passt nicht zum Mindestabstand (" + mehrAlsMoeglich + ")");
+  assert.ok(REGELN.V0_MAX >= REGELN.V_AUF + REGELN.GAIN - 0.01, "V0_MAX deckt 60 km/h plus einen Tipp");
+  const minTipps = Math.ceil(REGELN.V_AUF / REGELN.GAIN);   // ohne Rollen und ohne Verlust; 7 Tipps sind das Minimum
+  assert.equal(minTipps, +m[7], "TIPPS_AUF_MIN im Server");
+  assert.ok(+m[8] >= Math.floor(REGELN.AUFFAHRT_MS / REGELN.TAP_ABSTAND_MS) + 1, "TIPPS_AUF_MAX reicht für die ganze Auffahrt");
 });
-await pruefe("Zeitplan: Schilder, Ankündigung, Kulanz, Endspurt, Ende", () => {
-  assert.equal(LERN_MS, 30_000);
-  let l = lage(0); assert.equal(l.phase, "lern"); assert.equal(l.limit, 80); assert.equal(l.blitzerAktiv, false); assert.equal(l.ankuendigung, false);
-  assert.equal(lage(2499).blitzerAktiv, false); assert.equal(lage(2500).blitzerAktiv, true, "Blitzer erst nach der Kulanzzeit");
-  assert.equal(lage(2999).ankuendigung, false); l = lage(3000); assert.equal(l.ankuendigung, true); assert.equal(l.naechstes, 100);
-  assert.equal(lage(5000).limit, 100); assert.equal(lage(5000).segmentZeit, 0);
-  assert.equal(lage(29_999).naechstes, "frei", "vor dem letzten Schild: nächstes = Zeichen 282");
-  l = lage(30_000); assert.equal(l.phase, "spurt"); assert.equal(l.frei, true); assert.equal(lage(39_999).phase, "spurt"); assert.equal(lage(40_000).phase, "ende");
-  assert.equal(REGELN.LIMITS.at(-1), Math.max(...REGELN.LIMITS), "das letzte Schild ist das höchste (V0_MAX rechnet damit)");
-  assert.ok(REGELN.V0_MAX >= REGELN.LIMITS.at(-1) + REGELN.TOL + REGELN.GAIN, "V0_MAX deckt Limit + Toleranz + einen Tipp");
-});
-await pruefe("Blitzer: erst über Schild + 5 km/h", () => { assert.equal(blitzer(85, 80), false); assert.equal(blitzer(85.01, 80), true); assert.equal(blitzer(60, 80), false); });
 await pruefe("Tipp: je schneller, desto weniger; nie über VTOP; Rollen nie unter 0", () => {
-  assert.ok(tipp(0) - 0 > tipp(200) - 200); assert.equal(tipp(REGELN.VTOP), REGELN.VTOP); assert.ok(tipp(279) <= REGELN.VTOP);
+  assert.ok(tipp(0) - 0 > tipp(500) - 500); assert.equal(tipp(REGELN.VTOP), REGELN.VTOP); assert.ok(tipp(1399) <= REGELN.VTOP);
   assert.equal(rollen(3, 5000), 0); assert.equal(rollen(100, 1000), 100 - REGELN.DECAY);
 });
 
-/* Ein ganzes Spiel in 1-ms-Schritten durchrechnen (dieselben Funktionen wie im Spiel).
-   haltenBis: Verhalten in der Lernphase ("halten" = knapp unter dem Schild, "dauer" = immer tippen, "nichts" = nie tippen)
-   rate: Tipps pro Sekunde im Endspurt (0 = keine). */
-function simuliere(lernen, rate) {
-  let v = REGELN.V_START, sperre = -1e9, letzterTipp = -1e9, naechster = 0, maxV = 0, tipps = 0, blitze = 0, v0Spurt = null, sperrenVerletzt = 0;
-  for (let t = 0; t < LERN_MS + REGELN.SPURT_MS; t++) {
-    v = rollen(v, 1);
-    const l = lage(t);
-    if (l.phase === "lern" && l.blitzerAktiv && blitzer(v, l.limit) && t >= sperre) { blitze++; v *= REGELN.BLITZ_FAKTOR; sperre = t + REGELN.SPERRE_MS; }
-    if (l.phase === "spurt" && v0Spurt === null) { v0Spurt = v; maxV = v; sperre = -1e9; naechster = t; }
-    let tippt = false;
-    if (l.phase === "lern") tippt = lernen === "dauer" || (lernen === "halten" && v < l.limit - 8);
-    else if (rate > 0 && t >= naechster) { tippt = true; naechster += 1000 / rate; }
-    if (tippt && t >= sperre && t - letzterTipp >= REGELN.TAP_ABSTAND_MS) {
-      letzterTipp = t; v = tipp(v);
-      if (l.phase === "spurt") { tipps++; if (v > maxV) maxV = v; }
-    } else if (tippt && t < sperre) sperrenVerletzt++;
+/* Einen ganzen Lauf in 1-ms-Schritten durchrechnen (dieselben Funktionen wie im Spiel): rate Tipps pro Sekunde ab „Gas geben“ (0 = keine) */
+function simuliere(rate) {
+  const l = neuerLauf(); let naechster = 0;
+  for (let t = 0; t < 30_000 && !l.ende; t++) {
+    if (rate > 0 && t >= naechster) { tippen(l); naechster += 1000 / rate; }
+    schritt(l, 1);
   }
-  return { maxV, wert: Math.round(maxV), tipps, blitze, v0Spurt };
+  return { l, wert: Math.round(l.dist), vmax: Math.round(l.vmax), tipps: l.tippsStr, tippsAuf: l.tippsAuf };
 }
-await pruefe("Lernphase: ohne Tippen nie ein Blitzer; knapp unter dem Schild halten nie ein Blitzer (auch bei Abbremsen 100→80→60)", () => {
-  assert.equal(simuliere("nichts", 0).blitze, 0);
-  const r = simuliere("halten", 8);
-  assert.equal(r.blitze, 0, "Blitzer trotz Halten");
-  assert.ok(r.v0Spurt > 100 && r.v0Spurt <= REGELN.V0_MAX, "Tempo am Start des Endspurts " + r.v0Spurt);
+await pruefe("Auffahrt: ohne Tippen oder zu langsam kommt man nicht auf die Autobahn (verpasst nach 6 s)", () => {
+  for (const rate of [0, 1, 2, 3, 4]) { const r = simuliere(rate); assert.equal(r.l.ende, "verpasst", "Rate " + rate); assert.equal(r.l.dist, 0); assert.ok(Math.abs(r.l.t - REGELN.AUFFAHRT_MS) <= 1); }
 });
-await pruefe("Lernphase: dauernd Tippen löst Blitzer aus und sperrt das Tippen", () => {
-  const r = simuliere("dauer", 8); assert.ok(r.blitze >= 3, "Blitzer: " + r.blitze);
-  assert.ok(r.v0Spurt <= REGELN.V0_MAX);
-});
-await pruefe("Spielbare Tempi: gemächlich ~160, flott ~235, sehr gut ~285, Grenze ~300 km/h (wer richtig gut ist, wird SEHR schnell)", () => {
-  const a = simuliere("halten", 6).wert, b = simuliere("halten", 10).wert, g = simuliere("halten", 14).wert, c = simuliere("halten", 15.8).wert;
-  assert.ok(a >= 140 && a <= 185, "6/s: " + a);
-  assert.ok(b >= 215 && b <= 255, "10/s: " + b);
-  assert.ok(g >= 270 && g <= 310, "14/s: " + g);
-  assert.ok(c >= 285 && c <= 330 && c < REGELN.VTOP, "15,8/s: " + c);
-  assert.ok(a < b && b < g && g < c, "jede Stufe bringt mehr: " + [a, b, g, c].join(" / "));
-  assert.ok(g - b >= 30 && c - a >= 120, "Spielraum zwischen Gut und Durchschnitt");
-});
-await pruefe("Jeder ehrliche Lauf bleibt unter der Obergrenze seiner Tipps (Server lehnt keine ehrliche Runde ab)", () => {
-  for (const lernen of ["halten", "dauer", "nichts"]) for (const rate of [0, 3, 6, 8, 10, 12, 14, 15.8]) {
-    const r = simuliere(lernen, rate);
-    assert.ok(r.tipps <= REGELN.TAPS_MAX, "Tipps " + r.tipps);
-    assert.ok(r.maxV <= obergrenze(r.tipps) + 1e-9, lernen + " " + rate + ": " + r.maxV + " > " + obergrenze(r.tipps));
-    assert.ok(r.wert <= Math.ceil(obergrenze(r.tipps)) + 1);
+await pruefe("Auffahrt: bei 60 km/h geht es auf die Autobahn; danach genau 10 s, Ende \"ok\"", () => {
+  for (const rate of [6, 8, 12, 15.8]) {
+    const r = simuliere(rate); assert.equal(r.l.ende, "ok", "Rate " + rate); assert.ok(r.l.tAuf != null && r.l.tAuf <= REGELN.AUFFAHRT_MS);
+    assert.ok(Math.abs(r.l.tStr - REGELN.STRECKE_MS) < 1e-6, "Autobahnzeit " + r.l.tStr);
+    assert.ok(r.l.tippsAuf >= Math.ceil(REGELN.V_AUF / REGELN.GAIN), "Tipps bis 60: " + r.l.tippsAuf);
+    assert.ok(r.l.vmax >= REGELN.V_AUF);
   }
+  const l = neuerLauf(); for (let i = 0; i < 6; i++) { l.t += 70; tippen(l); } assert.equal(l.phase, "auf", "6 Tipps reichen nie für 60 km/h"); l.t += 70; tippen(l); assert.equal(l.phase, "str"); assert.ok(l.v >= 60 && l.v <= REGELN.V0_MAX);
 });
+await pruefe("Mehrfinger: Tipps unter 63 ms Abstand zählen nicht", () => {
+  const l = neuerLauf(); assert.equal(tippen(l), true, "erster Tipp zählt immer");
+  const k = neuerLauf(); k.t = 100; assert.equal(tippen(k), true); k.t = 150; assert.equal(tippen(k), false); k.t = 163; assert.equal(tippen(k), true);
+});
+await pruefe("Spielbare Tempi: kein Deckel, wer richtig gut ist, kommt auf 600 bis 700 km/h (Tipps je Sekunde → Höchsttempo)", () => {
+  const w = {}; for (const rate of [6, 8, 10, 12, 14, 15.8]) w[rate] = simuliere(rate);
+  assert.ok(w[6].vmax >= 130 && w[6].vmax <= 200, "6/s: " + w[6].vmax);
+  assert.ok(w[10].vmax >= 370 && w[10].vmax <= 440, "10/s: " + w[10].vmax);
+  assert.ok(w[14].vmax >= 560 && w[14].vmax <= 640, "14/s: " + w[14].vmax);
+  assert.ok(w[15.8].vmax >= 620 && w[15.8].vmax <= 720, "15,8/s: " + w[15.8].vmax);
+  assert.ok(w[15.8].vmax < REGELN.VTOP);
+  const reihe = [6, 8, 10, 12, 14, 15.8].map((r) => w[r].wert);
+  for (let i = 1; i < reihe.length; i++) assert.ok(reihe[i] > reihe[i - 1], "jede Stufe bringt mehr Strecke: " + reihe.join(" / "));
+  assert.ok(w[15.8].wert >= 1000 && w[15.8].wert <= 1300, "Strecke bei 15,8/s: " + w[15.8].wert + " m");
+});
+await pruefe("Jeder ehrliche Lauf bleibt unter der Obergrenze seiner Tipps (Server lehnt keine ehrliche Runde ab) – auch bei ungleichmäßigem Tippen", () => {
+  let zaehler = 0, schlimmster = 0;
+  const a = zufallsquelle0(11);
+  function laufMit(zeiten) {      // absolute Tippzeiten ab Gas; nach 600 ms schnell genug für 60 km/h
+    const l = neuerLauf(); let i = 0;
+    for (let t = 0; t < 30_000 && !l.ende; t++) { while (i < zeiten.length && zeiten[i] <= t) { tippen(l); i++; } schritt(l, 1); }
+    return l;
+  }
+  for (let r = 0; r < 120; r++) {
+    const art = r % 5, anzahl = 5 + Math.floor(a() * 155), dicht = []; for (let t = 0; t < 600; t += 70) dicht.push(t);
+    const rel = [];
+    if (art === 0) for (let i = 0; i < anzahl; i++) rel.push(i * 63);
+    else if (art === 1) { const sp = Math.max(63, 9900 / anzahl); for (let i = 0; i < anzahl; i++) rel.push(i * sp); }
+    else if (art === 2) for (let i = 0; i < anzahl; i++) rel.push(9900 - (anzahl - i) * 63);
+    else if (art === 3) { let t = 0; for (let i = 0; i < anzahl && t < 9900; i++) { rel.push(t); t += 63 + a() * 150; } }
+    else { for (let i = 0; i < anzahl; i++) rel.push(Math.round(a() * 9800)); rel.sort((x, y) => x - y); for (let i = 1; i < rel.length; i++) if (rel[i] - rel[i - 1] < 63) rel[i] = rel[i - 1] + 63; }
+    const l = laufMit(dicht.slice(0, 9).concat(rel.filter((x) => x < 10_000).map((x) => x + 640)));
+    if (l.ende !== "ok") continue;
+    const o = obergrenze(l.tippsStr); zaehler++;
+    assert.ok(l.tippsStr <= REGELN.TAPS_MAX, "Tipps " + l.tippsStr);
+    assert.ok(l.dist <= o.m && l.vmax <= o.v, "Art " + art + ", " + l.tippsStr + " Tipps: " + l.dist + " m > " + o.m + " oder " + l.vmax + " > " + o.v);
+    schlimmster = Math.max(schlimmster, l.dist / o.m);
+  }
+  assert.ok(zaehler >= 100, "zu wenige gültige Läufe: " + zaehler);
+  assert.ok(schlimmster < 0.99, "Spielraum der Obergrenze zu knapp: " + schlimmster);
+});
+function zufallsquelle0(seed) { return () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; }; }
 
 console.log("Tempo-Sprint: Server");
 warte(700_000);   // Rundenzähler der früheren Fälle verfällt
-const tempoRunde = async (token = "tok-a") => { const s = await rufe({ session_token: token, aktion: "start", spiel: "tempo" }); assert.equal(s.ok, true); return s.runde; };
-const tempoErg = (runde, wert, tipps, token = "tok-a") => rufe({ session_token: token, aktion: "ergebnis", runde, wert, ...(tipps === undefined ? {} : { tipps }) });
+const tempoRunde = async (token = "tok-a") => { const s = await rufe({ session_token: token, aktion: "start", spiel: "sprint" }); assert.equal(s.ok, true); return s.runde; };
+const tempoErg = (runde, wert, extra, token = "tok-a") => rufe({ session_token: token, aktion: "ergebnis", runde, wert, ...(extra || {}) });
+const gut = (n) => { const o = obergrenze(n); const vmax = Math.floor(o.v); return { tipps: n, tippsAuf: 20, vmax, wert: Math.min(Math.ceil(o.m), Math.floor(vmax / 3.6 * 10) + 1) }; };   // größter erlaubter Wert zu n Tipps
 let tr;
-await pruefe("start für tempo liefert Runden-ID", async () => { tr = await tempoRunde(); assert.match(tr, /^[0-9a-f-]{36}$/); });
-await pruefe("sofort melden (ehrlich aussehende Werte) -> zu_schnell", async () => { const r = await tempoErg(tr, 150, 100); assert.equal(r.status, 400); assert.equal(r.error, "zu_schnell"); });
-await pruefe("42 s nach dem Start ist unmöglich (Countdown 3 + Lernphase 30 + Endspurt 10 = 43 s)", async () => { warte(42_000); const r = await tempoErg(tr, 150, 100); assert.equal(r.error, "zu_schnell"); });
-await pruefe("ohne / falsche tipps -> tipps_ungueltig; zu viele -> zu_viele_tipps", async () => {
-  for (const t of [undefined, null, "80", 1.5, -1, NaN, true]) { const r = await tempoErg(tr, 150, t); assert.equal(r.status, 400, String(t)); assert.equal(r.error, "tipps_ungueltig", String(t)); }
-  const z = await tempoErg(tr, 150, REGELN.TAPS_MAX + 1); assert.equal(z.error, "zu_viele_tipps");
-  const z2 = await tempoErg(tr, 150, 100000); assert.equal(z2.error, "zu_viele_tipps");
+await pruefe("start für sprint liefert Runden-ID; das alte Spiel „tempo“ gibt es nicht mehr", async () => {
+  tr = await tempoRunde(); assert.match(tr, /^[0-9a-f-]{36}$/);
+  const alt = await rufe({ session_token: "tok-a", aktion: "start", spiel: "tempo" }); assert.equal(alt.status, 400); assert.equal(alt.error, "spiel_unbekannt");
 });
-await pruefe("Wert außerhalb 0–420 -> wert_ausserhalb; Wert keine ganze Zahl -> wert_ungueltig", async () => {
-  for (const w of [-1, 421, 1000]) assert.equal((await tempoErg(tr, w, 100)).error, "wert_ausserhalb", String(w));
-  assert.equal((await tempoErg(tr, 150.5, 100)).error, "wert_ungueltig");
+await pruefe("sofort melden (ehrlich aussehende Werte) -> zu_schnell", async () => { const r = await tempoErg(tr, 600, { tipps: 100, tippsAuf: 20, vmax: 400 }); assert.equal(r.status, 400); assert.equal(r.error, "zu_schnell"); });
+await pruefe("12 s nach dem Start ist unmöglich (Countdown 3 + Auffahrt ≥ 0,4 + Autobahn 10 = 13,4 s)", async () => { warte(12_000); const r = await tempoErg(tr, 600, { tipps: 100, tippsAuf: 20, vmax: 400 }); assert.equal(r.error, "zu_schnell"); });
+await pruefe("fehlende / falsche tipps -> tipps_ungueltig; zu viele -> zu_viele_tipps", async () => {
+  for (const t of [undefined, null, "80", 1.5, -1, NaN, true]) { const r = await tempoErg(tr, 300, { tipps: t, tippsAuf: 20, vmax: 400 }); assert.equal(r.status, 400, String(t)); assert.equal(r.error, "tipps_ungueltig", String(t)); }
+  assert.equal((await tempoErg(tr, 300, { tipps: REGELN.TAPS_MAX + 1, tippsAuf: 20, vmax: 400 })).error, "zu_viele_tipps");
+  assert.equal((await tempoErg(tr, 300, { tipps: 100000, tippsAuf: 20, vmax: 400 })).error, "zu_viele_tipps");
 });
-await pruefe("Tempo, das mit so wenigen Tipps nicht möglich ist -> tempo_unmoeglich", async () => {
-  assert.equal((await tempoErg(tr, 250, 10)).error, "tempo_unmoeglich");
-  assert.equal((await tempoErg(tr, 200, 0)).error, "tempo_unmoeglich");
-  assert.equal((await tempoErg(tr, 345, 160)).error, "tempo_unmoeglich");
+await pruefe("Auffahrt: weniger als 7 oder mehr als 100 Tipps bis 60 km/h -> tipps_auffahrt_ungueltig (ohne 60 km/h kommt niemand auf die Autobahn)", async () => {
+  for (const a of [undefined, null, 0, 6, 101, 1.5, "20"]) assert.equal((await tempoErg(tr, 300, { tipps: 100, tippsAuf: a, vmax: 400 })).error, "tipps_auffahrt_ungueltig", String(a));
 });
-await pruefe("gültiges Ergebnis nach 43 s: Rekord, Platz 1 (größer ist besser)", async () => {
+await pruefe("vmax fehlt, keine ganze Zahl oder unter 60 -> tempo_ungueltig", async () => {
+  for (const v of [undefined, null, 59, 1.5, "400", -10]) assert.equal((await tempoErg(tr, 300, { tipps: 100, tippsAuf: 20, vmax: v })).error, "tempo_ungueltig", String(v));
+});
+await pruefe("Wert außerhalb 5 bis Obergrenze -> wert_ausserhalb; keine ganze Zahl -> wert_ungueltig", async () => {
+  for (const w of [-1, 4, 5000, 100000]) assert.equal((await tempoErg(tr, w, { tipps: 100, tippsAuf: 20, vmax: 400 })).error, "wert_ausserhalb", String(w));
+  assert.equal((await tempoErg(tr, 500.5, { tipps: 100, tippsAuf: 20, vmax: 400 })).error, "wert_ungueltig");
+});
+await pruefe("Tempo / Strecke, die mit so wenigen Tipps nicht möglich sind -> tempo_unmoeglich / strecke_unmoeglich / strecke_passt_nicht_zum_tempo", async () => {
+  assert.equal((await tempoErg(tr, 300, { tipps: 10, tippsAuf: 20, vmax: 700 })).error, "tempo_unmoeglich");
+  assert.equal((await tempoErg(tr, 300, { tipps: 0, tippsAuf: 20, vmax: 300 })).error, "tempo_unmoeglich");
+  const g = gut(10); assert.equal((await tempoErg(tr, g.wert + 400, { tipps: 10, tippsAuf: 20, vmax: g.vmax })).error, "strecke_unmoeglich");
+  assert.equal((await tempoErg(tr, 900, { tipps: 160, tippsAuf: 20, vmax: 300 })).error, "strecke_passt_nicht_zum_tempo");   // 300 km/h = 83 m/s: höchstens ca. 834 m in 10 s
+});
+await pruefe("gültiges Ergebnis nach 13,4 s: Rekord, Platz 1 (größer ist besser)", async () => {
   warte(1_500);
-  const r = await tempoErg(tr, 180, 120); assert.equal(r.ok, true, JSON.stringify(r)); assert.equal(r.rekord, true); assert.equal(r.bestwert, 180); assert.equal(r.platz, 1);
+  const r = await tempoErg(tr, 700, { tipps: 100, tippsAuf: 20, vmax: 400 }); assert.equal(r.ok, true, JSON.stringify(r)); assert.equal(r.rekord, true); assert.equal(r.bestwert, 700); assert.equal(r.platz, 1);
 });
-await pruefe("dieselbe Runde zweimal -> abgelehnt", async () => { assert.equal((await tempoErg(tr, 180, 120)).error, "runde_schon_benutzt"); });
+await pruefe("dieselbe Runde zweimal -> abgelehnt", async () => { assert.equal((await tempoErg(tr, 700, { tipps: 100, tippsAuf: 20, vmax: 400 })).error, "runde_schon_benutzt"); });
 await pruefe("niedrigerer Wert ist kein Rekord, Bestwert bleibt", async () => {
-  const r2 = await tempoRunde(); warte(43_000);
-  const r = await tempoErg(r2, 140, 70); assert.equal(r.rekord, false); assert.equal(r.bestwert, 180);
+  const r2 = await tempoRunde(); warte(13_500);
+  const r = await tempoErg(r2, 400, { tipps: 70, tippsAuf: 20, vmax: 300 }); assert.equal(r.rekord, false); assert.equal(r.bestwert, 700);
 });
-await pruefe("höherer Wert wird neuer Bestwert; Ranking: Höchsttempo zuerst", async () => {
-  const r2 = await tempoRunde(); warte(43_000);
-  const r = await tempoErg(r2, 205, 155); assert.equal(r.rekord, true); assert.equal(r.bestwert, 205);
-  const b = await tempoRunde("tok-b"); warte(43_000);
-  assert.equal((await tempoErg(b, 190, 140, "tok-b")).platz, 2);
-  const liste = await rufe({ session_token: "tok-a", aktion: "rangliste", spiel: "tempo" });
-  assert.deepEqual(liste.top.map((z) => z.wert), [205, 190]); assert.equal(liste.top[0].ich, true);
-  const u = await rufe({ session_token: "tok-a", aktion: "uebersicht" }); assert.equal(u.bestwerte.tempo, 205);
+await pruefe("höherer Wert wird neuer Bestwert; Ranking: größte Strecke zuerst", async () => {
+  const r2 = await tempoRunde(); warte(13_500);
+  const r = await tempoErg(r2, 900, { tipps: 130, tippsAuf: 20, vmax: 520 }); assert.equal(r.rekord, true); assert.equal(r.bestwert, 900);
+  const b = await tempoRunde("tok-b"); warte(13_500);
+  assert.equal((await tempoErg(b, 800, { tipps: 120, tippsAuf: 20, vmax: 480 }, "tok-b")).platz, 2);
+  const liste = await rufe({ session_token: "tok-a", aktion: "rangliste", spiel: "sprint" });
+  assert.deepEqual(liste.top.map((z) => z.wert), [900, 800]); assert.equal(liste.top[0].ich, true);
+  const u = await rufe({ session_token: "tok-a", aktion: "uebersicht" }); assert.equal(u.bestwerte.sprint, 900);
 });
-await pruefe("Grenze genau: Obergrenze(n) + 1 zählt, +2 nicht (n = 0, 1, 10, 50, 100, 160)", async () => {
+await pruefe("Grenze genau: größter erlaubter Wert zählt, +1 Tipp-Spielraum nicht (n = 0, 1, 10, 50, 100, 160)", async () => {
   for (const n of [0, 1, 10, 50, 100, 160]) {
-    const grenze = Math.min(REGELN.VTOP, Math.ceil(obergrenze(n)) + 1);
-    const ok1 = await tempoRunde(); warte(43_000);
-    const a = await tempoErg(ok1, grenze, n); assert.equal(a.ok, true, "n=" + n + " wert=" + grenze + " " + JSON.stringify(a));
-    if (grenze + 1 <= REGELN.VTOP) {
-      const ok2 = await tempoRunde(); warte(43_000);
-      const b = await tempoErg(ok2, grenze + 1, n); assert.equal(b.error, "tempo_unmoeglich", "n=" + n);
-    }
+    const g = gut(n);
+    if (g.vmax < REGELN.V_AUF) continue;
+    const ok1 = await tempoRunde(); warte(13_500);
+    const a = await tempoErg(ok1, g.wert, { tipps: g.tipps, tippsAuf: g.tippsAuf, vmax: g.vmax }); assert.equal(a.ok, true, "n=" + n + " " + JSON.stringify(g) + " " + JSON.stringify(a));
+    const ok2 = await tempoRunde(); warte(13_500);
+    const b = await tempoErg(ok2, g.wert + 1, { tipps: g.tipps, tippsAuf: g.tippsAuf, vmax: g.vmax }); assert.ok(b.status === 400 && /unmoeglich|passt_nicht|ausserhalb/.test(b.error), "n=" + n + " " + JSON.stringify(b));
   }
 });
-await pruefe("echte Läufe aus dem Spiel-Modell (Tippen mit 4–15,8 pro Sekunde) werden angenommen", async () => {
+await pruefe("echte Läufe aus dem Spiel-Modell (Tippen mit 6–15,8 pro Sekunde) werden angenommen", async () => {
   warte(700_000);
-  for (const rate of [4, 8, 12, 15.8]) {
-    const sim = simuliere("halten", rate);
-    const r = await tempoRunde(); warte(43_000);
-    const a = await tempoErg(r, sim.wert, sim.tipps); assert.equal(a.ok, true, "rate " + rate + " -> " + sim.wert + "/" + sim.tipps + " " + JSON.stringify(a));
+  for (const rate of [6, 8, 12, 15.8]) {
+    const sim = simuliere(rate);
+    const r = await tempoRunde(); warte(13_500);
+    const a = await tempoErg(r, sim.wert, { tipps: sim.tipps, tippsAuf: sim.tippsAuf, vmax: sim.vmax }); assert.equal(a.ok, true, "rate " + rate + " -> " + JSON.stringify([sim.wert, sim.tipps, sim.tippsAuf, sim.vmax]) + " " + JSON.stringify(a));
   }
 });
 await pruefe("tipps bei der Ampel werden ignoriert (kein Einfluss), Ampel-Regeln unverändert", async () => {
@@ -217,9 +237,9 @@ await pruefe("tipps bei der Ampel werden ignoriert (kein Einfluss), Ampel-Regeln
   const s = await rufe({ session_token: "tok-a", aktion: "start", spiel: "ampel" }); warte(5200);
   const r = await rufe({ session_token: "tok-a", aktion: "ergebnis", runde: s.runde, wert: 300, tipps: 99999 }); assert.equal(r.ok, true);
 });
-await pruefe("tempo-Runde wird nicht als ampel-Ergebnis verbucht (Wert 150 als Ampel wäre erlaubt, als Tempo gilt tempo-Grenze)", async () => {
-  const r = await tempoRunde(); warte(43_000);
-  assert.equal((await tempoErg(r, 150, undefined)).error, "tipps_ungueltig");
+await pruefe("sprint-Runde wird nicht als ampel-Ergebnis verbucht (Wert 300 als Ampel wäre erlaubt, als Sprint fehlen die Felder)", async () => {
+  const r = await tempoRunde(); warte(13_500);
+  assert.equal((await tempoErg(r, 300, undefined)).error, "tipps_ungueltig");
 });
 
 /* ===================== Spiel 3: Schilder-Memory ===================== */
@@ -261,7 +281,6 @@ await pruefe("Alle Verkehrszeichen sind AMTLICHE Bilddateien (nichts nachgezeich
   assert.ok(zeichen282("x").includes("z282.svg"));
   for (const v of TEMPO_ZAHLEN) assert.ok(zeichen274(v, "x").includes("z274-" + v + ".svg"));
   assert.throws(() => zeichen274(70, "x"), /kein Bild/);
-  assert.ok(REGELN.LIMITS.every((v) => TEMPO_ZAHLEN.includes(v)), "Tempo-Sprint braucht für jedes Schild ein Bild");
 });
 await pruefe("Karten: 12 Stück, je Schild genau eine Schild-Karte und eine Text-Karte, 6 verschiedene Paare, gemischt", async () => {
   const zufall = zufallsquelle(7);

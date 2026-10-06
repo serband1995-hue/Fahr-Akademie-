@@ -8,7 +8,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 //   { aktion: "profil", sichtbar: true|false }  -> im Ranking sichtbar / ausgeblendet
 //   { aktion: "start", spiel }                  -> neue Runde; liefert eine einmalige Runden-ID
 //   { aktion: "ergebnis", runde, wert, … }    -> Ergebnis einer Runde, prüft Plausibilität, speichert Bestwert
-//                                                  (zusätzlich je Spiel: tipps = Tempo-Sprint, zuege + fehler = Memory, richtig = Rechts vor Links)
+//                                                  (zusätzlich je Spiel: tipps/tippsAuf/vmax = Tempo-Sprint, zuege + fehler = Memory, richtig = Rechts vor Links)
 //   { aktion: "rangliste", spiel, limit }       -> beste Spieler (nur sichtbare), eigene Platzierung
 //
 // Der Name im Ranking kommt NIE vom Gerät, sondern aus dem Schülerkonto: Vorname + erster
@@ -31,17 +31,20 @@ function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 }
 
-// Tempo-Sprint (07.10.2026): dieselben Zahlen wie REGELN in spiele/tempo.js (die Prüfung pruefe-academy-spiele.mjs vergleicht beides).
-const TEMPO = { GAIN: 5, VTOP: 420, DECAY: 16, V0_MAX: 130, TAPS_MAX: 160, ABSTAND_MS: 60 };
-// Höchste Geschwindigkeit, die mit n Tipps im Endspurt überhaupt möglich ist: Start bei V0_MAX, alle Tipps gleich am Anfang im
-// dichtesten Abstand (spätere Tipps bringen nie mehr, das Tempo sinkt dazwischen nur), dazwischen der Rollverlust.
-function tempoObergrenze(n: number): number {
-  let v = TEMPO.V0_MAX;
-  for (let i = 0; i < n; i++) {
-    if (i > 0) v = Math.max(0, v - TEMPO.DECAY * TEMPO.ABSTAND_MS / 1000);
-    v = Math.min(TEMPO.VTOP, v + TEMPO.GAIN * (1 - v / TEMPO.VTOP));
+// Tempo-Sprint (umgebaut 08.10.2026, Spiel-Id "sprint"): dieselben Zahlen wie REGELN in spiele/tempo.js (die Prüfung pruefe-academy-spiele.mjs vergleicht beides).
+const SPRINT = { GAIN: 9, VTOP: 1400, DECAY: 40, V0_MAX: 70, V_AUF: 60, TAPS_MAX: 160, TIPPS_AUF_MIN: 7, TIPPS_AUF_MAX: 100, ABSTAND_MS: 60, STRECKE_MS: 10_000, MARGE: 1.03, MARGE_M: 5 };
+// Höchste Strecke (m) und höchstes Tempo (km/h), die mit n Tipps auf der Autobahn überhaupt möglich sind: Start bei V0_MAX, alle Tipps gleich am
+// Anfang im dichtesten Abstand, dazwischen der Rollverlust; 5-ms-Schritte, dazu 3 % und 5 m Spielraum (gleiche Rechnung wie obergrenze() in tempo.js).
+function sprintObergrenze(n: number): { v: number; m: number } {
+  const DT = 5;
+  let v = SPRINT.V0_MAX, m = 0, vmax = v, taps = 0, naechster = 0;
+  for (let t = 0; t < SPRINT.STRECKE_MS; t += DT) {
+    if (taps < n && t >= naechster) { v = Math.min(SPRINT.VTOP, v + SPRINT.GAIN * (1 - v / SPRINT.VTOP)); taps++; naechster += SPRINT.ABSTAND_MS; if (v > vmax) vmax = v; }
+    const vAlt = v;
+    v = Math.max(0, v - SPRINT.DECAY * DT / 1000);
+    m += (vAlt + v) / 2 / 3.6 * DT / 1000;
   }
-  return v;
+  return { v: vmax * SPRINT.MARGE, m: m * SPRINT.MARGE + SPRINT.MARGE_M };
 }
 
 // Schilder-Memory (07.10.2026): dieselben Zahlen wie PAARE / ZUG_MIN_MS / ZURUECK_MS in spiele/memory.js (die Prüfung vergleicht sie).
@@ -51,9 +54,9 @@ const VORFAHRT = { AUFGABEN: 10, MIN_PUNKTE: 100, MAX_PUNKTE: 150 };
 const istGanz = (x: unknown): x is number => typeof x === "number" && Number.isInteger(x);
 
 // Je Spiel: Richtung des Rankings und menschlich mögliche Grenzen.
-//  aufsteigend true  = kleiner ist besser (Reaktionszeit in ms); false = größer ist besser (Höchsttempo in km/h)
+//  aufsteigend true  = kleiner ist besser (Reaktionszeit in ms); false = größer ist besser (Strecke in m, Punkte)
 //  vorlauf_ms        = so lange dauert die Runde MINDESTENS, bevor der Wert entsteht
-//                      Ampel: Lichter + kürzeste Wartezeit; Tempo-Sprint: Countdown 3 s + Lernphase 30 s + Endspurt 10 s
+//                      Ampel: Lichter + kürzeste Wartezeit; Tempo-Sprint: Countdown 3 s + Auffahrt (mindestens 0,4 s) + Autobahn 10 s
 //  wert_ist_zeit     = true: der Wert (ms) kommt NACH dem Vorlauf dazu (Ampel); false: der Wert ist keine Zeit (Tempo-Sprint)
 //  runde_max_ms      = so lange darf eine Runde offen sein (Standard RUNDE_MAX_MS); Memory und Rechts vor Links dauern länger
 //  pruefe            = zusätzliche Plausibilität; gibt einen Fehlernamen zurück oder null
@@ -62,15 +65,20 @@ const SPIELE: Record<string, {
   pruefe?: (wert: number, body: Record<string, unknown>) => string | null;
 }> = {
   ampel: { aufsteigend: true, min: 120, max: 1500, vorlauf_ms: 4600, wert_ist_zeit: true },
-  tempo: {
-    aufsteigend: false, min: 0, max: TEMPO.VTOP, vorlauf_ms: 43_000, wert_ist_zeit: false,
+  // Tempo-Sprint: Wert = Strecke in Metern auf der Autobahn (10 s), größer ist besser. Zusätzlich: tipps (Autobahn), tippsAuf (Auffahrt), vmax (km/h).
+  // Mehr als 16 Tipps pro Sekunde (160 in 10 s) schafft kein Mensch; ohne Höchsttempo, aber Strecke und Tempo müssen zur Spielregel passen.
+  sprint: {
+    aufsteigend: false, min: 5, max: Math.ceil(sprintObergrenze(SPRINT.TAPS_MAX).m), vorlauf_ms: 13_000, wert_ist_zeit: false,
     pruefe: (wert, body) => {
-      const tipps = body.tipps;
-      // Mehr als 16 Tipps pro Sekunde (160 im 10-s-Endspurt) schafft kein Mensch; ohne Angabe zählt die Runde nicht
-      if (typeof tipps !== "number" || !Number.isInteger(tipps) || tipps < 0) return "tipps_ungueltig";
-      if (tipps > TEMPO.TAPS_MAX) return "zu_viele_tipps";
-      // Das Tempo muss zur Spielregel passen: mit n Tipps ist höchstens tempoObergrenze(n) möglich (+1 für Rundung)
-      if (wert > Math.ceil(tempoObergrenze(tipps)) + 1) return "tempo_unmoeglich";
+      const { tipps, tippsAuf, vmax } = body;
+      if (!istGanz(tipps) || tipps < 0) return "tipps_ungueltig";
+      if (tipps > SPRINT.TAPS_MAX) return "zu_viele_tipps";
+      if (!istGanz(tippsAuf) || tippsAuf < SPRINT.TIPPS_AUF_MIN || tippsAuf > SPRINT.TIPPS_AUF_MAX) return "tipps_auffahrt_ungueltig";   // ohne 60 km/h kommt niemand auf die Autobahn
+      if (!istGanz(vmax) || vmax < SPRINT.V_AUF) return "tempo_ungueltig";
+      const grenze = sprintObergrenze(tipps);
+      if (vmax > Math.ceil(grenze.v)) return "tempo_unmoeglich";
+      if (wert > Math.ceil(grenze.m)) return "strecke_unmoeglich";
+      if (wert > Math.floor(vmax / 3.6 * 10) + 1) return "strecke_passt_nicht_zum_tempo";    // 10 s mit höchstens vmax
       return null;
     },
   },

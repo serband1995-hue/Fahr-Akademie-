@@ -121,34 +121,29 @@
 .sp-karte-marke{align-self:flex-start;font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
   padding:2px 9px;border-radius:var(--r-pill);background:var(--gold);color:var(--auf-gold);}
 
-/* ---- Spiel: Tempo-Sprint ----
+/* ---- Spiel: Tempo-Sprint (umgebaut 08.10.2026: Schein-3D-Autobahn auf einer Zeichenfläche) ----
    Wichtig: Tacho, Straße, Meldung UND Tippfläche müssen zusammen auf einen Handy-Bildschirm (360 x 740, 320 x 640),
    über der Menüleiste (ca. 90 px). Darum alles kompakt; die Tippfläche richtet sich nach der Bildschirmhöhe. */
 .sp-tempo-spiel{display:grid;gap:10px;}
 .sp-tempo-spiel .sp-spieltitel{font-size:20px;}
 .sp-t-buehne{display:grid;gap:8px;padding:10px;scroll-margin-top:8px;}
-.sp-t-hud{display:grid;grid-template-columns:clamp(52px,16vw,68px) 1fr clamp(56px,17vw,72px);align-items:center;gap:var(--sp-m);}
-.sp-t-schild{width:100%;aspect-ratio:1;}
-.sp-t-schild svg,.sp-t-schild img,.sp-t-weg-schild svg,.sp-t-weg-schild img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35));}
-.sp-t-tacho{display:flex;flex-direction:column;align-items:center;line-height:1;}
-.sp-t-zahl{font-family:var(--ff-titel);font-size:clamp(40px,13vw,56px);font-weight:700;font-variant-numeric:tabular-nums;}
+.sp-t-hud{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:var(--sp-m);}
+.sp-t-tacho{display:flex;flex-direction:column;align-items:center;line-height:1;min-width:92px;}
+.sp-t-zahl{font-family:var(--ff-titel);font-size:clamp(38px,12vw,52px);font-weight:700;font-variant-numeric:tabular-nums;}
 .sp-t-tacho small{font-size:13px;font-weight:700;color:var(--muted);margin-top:1px;}
-.sp-t-rest{text-align:end;font-size:15px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;}
+.sp-t-strecke{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap;}
+.sp-t-strecke small{font-size:13px;font-weight:700;color:var(--muted);}
+.sp-t-rest{text-align:end;font-size:16px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;}
 .sp-t-leiste{height:6px;border-radius:3px;background:var(--surface-strong);overflow:hidden;}
 .sp-t-leiste i{display:block;height:100%;width:0;background:var(--gruen-hell);}
 .sp-t-leiste i.spurt{background:var(--gold);}
-.sp-t-szene{position:relative;overflow:hidden;border-radius:var(--r-m);aspect-ratio:16/6.5;background:#8fb8de;}
-.sp-t-svg{position:absolute;inset:0;width:100%;height:100%;display:block;}
-.sp-t-weg{position:absolute;inset:0;pointer-events:none;}
-.sp-t-weg-schild{position:absolute;aspect-ratio:1;}
-.sp-t-mast{position:absolute;min-width:1px;background:#8b8d94;}
-.sp-t-blitz{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;}
-.sp-t-blitz.an{animation:sp-blitz .7s ease-out;}
-@keyframes sp-blitz{0%{opacity:.95;}100%{opacity:0;}}
+.sp-t-leiste i.warn{background:var(--warn);}
+.sp-t-szene{position:relative;overflow:hidden;border-radius:var(--r-m);aspect-ratio:16/7;background:#8fb8de;}
+.sp-t-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
 .sp-t-meldung{min-height:2.7em;text-align:center;font-size:14.5px;line-height:1.35;color:var(--muted);display:flex;align-items:center;justify-content:center;font-weight:600;}
 .sp-t-meldung.warn{color:var(--warn);font-weight:800;}
 .sp-t-meldung.go{color:var(--gruen-text);font-weight:800;font-size:17px;}
-.sp-t-pad{width:100%;min-height:clamp(96px,21vh,170px);border:0;border-radius:var(--r-l);cursor:pointer;
+.sp-t-pad{width:100%;min-height:clamp(88px,19vh,170px);border:0;border-radius:var(--r-l);cursor:pointer;
   font-family:inherit;font-size:28px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
   touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;
   box-shadow:0 6px 18px rgba(43,40,30,.22);}
@@ -156,13 +151,13 @@
 .sp-t-pad.warte{background:var(--surface-strong);color:var(--muted);cursor:default;}
 .sp-t-pad.tippen{background:var(--gruen-hell);color:var(--auf-warn);}   /* auf-warn = Weiß (hell) / Dunkel (dunkel): passt auch auf dem helleren Grün */
 .sp-t-pad.tippen.spurt{background:var(--gold);color:var(--auf-gold);}
-.sp-t-pad.gesperrt{background:var(--warn);color:var(--auf-warn);cursor:default;}
-.sp-t-pad:active:not(.warte):not(.gesperrt){transform:scale(.985);}
+.sp-t-pad:active:not(.warte){transform:scale(.985);}
 .sp-t-pad:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
 .sp-t-anleitung{margin:0;line-height:1.5;}
 .sp-t-zahlen{list-style:none;margin:0;padding:0;display:grid;gap:6px;}
 .sp-t-zahlen li{display:flex;justify-content:space-between;gap:var(--sp-m);font-size:15px;}
 .sp-t-zahlen b{font-weight:800;}
+.sp-t-verpasst{margin:0;font-size:16px;line-height:1.45;}
 /* Querformat am Handy: Bühne links, große Tippfläche rechts -- alles ohne Scrollen im Bild */
 @media (max-height:520px){
   .sp-tempo-spiel{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);align-items:stretch;}
@@ -171,14 +166,11 @@
   .sp-tempo-spiel > .sp-t-pad{grid-column:2;grid-row:1;min-height:0;height:100%;font-size:24px;}
   .sp-tempo-spiel .sp-spieltitel{display:none;}
   .sp-t-buehne{padding:8px;gap:6px;}
-  .sp-t-hud{grid-template-columns:52px 1fr 60px;}
-  .sp-t-zahl{font-size:42px;}
-  .sp-t-szene{aspect-ratio:16/4.4;}
+  .sp-t-zahl{font-size:40px;}
+  .sp-t-strecke{font-size:17px;}
+  .sp-t-szene{aspect-ratio:16/5.4;}
   .sp-t-meldung{min-height:2.3em;font-size:13px;}
   .sp-t-anleitung{display:none;}
-}
-@media (prefers-reduced-motion:reduce){
-  .sp-t-blitz.an{animation:none;opacity:.35;}
 }
 
 /* ================= Spiel 3: Schilder-Memory ================= */
