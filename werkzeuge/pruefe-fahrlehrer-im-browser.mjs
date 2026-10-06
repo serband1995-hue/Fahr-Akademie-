@@ -74,6 +74,7 @@ async function neueSeite(opt) {
   }, { ablauf: inEinemJahr, sprache: opt.sprache || "de", ohneFlag: !!opt.ohneFlag });
   const seite = await ctx.newPage();
   seite.fehler = [];
+  seite.breite = opt.b;   // Sollbreite des Geräts: bei zu breitem Inhalt vergrößert der Handy-Browser sonst window.innerWidth selbst und nichts fiele auf
   seite.on("pageerror", (e) => seite.fehler.push("pageerror: " + e.message));
   seite.on("console", (m) => { if (m.type() === "error" && !/Failed to load resource|net::ERR|fonts\.g/.test(m.text())) seite.fehler.push("console: " + m.text()); });
   await seite.route("**/*", async (route) => {
@@ -115,16 +116,20 @@ const zumSpiel = async (s) => {
 
 /* Layout: nichts seitlich wischbar, nichts abgeschnitten, Tippflächen groß genug (Zeichnung der Szene selbst ausgenommen: sie wird beschnitten) */
 async function layoutPruefen(s, name) {
-  const r = await s.evaluate(() => {
+  const r = await s.evaluate((B) => {
     const probleme = [];
     const de = document.documentElement;
-    if (de.scrollWidth > window.innerWidth + 1) probleme.push("Seite wischbar: " + de.scrollWidth + " > " + window.innerWidth);
+    if (de.scrollWidth > B + 1) probleme.push("Seite wischbar: " + de.scrollWidth + " > " + B);
     document.querySelectorAll("#spiele-platz *").forEach((el) => {
       if (el.closest("svg") && el.tagName.toLowerCase() !== "svg") return;
       const rc = el.getBoundingClientRect();
       if (rc.width === 0 || rc.height === 0) return;
-      if (rc.right > window.innerWidth + 1 || rc.left < -1) probleme.push("ragt raus: " + el.className + " " + Math.round(rc.left) + ".." + Math.round(rc.right));
-      if (el.children.length === 0 && el.scrollWidth > el.clientWidth + 2 && getComputedStyle(el).overflow !== "visible") probleme.push("abgeschnitten: " + el.className);
+      if (rc.right > B + 1 || rc.left < -1) probleme.push("ragt raus: " + el.className + " " + Math.round(rc.left) + ".." + Math.round(rc.right));
+      if (el.children.length === 0 && el.textContent.trim()) {   // Text breiter als sein Kasten (auch bei sichtbarem Überlauf; Buttons melden hier scrollWidth nicht zuverlässig -> Textbreite per Range messen)
+        const rg = document.createRange(); rg.selectNodeContents(el);
+        const tr = rg.getBoundingClientRect();
+        if (tr.right > rc.right + 1.5 || tr.left < rc.left - 1.5 || el.scrollWidth > el.clientWidth + 2) probleme.push("Text läuft über den Rand: " + el.className + " " + Math.round(tr.left) + ".." + Math.round(tr.right) + " in " + Math.round(rc.left) + ".." + Math.round(rc.right));
+      }
       if (el.matches(".sp-fl-wahl,.sp-fl-weiter,.sp-fl-aufloesung,.sp-fl-bild,.sp-fl-frage,.sp-fl-zeilentext,.sp-fl-regel p") && el.scrollHeight > el.clientHeight + 2 && getComputedStyle(el).overflowY !== "visible") probleme.push("Text abgeschnitten (Höhe): " + el.className);
     });
     document.querySelectorAll(".sp-fl-wahl,.sp-fl-weiter,.sp-fl-knopf,.sp-schalter,.sp-karte").forEach((el) => {
@@ -132,7 +137,7 @@ async function layoutPruefen(s, name) {
       if (rc.height > 0 && (rc.height < 43.5 || rc.width < 43.5)) probleme.push("Tippfläche klein: " + el.className + " " + Math.round(rc.width) + "x" + Math.round(rc.height));
     });
     return probleme;
-  });
+  }, s.breite);
   pruefe(name + ": Layout ohne Überstand/Abschneiden/kleine Knöpfe", r.length === 0, r.slice(0, 4).join(" | "));
 }
 /* Ist das Element nach dem Scrollen ans Seitenende noch über der Menüleiste und im Bild? */
