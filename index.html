@@ -8806,11 +8806,18 @@ function spieleSichtbar(){
 async function spieleAufruf(body){
   if(!session || !session.session_token) throw new Error("keine_sitzung");
   const headers = { "Content-Type": "application/json", "Authorization": "Bearer " + SUPABASE_ANON_KEY };
-  const res = await fetch(SUPABASE_URL + "/functions/v1/academy-spiele", {
-    method: "POST", headers: headers, body: JSON.stringify(Object.assign({ session_token: session.session_token }, body))
-  });
+  // Zeitlimit 20 s: hängt das Netz, bricht der Aufruf ab und wird wie ein Netzfehler behandelt (Fehlertext "netzwerk", kein endgültiger Servercode)
+  const abbruch = new AbortController();
+  const wecker = setTimeout(function(){ abbruch.abort(); }, 20000);
+  let res;
+  try{
+    res = await fetch(SUPABASE_URL + "/functions/v1/academy-spiele", {
+      method: "POST", headers: headers, body: JSON.stringify(Object.assign({ session_token: session.session_token }, body)), signal: abbruch.signal
+    });
+  } catch(e){ clearTimeout(wecker); throw new Error("netzwerk"); }
   let data = {};
   try{ data = await res.json(); } catch(e){}
+  clearTimeout(wecker);
   if(res.ok && data.ok) return data;
   if(istAbmeldeGrund(data)){ abmeldenWegen(data.code); throw new Error("abgemeldet"); }
   throw new Error(data.code || "fehler");

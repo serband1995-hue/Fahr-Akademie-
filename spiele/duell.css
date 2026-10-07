@@ -1,0 +1,101 @@
+/* Spiel 10: Duell gegen Mitschüler (06.10.2026). Eigene Datei, wird von spiele/duell.js selbst geladen.
+   Nur die Farb-/Abstandswerte der App (:root in index.html) und die Klassen der Spielekarten (.karte, .sp-*), deshalb passt es sich dem Dunkelmodus an.
+   Handy zuerst (320–412 px), dann Querformat. */
+
+.du-spiel{display:grid;gap:12px;}
+.du-hinweis{margin:0;line-height:1.5;}
+.du-fehler{margin:0;font-size:14px;line-height:1.45;color:var(--warn);font-weight:600;}
+.du-fehler[hidden]{display:none;}
+
+/* ---- Knöpfe ---- */
+.du-knopf{display:flex;align-items:center;justify-content:center;width:100%;min-height:52px;padding:10px 16px;border:0;border-radius:var(--r-l);cursor:pointer;
+  font-family:inherit;font-size:17px;font-weight:800;letter-spacing:.02em;text-align:center;line-height:1.25;
+  background:var(--gruen);color:var(--auf-tief);touch-action:manipulation;-webkit-tap-highlight-color:transparent;box-shadow:0 4px 14px rgba(43,40,30,.18);}
+.du-knopf.zweit{background:var(--bg);color:var(--text);border:1.5px solid var(--hairline);box-shadow:none;font-weight:700;}
+.du-knopf:disabled{opacity:.5;cursor:default;box-shadow:none;}
+.du-knopf:focus-visible,.du-klein:focus-visible,.du-antwort:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.du-klein{flex:none;min-width:44px;min-height:44px;padding:8px 14px;border:0;border-radius:var(--r-m);cursor:pointer;font-family:inherit;font-size:15px;font-weight:800;
+  background:var(--gruen);color:var(--auf-tief);touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.du-klein:disabled{opacity:.5;cursor:default;}
+.du-knopf:active:not(:disabled),.du-klein:active:not(:disabled){transform:scale(.985);}
+
+/* ---- Übersicht ---- */
+.du-karte{display:grid;gap:10px;}
+.du-ueberschrift{margin:0;font-family:var(--ff-titel);font-size:18px;font-weight:600;}
+.du-bilanz{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;text-align:center;}
+.du-bilanz > div{display:flex;flex-direction:column;gap:2px;min-width:0;padding:8px 4px;border-radius:var(--r-m);background:var(--surface-strong);}
+.du-bilanz b{font-family:var(--ff-titel);font-size:26px;line-height:1.1;font-variant-numeric:tabular-nums;}
+.du-bilanz .sp-label{font-size:12px;text-transform:none;letter-spacing:0;font-weight:700;overflow-wrap:break-word;hyphens:auto;}
+.du-bilanz .s b{color:var(--gruen-text);}
+.du-bilanz .n b{color:var(--warn);}
+.du-liste{list-style:none;margin:0;padding:0;display:grid;gap:8px;}
+.du-zeile{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;border-radius:var(--r-m);background:var(--surface-strong);}
+.du-zeile-text{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1 1 150px;}
+.du-zeile-titel{font-weight:700;font-size:15.5px;overflow-wrap:anywhere;}
+.du-zeile-sub{font-size:13px;color:var(--muted);line-height:1.35;overflow-wrap:anywhere;}
+.du-marke{display:inline-block;align-self:flex-start;padding:3px 10px;border-radius:var(--r-pill);font-size:12.5px;font-weight:800;background:var(--surface-tint);color:var(--gruen-text);}
+.du-marke.sieg{background:var(--gruen);color:var(--auf-tief);}
+.du-marke.niederlage{background:var(--warn);color:var(--auf-warn);}
+.du-marke.gleich{background:var(--gold);color:var(--auf-gold);}
+.du-punkte{font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap;}
+.du-wegweiser{margin:0;font-size:13px;color:var(--muted);line-height:1.4;}
+.du-profil:empty{display:none;}
+
+/* ---- Bereit ---- */
+.du-bereit{display:grid;gap:12px;text-align:start;}
+.du-bereit .du-ueberschrift{font-size:22px;}
+
+/* ---- Frage ---- */
+.du-buehne{display:grid;gap:10px;padding:12px;scroll-margin-top:8px;}
+.du-kopf{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-m);font-weight:700;font-size:14px;color:var(--muted);}
+.du-leiste{height:6px;border-radius:3px;background:var(--surface-strong);overflow:hidden;}
+.du-leiste i{display:block;height:100%;width:100%;background:var(--gruen-hell);}
+.du-leiste i.knapp{background:var(--warn);}
+.du-schild{display:flex;justify-content:center;}
+.du-schild img{display:block;width:clamp(96px,30vw,132px);height:clamp(96px,30vw,132px);object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.28));}
+.du-frage{margin:0;font-family:var(--ff-titel);font-size:clamp(17px,4.8vw,20px);font-weight:600;line-height:1.35;overflow-wrap:anywhere;hyphens:auto;}
+.du-antworten{display:grid;gap:10px;}
+.du-antwort{display:block;width:100%;min-height:56px;padding:12px 14px;border:1.5px solid var(--hairline);border-radius:var(--r-m);background:var(--bg);color:var(--text);
+  font-family:inherit;font-size:16px;font-weight:600;line-height:1.35;text-align:start;overflow-wrap:anywhere;hyphens:auto;cursor:pointer;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.du-antwort:active:not(:disabled){transform:scale(.99);}
+.du-antwort:disabled{cursor:default;}
+.du-antwort.gewaehlt{border-color:var(--gold);background:var(--surface-tint);box-shadow:inset 0 0 0 1.5px var(--gold);}
+.du-antwort.blass{opacity:.55;}
+
+/* ---- Ergebnis ---- */
+.du-erg{display:grid;gap:12px;}
+.du-erg-kopf{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-m);flex-wrap:wrap;}
+.du-gross{font-family:var(--ff-titel);font-size:44px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;}
+.du-urteil{font-family:var(--ff-titel);font-size:26px;font-weight:700;line-height:1.2;}
+.du-urteil.sieg{color:var(--gruen-text);}
+.du-urteil.niederlage{color:var(--warn);}
+.du-pruefung{display:grid;gap:10px;}
+.du-pr{display:grid;gap:6px;padding:12px;border-radius:var(--r-m);background:var(--surface-strong);border-inline-start:5px solid var(--hairline);}
+.du-pr.ok{border-inline-start-color:#2ea84f;}
+.du-pr.nein{border-inline-start-color:#e0442a;}
+.du-pr-kopf{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.du-pr-nr{font-size:12.5px;font-weight:700;color:var(--muted);}
+.du-pr-urteil{font-size:13px;font-weight:800;padding:2px 10px;border-radius:var(--r-pill);}
+.du-pr.ok .du-pr-urteil{background:var(--gruen);color:var(--auf-tief);}
+.du-pr.nein .du-pr-urteil{background:var(--warn);color:var(--auf-warn);}
+.du-pr-frage{margin:0;font-weight:700;font-size:15px;line-height:1.4;overflow-wrap:anywhere;}
+.du-pr-bild img{display:block;width:72px;height:72px;object-fit:contain;}
+.du-pr-zeile{margin:0;font-size:14px;line-height:1.4;overflow-wrap:anywhere;}
+.du-pr-zeile b{font-weight:800;}
+.du-pr-erkl{margin:0;font-size:13.5px;line-height:1.5;color:var(--muted);overflow-wrap:anywhere;}
+
+/* ---- Querformat am Handy: Schild + Frage links, Antworten rechts ---- */
+@media (max-height:520px){
+  .du-spiel .sp-spieltitel{display:none;}
+  .du-buehne{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:14px;align-content:start;padding:8px 10px;row-gap:6px;}
+  .du-kopf,.du-leiste{grid-column:1/-1;}
+  .du-vorn{grid-column:1;display:grid;gap:6px;align-content:start;}
+  .du-antworten{grid-column:2;gap:6px;align-content:start;}
+  .du-antwort{min-height:46px;padding:8px 12px;font-size:15px;}
+  .du-schild img{width:64px;height:64px;}
+  .du-frage{font-size:16px;}
+  .du-knopf{min-height:48px;font-size:16px;}
+}
+@media (min-height:521px){ .du-vorn{display:grid;gap:10px;} }
+@media (prefers-reduced-motion:reduce){ .du-knopf:active,.du-klein:active,.du-antwort:active{transform:none;} }

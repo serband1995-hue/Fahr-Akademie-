@@ -498,5 +498,22 @@ await pruefe("Fehler-Codes der Spiele melden nie ab", async () => {
   const abmeldeGruende = ["session_ungueltig", "session_abgelaufen", "zugang_gesperrt", "zugang_abgelaufen", "schule_pausiert"];
   for (const code of ["ergebnis_ungueltig", "eingabe_fehlt", "zu_viele_runden", "voruebergehend"]) assert.ok(!abmeldeGruende.includes(code));
 });
+await pruefe("Request-Body muss ein JSON-Objekt sein (null, Liste, Text, Zahl, kaputtes JSON -> 400 eingabe_fehlt)", async () => {
+  const roh = async (text) => { const res = await globalThis.__handler(new Request("http://x/", { method: "POST", body: text })); return { status: res.status, ...(await res.json()) }; };
+  for (const t of ["null", "[]", '"x"', "5", "{kaputt", ""]) { const r = await roh(t); assert.equal(r.status, 400, JSON.stringify(t)); assert.equal(r.code, "eingabe_fehlt"); }
+  assert.equal((await roh("{}")).status, 401);
+});
+await pruefe("Interner Fehler: der Client bekommt nur den festen Text (500 voruebergehend), nie die Fehlermeldung (alte Aktionen: uebersicht, start, ergebnis, rangliste)", async () => {
+  const alt = console.error; console.error = () => {};
+  try {
+    for (const [tabelle, aufruf] of [["academy_spiele_bestwerte", { aktion: "uebersicht" }], ["academy_spiele_runden", { aktion: "start", spiel: "ampel" }], ["academy_spiele_profil", { aktion: "profil", sichtbar: true }]]) {
+      const gesichert = db[tabelle]; db[tabelle] = null;
+      try {
+        const r = await rufe(A(aufruf)); assert.equal(r.status, 500, aufruf.aktion); assert.deepEqual(Object.keys(r).sort(), ["code", "error", "status"]);
+        assert.equal(r.error, "voruebergehend"); assert.ok(!/TypeError|Cannot|null|filter|undefined/.test(JSON.stringify(r)), JSON.stringify(r));
+      } finally { db[tabelle] = gesichert; }
+    }
+  } finally { console.error = alt; }
+});
 
 console.log(`\n${ok} Prüfungen bestanden` + (process.exitCode ? " – ES GIBT FEHLER" : ""));
