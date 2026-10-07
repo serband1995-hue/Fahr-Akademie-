@@ -36,6 +36,8 @@
 .sp-fl-frage.urteil{font-size:18px;font-weight:800;}
 .sp-fl-frage.urteil.ja{color:var(--gruen-text);}
 .sp-fl-frage.urteil.nein{color:var(--warn);}
+.sp-fl-frage.urteil::before{content:"";display:inline-block;width:1.15em;height:1.15em;margin-inline-end:.45em;vertical-align:-.2em;background:center/contain no-repeat var(--ico-haken);}
+.sp-fl-frage.urteil.nein::before{background-image:var(--ico-x);}
 
 /* Antworten */
 .sp-fl-antworten{display:grid;gap:8px;min-width:0;}
@@ -46,9 +48,9 @@
 .sp-fl-wahl:active:not(:disabled){transform:scale(.99);}
 .sp-fl-wahl:disabled{cursor:default;}
 .sp-fl-wahl.richtig{border-color:#2ea84f;box-shadow:inset 0 0 0 1.5px #2ea84f;background:var(--surface-tint);}
-.sp-fl-wahl.richtig::before{content:"\2713\00a0";color:var(--gruen-text);font-weight:800;}
+.sp-fl-wahl.richtig::before,.sp-fl-wahl.falsch::before{content:"";display:inline-block;width:1.1em;height:1.1em;margin-inline-end:.4em;vertical-align:-.2em;background:center/contain no-repeat var(--ico-haken);}
 .sp-fl-wahl.falsch{border-color:var(--warn);box-shadow:inset 0 0 0 1.5px var(--warn);}
-.sp-fl-wahl.falsch::before{content:"\2717\00a0";color:var(--warn);font-weight:800;}
+.sp-fl-wahl.falsch::before{background-image:var(--ico-x);}
 .sp-fl-wahl.blass{opacity:.5;}
 
 /* Auflösung nach der Runde */
@@ -56,9 +58,9 @@
 .sp-fl-zeile{display:flex;align-items:flex-start;gap:10px;min-width:0;}
 .sp-fl-marke{flex:none;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;line-height:1;margin-top:1px;}
 .sp-fl-zeile.ja .sp-fl-marke{background:#2ea84f;color:#fff;}
-.sp-fl-zeile.ja .sp-fl-marke::before{content:"\2713";}
+.sp-fl-marke::before{content:"";width:15px;height:15px;background:center/contain no-repeat var(--ico-haken-w);}
 .sp-fl-zeile.nein .sp-fl-marke{background:var(--warn);color:var(--auf-warn);}
-.sp-fl-zeile.nein .sp-fl-marke::before{content:"\2717";}
+.sp-fl-zeile.nein .sp-fl-marke::before{background-image:var(--ico-x-w);}
 .sp-fl-zeilentext{min-width:0;font-size:14.5px;line-height:1.4;overflow-wrap:anywhere;}
 .sp-fl-zeilentext .sp-label{margin-bottom:1px;}
 .sp-fl-plus{margin-inline-start:6px;color:var(--gruen-text);font-weight:800;letter-spacing:0;}

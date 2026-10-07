@@ -90,7 +90,8 @@
 .sp-k-art{font-size:12.5px;font-weight:700;color:var(--muted);}
 .sp-k-art.richtig{color:var(--gruen-text);}
 .sp-k-art.alarm,.sp-k-art.uebersehen{color:var(--warn);}
-.sp-k-art::before{content:"";display:inline-block;width:.7em;height:.7em;margin-inline-end:.4em;border-radius:50%;background:currentColor;}
+.sp-k-art::before{content:"";display:inline-block;width:1.1em;height:1.1em;margin-inline-end:.35em;vertical-align:-.2em;background:center/contain no-repeat var(--ico-haken);}
+.sp-k-art.alarm::before,.sp-k-art.uebersehen::before{background-image:var(--ico-x);}
 .sp-k-satz{margin:0;padding-inline-start:9px;border-inline-start:4px solid var(--hairline);font-size:14px;line-height:1.42;overflow-wrap:anywhere;}
 .sp-k-satz.ok{border-inline-start-color:#2ea84f;}
 .sp-k-satz.mangel{border-inline-start-color:#d3382c;}

@@ -274,7 +274,7 @@ export function starte(platz, k) {
     const letzte = idx >= ANZAHL_AUFGABEN - 1;
     const zeilen = [];
     zeilen.push('<div class="sp-v-urteil ' + (stimmt ? "ja" : "nein") + '">' + k.esc(stimmt ? k.tx("vorRichtig") + " +" + gewinn : (arm == null ? k.tx("vorZeitAus") : k.tx("vorFalsch"))) + "</div>");
-    zeilen.push('<p class="sp-v-regel gruen" dir="auto">' + k.esc(k.tx({ frei: "vorGFrei", rechts: "vorGRechts", gegen: "vorGGegen" }[a.grund])) + "</p>");   // grünes Zeichen = das grün umrandete Auto
+    zeilen.push('<p class="sp-v-regel gruen" dir="auto">' + k.esc(k.tx({ frei: "vorGFrei", rechts: "vorGRechts", gegen: "vorGGegen" }[a.grund])) + "</p>");   // grüner Haken = Begründung für das richtige (grün umrandete) Auto
     if (gewaehlt && !stimmt) {
       const w = grundWarten(a.autos, gewaehlt);
       if (w) zeilen.push('<p class="sp-v-regel warten rot" dir="auto">' + k.esc(k.tx(w === "rechts" ? "vorWRechts" : "vorWGegen")) + "</p>");

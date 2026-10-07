@@ -91,7 +91,7 @@ const WELT = {
   F: 0.55, CAMH: 2.4, ZC: 6.5, HZ: 0.38,        // Brennweite (mal Breite), Kamerahöhe, Abstand Kamera–Auto, Horizont (mal Höhe)
   HW: 3.5, RAMPE: 3.5, R_VOLL: 60, R_ENDE: 90,   // halbe Autobahnbreite, Rampenbreite, Rampe voll bis …, Rampe zu Ende bei … (Meter ab Start)
   X_RAMPE: 5.25, X_SPUR: 1.75,                    // Mitte der Rampe / der rechten Fahrspur
-  MERGE_MS: 1100
+  MERGE_MS: 1900                                  // Zeit für den Spurwechsel von der Auffahrt auf die Autobahn (länger = weicher)
 };
 function rampBreite(s) {
   if (s >= WELT.R_ENDE) return 0;
@@ -241,7 +241,7 @@ function demoAnsicht(tSek) {
   const v = tempoBei(t);
   const m = sanft((t - 1.8) / (WELT.MERGE_MS / 1000));
   const dm = (sanft((t - 1.8 + 0.02) / (WELT.MERGE_MS / 1000)) - m) / 0.02 * (WELT.X_SPUR - WELT.X_RAMPE);
-  return { s: s, v: v, carX: WELT.X_RAMPE + (WELT.X_SPUR - WELT.X_RAMPE) * m, rot: Math.atan(dm / Math.max(8, v / 3.6)) * 1.6, t: tSek, bremse: false, t0: t };
+  return { s: s, v: v, carX: WELT.X_RAMPE + (WELT.X_SPUR - WELT.X_RAMPE) * m, rot: Math.atan(dm / Math.max(14, v / 3.6)) * 1.0, t: tSek, bremse: false, t0: t };
 }
 
 export function starte(platz, k) {
@@ -258,6 +258,7 @@ export function starte(platz, k) {
   let tLauf0 = 0;                // performance.now() beim Gas-geben
   let letzt = 0;                 // Zeitpunkt des letzten Rechenschritts
   let weltS = 0;                 // gefahrene Meter für die Zeichnung
+  let vSicht = 0;                // geglättetes Tempo nur für die Zeichnung (Tipp-Sprünge ruckeln sonst die Landschaft); Tacho und Strecke bleiben echt
   let mergeT = 0;                // ms seit dem Auffahren (Spurwechsel-Bewegung)
   let ergebnisDaten = null;
   let padSperreBis = 0;
@@ -326,7 +327,7 @@ export function starte(platz, k) {
   function anleitungZeigen() { anleitung.hidden = imSpiel(); }   // unter der Tippfläche: ändert nichts an ihrer Lage
 
   function bereitMachen() {
-    zustand = "bereit"; anleitungZeigen(); lauf = null; weltS = 0;
+    zustand = "bereit"; anleitungZeigen(); lauf = null; weltS = 0; vSicht = 0;
     demoAb = performance.now();
     setZahl(0); setStrecke(0); restEl.textContent = ""; anzeige.rest = null; leisteSetzen(0);
     setMeldung("");
@@ -344,7 +345,7 @@ export function starte(platz, k) {
     const meine = ++nr;
     zustand = "start"; anleitungZeigen(); runde = null; ergebnisDaten = null; speicherInfo = ""; ergId++;
     ergebnis.hidden = true; ergebnis.innerHTML = "";
-    lauf = null; weltS = 0; mergeT = 0;
+    lauf = null; weltS = 0; vSicht = 0; mergeT = 0;
     setZahl(0); setStrecke(0); leisteSetzen(0); restEl.textContent = ""; anzeige.rest = null;
     setMeldung(k.tx("tempoGleich"));
     setPad("warte", "…");
@@ -387,14 +388,20 @@ export function starte(platz, k) {
     setMeldung(k.tx("tempoGas"), "go");
   }
 
+  /* Das gezeichnete Tempo folgt dem echten mit kurzer Verzögerung (ca. 0,15 s): kein Ruck bei jedem Tipp, die Meter für die Landschaft laufen gleichmäßig. */
+  function sichtFortschritt(ziel, dt) {
+    const alt = vSicht;
+    vSicht += (ziel - vSicht) * (1 - Math.exp(-dt / 150));
+    weltS += (alt + vSicht) / 2 / 3.6 * dt / 1000;
+  }
+
   /* Rechnet das Spiel bis `jetzt` fort. Wird vom Bildlauf UND vor jedem Tipp gerufen, damit ein Tipp immer auf dem aktuellen Stand landet. */
   function fortschritt(jetzt) {
     if (zustand !== "lauf") return;
     const dt = Math.max(0, Math.min(250, jetzt - letzt));    // ein hängendes Bild darf nicht plötzlich viel Tempo kosten
     letzt = jetzt;
-    const vorher = lauf.v;
     schritt(lauf, dt);
-    weltS += (vorher + lauf.v) / 2 / 3.6 * dt / 1000;
+    sichtFortschritt(lauf.v, dt);
     if (lauf.phase === "str") mergeT += dt;
     if (lauf.ende) beenden();
   }
@@ -501,7 +508,7 @@ export function starte(platz, k) {
         const m = sanft(mergeT / WELT.MERGE_MS), mp = sanft((mergeT + 16) / WELT.MERGE_MS);
         const carX = WELT.X_RAMPE + (WELT.X_SPUR - WELT.X_RAMPE) * (l.phase === "str" ? m : 0);
         const dxdt = l.phase === "str" ? (mp - m) * (WELT.X_SPUR - WELT.X_RAMPE) / 0.016 : 0;
-        an = { s: weltS, v: l.v, carX: carX, rot: Math.atan(dxdt / Math.max(8, l.v / 3.6)) * 1.6, t: (jetzt - szeneT0) / 1000, bremse: false };
+        an = { s: weltS, v: vSicht, carX: carX, rot: Math.atan(dxdt / Math.max(14, vSicht / 3.6)) * 1.0, t: (jetzt - szeneT0) / 1000, bremse: false };
         setZahl(l.v);
         if (l.phase === "auf") {
           leisteSetzen(l.v / R.V_AUF, "warn");
@@ -516,8 +523,8 @@ export function starte(platz, k) {
     if (!an) {
       if (zustand === "fertig" && jetzt < demoAb) {
         const l = lauf;
-        an = { s: weltS, v: l ? l.v : 0, carX: l && l.phase === "str" ? WELT.X_SPUR : WELT.X_RAMPE, rot: 0, t: (jetzt - szeneT0) / 1000, bremse: !!(l && l.ende === "verpasst") };
-        if (l) { const vorher = l.v; l.v = rollen(l.v, 16); weltS += (vorher + l.v) / 2 / 3.6 * 0.016; setZahl(l.v); }
+        an = { s: weltS, v: vSicht, carX: l && l.phase === "str" ? WELT.X_SPUR : WELT.X_RAMPE, rot: 0, t: (jetzt - szeneT0) / 1000, bremse: !!(l && l.ende === "verpasst") };
+        if (l) { l.v = rollen(l.v, 16); sichtFortschritt(l.v, 16); setZahl(l.v); }
       } else if (zustand === "bereit" || zustand === "fertig") {
         an = demoAnsicht((jetzt - demoAb) / 1000);
       } else {                                // start / countdown: das Auto steht auf der Rampe, die anderen fahren vorbei
