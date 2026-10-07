@@ -38,6 +38,9 @@
 .ni-knopf.warte{background:var(--surface-strong);color:var(--muted);cursor:default;}
 .ni-knopf:focus-visible,.ni-weiter:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
 .ni-meldung{min-height:1.4em;text-align:center;font-size:13.5px;color:var(--muted);}
+.ni-meldung.ja::before,.ni-meldung.nein::before{content:"";display:inline-block;width:1.2em;height:1.2em;margin-inline-end:.35em;vertical-align:-.25em;background:center/contain no-repeat var(--ico-haken);}
+.ni-meldung.nein::before{background-image:var(--ico-x);}
+.ni-meldung:empty::before{display:none;}
 .ni-anleitung{margin:0;line-height:1.5;}
 .ni-antwort{display:grid;gap:8px;padding:10px;border-radius:var(--r-m);background:var(--surface-strong);min-width:0;}
 .ni-antwort[hidden]{display:none;}

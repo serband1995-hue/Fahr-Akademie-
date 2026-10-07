@@ -378,6 +378,7 @@ export function starte(platz, k) {
     if (zustand !== "spiel" || gewischt[sch.i] || erledigt[sch.i]) return;
     gewischt[sch.i] = true; erledigt[sch.i] = true;
     const el = elemente[sch.i];
+    meldung.className = "ni-meldung " + (sch.richtig ? "ja" : "nein");
     if (sch.richtig) { rundeRichtig++; meldung.textContent = k.tx("niRichtigMsg", { v: PKT_RICHTIG }); }
     else { rundeFalsch++; meldung.textContent = k.tx("niFalschMsg", { v: ABZUG_FALSCH }); }
     setPunkte(liveStand());
