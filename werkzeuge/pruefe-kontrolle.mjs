@@ -244,7 +244,7 @@ await pruefe("alle Sprachen haben genau dieselben Schlüssel wie Deutsch, alle m
     assert.equal(new Set(k).size, k.length);
   }
   assert.ok(deKeys.every((x) => /^ko[A-Za-z0-9]+$/.test(x)));
-  assert.deepEqual(deKeys.filter((x) => x in TEXTE.de), [], "Schlüssel gibt es schon in texte.js");
+  assert.deepEqual(deKeys.filter((x) => new RegExp("\\n\\s+" + x + ":").test(readFileSync(new URL("../spiele/texte.js", import.meta.url), "utf8"))), [], "Schlüssel gibt es schon in texte.js");
 });
 await pruefe("kein Text leer, alles Text, nichts nur aus Platzhaltern", () => {
   for (const l of SPRACHEN) for (const [k, v] of Object.entries(TEXTE_KONTROLLE[l])) {

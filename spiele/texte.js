@@ -2321,3 +2321,13 @@ export function tx(sprache, schluessel, werte) {
   if (!werte) return t;
   return Object.keys(werte).reduce(function (s, k) { return s.split("{" + k + "}").join(werte[k]); }, t);
 }
+
+import { TEXTE_FAHRLEHRER } from "./texte-fahrlehrer.js";
+import { TEXTE_KONTROLLE } from "./texte-kontrolle.js";
+import { TEXTE_GEFAHREN } from "./texte-gefahren.js";
+import { TEXTE_FAHRZEUG } from "./texte-fahrzeug.js";
+import { TEXTE_NINJA } from "./texte-ninja.js";
+/* Texte der einzelnen Spiele (je Spiel eigene Datei, 18 Sprachen) in die Sprachpakete mischen */
+[TEXTE_FAHRLEHRER, TEXTE_KONTROLLE, TEXTE_GEFAHREN, TEXTE_FAHRZEUG, TEXTE_NINJA].forEach(function (z) {
+  Object.keys(z).forEach(function (sp) { Object.assign(TEXTE[sp], z[sp]); });
+});

@@ -52,6 +52,23 @@ const MEMORY = { PAARE: 6, ZUG_MIN_MS: 100, ZURUECK_MS: 900 };
 // Rechts vor Links (07.10.2026): 10 Aufgaben, je richtig 100 bis 150 Punkte (siehe punkteFuer in spiele/vorfahrt.js).
 const VORFAHRT = { AUFGABEN: 10, MIN_PUNKTE: 100, MAX_PUNKTE: 150 };
 const istGanz = (x: unknown): x is number => typeof x === "number" && Number.isInteger(x);
+// Fahrlehrer-Simulator (07.10.2026): 8 Runden mit je 2 Fragen = 16 Teilantworten, je richtige 50 bis 75 Punkte (siehe punkteFuer in spiele/fahrlehrer.js).
+const FAHRLEHRER = { TEILE: 16, MIN_PUNKTE: 50, MAX_PUNKTE: 75 };
+// Verkehrskontrolle (07.10.2026): 8 Fahrzeuge, je 5 Entscheidungen (4 Stationen + Gesamtentscheidung), je richtige Entscheidung 20 bis 30 Punkte
+// (siehe punkteFuer in spiele/kontrolle.js); falscher Alarm zieht ab, je Fahrzeug nie unter 0.
+const KONTROLLE = { ENTSCHEIDUNGEN: 40, MAX_JE_ENTSCHEIDUNG: 30 };
+// Gefahren finden (07.10.2026): 4 Bilder je 4–6 Gefahren, je Bild 30 s. Je gefundener Gefahr 100 Punkte, je Tipp ohne Gefahr −30 (ein Bild nie unter 0),
+// alle Gefahren eines Bildes gefunden: bis +60 Zeitbonus (2 je übrige Sekunde). Ein Tipp ohne Gefahr kostet 2 s Zeit, also höchstens 15 je Bild.
+// Dieselben Zahlen wie in spiele/gefahren.js (BILDER_JE_RUNDE, MIN_JE_BILD, MAX_JE_BILD, PKT_GEFAHR, ABZUG_TIPP, BONUS_MAX); pruefe-gefahren.mjs vergleicht sie.
+const GEFAHREN = { BILDER: 4, MIN_JE_BILD: 4, MAX_JE_BILD: 6, PKT: 100, ABZUG: 30, BONUS_MAX: 60, FEHL_JE_BILD: 15 };
+// Fahrzeug-Check (08.10.2026): 4 Bilder je 4–6 Mängel, je Bild 40 s. Je gefundenem Mangel 100 Punkte, je Tipp ohne Mangel −30 (ein Bild nie unter 0),
+// alle Mängel eines Bildes gefunden: bis +80 Zeitbonus (2 je übrige Sekunde). Ein Tipp ohne Mangel kostet 2 s Zeit, also höchstens 20 je Bild.
+// Dieselben Zahlen wie in spiele/fahrzeug.js (BILDER_JE_RUNDE, MIN_JE_BILD, MAX_JE_BILD, PKT_MANGEL, ABZUG_TIPP, BONUS_MAX); pruefe-fahrzeug.mjs vergleicht sie.
+const FAHRZEUG = { BILDER: 4, MIN_JE_BILD: 4, MAX_JE_BILD: 6, PKT: 100, ABZUG: 30, BONUS_MAX: 80, FEHL_JE_BILD: 20 };
+// Schilder-Wisch (08.10.2026, Id "ninja"): 3 Runden mit je 9 richtigen und 8 falschen Schildern, je Runde höchstens 25 s. Je richtig gewischtem Schild +10,
+// je falsch gewischtem −15 (eine Runde nie unter 0), alle 9 richtigen und kein falsches: +20 Bonus. Höchstens 3 x 110 = 330 Punkte.
+// Dieselben Zahlen wie in spiele/ninja.js (RUNDEN, N_RICHTIG, N_FALSCH, PKT_RICHTIG, ABZUG_FALSCH, BONUS_VOLL, MIN_RUNDE_MS); pruefe-ninja.mjs vergleicht sie.
+const NINJA = { RUNDEN: 3, N_RICHTIG: 9, N_FALSCH: 8, PKT: 10, ABZUG: 15, BONUS: 20, MIN_RUNDE_MS: 12_000 };
 
 // Je Spiel: Richtung des Rankings und menschlich mögliche Grenzen.
 //  aufsteigend true  = kleiner ist besser (Reaktionszeit in ms); false = größer ist besser (Strecke in m, Punkte)
@@ -102,6 +119,68 @@ const SPIELE: Record<string, {
       const r = body.richtig;
       if (!istGanz(r) || r < 0 || r > VORFAHRT.AUFGABEN) return "richtig_ungueltig";
       if (wert < r * VORFAHRT.MIN_PUNKTE || wert > r * VORFAHRT.MAX_PUNKTE) return "punkte_passen_nicht";
+      return null;
+    },
+  },
+  // Fahrlehrer-Simulator: Wert = Punkte 0–1200; richtig = Anzahl richtiger Teilantworten (0–16), je richtige 50–75 Punkte.
+  fahrlehrer: {
+    aufsteigend: false, min: 0, max: FAHRLEHRER.TEILE * FAHRLEHRER.MAX_PUNKTE, vorlauf_ms: 12_000, wert_ist_zeit: false, runde_max_ms: 1_800_000,
+    pruefe: (wert, body) => {
+      const r = body.richtig;
+      if (!istGanz(r) || r < 0 || r > FAHRLEHRER.TEILE) return "richtig_ungueltig";
+      if (wert < r * FAHRLEHRER.MIN_PUNKTE || wert > r * FAHRLEHRER.MAX_PUNKTE) return "punkte_passen_nicht";
+      return null;
+    },
+  },
+  // Verkehrskontrolle: Wert = Punkte 0–1200; richtig = Anzahl richtiger Entscheidungen (0–40), höchstens 30 Punkte je richtiger Entscheidung.
+  // Vorlauf 30 s: 8 Fahrzeuge brauchen mindestens 72 Fingertipps (je Fahrzeug 4 Stationen antippen + 4 Urteile + 1 Gesamturteil).
+  kontrolle: {
+    aufsteigend: false, min: 0, max: KONTROLLE.ENTSCHEIDUNGEN * KONTROLLE.MAX_JE_ENTSCHEIDUNG, vorlauf_ms: 30_000, wert_ist_zeit: false, runde_max_ms: 1_800_000,
+    pruefe: (wert, body) => {
+      const r = body.richtig;
+      if (!istGanz(r) || r < 0 || r > KONTROLLE.ENTSCHEIDUNGEN) return "richtig_ungueltig";
+      if (wert > r * KONTROLLE.MAX_JE_ENTSCHEIDUNG) return "punkte_passen_nicht";
+      return null;
+    },
+  },
+  // Gefahren finden: Wert = Punkte 0–2640; gefunden = Gefahren insgesamt (0–24), fehltipps = Tipps ohne Gefahr (0–60), vollstaendig = Bilder mit allen Gefahren (0–4).
+  gefahren: {
+    aufsteigend: false, min: 0, max: GEFAHREN.BILDER * (GEFAHREN.MAX_JE_BILD * GEFAHREN.PKT + GEFAHREN.BONUS_MAX), vorlauf_ms: 8000, wert_ist_zeit: false, runde_max_ms: 1_800_000,
+    pruefe: (wert, body) => {
+      const g = body.gefunden, f = body.fehltipps, v = body.vollstaendig;
+      if (!istGanz(g) || g < 0 || g > GEFAHREN.BILDER * GEFAHREN.MAX_JE_BILD) return "gefunden_ungueltig";
+      if (!istGanz(v) || v < 0 || v > GEFAHREN.BILDER || v * GEFAHREN.MIN_JE_BILD > g) return "vollstaendig_ungueltig";
+      if (!istGanz(f) || f < 0 || f > GEFAHREN.BILDER * GEFAHREN.FEHL_JE_BILD) return "fehltipps_ungueltig";
+      if (wert > g * GEFAHREN.PKT + v * GEFAHREN.BONUS_MAX) return "punkte_zu_hoch";
+      if (wert < g * GEFAHREN.PKT - f * GEFAHREN.ABZUG) return "punkte_zu_niedrig";
+      return null;
+    },
+  },
+  // Schilder-Wisch: Wert = Punkte 0–330; richtig = richtig gewischte Schilder (0–27), falsch = falsch gewischte (0–24), voll = fehlerfreie Runden (0–3).
+  // Vorlauf: 3 Runden dauern mindestens je MIN_RUNDE_MS (das letzte Schild erscheint frühestens nach 12 s); das Lesen der Erklärungen kommt dazu.
+  ninja: {
+    aufsteigend: false, min: 0, max: NINJA.RUNDEN * (NINJA.N_RICHTIG * NINJA.PKT + NINJA.BONUS), vorlauf_ms: NINJA.RUNDEN * NINJA.MIN_RUNDE_MS, wert_ist_zeit: false, runde_max_ms: 1_800_000,
+    pruefe: (wert, body) => {
+      const r = body.richtig, f = body.falsch, v = body.voll;
+      if (!istGanz(r) || r < 0 || r > NINJA.RUNDEN * NINJA.N_RICHTIG) return "richtig_ungueltig";
+      if (!istGanz(f) || f < 0 || f > NINJA.RUNDEN * NINJA.N_FALSCH) return "falsch_ungueltig";
+      if (!istGanz(v) || v < 0 || v > NINJA.RUNDEN || v * NINJA.N_RICHTIG > r) return "voll_ungueltig";
+      if (v > NINJA.RUNDEN - Math.ceil(f / NINJA.N_FALSCH)) return "voll_passt_nicht";
+      if (wert > r * NINJA.PKT + v * NINJA.BONUS) return "punkte_zu_hoch";
+      if (wert < r * NINJA.PKT - f * NINJA.ABZUG + v * NINJA.BONUS) return "punkte_zu_niedrig";
+      return null;
+    },
+  },
+  // Fahrzeug-Check: Wert = Punkte 0–2720; gefunden = Mängel insgesamt (0–24), fehltipps = Tipps ohne Mangel (0–80), vollstaendig = Bilder mit allen Mängeln (0–4).
+  fahrzeug: {
+    aufsteigend: false, min: 0, max: FAHRZEUG.BILDER * (FAHRZEUG.MAX_JE_BILD * FAHRZEUG.PKT + FAHRZEUG.BONUS_MAX), vorlauf_ms: 8000, wert_ist_zeit: false, runde_max_ms: 1_800_000,
+    pruefe: (wert, body) => {
+      const g = body.gefunden, f = body.fehltipps, v = body.vollstaendig;
+      if (!istGanz(g) || g < 0 || g > FAHRZEUG.BILDER * FAHRZEUG.MAX_JE_BILD) return "gefunden_ungueltig";
+      if (!istGanz(v) || v < 0 || v > FAHRZEUG.BILDER || v * FAHRZEUG.MIN_JE_BILD > g) return "vollstaendig_ungueltig";
+      if (!istGanz(f) || f < 0 || f > FAHRZEUG.BILDER * FAHRZEUG.FEHL_JE_BILD) return "fehltipps_ungueltig";
+      if (wert > g * FAHRZEUG.PKT + v * FAHRZEUG.BONUS_MAX) return "punkte_zu_hoch";
+      if (wert < g * FAHRZEUG.PKT - f * FAHRZEUG.ABZUG) return "punkte_zu_niedrig";
       return null;
     },
   },

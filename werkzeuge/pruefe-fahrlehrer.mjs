@@ -16,6 +16,8 @@ const pruefe = async (name, f) => { try { await f(); ok++; console.log("  ok   "
 
 // Zufallsquelle mit festem Startwert (reproduzierbar)
 const lcg = (seed) => { let s = seed >>> 0; return () => ((s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 4294967296); };
+import { readFileSync as __rf } from "node:fs";
+const TEXTE_JS_QUELLE = __rf(new URL("../spiele/texte.js", import.meta.url), "utf8");   // nur die eigenen Schlüssel von texte.js (die Spieltexte stehen in eigenen Dateien)
 const SPRACHEN = Object.keys(TEXTE);     // die 18 Sprachen der App (aus spiele/texte.js)
 const UI_SCHLUESSEL = ["flName", "flKurz", "flBestwert", "flNeu", "flBereit", "flLegende", "flRunde", "flSchritt", "flPunkte", "flFrage1", "flFrage2", "flRichtig", "flFalsch",
   "flZeitAus", "flWeiter", "flErgebnisZeigen", "flRichtigVon", "flHinweis", "flLabelFehler", "flLabelAnweisung", "flLabelRegel"];
@@ -171,7 +173,7 @@ await pruefe("keine doppelten Schlüssel in der Textdatei (je Sprachblock)", () 
   }
 });
 await pruefe("Texte lassen sich mit der App zusammenführen: nur Schlüssel mit Präfix fl, keine Kollision mit texte.js", () => {
-  for (const sp of SPRACHEN) for (const key of Object.keys(TEXTE_FAHRLEHRER[sp])) { assert.ok(key.startsWith("fl")); assert.ok(!(key in TEXTE[sp]) || key.startsWith("fl") === false, sp + "." + key + " gibt es schon in texte.js"); }
+  for (const sp of SPRACHEN) for (const key of Object.keys(TEXTE_FAHRLEHRER[sp])) { assert.ok(key.startsWith("fl")); assert.ok(!new RegExp("\\n\\s+" + key + ":").test(TEXTE_JS_QUELLE), sp + "." + key + " gibt es schon in texte.js"); }
   for (const key of ["start", "nochmal", "uebung", "nichtGespeichert", "platz", "laden", "du", "rankingTitel"]) for (const sp of SPRACHEN) assert.ok(TEXTE[sp][key], sp + " fehlt Rahmen-Text " + key);
 });
 await pruefe("RTL-Sprachen der App: ar, ckb, ur, fa, ps", () => assert.deepEqual(RTL.slice().sort(), ["ar", "ckb", "fa", "ps", "ur"]));

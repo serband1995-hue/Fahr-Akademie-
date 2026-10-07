@@ -122,7 +122,9 @@ pruefe("18 Sprachen in texte.js", SPRACHEN.length === 18, SPRACHEN.join(","));
 pruefe("Sprachen von texte-gefahren.js = Sprachen von texte.js", gleich(Object.keys(TEXTE_GEFAHREN).sort(), SPRACHEN.slice().sort()));
 const schluessel = Object.keys(TEXTE_GEFAHREN.de);
 pruefe("alle Schlüssel mit Präfix ge", schluessel.every((s) => s.startsWith("ge")));
-pruefe("kein Schlüssel kollidiert mit bestehenden Texten", schluessel.every((s) => !(s in TEXTE.de)), schluessel.filter((s) => s in TEXTE.de).join(","));
+const texteJsQuelle = readFileSync(join(wurzel, "spiele/texte.js"), "utf8");   // nur die eigenen Schlüssel von texte.js (Spieltexte stehen in eigenen Dateien)
+const kollision = schluessel.filter((s) => new RegExp("\\n\\s+" + s + ":").test(texteJsQuelle));
+pruefe("kein Schlüssel kollidiert mit bestehenden Texten", kollision.length === 0, kollision.join(","));
 const platzhalter = (s) => (s.match(/\{[a-z]+\}/g) || []).sort().join("");
 for (const sp of SPRACHEN) {
   const t = TEXTE_GEFAHREN[sp];

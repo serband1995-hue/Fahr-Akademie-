@@ -41,11 +41,13 @@ export const SPIELE_EINTRAG = `  {
 
 /* spiele.js / texte.js mit dem Spiel versehen (Text der Datei rein, Text raus) */
 export function spielePatch(quelle) {
+  if (/id:\s*"gefahren"/.test(quelle)) return quelle;       // schon fest eingebaut
   const ende = quelle.lastIndexOf("\n];");
   if (ende < 0) throw new Error("SPIELE-Ende nicht gefunden");
   return quelle.slice(0, ende) + ",\n" + SPIELE_EINTRAG + quelle.slice(ende);
 }
 export function textePatch(quelle) {
+  if (/TEXTE_GEFAHREN|texte-gefahren/.test(quelle)) return quelle;   // schon fest eingebaut
   return quelle + '\nimport { TEXTE_GEFAHREN } from "./texte-gefahren.js";\nfor (const sp of Object.keys(TEXTE_GEFAHREN)) Object.assign(TEXTE[sp], TEXTE_GEFAHREN[sp]);\n';
 }
 
@@ -56,10 +58,14 @@ export async function serverMitEintrag(mutation) {
   quelle = quelle.replace(/import \{ createClient \} from "[^"]+";/, "const createClient = globalThis.__createClient;");
   const a = "const istGanz = (x: unknown): x is number => typeof x === \"number\" && Number.isInteger(x);";
   if (!quelle.includes(a)) throw new Error("Anker istGanz nicht gefunden");
-  quelle = quelle.replace(a, a + "\n" + SERVER_KONSTANTE);
+  const schon = /\n\s*gefahren:\s*\{/.test(quelle);         // schon fest eingebaut: nichts doppelt einsetzen
+  if (!schon) quelle = quelle.replace(a, a + "\n" + SERVER_KONSTANTE);
   const b = "\n};\nconst RUNDE_MAX_MS";
   if (!quelle.includes(b)) throw new Error("Anker SPIELE-Ende nicht gefunden");
-  quelle = quelle.replace(b, "\n" + (mutation ? mutation(SERVER_EINTRAG) : SERVER_EINTRAG) + b);
+  if (!schon || mutation) {
+    if (schon) { quelle = quelle.replace(/\n  \/\/ Gefahren finden: Wert[\s\S]*?\n  gefahren: \{[\s\S]*?\n  \},/, ""); }
+    quelle = quelle.replace(b, "\n" + (mutation ? mutation(SERVER_EINTRAG) : SERVER_EINTRAG) + b);
+  }
   let handler = null;
   const alt = globalThis.Deno;
   globalThis.Deno = { env: { get: () => "x" }, serve: (h) => { handler = h; } };
