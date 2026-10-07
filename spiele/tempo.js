@@ -241,7 +241,7 @@ function demoAnsicht(tSek) {
   const v = tempoBei(t);
   const m = sanft((t - 1.8) / (WELT.MERGE_MS / 1000));
   const dm = (sanft((t - 1.8 + 0.02) / (WELT.MERGE_MS / 1000)) - m) / 0.02 * (WELT.X_SPUR - WELT.X_RAMPE);
-  return { s: s, v: v, carX: WELT.X_RAMPE + (WELT.X_SPUR - WELT.X_RAMPE) * m, rot: Math.atan(dm / Math.max(8, v / 3.6)) * 1.6, t: tSek, bremse: false, t0: t };
+  return { s: s, v: v, carX: WELT.X_RAMPE + (WELT.X_SPUR - WELT.X_RAMPE) * m, rot: Math.atan(dm / Math.max(14, v / 3.6)) * 1.0, t: tSek, bremse: false, t0: t };
 }
 
 export function starte(platz, k) {
