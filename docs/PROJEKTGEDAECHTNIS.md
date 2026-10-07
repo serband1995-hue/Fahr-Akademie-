@@ -185,6 +185,11 @@ Konto-Schlüssel, den die Functions nicht haben).
   (STATIC_ASSETS + CACHE_NAME) anpassen.
 - **Logo** ist die Datei `logo-264.png` (nicht mehr im HTML eingebettet), im
   Service Worker vorgeladen. Neues Logo = neuer Dateiname + `sw.js` anpassen.
+  **App-Icons (07.10.2026):** `icon-192/512.png` = abgerundete Kachel mit transparenten Ecken (Zweck „any“). `icon-*-maskable.png` und
+  `apple-touch-icon.png` = dieselbe Kachel (64 % bzw. 80 %) auf Creme `#F5F0E3` (= `background_color`). Warum: Android schneidet maskable-Icons mit
+  der Form des Launchers aus und zeigt beim Start (Android 12+, manche Hersteller) die ganze Fläche ohne Maske -- eine randlos beschnittene Kachel gab
+  einen harten Block mit dunklen Ecken. Auf Creme verschwindet der Block; der Launcher schneidet nur Creme ab. Gebaut aus dem Original mit Pillow
+  (Kachel freigestellt per Flood-Fill von den Ecken). Das Icon eines schon angelegten Home-Bildschirm-Eintrags ändert sich nicht von selbst: entfernen und neu hinzufügen.
 - **Anklickbare `<div>`s** bekommen automatisch `role="button"`/`tabindex`
   (`KLICK_FLAECHEN` + `tastaturSystemStarten`). Neue Klickflächen mit
   `data-…`-Attribut dort eintragen — oder gleich `<button>` verwenden.
