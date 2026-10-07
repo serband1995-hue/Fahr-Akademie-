@@ -1,0 +1,80 @@
+/* Schilder-Wisch (Spiel 9, 08.10.2026). Eigene Datei, wird von spiele/ninja.js selbst geladen.
+   Nur Farb-/Abstandswerte der App (:root in index.html) -> Dunkelmodus. Die Schilder selbst sind die amtlichen Bilder (feste Farben).
+   Wichtig: touch-action:none NUR auf dem Spielfeld und den Schildern, nie auf der Seite -> Wischen im Feld scrollt nicht, der Rest der Seite schon. */
+
+.sp-ninja{display:grid;gap:var(--sp-m);}
+.sp-ninja .sp-spieltitel{font-family:var(--ff-titel);font-size:22px;font-weight:600;margin:0;}
+.ni-buehne{position:relative;display:grid;gap:8px;padding:10px;scroll-margin-top:8px;min-width:0;}
+.ni-hud{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-m);font-weight:700;min-height:1.6em;}
+.ni-runde{font-size:14px;color:var(--muted);min-width:0;overflow-wrap:anywhere;}
+.ni-punkte{flex:none;}
+.ni-punkte b{font-size:20px;font-variant-numeric:tabular-nums;font-family:var(--ff-titel);}
+.ni-leiste{height:6px;border-radius:3px;background:var(--surface-strong);overflow:hidden;}
+.ni-leiste i{display:block;height:100%;width:0;background:var(--gruen-hell);}
+.ni-leiste i.knapp{background:var(--warn);}
+.ni-info{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-m);min-height:2.6em;}
+.ni-regel{min-width:0;flex:1;font-weight:800;font-size:16px;line-height:1.3;overflow-wrap:anywhere;color:var(--text);}
+.ni-zeit{flex:none;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--muted);}
+.ni-spielfeld{position:relative;width:100%;aspect-ratio:10/11;border-radius:var(--r-m);overflow:hidden;background:var(--surface-strong);
+  background-image:repeating-linear-gradient(0deg,transparent 0 calc(20% - 1px),var(--hairline) calc(20% - 1px) 20%);}
+.ni-spielfeld.leer{background-image:repeating-linear-gradient(135deg,var(--surface-strong) 0 14px,var(--surface-tint) 14px 28px);}
+.ni-feld{position:absolute;inset:0;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;}
+.ni-spielfeld.aktiv .ni-feld,.ni-spielfeld.aktiv .ni-schild{touch-action:none;}
+.ni-spielfeld.aktiv .ni-feld{cursor:crosshair;}
+.ni-schild{position:absolute;left:0;top:0;padding:0;border:0;background:none;cursor:pointer;will-change:transform;
+  -webkit-tap-highlight-color:transparent;border-radius:8px;}
+.ni-schild img{display:block;width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;user-select:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35));}
+.ni-schild:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.ni-schild.treffer img{animation:ni-treffer .42s ease-out forwards;filter:drop-shadow(0 0 7px var(--gruen-hell)) drop-shadow(0 0 3px var(--gruen-hell));}
+.ni-schild.fehl img{animation:ni-fehl .42s ease-out forwards;filter:drop-shadow(0 0 7px var(--warn)) drop-shadow(0 0 3px var(--warn));}
+@keyframes ni-treffer{to{transform:scale(1.5);opacity:0;}}
+@keyframes ni-fehl{20%{transform:translateX(-5px) rotate(-6deg);}50%{transform:translateX(5px) rotate(6deg);}to{transform:scale(.7);opacity:0;}}
+.ni-spielfeld.wackeln{animation:ni-wackeln .22s linear;}
+@keyframes ni-wackeln{25%{transform:translateX(-3px);}75%{transform:translateX(3px);}}
+.ni-knopf{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);width:min(82%,260px);min-height:62px;border:0;border-radius:var(--r-l);cursor:pointer;
+  font-family:inherit;font-size:22px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;touch-action:manipulation;-webkit-tap-highlight-color:transparent;box-shadow:0 6px 18px rgba(43,40,30,.22);}
+.ni-knopf[hidden]{display:none;}
+.ni-knopf.start,.ni-knopf.los{background:var(--gruen);color:var(--auf-tief);}
+.ni-knopf.warte{background:var(--surface-strong);color:var(--muted);cursor:default;}
+.ni-knopf:focus-visible,.ni-weiter:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.ni-meldung{min-height:1.4em;text-align:center;font-size:13.5px;color:var(--muted);}
+.ni-anleitung{margin:0;line-height:1.5;}
+.ni-antwort{display:grid;gap:8px;padding:10px;border-radius:var(--r-m);background:var(--surface-strong);min-width:0;}
+.ni-antwort[hidden]{display:none;}
+.ni-urteil{font-weight:800;font-size:18px;}
+.ni-urteil.ja{color:var(--gruen-text);}
+.ni-urteil.nein{color:var(--text);}
+.ni-zahlen{font-weight:700;font-size:14.5px;}
+.ni-warum{margin:0;font-size:14.5px;line-height:1.45;overflow-wrap:anywhere;hyphens:auto;}
+.ni-listentitel{margin:4px 0 0;font-family:var(--ff-titel);font-size:16px;font-weight:600;}
+.ni-liste{list-style:none;margin:0;padding:0;display:grid;gap:10px;}
+.ni-eintrag{display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;align-items:start;padding:8px;border-radius:var(--r-m);background:var(--bg);border:2px solid transparent;}
+.ni-eintrag.falsch{border-color:var(--warn);}
+.ni-eintrag.verpasst{border-color:var(--gold);}
+.ni-eintrag-bild{display:block;width:44px;height:44px;}
+.ni-eintrag-bild img{display:block;width:100%;height:100%;}
+.ni-eintrag-kopf{font-size:15px;line-height:1.3;overflow-wrap:anywhere;}
+.ni-status{display:inline-block;margin-inline-start:.4em;padding:1px 8px;border-radius:var(--r-pill);font-size:12px;font-weight:700;background:var(--surface-tint);color:var(--gruen-text);}
+.ni-eintrag.falsch .ni-status{background:var(--warn);color:var(--auf-warn);}
+.ni-eintrag.verpasst .ni-status{background:var(--gold);color:var(--auf-gold);}
+.ni-kat{margin-top:3px;font-size:13.5px;line-height:1.4;color:var(--muted);overflow-wrap:anywhere;}
+.ni-weiter{margin-top:6px;width:100%;min-height:48px;border:0;border-radius:var(--r-l);background:var(--gruen);color:var(--auf-tief);
+  font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;touch-action:manipulation;}
+.ni-ergzeile{margin:0;font-weight:700;}
+@media (prefers-reduced-motion:reduce){
+  .ni-schild.treffer img,.ni-schild.fehl img{animation:none;}
+  .ni-spielfeld.wackeln{animation:none;}
+}
+
+/* Querformat am Handy: Feld links, Anzeigen und Erklärung rechts */
+@media (max-height:520px){
+  .sp-ninja .sp-spieltitel{display:none;}
+  .ni-buehne{grid-template-columns:min(76vh,54%) minmax(0,1fr);grid-template-areas:"feld hud" "feld bar" "feld info" "feld meldung" "feld antwort";
+    column-gap:12px;row-gap:6px;align-content:start;padding:8px;}
+  .ni-hud{grid-area:hud;}.ni-leiste{grid-area:bar;}.ni-info{grid-area:info;}
+  .ni-spielfeld{grid-area:feld;aspect-ratio:1/1;align-self:start;position:sticky;top:8px;}
+  .ni-meldung{grid-area:meldung;text-align:start;}.ni-antwort{grid-area:antwort;}
+  .ni-anleitung{display:none;}
+  .ni-knopf{min-height:48px;font-size:18px;}
+  .ni-weiter{min-height:44px;}
+}

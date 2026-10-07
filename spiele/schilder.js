@@ -19,7 +19,20 @@ const DATEI = {
   z237: "z237.svg",          // Radweg (Sonderweg Radfahrer)
   z350: "z350.svg",          // Fußgängerüberweg
   z215: "z215.svg",          // Kreisverkehr
-  z282: "z282.svg"           // Ende sämtlicher Streckenverbote
+  z282: "z282.svg",          // Ende sämtlicher Streckenverbote
+  // Schilder-Wisch (Spiel 9): weitere amtliche Zeichen
+  z103: "z103.svg",          // Kurve (rechts)
+  z112: "z112.svg",          // Unebene Fahrbahn
+  z114: "z114.svg",          // Schleuder- oder Rutschgefahr
+  z133: "z133.svg",          // Fußgänger
+  z136: "z136.svg",          // Kinder
+  z142: "z142.svg",          // Wildwechsel
+  z209: "z209.svg",          // Vorgeschriebene Fahrtrichtung (rechts)
+  z222: "z222.svg",          // Rechts vorbei
+  z239: "z239.svg",          // Gehweg (Sonderweg Fußgänger)
+  z276: "z276.svg",          // Überholverbot
+  z2901: "z2901.svg",        // Beginn eines eingeschränkten Haltverbots für eine Zone (Zeichen 290.1)
+  z301: "z301.svg"           // Vorfahrt
 };
 /* Zeichen 274 gibt es für jede Zahl als eigenes amtliches Bild; der Tempo-Sprint braucht diese */
 export const TEMPO_ZAHLEN = [50, 60, 80, 100, 120];
