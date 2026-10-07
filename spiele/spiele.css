@@ -240,10 +240,6 @@
 .sp-v-antwort{display:grid;gap:8px;padding:10px;border-radius:var(--r-m);background:var(--surface-strong);}
 .sp-v-antwort[hidden]{display:none;}
 /* Einheitliche Zeichen in allen Spielen: grüner Haken = richtig, rotes X = falsch (gezeichnet, nicht als Schriftzeichen) */
-:root{--ico-haken:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4.5 12.8l5 5L19.5 6.5' fill='none' stroke='%232ea84f' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  --ico-x:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 6l12 12M18 6L6 18' fill='none' stroke='%23e0442a' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
-  --ico-haken-w:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4.5 12.8l5 5L19.5 6.5' fill='none' stroke='%23fff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  --ico-x-w:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 6l12 12M18 6L6 18' fill='none' stroke='%23fff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");}
 .sp-v-urteil{font-weight:800;font-size:18px;}
 .sp-v-urteil.ja{color:var(--gruen-text);}
 .sp-v-urteil.nein{color:var(--warn);}
