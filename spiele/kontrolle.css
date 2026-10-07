@@ -1,0 +1,137 @@
+/* Spiel 6: Verkehrskontrolle. Eigener Stil, wird von spiele/kontrolle.js selbst geladen (spiele.css bleibt unberührt).
+   Nur die Farb-/Abstandswerte der App (:root in index.html) -> passt sich dem Dunkelmodus an; die Bilder (SVG) haben feste Farben.
+   Handy zuerst (320–412 px), dann Querformat (niedrige Höhe). Lange Texte (tr, ru, ar …) brechen um. */
+
+.sp-kontrolle{display:grid;gap:10px;}
+.sp-kontrolle .sp-spieltitel{font-family:var(--ff-titel);font-size:22px;font-weight:600;margin:0;}
+.sp-kontrolle .sp-uebung{margin:-4px 0 0;}
+.sp-k-buehne{position:relative;display:grid;gap:8px;padding:10px;scroll-margin-top:8px;min-width:0;}
+.sp-k-buehne > *{min-width:0;}
+.sp-k-hud{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-m);font-weight:700;min-height:1.6em;}
+.sp-k-fz{font-size:14px;color:var(--muted);}
+.sp-k-punkte b{font-size:20px;font-variant-numeric:tabular-nums;font-family:var(--ff-titel);}
+
+/* Szene: Fahrzeug von hinten */
+.sp-k-szene{border-radius:var(--r-m);overflow:hidden;background:#cfe0ec;line-height:0;}
+.sp-k-svg{display:block;width:100%;height:auto;max-height:27vh;}
+.sp-k-pin circle{fill:var(--surface-strong);stroke:#fff;stroke-width:2;opacity:0;}
+.sp-k-pin text{font:800 12px sans-serif;text-anchor:middle;dominant-baseline:central;fill:#fff;}
+.sp-k-pin.ok circle{fill:#2ea84f;opacity:1;}
+.sp-k-pin.mangel circle{fill:#d3382c;opacity:1;}
+
+/* Start-Knopf MITTEN über der abgeblendeten Szene (wie beim Schilder-Memory) */
+.sp-k-buehne.aus .sp-k-hud,.sp-k-buehne.aus .sp-k-szene,.sp-k-buehne.aus .sp-k-haupt{opacity:.35;pointer-events:none;}
+.sp-k-knopf{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);width:min(82%,260px);min-height:62px;border:0;border-radius:var(--r-l);
+  cursor:pointer;font-family:inherit;font-size:22px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;box-shadow:0 6px 18px rgba(43,40,30,.22);overflow-wrap:anywhere;}
+.sp-k-knopf[hidden]{display:none;}
+.sp-k-knopf.start{background:var(--gruen);color:var(--auf-tief);}
+.sp-k-knopf.warte{background:var(--surface-strong);color:var(--muted);cursor:default;}
+.sp-k-knopf:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.sp-k-anleitung{margin:0;line-height:1.5;}
+.sp-k-anleitung[hidden]{display:none;}
+
+/* Hauptbereich: Übersicht, Station, Auswertung (immer nur eine Ansicht) */
+.sp-k-haupt{display:grid;gap:8px;align-content:start;}
+.sp-k-uebersicht,.sp-k-panel,.sp-k-antwort{display:grid;gap:8px;min-width:0;}
+.sp-k-sage{margin:0;font-size:14px;line-height:1.4;color:var(--muted);}
+.sp-k-stationen{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+.sp-k-station{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"icon text" "chip chip";align-items:center;align-content:center;gap:4px 8px;min-height:60px;padding:8px 10px;
+  border:1.5px solid var(--hairline);border-radius:var(--r-m);background:var(--bg);color:var(--text);font-family:inherit;text-align:start;cursor:pointer;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.sp-k-station:focus-visible,.sp-k-ent:focus-visible,.sp-k-weiter:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.sp-k-station:disabled{cursor:default;}
+.sp-k-station.ok{border-color:#2ea84f;}
+.sp-k-station.mangel{border-color:#d3382c;}
+.sp-k-sicon{grid-area:icon;display:inline-flex;width:26px;height:26px;color:var(--gruen-text);flex:none;}
+.sp-k-sicon svg{width:100%;height:100%;}
+.sp-k-stext{grid-area:text;font-weight:700;font-size:14.5px;line-height:1.2;overflow-wrap:anywhere;hyphens:auto;min-width:0;}
+.sp-k-chip{display:inline-block;padding:2px 9px;border-radius:var(--r-pill);font-size:12.5px;font-weight:700;line-height:1.35;background:var(--surface-tint);color:var(--gruen-text);overflow-wrap:anywhere;}
+.sp-k-station .sp-k-chip{grid-area:chip;justify-self:start;}
+.sp-k-chip.leer{display:none;}
+.sp-k-chip.mangel{background:var(--gold-schwach);color:var(--warn);box-shadow:inset 0 0 0 1.5px var(--warn);}
+.sp-k-wahl,.sp-k-entscheid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr));gap:8px;}
+.sp-k-entscheid{grid-template-columns:repeat(2,minmax(0,1fr));}
+.sp-k-ent,.sp-k-weiter{min-height:52px;padding:8px 10px;border:0;border-radius:var(--r-l);font-family:inherit;font-size:16px;font-weight:800;line-height:1.2;cursor:pointer;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;overflow-wrap:anywhere;hyphens:auto;}
+.sp-k-ent.weiter{background:var(--gruen);color:var(--auf-tief);}
+.sp-k-ent.halten{background:var(--warn);color:var(--auf-warn);}
+.sp-k-weiter{width:100%;background:var(--gruen);color:var(--auf-tief);}
+
+/* Station: Karten, Bilder */
+.sp-k-ptitel{display:flex;align-items:center;gap:8px;font-weight:800;font-size:17px;}
+.sp-k-ptitel .sp-k-sicon{width:28px;height:28px;}
+.sp-k-frage{margin:2px 0 0;text-align:center;font-weight:700;font-size:15px;}
+.sp-k-karten{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,78px),1fr));gap:6px;}
+.sp-k-karte{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;padding:7px 3px;border-radius:var(--r-m);background:var(--surface-strong);
+  text-align:center;font-size:12.5px;font-weight:700;line-height:1.2;overflow-wrap:anywhere;hyphens:auto;}
+.sp-k-karte svg{width:40px;height:40px;flex:none;}
+.sp-k-lichter{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+.sp-k-lichter figure{margin:0;display:grid;gap:3px;min-width:0;}
+.sp-k-lichter svg{display:block;width:100%;height:auto;border-radius:6px;}
+.sp-k-lichter figcaption{font-size:12.5px;font-weight:700;text-align:center;line-height:1.25;overflow-wrap:anywhere;hyphens:auto;}
+.sp-k-reifen{display:grid;gap:6px;justify-items:center;}
+.sp-k-messung{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;justify-content:center;}
+.sp-k-messung b{font-family:var(--ff-titel);font-size:30px;line-height:1;font-variant-numeric:tabular-nums;}
+.sp-k-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;}
+.sp-k-etikett{padding:3px 10px;border-radius:var(--r-pill);background:var(--surface-strong);font-size:13px;font-weight:700;line-height:1.3;overflow-wrap:anywhere;}
+.sp-k-plbild{width:min(100%,250px);}
+.sp-k-plbild svg{display:block;width:100%;height:auto;}
+.sp-k-plzeile{margin:0;text-align:center;font-size:13.5px;line-height:1.4;}
+
+/* Auswertung */
+.sp-k-urteil{font-weight:800;font-size:19px;}
+.sp-k-urteil.ja{color:var(--gruen-text);}
+.sp-k-urteil.nein{color:var(--warn);}
+.sp-k-richtigzahl{margin:0;font-weight:700;}
+.sp-k-zeile{display:grid;gap:5px;padding:8px 10px;border-radius:var(--r-m);background:var(--surface-strong);min-width:0;}
+.sp-k-zkopf{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;}
+.sp-k-zname{font-weight:800;font-size:15px;}
+.sp-k-art{font-size:12.5px;font-weight:700;color:var(--muted);}
+.sp-k-art.richtig{color:var(--gruen-text);}
+.sp-k-art.alarm,.sp-k-art.uebersehen{color:var(--warn);}
+.sp-k-art::before{content:"";display:inline-block;width:.7em;height:.7em;margin-inline-end:.4em;border-radius:50%;background:currentColor;}
+.sp-k-satz{margin:0;padding-inline-start:9px;border-inline-start:4px solid var(--hairline);font-size:14px;line-height:1.42;overflow-wrap:anywhere;}
+.sp-k-satz.ok{border-inline-start-color:#2ea84f;}
+.sp-k-satz.mangel{border-inline-start-color:#d3382c;}
+.sp-k-satz.info{border-inline-start-color:var(--gold);}
+
+/* Ergebnis (nutzt .sp-erg, .sp-gross usw. aus spiele.css) */
+.sp-ergebnis .sp-k-richtigzahl{margin:0;}
+
+/* Hochformat: die Szene wird in Station/Auswertung ausgeblendet, damit Karten und Knöpfe ins Bild passen */
+.sp-k-buehne[data-ansicht="station"] .sp-k-szene,.sp-k-buehne[data-ansicht="antwort"] .sp-k-szene{display:none;}
+
+@media (max-width:359px){
+  .sp-k-stext{font-size:13.5px;}
+  .sp-k-ent,.sp-k-weiter{font-size:15px;}
+}
+@media (prefers-reduced-motion:reduce){.sp-k-knopf{transition:none;}}
+
+/* Querformat am Handy: Szene + Zähler links, Station/Auswertung rechts, ohne Scrollen im Bild (auch bei nur 320 px Höhe) */
+@media (max-height:520px){
+  .sp-kontrolle .sp-spieltitel{display:none;}
+  .sp-k-anleitung{display:none;}
+  .sp-k-buehne{grid-template-columns:min(42%,56vh) minmax(0,1fr);grid-template-rows:auto 1fr;grid-template-areas:"szene haupt" "hud haupt";column-gap:12px;row-gap:6px;align-content:start;padding:8px;}
+  .sp-k-hud{grid-area:hud;align-self:start;flex-wrap:wrap;}
+  .sp-k-szene{grid-area:szene;align-self:start;}
+  .sp-k-buehne[data-ansicht="station"] .sp-k-szene,.sp-k-buehne[data-ansicht="antwort"] .sp-k-szene{display:block;}
+  .sp-k-svg{max-height:none;}
+  .sp-k-haupt{grid-area:haupt;gap:6px;}
+  .sp-k-uebersicht,.sp-k-panel,.sp-k-antwort{gap:6px;}
+  .sp-k-panel .sp-k-sage,.sp-k-panel .sp-k-frage{display:none;}
+  .sp-k-ptitel{font-size:15px;}
+  .sp-k-ptitel .sp-k-sicon{width:24px;height:24px;}
+  .sp-k-stationen{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px;}
+  .sp-k-station{min-height:50px;padding:5px 8px;}
+  .sp-k-ent,.sp-k-weiter{min-height:46px;}
+  .sp-k-karte svg{width:30px;height:30px;}
+  .sp-k-karte{padding:5px 3px;font-size:12px;}
+  .sp-k-lichter svg{width:auto;max-width:100%;max-height:min(26vh,96px);margin-inline:auto;}
+  .sp-k-lichter figcaption{font-size:12px;}
+  .sp-k-reifen{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"messung plbild" "chips plbild" "zeile zeile";align-items:center;justify-items:center;gap:4px 8px;}
+  .sp-k-messung{grid-area:messung;}.sp-k-chips{grid-area:chips;}.sp-k-plbild{grid-area:plbild;width:min(100%,170px);}.sp-k-plzeile{grid-area:zeile;font-size:12.5px;}
+  .sp-k-messung b{font-size:24px;}
+  .sp-k-satz{font-size:13px;}
+  .sp-k-knopf{min-height:48px;font-size:18px;}
+}

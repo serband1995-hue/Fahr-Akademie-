@@ -103,7 +103,13 @@ const zumHub = async (s) => {
   await s.tap('[data-drawer="spiele"]');
   await s.waitForSelector(".sp-karte", { timeout: 10000 });
 };
-const zumSpiel = async (s) => { await zumHub(s); await s.tap('.sp-karte[data-spiel="ampel"]'); await s.waitForSelector(".sp-knopf"); };
+/* Spielkarte antippen: erst in die Bildschirmmitte holen (bei vielen Spielen und langen Texten liegt sie sonst unter der Menüleiste) */
+async function karteTippen(s, id) {
+  await s.locator('.sp-karte[data-spiel="' + id + '"]').evaluate((e) => e.scrollIntoView({ block: "center" }));
+  await s.waitForTimeout(250);
+  await s.tap('.sp-karte[data-spiel="' + id + '"]');
+}
+const zumSpiel = async (s) => { await zumHub(s); await karteTippen(s, 'ampel'); await s.waitForSelector(".sp-knopf"); };
 
 /* Layout: nichts seitlich wischbar, nichts abgeschnitten, Tippflächen groß genug */
 async function layoutPruefen(s, name, breite) {
@@ -151,7 +157,7 @@ async function bisherige() {
   await s.screenshot({ path: join(bilder, "start-360.png") });
 
   console.log("Spiel: Fehlstart");
-  await s.tap('.sp-karte[data-spiel="ampel"]');
+  await karteTippen(s, 'ampel');
   await s.waitForSelector(".sp-knopf");
   await layoutPruefen(s, "Spiel 360 (bereit)", 360);
   await s.screenshot({ path: join(bilder, "spiel-bereit-360.png") });
@@ -219,7 +225,7 @@ async function bisherige() {
   pruefe("Startseite zeigt jetzt die Bestzeit", (await s.textContent("[data-best]")).includes(ms1 + " ms"), await s.textContent("[data-best]"));
   await s.waitForTimeout(7500);                   // länger als jede Rundenzeit: alte Zeitgeber dürfen nichts mehr tun
   pruefe("nach dem Verlassen keine Fehler / keine späten Zeitgeber", s.fehler.length === 0, s.fehler.join(" | "));
-  await s.tap('.sp-karte[data-spiel="ampel"]');
+  await karteTippen(s, 'ampel');
   await s.waitForSelector(".sp-knopf");
   pruefe("Spiel lässt sich erneut öffnen, Zustand frisch", (await s.textContent(".sp-knopf")).trim() === "Start" && (await s.locator(".sp-erg:visible").count()) === 0);
   pruefe("Konsole ohne Fehler (Teil 1)", s.fehler.length === 0, s.fehler.join(" | "));
@@ -257,7 +263,7 @@ async function bisherige() {
     const titel = (await t.textContent(".sp-titel")).trim();
     pruefe(sp + ": Titel übersetzt, Richtung " + (RTL.includes(sp) ? "rtl" : "ltr"), dirOk && (sp === "de" || titel !== "Spiele"), titel);
     await layoutPruefen(t, sp + " Startseite", 360);
-    await t.tap('.sp-karte[data-spiel="ampel"]');
+    await karteTippen(t, 'ampel');
     await t.waitForSelector(".sp-knopf");
     await runde(t, 300);
     await t.waitForSelector(".sp-erg");
@@ -273,7 +279,7 @@ async function bisherige() {
 
 /* =========================  Tempo-Sprint (Spiel 2)  ========================= */
 const warteMs = (ms) => new Promise((ok) => setTimeout(ok, ms));
-const zumTempo = async (s) => { await zumHub(s); await s.tap('.sp-karte[data-spiel="sprint"]'); await s.waitForSelector(".sp-t-pad"); };
+const zumTempo = async (s) => { await zumHub(s); await karteTippen(s, 'sprint'); await s.waitForSelector(".sp-t-pad"); };
 const padText = async (s) => (await s.textContent(".sp-t-pad")).trim();
 const zahlJetzt = async (s) => parseInt(await s.textContent(".sp-t-zahl"), 10);
 const SPRACHEN = ["de", "tr", "en", "ar", "es", "ru", "sr", "ckb", "kmr", "hi", "ur", "vi", "rif", "fa", "ps", "el", "am", "ti"];
@@ -341,7 +347,7 @@ async function tempoPruefungen() {
     pruefe("Gerät mit ?spiele=1 sieht alle Spiele", karten.join(",") === alleIds.join(","), karten.join(","));
     pruefe("Vorschau-Marke genau auf den versteckten Spielen", (await n.locator(".sp-karte-marke").count()) === verstecktIds.length && (await n.locator(".sp-karte[data-spiel] .sp-karte-marke").evaluateAll((els) => els.map((e) => e.closest(".sp-karte").dataset.spiel))).join(",") === verstecktIds.join(","));
     await n.waitForFunction(() => /Noch nicht gespielt/.test(document.querySelector('[data-best="sprint"]')?.textContent || ""));
-    await n.tap('.sp-karte[data-spiel="sprint"]');
+    await karteTippen(n, 'sprint');
     await n.waitForSelector(".sp-t-pad");
     pruefe("Tempo-Sprint öffnet auf dem Vorschau-Gerät", (await padText(n)) === "Start");
     await n.context().close();
@@ -491,7 +497,7 @@ async function tempoPruefungen() {
     const titel = (await t.textContent('.sp-karte[data-spiel="sprint"] .sp-karte-titel')).trim();
     pruefe(sp + ": Tempo-Sprint-Karte übersetzt", sp === "de" ? titel === "Tempo-Sprint" : titel !== "Tempo-Sprint" && !/^tempo[A-Z]/.test(titel), titel);
     await layoutPruefen(t, sp + " Spieleliste", 360);
-    await t.tap('.sp-karte[data-spiel="sprint"]');
+    await karteTippen(t, 'sprint');
     await t.waitForSelector(".sp-t-pad");
     pruefe(sp + ": Richtung " + (RTL.includes(sp) ? "rtl" : "ltr"), (await t.getAttribute("#spiele-platz", "dir")) === (RTL.includes(sp) ? "rtl" : "ltr"));
     await layoutPruefen(t, sp + " Tempo bereit", 360);
@@ -512,7 +518,7 @@ async function tempoPruefungen() {
 }
 
 /* =========================  Schilder-Memory (Spiel 3)  ========================= */
-const zumMemory = async (s) => { await zumHub(s); await s.tap('.sp-karte[data-spiel="memory"]'); await s.waitForSelector(".sp-m-knopf"); };
+const zumMemory = async (s) => { await zumHub(s); await karteTippen(s, 'memory'); await s.waitForSelector(".sp-m-knopf"); };
 const sekunden = (txt) => parseFloat(String(txt).replace(",", ".").replace(/[^\d.]/g, ""));
 const memKarten = (s) => s.locator(".sp-m-karte").evaluateAll((els) => els.map((e) => ({ i: +e.dataset.i, paar: e.dataset.paar, art: e.dataset.art })));
 const zeitLesen = async (s) => sekunden(await s.textContent(".sp-m-zeit"));
@@ -646,7 +652,7 @@ async function memoryPruefungen() {
     await t.waitForSelector('.sp-karte[data-spiel="memory"]');
     const titel = (await t.textContent('.sp-karte[data-spiel="memory"] .sp-karte-titel')).trim();
     pruefe(sp + ": Memory-Karte übersetzt", titel === TEXTE[sp].memoryName, titel);
-    await t.tap('.sp-karte[data-spiel="memory"]');
+    await karteTippen(t, 'memory');
     await t.waitForSelector(".sp-m-knopf");
     pruefe(sp + ": Memory Richtung " + (RTL.includes(sp) ? "rtl" : "ltr"), (await t.getAttribute("#spiele-platz", "dir")) === (RTL.includes(sp) ? "rtl" : "ltr"));
     await layoutPruefen(t, sp + " Memory bereit", 360);
@@ -685,7 +691,7 @@ async function memoryPruefungen() {
 const padStart = async (s) => (await s.textContent(".sp-m-knopf")).trim() === "Start";
 
 /* =========================  Rechts vor Links (Spiel 4)  ========================= */
-const zumVorfahrt = async (s) => { await zumHub(s); await s.tap('.sp-karte[data-spiel="vorfahrt"]'); await s.waitForSelector(".sp-v-knopf"); };
+const zumVorfahrt = async (s) => { await zumHub(s); await karteTippen(s, 'vorfahrt'); await s.waitForSelector(".sp-v-knopf"); };
 const vorAutos = (s) => s.locator(".sp-v-auto").evaluateAll((els) => els.map((e) => ({ arm: +e.dataset.arm, richtung: e.dataset.richtung })));
 const GRUND_TEXT = { frei: "vorGFrei", rechts: "vorGRechts", gegen: "vorGGegen" };
 async function vorTippen(s, arm) { await s.tap('.sp-v-auto[data-arm="' + arm + '"] .sp-v-treffer'); }
@@ -805,7 +811,7 @@ async function vorfahrtPruefungen() {
     await zumHub(t);
     await t.waitForSelector('.sp-karte[data-spiel="vorfahrt"]');
     pruefe(sp + ": Vorfahrt-Karte übersetzt", (await t.textContent('.sp-karte[data-spiel="vorfahrt"] .sp-karte-titel')).trim() === TEXTE[sp].vorName);
-    await t.tap('.sp-karte[data-spiel="vorfahrt"]');
+    await karteTippen(t, 'vorfahrt');
     await t.waitForSelector(".sp-v-knopf");
     pruefe(sp + ": Vorfahrt Richtung " + (RTL.includes(sp) ? "rtl" : "ltr"), (await t.getAttribute("#spiele-platz", "dir")) === (RTL.includes(sp) ? "rtl" : "ltr"));
     await layoutPruefen(t, sp + " Vorfahrt bereit", 360);

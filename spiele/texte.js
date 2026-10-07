@@ -6,6 +6,8 @@
    NICHT von Muttersprachlern geprüft: rif, ckb, kmr, ps, am, ti (wie bei den bisherigen Sprachpaketen
    bitte gegenlesen lassen). Neues Spiel = Schlüssel hier in ALLEN Sprachen ergänzen. */
 
+import { TEXTE_DUELL } from "./texte-duell.js";
+
 export const RTL = ["ar", "ckb", "ur", "fa", "ps"];
 
 export const TEXTE = {
@@ -55,7 +57,7 @@ export const TEXTE = {
     z205m: "Du musst Fahrzeuge auf der kreuzenden Straße durchfahren lassen.",
     z206l: "Halt! Vorfahrt gewähren",
     z206m: "Du musst immer anhalten, auch wenn nichts kommt. Danach musst du dem kreuzenden Verkehr die Vorfahrt lassen.",
-    z306l: "Vorfahrts­straße",
+    z306l: "Vorfahrt­straße",
     z306m: "Auf dieser Straße hast du an Kreuzungen und Einmündungen Vorfahrt, bis sie endet.",
     z274l: "Höchst­ge­schwin­dig­keit",
     z274m: "Schneller als die Zahl auf dem Schild (in km/h) darfst du hier nicht fahren.",
@@ -63,9 +65,9 @@ export const TEXTE = {
     z2741m: "In der ganzen Zone gilt Tempo 30, bis das Zonen-Ende-Schild kommt. Meist gilt dort rechts vor links.",
     z267l: "Verbot der Ein­fahrt",
     z267m: "In diese Straße darfst du von dieser Seite nicht einfahren.",
-    z283l: "Absolutes Halte­verbot",
+    z283l: "Absolutes Halt­verbot",
     z283m: "Hier darfst du nicht halten und nicht parken, auch nicht kurz.",
-    z286l: "Ein­ge­schränktes Halte­verbot",
+    z286l: "Ein­ge­schränktes Halt­verbot",
     z286m: "Du darfst hier bis zu 3 Minuten halten, zum Beispiel zum Aussteigen. Parken ist verboten.",
     z250l: "Verbot für Fahr­zeuge aller Art",
     z250m: "Hier darf kein Fahrzeug fahren. Fußgänger dürfen hier gehen.",
@@ -2315,9 +2317,22 @@ export const TEXTE = {
   }
 };
 
+/* Texte von Spiel 10 (Duell gegen Mitschüler) einmischen: spiele/texte-duell.js */
+Object.keys(TEXTE_DUELL).forEach(function (l) { if (TEXTE[l]) Object.assign(TEXTE[l], TEXTE_DUELL[l]); });
+
 /* Text holen: gewählte Sprache, sonst Deutsch, sonst der Schlüssel selbst. {n}-Platzhalter werden ersetzt. */
 export function tx(sprache, schluessel, werte) {
   const t = (TEXTE[sprache] && TEXTE[sprache][schluessel]) || TEXTE.de[schluessel] || schluessel;
   if (!werte) return t;
   return Object.keys(werte).reduce(function (s, k) { return s.split("{" + k + "}").join(werte[k]); }, t);
 }
+
+import { TEXTE_FAHRLEHRER } from "./texte-fahrlehrer.js";
+import { TEXTE_KONTROLLE } from "./texte-kontrolle.js";
+import { TEXTE_GEFAHREN } from "./texte-gefahren.js";
+import { TEXTE_FAHRZEUG } from "./texte-fahrzeug.js";
+import { TEXTE_NINJA } from "./texte-ninja.js";
+/* Texte der einzelnen Spiele (je Spiel eigene Datei, 18 Sprachen) in die Sprachpakete mischen */
+[TEXTE_FAHRLEHRER, TEXTE_KONTROLLE, TEXTE_GEFAHREN, TEXTE_FAHRZEUG, TEXTE_NINJA].forEach(function (z) {
+  Object.keys(z).forEach(function (sp) { Object.assign(TEXTE[sp], z[sp]); });
+});

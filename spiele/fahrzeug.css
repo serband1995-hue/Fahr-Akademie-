@@ -1,0 +1,80 @@
+/* Fahrzeug-Check (Spiel 8, 08.10.2026). Eigene Datei, wird von spiele/fahrzeug.js selbst geladen.
+   Nur Farb-/Abstandswerte der App (:root in index.html) -> Dunkelmodus. Bildfarben der Fahrzeugbilder sind feste Zeichenfarben. */
+
+.sp-fahrzeug{display:grid;gap:var(--sp-m);}
+.sp-fahrzeug .sp-spieltitel{font-family:var(--ff-titel);font-size:22px;font-weight:600;margin:0;}
+.fz-buehne{position:relative;display:grid;gap:8px;padding:10px;scroll-margin-top:8px;min-width:0;}
+.fz-hud{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-m);font-weight:700;min-height:1.6em;}
+.fz-bild{font-size:14px;color:var(--muted);min-width:0;overflow-wrap:anywhere;}
+.fz-punkte{flex:none;}
+.fz-punkte b{font-size:20px;font-variant-numeric:tabular-nums;font-family:var(--ff-titel);}
+.fz-leiste{height:6px;border-radius:3px;background:var(--surface-strong);overflow:hidden;}
+.fz-leiste i{display:block;height:100%;width:0;background:var(--gruen-hell);}
+.fz-leiste i.knapp{background:var(--warn);}
+.fz-info{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-m);font-size:14px;font-weight:700;min-height:1.4em;}
+.fz-zaehler{min-width:0;overflow-wrap:anywhere;}
+.fz-zeit{flex:none;font-variant-numeric:tabular-nums;color:var(--muted);}
+.fz-frage{min-height:1.4em;text-align:center;font-weight:700;font-size:15px;}
+.fz-szene{position:relative;width:100%;aspect-ratio:3/2;border-radius:var(--r-m);overflow:hidden;background:var(--surface-strong);touch-action:manipulation;}
+.fz-szene.leer{background:repeating-linear-gradient(135deg,var(--surface-strong) 0 14px,var(--surface-tint) 14px 28px);}
+.fz-bildplatz,.fz-svg{display:block;width:100%;height:100%;}
+.fz-svg{user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;cursor:crosshair;}
+.fz-svg.fest{cursor:default;}
+.fz-svg:focus{outline:none;}
+.fz-svg:focus-visible{outline:3px solid #2d6cdf;outline-offset:2px;}
+.fz-svg image{pointer-events:none;}
+.fz-ring circle:first-child{stroke-width:3.5;fill:none;}
+.fz-ring.gefunden circle:first-child{stroke:#2ea84f;}
+.fz-ring.uebersehen circle:first-child{stroke:#f08a1c;stroke-dasharray:6 4;}
+.fz-ring.gefunden .fz-nr-bg{fill:#2ea84f;}
+.fz-ring.uebersehen .fz-nr-bg{fill:#c2620a;}
+.fz-nr{fill:#fff;font:700 11px sans-serif;}
+.fz-fehltipp path{stroke:#e0442a;stroke-width:3;stroke-linecap:round;animation:fz-weg .7s ease-out forwards;}
+@keyframes fz-weg{to{opacity:0;}}
+.fz-szene.wackeln{animation:fz-wackeln .22s linear;}
+@keyframes fz-wackeln{25%{transform:translateX(-3px);}75%{transform:translateX(3px);}}
+.fz-meldung{min-height:1.4em;text-align:center;font-size:13.5px;color:var(--muted);}
+.fz-knopf{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);width:min(82%,260px);min-height:62px;border:0;border-radius:var(--r-l);cursor:pointer;
+  font-family:inherit;font-size:22px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;touch-action:manipulation;-webkit-tap-highlight-color:transparent;box-shadow:0 6px 18px rgba(43,40,30,.22);}
+.fz-knopf[hidden]{display:none;}
+.fz-knopf.start{background:var(--gruen);color:var(--auf-tief);}
+.fz-knopf.warte{background:var(--surface-strong);color:var(--muted);cursor:default;}
+.fz-knopf:focus-visible,.fz-fertig:focus-visible,.fz-weiter:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.fz-fertig{justify-self:center;min-height:44px;padding:8px 18px;border:1.5px solid var(--hairline);border-radius:var(--r-l);background:var(--bg);color:var(--text);
+  font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;touch-action:manipulation;max-width:100%;}
+.fz-fertig[hidden]{display:none;}
+.fz-anleitung{margin:0;line-height:1.5;}
+.fz-antwort{display:grid;gap:8px;padding:10px;border-radius:var(--r-m);background:var(--surface-strong);min-width:0;}
+.fz-antwort[hidden]{display:none;}
+.fz-urteil{font-weight:800;font-size:18px;}
+.fz-urteil.ja{color:var(--gruen-text);}
+.fz-urteil.nein{color:var(--warn);}
+.fz-zahlen{font-weight:700;font-size:14.5px;}
+.fz-legende{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);}
+.fz-leg::before{content:"";display:inline-block;width:.85em;height:.85em;margin-inline-end:.45em;vertical-align:-.1em;border-radius:50%;border:3px solid #2ea84f;}
+.fz-leg.uebersehen::before{border-color:#f08a1c;border-style:dashed;}
+.fz-listentitel{margin:4px 0 0;font-family:var(--ff-titel);font-size:16px;font-weight:600;}
+.fz-liste{list-style:none;margin:0;padding:0;display:grid;gap:10px;}
+.fz-eintrag{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;align-items:start;}
+.fz-nummer{display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-weight:800;font-size:13px;color:#fff;background:#2ea84f;}
+.fz-eintrag.uebersehen .fz-nummer{background:#c2620a;}
+.fz-eintrag-kopf{font-size:15px;line-height:1.3;overflow-wrap:anywhere;}
+.fz-status{display:inline-block;margin-inline-start:.4em;padding:1px 8px;border-radius:var(--r-pill);font-size:12px;font-weight:700;background:var(--surface-tint);color:var(--gruen-text);}
+.fz-eintrag.uebersehen .fz-status{background:var(--gold);color:var(--auf-gold);}
+.fz-eintrag p{margin:3px 0 0;font-size:14.5px;line-height:1.45;overflow-wrap:anywhere;hyphens:auto;}
+.fz-weiter{margin-top:6px;width:100%;min-height:48px;border:0;border-radius:var(--r-l);background:var(--gruen);color:var(--auf-tief);
+  font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;touch-action:manipulation;}
+.fz-ergzeile{margin:0;font-weight:700;}
+@media (prefers-reduced-motion:reduce){.fz-szene.wackeln{animation:none;}.fz-fehltipp path{animation:none;opacity:.6;}}
+
+/* Querformat am Handy: Bild links, Anzeigen und Erklärung rechts */
+@media (max-height:520px){
+  .sp-fahrzeug .sp-spieltitel{display:none;}
+  .fz-buehne{grid-template-columns:min(76vh,54%) minmax(0,1fr);grid-template-areas:"szene hud" "szene bar" "szene info" "szene frage" "szene meldung" "szene fertig" "szene antwort";
+    column-gap:12px;row-gap:6px;align-content:start;padding:8px;}
+  .fz-hud{grid-area:hud;}.fz-leiste{grid-area:bar;}.fz-info{grid-area:info;}.fz-frage{grid-area:frage;text-align:start;}
+  .fz-szene{grid-area:szene;align-self:start;position:sticky;top:8px;}.fz-meldung{grid-area:meldung;text-align:start;}.fz-fertig{grid-area:fertig;justify-self:start;}.fz-antwort{grid-area:antwort;}
+  .fz-anleitung{display:none;}
+  .fz-knopf{min-height:48px;font-size:18px;}
+  .fz-weiter{min-height:44px;}
+}
