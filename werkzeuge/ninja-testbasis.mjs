@@ -65,7 +65,13 @@ export async function serverMitEintrag(mutation) {
   let quelle = readFileSync(join(wurzel, "werkzeuge/edge-functions/academy-spiele.ts"), "utf8");
   quelle = quelle.replace(/import \{ createClient \} from "[^"]+";/, "const createClient = globalThis.__createClient;");
   if (schonEingebautServer(quelle)) {
-    if (mutation) { const neu = mutation(quelle); if (neu === quelle) throw new Error("Mutation ändert nichts"); quelle = neu; }
+    if (mutation) {   // nur der ninja-Block wird verändert (ähnliche Zeilen anderer Spiele bleiben)
+      const m = /\n\s*ninja:\s*\{/.exec(quelle);
+      const ende = quelle.indexOf("\n  },", m.index) + 5;
+      const block = quelle.slice(m.index, ende), neu = mutation(block);
+      if (neu === block) throw new Error("Mutation ändert nichts");
+      quelle = quelle.slice(0, m.index) + neu + quelle.slice(ende);
+    }
   } else {
     const a = "const istGanz = (x: unknown): x is number => typeof x === \"number\" && Number.isInteger(x);";
     if (!quelle.includes(a)) throw new Error("Anker istGanz nicht gefunden");
