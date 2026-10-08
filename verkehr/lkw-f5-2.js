@@ -340,7 +340,7 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
      Weltkoordinaten der Rechnung: der Lkw fährt in x-Richtung, die Vorderachse beginnt die Rechtskurve (Radius 10,75 m) bei x = 32 m; y nach rechts.
      Der Radfahrer fährt auf dem Radstreifen rechts vom Lkw geradeaus (y = 2,4 m, Länge 1,8 m, Breite 0,6 m, Höhe der Sichtprobe 1,0 m).
      art "A": Lkw wird langsamer, biegt ab, ohne neu zu schauen. art "B": Lkw hält vor dem Abbiegen, lässt den Radfahrer durch, biegt dann mit Schrittgeschwindigkeit ab. */
-  const ABBIEGEN = { R: 10.75, S0: 32, dt: 0.05, yb: 2.4, vb: 4.0, xb0: 9, s0: 9, v0: 5.0, v1: 3.5, ta: 2.0, vSchritt: 1.8, sBremse: 21.7, aBremse: 1.5, stopp: 0.35 };
+  const ABBIEGEN = { R: 10.75, S0: 32, dt: 0.05, yb: 2.4, vb: 4.0, xb0: 9, s0: 9, v0: 5.0, v1: 3.5, ta: 2.0, vSchritt: 1.8, sBremse: 21.7, aBremse: 1.5, stopp: 0.2 };
   function radfahrerAbbiegen(art, opt) {
     const P = Object.assign({}, ABBIEGEN, opt || {}), fz = FAHRZEUGE.solo, sf = sichtfeld(fz);
     const bogenL = P.R * Math.PI / 2, b = bahn([{ gerade: P.S0 }, { bogen: P.R, winkel: Math.PI / 2, rechts: true }, { gerade: 60 }]);
@@ -371,7 +371,8 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
   }
 
   // Umrisse der Sichtfelder (Meter im Fahrzeug) zum Zeichnen: Spiegelkeile mit Schatten des Aufbaus (Strahlverfolgung), Blickfelder durch die Scheiben (Boden)
-  function sichtPolygone(fz) {
+  function sichtPolygone(fz, ho) {
+    ho = ho || 0;
     const sf = sichtfeld(fz), r = sf.koerper, out = { spiegel: [], scheibe: [] };
     function trifftKoerper(o, w) {      // Abstand bis zum Rechteck entlang des Strahls (Infinity: kein Treffer)
       const dx = Math.cos(w), dy = Math.sin(w); let t0 = 0, t1 = Infinity;
@@ -389,7 +390,7 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
       out.spiegel.push({ id: m.id, seite: m.seite, pts: pts });
     });
     sf.oeff.forEach(function (o) {
-      const k = SICHT.he / (SICHT.he - o.h), ex = (p, f) => ({ x: sf.auge.x + f * (p.x - sf.auge.x), y: sf.auge.y + f * (p.y - sf.auge.y) });
+      const k = Math.max(1, (SICHT.he - ho) / (SICHT.he - o.h)), ex = (p, f) => ({ x: sf.auge.x + f * (p.x - sf.auge.x), y: sf.auge.y + f * (p.y - sf.auge.y) });
       const dA = Math.hypot(o.A.x - sf.auge.x, o.A.y - sf.auge.y), dB = Math.hypot(o.B.x - sf.auge.x, o.B.y - sf.auge.y), far = 12;
       out.scheibe.push({ id: o.id, pts: [ex(o.A, k), ex(o.B, k), ex(o.B, Math.max(k, far / dB)), ex(o.A, Math.max(k, far / dA))] });
     });
@@ -432,7 +433,26 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
     return { geloest: geloest, bremstSelbst: ab.selbsttaetig, vomZugSteuerbar: geloest && gelb, unsicher: unsicher };
   }
 
-  const api = { lenkdauerBei: lenkdauerBei, pruefeTag: pruefeTag, pruefeWochen: pruefeWochen, folgefahrt: folgefahrt, FAHRZEUGE: FAHRZEUGE, bahn: bahn, simuliere: simuliere, koerper: koerper, rechteck: rechteck, maxUeberschnitt: maxUeberschnitt, gesamtLaenge: gesamtLaenge, radien: radien, vorderachsRadius: vorderachsRadius, innenRadius: innenRadius, abstandLinks: abstandLinks, folge: folge, SICHT: SICHT, sichtfeld: sichtfeld, insFahrzeug: insFahrzeug, polyAbstand: polyAbstand, verdecktVorn: verdecktVorn, radfahrerAbbiegen: radfahrerAbbiegen, ABBIEGEN: ABBIEGEN, sichtPolygone: sichtPolygone, zweikreis: zweikreis, anhaengerBremse: anhaengerBremse, federspeicher: federspeicher, kuppelnZustand: kuppelnZustand, DRUCK: DRUCK, FEDER: FEDER };
+  /* ---------- Sattelzug kuppeln (Filme 3.1, 3.2, 3.3): Beispielhöhen eines neutralen Fahrzeugs, Prüfungen für Höhe, Fluchten und Wegrollen ---------- */
+  const SATTEL = { unterkante: 1.30, plattenOben: 1.25, zapfenUnten: 1.18, fluchtToleranz: 0.10, e: 0.55 };   // m; Zapfen ragt 0,12 m unter die Aufgleitplatte, Sattelplatte soll ihn seitlich fassen
+  // Höhe: Die Sattelplatte muss beim Unterfahren unter dem Zapfen und der Aufgleitplatte bleiben; erst danach wird die Zugmaschine bis zum Kontakt angehoben (Auflieger darf nicht angehoben werden)
+  function sattelUnterfahren(luft) {
+    const oben = SATTEL.plattenOben + luft;
+    return { plattenOben: oben, passtUnter: oben < SATTEL.zapfenUnten - 1e-9, kontakt: oben >= SATTEL.unterkante - 1e-9, hebtAuf: oben > SATTEL.unterkante + 1e-9 };
+  }
+  // Fluchten: Die Zugmaschine fährt gerade zurück; sie startet mit seitlichem Versatz (m) und Winkel (Grad) zur Auflieger-Mittellinie, Weg bis zum Zapfen d (m)
+  function sattelTreffer(o) {
+    const quer = (o.versatz || 0) + (o.abstand || 6) * Math.tan((o.winkel || 0) * Math.PI / 180);
+    return { quer: quer, ok: Math.abs(quer) <= SATTEL.fluchtToleranz };
+  }
+  // Wegrollen beim Anschließen der roten Leitung (DGUV Information 214-080): Rot löst die Betriebsbremse des Anhängers; ohne Feststellbremse und Keile rollt der Zug schon bei kleinem Gefälle
+  function rollen(o) {
+    const betriebsbremseAnhaenger = !o.rot;                          // rot angeschlossen = Betriebsbremse des Anhängers gelöst
+    const gesichert = !!(o.festZug || o.festAnh || o.keile);
+    return { rollt: !betriebsbremseAnhaenger && !gesichert && (o.gefaelle || 0) > 0, betriebsbremseAnhaenger: betriebsbremseAnhaenger, gesichert: gesichert };
+  }
+
+  const api = { lenkdauerBei: lenkdauerBei, pruefeTag: pruefeTag, pruefeWochen: pruefeWochen, folgefahrt: folgefahrt, FAHRZEUGE: FAHRZEUGE, bahn: bahn, simuliere: simuliere, koerper: koerper, rechteck: rechteck, maxUeberschnitt: maxUeberschnitt, gesamtLaenge: gesamtLaenge, radien: radien, vorderachsRadius: vorderachsRadius, innenRadius: innenRadius, abstandLinks: abstandLinks, folge: folge, SICHT: SICHT, sichtfeld: sichtfeld, insFahrzeug: insFahrzeug, polyAbstand: polyAbstand, verdecktVorn: verdecktVorn, radfahrerAbbiegen: radfahrerAbbiegen, ABBIEGEN: ABBIEGEN, sichtPolygone: sichtPolygone, zweikreis: zweikreis, anhaengerBremse: anhaengerBremse, federspeicher: federspeicher, kuppelnZustand: kuppelnZustand, DRUCK: DRUCK, FEDER: FEDER, SATTEL: SATTEL, sattelUnterfahren: sattelUnterfahren, sattelTreffer: sattelTreffer, rollen: rollen };
   if (typeof module !== "undefined" && module.exports) module.exports = api; else root.LKW_MODELL = api;
 })(typeof window !== "undefined" ? window : globalThis);
 
@@ -1041,6 +1061,116 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
 
 })(W);
 
+// ---- kern/pneu.js ----
+(function (window) {
+/* Schaltbilder der Druckluft-Bremsanlage (Filme 6.1, 6.2, 6.3, 3.x): Behälter, Leitungen, Zylinder, Ventile, Kupplungsköpfe.
+   Reine Zeichnung: jede Komponente hat setze(Wert) mit Werten 0…1 aus kern/modell.js (zweikreis, anhaengerBremse, federspeicher, kuppelnZustand).
+   Farben: Druckluft blau, Bremsleitung (Kupplungskopf) gelb, Vorratsleitung rot. Bühne 1080 x 1080. */
+(function (window) {
+  "use strict";
+  const BK = window.LKW_BK, F = BK.FARBE, el = BK.el, f = BK.f;
+  const C = { luft: "#6EC1E4", gelb: "#F2C94C", rot: "#E5584B", stahl: "#C9CFC6", dunkel: "#23262A", linie: "rgba(250,246,236,.30)", feder: "#E8B77F", belag: "#B08A5A" };
+
+  function buehne(stage) {
+    stage.style.background = "linear-gradient(180deg,#2B3631 0%,#36423B 100%)";
+    const svg = el("svg", { viewBox: "0 0 1080 1080", width: 1080, height: 1080 });
+    svg.style.cssText = "position:absolute;left:0;top:0;overflow:hidden";
+    stage.appendChild(svg);
+    return { svg: svg, g: el("g", null, svg), ueber: el("g", null, svg) };
+  }
+  function text(parent, t, x, y, o) {
+    o = o || {};
+    const e = el("text", { x: x, y: y, "text-anchor": o.anker || "middle", "font-size": o.gr || 28, "font-weight": o.fett ? 700 : 600, "font-family": "Barlow, sans-serif", fill: o.farbe || F.creme }, parent);
+    e.textContent = t; return e;
+  }
+  const pfadD = (pts) => "M" + pts.map((p) => f(p[0]) + " " + f(p[1])).join(" L");
+  const mix = (a, b, u) => a + (b - a) * u;
+
+  /* Leitung: graue Röhre, darüber die Füllung (Farbe), Deckkraft/Dicke nach Druck p; ungefüllt = nur Röhre. o: { farbe, w } */
+  function leitung(B, pts, o) {
+    o = o || {}; const w = o.w || 14, g = el("g", null, o.layer || B.g);
+    el("path", { d: pfadD(pts), fill: "none", stroke: "rgba(250,246,236,.22)", "stroke-width": w + 6, "stroke-linecap": "round", "stroke-linejoin": "round" }, g);
+    el("path", { d: pfadD(pts), fill: "none", stroke: "#2B3631", "stroke-width": w, "stroke-linecap": "round", "stroke-linejoin": "round" }, g);
+    const fuell = el("path", { d: pfadD(pts), fill: "none", stroke: o.farbe || C.luft, "stroke-width": w, "stroke-linecap": "round", "stroke-linejoin": "round", opacity: 0 }, g);
+    return { g: g, setze: function (p) { fuell.setAttribute("opacity", f(Math.max(0, Math.min(1, p)) * 0.95)); }, farbe: (c) => fuell.setAttribute("stroke", c), pts: pts };
+  }
+  /* Behälter (Vorratsbehälter): Füllstand von unten */
+  function behaelter(B, o) {
+    const g = el("g", null, B.g), x = o.x, y = o.y, w = o.w || 150, h = o.h || 90;
+    el("rect", { x: x, y: y, width: w, height: h, rx: h / 2, fill: "#2B3631", stroke: C.stahl, "stroke-width": 5 }, g);
+    const cp = "cl" + Math.round(x) + "_" + Math.round(y) + "_" + (o.id || "");
+    const defs = el("defs", null, g), clip = el("clipPath", { id: cp }, defs); el("rect", { x: x + 3, y: y + 3, width: w - 6, height: h - 6, rx: h / 2 - 3 }, clip);
+    const fuell = el("rect", { x: x, y: y + h, width: w, height: 0, fill: C.luft, opacity: 0.85, "clip-path": "url(#" + cp + ")" }, g);
+    if (o.name) text(g, o.name, x + w / 2, y + h + 34, { gr: 26 });
+    return { g: g, setze: function (p) { p = Math.max(0, Math.min(1, p)); fuell.setAttribute("y", f(y + h - p * h)); fuell.setAttribute("height", f(p * h)); }, x: x, y: y, w: w, h: h };
+  }
+  /* Bremszylinder (Membran) waagerecht mit Schubstange nach rechts auf eine Bremstrommel-Scheibe. setze(p): Druck 0…1 → Stange fährt aus, Belag drückt */
+  function zylinder(B, o) {
+    const g = el("g", null, B.g), x = o.x, y = o.y, w = o.w || 150, h = o.h || 80, hub = o.hub || 60;
+    const kam = el("rect", { x: x, y: y, width: w * 0.6, height: h, rx: 10, fill: "#2B3631", stroke: C.stahl, "stroke-width": 5 }, g);
+    const luft = el("rect", { x: x + 4, y: y + 4, width: 0, height: h - 8, rx: 6, fill: C.luft, opacity: 0.85 }, g);
+    const kolben = el("rect", { x: x + 4, y: y + 4, width: 10, height: h - 8, rx: 3, fill: C.stahl }, g);
+    const stange = el("rect", { x: x + w * 0.6, y: y + h / 2 - 7, width: w * 0.4, height: 14, fill: C.stahl }, g);
+    const beleg = el("rect", { x: x + w, y: y + h / 2 - 28, width: 14, height: 56, rx: 4, fill: C.belag }, g);
+    const trommel = el("circle", { cx: x + w + 14 + 70, cy: y + h / 2, r: 62, fill: "none", stroke: "rgba(250,246,236,.45)", "stroke-width": 10 }, g);
+    return { g: g, setze: function (p) {
+      p = Math.max(0, Math.min(1, p));
+      const lw = (w * 0.6 - 8 - 12) * 0.9;
+      luft.setAttribute("width", f(p * lw)); kolben.setAttribute("x", f(x + 4 + p * lw)); luft.setAttribute("opacity", f(p > 0 ? 0.85 : 0));
+      const s = p * hub * 0.35;
+      stange.setAttribute("x", f(x + w * 0.6 + s)); stange.setAttribute("width", f(w * 0.4 - s * 0 + 0)); beleg.setAttribute("x", f(x + w + s));
+      trommel.setAttribute("stroke", p > 0.05 ? C.belag : "rgba(250,246,236,.45)");
+    } };
+  }
+  /* Ventil (Kasten mit Beschriftung); setze(aktiv 0…1) färbt den Rand */
+  function ventil(B, o) {
+    const g = el("g", null, B.g), w = o.w || 110, h = o.h || 90;
+    const r = el("rect", { x: o.x, y: o.y, width: w, height: h, rx: 14, fill: "#2B3631", stroke: C.stahl, "stroke-width": 5 }, g);
+    el("path", { d: "M" + (o.x + w * 0.3) + " " + (o.y + h * 0.75) + " L" + (o.x + w * 0.3) + " " + (o.y + h * 0.25) + " L" + (o.x + w * 0.7) + " " + (o.y + h * 0.75) + " L" + (o.x + w * 0.7) + " " + (o.y + h * 0.25), fill: "none", stroke: "rgba(250,246,236,.7)", "stroke-width": 4, "stroke-linejoin": "round" }, g);
+    if (o.name) text(g, o.name, o.x + w / 2, o.y - 14, { gr: 26 });
+    return { g: g, setze: function (a) { r.setAttribute("stroke", a > 0.5 ? (o.farbe || F.gold) : C.stahl); } };
+  }
+  /* Kupplungskopf (rot/gelb) als Kreis mit Ring; setze(verbunden): 1 = zusammen, 0 = getrennt (Hälften auseinander) */
+  function kupplung(B, o) {
+    const g = el("g", null, B.g), col = o.farbe, r = o.r || 24, d = o.abstand || 70;
+    const a = el("g", null, g), b = el("g", null, g);
+    el("circle", { r: r, fill: "#2B3631", stroke: col, "stroke-width": 8 }, a); el("circle", { r: r, fill: "#2B3631", stroke: col, "stroke-width": 8 }, b);
+    el("circle", { r: r * 0.4, fill: col }, a); el("circle", { r: r * 0.4, fill: col }, b);
+    return { g: g, setze: function (v) { const s = (1 - Math.max(0, Math.min(1, v))) * d / 2; a.setAttribute("transform", "translate(" + f(o.x - s - r) + " " + o.y + ")"); b.setAttribute("transform", "translate(" + f(o.x + s + r) + " " + o.y + ")"); } };
+  }
+  /* Kombizylinder (Schnittbild, vereinfacht): links der Raum der Betriebsbremse (Membran: Druck schiebt die Platte nach links = bremst),
+     rechts der Federspeicher (Feder schiebt den Federkolben zur Trennwand und über die Schubstange die Platte nach links = bremst; Druck zwischen Wand und Federkolben spannt die Feder = löst).
+     setze(pMembran, pFeder) rechnet mit modell.federspeicher; Stange fährt bei Bremskraft nach links zur Bremse aus. Gibt das Modell-Ergebnis zurück. */
+  function kombi(B, o) {
+    const g = el("g", null, B.g), x = o.x, y = o.y, w = o.w || 560, h = o.h || 200, M = window.LKW_MODELL;
+    const mem = w * 0.42, wand = x + mem, ende = x + w, ym = y + h / 2, hub = mem - 70, weg = ende - wand - 90;
+    el("rect", { x: x, y: y, width: w, height: h, rx: 22, fill: "#2B3631", stroke: C.stahl, "stroke-width": 7 }, g);
+    const luftM = el("rect", { x: x + 8, y: y + 10, width: 0, height: h - 20, fill: C.luft, opacity: 0.85 }, g);
+    const luftF = el("rect", { x: wand + 6, y: y + 10, width: 0, height: h - 20, fill: C.luft, opacity: 0.85 }, g);
+    el("rect", { x: wand - 6, y: y + 4, width: 12, height: h - 8, fill: C.stahl }, g);                                  // Trennwand
+    const platte = el("rect", { x: wand - 16, y: y + 12, width: 14, height: h - 24, rx: 4, fill: C.stahl }, g);       // Membranplatte
+    const kolbenF = el("rect", { x: wand + 6, y: y + 12, width: 16, height: h - 24, rx: 4, fill: C.stahl }, g);        // Federkolben
+    const feder = el("path", { d: "", fill: "none", stroke: C.feder, "stroke-width": 9, "stroke-linejoin": "round" }, g);
+    const stange = el("rect", { x: x - 70, y: ym - 10, width: 90, height: 20, fill: C.stahl }, g);
+    const belag = el("rect", { x: x - 100, y: ym - 42, width: 28, height: 84, rx: 6, fill: C.belag }, g);
+    const trommel = el("circle", { cx: x - 100 - 24 - 80, cy: ym, r: 86, fill: "none", stroke: "rgba(250,246,236,.45)", "stroke-width": 12 }, g);
+    function federPfad(l, r) { const n = 9, a = h * 0.28; let d = "M" + f(l) + " " + f(ym); for (let k = 0; k < n; k++) d += " L" + f(l + (r - l) * (k + 0.5) / n) + " " + f(ym + (k % 2 ? a : -a)); return d + " L" + f(r) + " " + f(ym); }
+    return { g: g, x: x, y: y, w: w, h: h, wandX: wand, endeX: ende, setze: function (pM, pF) {
+      const r = M.federspeicher({ pFeder: pF, pMembran: pM }), pl = Math.min(1, pF / M.FEDER.haltedruck);
+      const xk = wand + 12 + weg * pl;                                              // Federkolben: bei Druck nach rechts (Feder gespannt)
+      kolbenF.setAttribute("x", f(xk)); luftF.setAttribute("width", f(Math.max(0, xk - wand - 6))); luftF.setAttribute("opacity", f(pF > 0.02 ? 0.85 : 0));
+      feder.setAttribute("d", federPfad(xk + 16, ende - 14));
+      const px = wand - 16 - hub * r.kraft;                                          // Membranplatte: je größer die Bremskraft, desto weiter links
+      platte.setAttribute("x", f(px)); luftM.setAttribute("x", f(px + 14)); luftM.setAttribute("width", f(Math.max(0, wand - 16 - px) * (pM > 0.02 ? 1 : 0))); luftM.setAttribute("opacity", f(pM > 0.02 ? 0.85 : 0));
+      const aus = 40 * r.kraft; stange.setAttribute("x", f(x - 70 - aus)); belag.setAttribute("x", f(x - 100 - aus));
+      trommel.setAttribute("stroke", r.gebremst ? C.belag : "rgba(250,246,236,.45)"); return r;
+    } };
+  }
+  window.LKW_PNEU = { C: C, buehne: buehne, text: text, leitung: leitung, behaelter: behaelter, zylinder: zylinder, ventil: ventil, kupplung: kupplung, kombi: kombi, mix: mix };
+})(window);
+
+})(W);
+
 // ---- f5-2/text.js ----
 (function (window) {
 /* Film 5.2 „Toter Winkel“ – EINE Quelle für allen Text (Deutsch) samt Zeiten. Keine Stimme (Stimmen kommen später in einer eigenen Sitzung).
@@ -1067,7 +1197,7 @@ window.FILM_TEXT = {
     k2_p1: "Die Spiegel zeigen die Seiten und den Bereich hinter dem Fahrerhaus.",
     k2_p2: "Durch die Scheiben sieht der Fahrer nach vorn und etwas zur Seite.",
     k2_p3: "Dazwischen bleiben Flächen ohne Sicht: der tote Winkel.",
-    k2_p4: "Rechts neben und vor dem Fahrerhaus ist er besonders groß.",
+    k2_p4: "Neben und vor dem Fahrerhaus ist er besonders groß.",
     k2_p5: "Auch direkt hinter dem Lkw ist ein Bereich verdeckt.",
     k2_p6: "Zusätzliche Spiegel und Kameras verkleinern den toten Winkel, ersetzen aber nicht den Blick des Fahrers.",
     l_spiegel: "Spiegel", l_scheibe: "Blick durch die Scheibe", l_toter: "Toter Winkel", l_rechts: "Rechts neben dem Fahrerhaus", l_hinten: "Hinter dem Lkw", l_vorn: "Vor dem Fahrerhaus",
@@ -1093,11 +1223,11 @@ window.FILM_TEXT = {
   },
   kapitel: [
     { id: "k1", titel: "k1_titel", kicker: "k1_kicker", dauer: 44, sub: { k: "k1_sub", t: 0.6 },
-      punkte: [{ k: "k1_p1", t: 3.5 }, { k: "k1_p2", t: 11.0 }, { k: "k1_p3", t: 24.5 }, { k: "k1_p4", t: 32.0 }] },
+      punkte: [{ k: "k1_p1", t: 3.5 }, { k: "k1_p2", t: 11.0 }, { k: "k1_p3", t: 25.5 }, { k: "k1_p4", t: 33.0 }] },
     { id: "k2", titel: "k2_titel", kicker: "k2_kicker", dauer: 68, sub: { k: "k2_sub", t: 0.6 },
       punkte: [{ k: "k2_p1", t: 4.0 }, { k: "k2_p2", t: 14.0 }, { k: "k2_p3", t: 24.0 }, { k: "k2_p4", t: 36.0 }, { k: "k2_p5", t: 48.0 }, { k: "k2_p6", t: 56.0 }] },
-    { id: "k3", titel: "k3_titel", kicker: "k3_kicker", dauer: 52, sub: { k: "k3_sub", t: 0.6 },
-      punkte: [{ k: "k3_p1", t: 1.8 }, { k: "k3_p2", t: 7.6 }, { k: "k3_p3", t: 19.0 }, { k: "k3_p4", t: 25.0 }, { k: "k3_p5", t: 33.0, stil: "gold" }] },
+    { id: "k3", titel: "k3_titel", kicker: "k3_kicker", dauer: 46, sub: { k: "k3_sub", t: 0.6 },
+      punkte: [{ k: "k3_p1", t: 1.8 }, { k: "k3_p2", t: 7.6 }, { k: "k3_p3", t: 18.5 }, { k: "k3_p4", t: 24.0 }, { k: "k3_p5", t: 31.0, stil: "gold" }] },
     { id: "k4", titel: "k4_titel", kicker: "k4_kicker", dauer: 64, sub: { k: "k4_sub", t: 0.6 },
       punkte: [{ k: "k4_p1", t: 2.0, ref: "§ 9 Abs. 3 StVO" }, { k: "k4_p2", t: 9.0 }, { k: "k4_p3", t: 16.0 }, { k: "k4_p4", t: 33.5 }, { k: "k4_p5", t: 44.0, ref: "§ 9 Abs. 6 StVO", stil: "gold" }] },
     { id: "k5", titel: "k5_titel", kicker: "k5_kicker", dauer: 18, merk: { k: "k5_merk", t: 1.2 } }
@@ -1106,7 +1236,7 @@ window.FILM_TEXT = {
 
 })(W);
 
-W.FILM_SPRACHEN = {"en":{"titel":"Blind spot","ui_ueber":"Overview: the truck blind spot","ui_intro":"A short film without sound: everything is shown as text on screen. You can pause at any time or pick a chapter.","ui_start":"Start film","ui_pause":"Pause","ui_weiter":"Resume","ui_neu":"Restart","ui_kapitel":"Chapters","ui_lesen":"Read the full text","k1_kicker":"From the side","k1_titel":"The driver sits high","k1_sub":"Simplified drawing of a truck, without a front mirror.","k1_p1":"The driver's eyes are far above the road.","k1_p2":"The cab hides the ground right in front of the truck.","k1_p3":"A child right in front of the truck can be completely hidden.","k1_p4":"The farther away it stands, the sooner you see it.","l_auge":"Driver's eye","l_boden":"Ground hidden","l_kind_weg":"Child hidden","l_kind_da":"Child visible","k2_kicker":"From above","k2_titel":"Mirrors do not show everything","k2_sub":"Example with main and wide-angle mirror, without front mirror.","k2_p1":"The mirrors show the sides and the area behind the cab.","k2_p2":"Through the windows the driver sees ahead and a little to the side.","k2_p3":"In between are areas with no view: the blind spot.","k2_p4":"To the right of and in front of the cab it is especially large.","k2_p5":"An area directly behind the truck is also hidden.","k2_p6":"Extra mirrors and cameras make the blind spot smaller, but they do not replace the driver's own look.","l_spiegel":"Mirror","l_scheibe":"View through window","l_toter":"Blind spot","l_rechts":"Right of the cab","l_hinten":"Behind the truck","l_vorn":"In front of the cab","k3_kicker":"Turning right","k3_titel":"The cyclist next to the truck","k3_sub":"Simplified model: the truck turns right, a cyclist rides straight ahead.","k3_p1":"The cyclist rides to the right of the truck.","k3_p2":"At first the driver sees the cyclist in the mirror and through the side window.","k3_p3":"Now the cyclist is in the blind spot.","k3_p4":"The driver turns without looking once more.","k3_p5":"The truck swings into the bike lane. The cyclist is in danger.","l_sp_sicht":"Visible in mirror","l_sch_sicht":"Visible through window","l_verdeckt":"In the blind spot","l_gefahr":"Danger!","k4_kicker":"This is how it's done right","k4_titel":"Wait and let them pass","k4_sub":"The same situation, now done right.","k4_p1":"You must let cyclists who ride straight ahead next to you pass.","k4_p2":"The driver looks in the mirror and sees the cyclist.","k4_p3":"He stops. The cyclist rides past.","k4_p4":"Only when the way is clear does he turn, and then at walking speed.","k4_p5":"With a truck over 3.5 t, you must drive at walking speed when turning right in built-up areas if you must expect cyclists going straight ahead, or pedestrians crossing where you turn in.","l_warten":"Wait","k5_kicker":"Remember","k5_titel":"Take-away","k5_merk":"Look in the mirror before turning, let cyclists pass, and when turning right in built-up areas with a truck over 3.5 t, drive at walking speed."},"sr":{"titel":"Mrtvi ugao","ui_ueber":"Pregled: mrtvi ugao kod kamiona","ui_intro":"Kratak film bez zvuka: sve piše na ekranu. Možeš da zaustaviš film ili da izabereš poglavlje kad god želiš.","ui_start":"Pokreni film","ui_pause":"Zaustavi","ui_weiter":"Nastavi","ui_neu":"Od početka","ui_kapitel":"Poglavlja","ui_lesen":"Pročitaj ceo tekst","k1_kicker":"Sa strane","k1_titel":"Vozač sedi visoko","k1_sub":"Pojednostavljen crtež kamiona, bez prednjeg ogledala.","k1_p1":"Oči vozača su visoko iznad puta.","k1_p2":"Kabina zaklanja tlo odmah ispred kamiona.","k1_p3":"Dete odmah ispred kamiona može biti potpuno zaklonjeno.","k1_p4":"Što je dalje, to ćeš ga pre videti.","l_auge":"Oko vozača","l_boden":"Tlo zaklonjeno","l_kind_weg":"Dete zaklonjeno","l_kind_da":"Dete vidljivo","k2_kicker":"Odozgo","k2_titel":"Ogledala ne pokazuju sve","k2_sub":"Primer sa glavnim ogledalom i ogledalom širokog ugla, bez prednjeg ogledala.","k2_p1":"Ogledala pokazuju strane i prostor iza kabine.","k2_p2":"Kroz stakla vozač vidi napred i malo u stranu.","k2_p3":"Između ostaju površine bez vidljivosti: mrtvi ugao.","k2_p4":"Desno pored kabine i ispred nje on je posebno velik.","k2_p5":"I neposredno iza kamiona postoji zaklonjen prostor.","k2_p6":"Dodatna ogledala i kamere smanjuju mrtvi ugao, ali ne zamenjuju pogled vozača.","l_spiegel":"Ogledalo","l_scheibe":"Pogled kroz staklo","l_toter":"Mrtvi ugao","l_rechts":"Desno od kabine","l_hinten":"Iza kamiona","l_vorn":"Ispred kabine","k3_kicker":"Skretanje udesno","k3_titel":"Biciklista pored kamiona","k3_sub":"Pojednostavljen model: kamion skreće udesno, biciklista vozi pravo.","k3_p1":"Biciklista vozi desno pored kamiona.","k3_p2":"Prvo ga vozač vidi u ogledalu i kroz bočno staklo.","k3_p3":"Sada je biciklista u mrtvom uglu.","k3_p4":"Vozač skreće, a da ne pogleda još jednom.","k3_p5":"Kamion zalazi u biciklističku traku. Biciklista je u opasnosti.","l_sp_sicht":"Vidi se u ogledalu","l_sch_sicht":"Vidi se kroz staklo","l_verdeckt":"U mrtvom uglu","l_gefahr":"Opasnost!","k4_kicker":"Ovako je ispravno","k4_titel":"Čekaj i propusti","k4_sub":"Ista situacija, sada ispravno.","k4_p1":"Biciklistu koji vozi pravo pored tebe moraš da propustiš.","k4_p2":"Vozač pogleda u ogledalo i vidi biciklistu.","k4_p3":"Zaustavi se. Biciklista prolazi.","k4_p4":"Tek kada je put slobodan, skreće, i to brzinom hoda.","k4_p5":"Kamionom preko 3,5 t moraš u naselju pri skretanju udesno da voziš brzinom hoda, ako treba računati na bicikliste koji idu pravo ili na pešake koji prelaze put tamo gde skrećeš.","l_warten":"Čekaj","k5_kicker":"Zapamti","k5_titel":"Za poneti","k5_merk":"Pre skretanja pogledaj u ogledalo, propusti bicikliste, u naselju kamionom preko 3,5 t pri skretanju udesno vozi brzinom hoda."},"tr":{"titel":"Ölü açı","ui_ueber":"Genel bakış: kamyonda ölü açı","ui_intro":"Sessiz kısa bir film: Her şey görüntüde yazıyla yer alır. İstediğin zaman durdurabilir veya bir bölüm seçebilirsin.","ui_start":"Filmi başlat","ui_pause":"Durdur","ui_weiter":"Devam","ui_neu":"Baştan","ui_kapitel":"Bölümler","ui_lesen":"Metnin tamamını oku","k1_kicker":"Yandan","k1_titel":"Sürücü yüksekte oturur","k1_sub":"Ön aynası olmayan, basitleştirilmiş bir kamyon çizimi.","k1_p1":"Sürücünün gözleri yolun çok üstündedir.","k1_p2":"Sürücü kabini, kamyonun hemen önündeki zemini gizler.","k1_p3":"Kamyonun hemen önündeki bir çocuk tamamen gizlenebilir.","k1_p4":"Ne kadar uzakta durursa, onu o kadar erken görürsün.","l_auge":"Sürücünün gözü","l_boden":"Zemin görünmüyor","l_kind_weg":"Çocuk görünmüyor","l_kind_da":"Çocuk görünüyor","k2_kicker":"Yukarıdan","k2_titel":"Aynalar her şeyi göstermez","k2_sub":"Ana ayna ve geniş açılı ayna ile örnek, ön ayna yok.","k2_p1":"Aynalar yanları ve sürücü kabininin arkasındaki alanı gösterir.","k2_p2":"Sürücü camlardan öne ve biraz yana doğru görür.","k2_p3":"Arada görüş olmayan alanlar kalır: ölü açı.","k2_p4":"Sürücü kabininin sağında ve önünde özellikle büyüktür.","k2_p5":"Kamyonun hemen arkasında da gizli bir alan vardır.","k2_p6":"Ek aynalar ve kameralar ölü açıyı küçültür, ama sürücünün kendi bakışının yerini tutmaz.","l_spiegel":"Ayna","l_scheibe":"Camdan görüş","l_toter":"Ölü açı","l_rechts":"Kabinin sağı","l_hinten":"Kamyonun arkası","l_vorn":"Kabinin önü","k3_kicker":"Sağa dönüş","k3_titel":"Kamyonun yanındaki bisikletli","k3_sub":"Basitleştirilmiş model: Kamyon sağa dönüyor, bir bisikletli düz gidiyor.","k3_p1":"Bisikletli kamyonun sağında gidiyor.","k3_p2":"Sürücü onu önce aynada ve yan camdan görür.","k3_p3":"Şimdi bisikletli ölü açıda.","k3_p4":"Sürücü bir kez daha bakmadan döner.","k3_p5":"Kamyon bisiklet şeridine kayar. Bisikletli tehlikede.","l_sp_sicht":"Aynada görünüyor","l_sch_sicht":"Camdan görünüyor","l_verdeckt":"Ölü açıda","l_gefahr":"Tehlike!","k4_kicker":"Doğrusu böyle","k4_titel":"Bekle ve geçmesine izin ver","k4_sub":"Aynı durum, bu sefer doğru.","k4_p1":"Yanında düz giden bisikletlilerin geçmesine izin vermelisin.","k4_p2":"Sürücü aynaya bakar ve bisikletliyi görür.","k4_p3":"Durur. Bisikletli geçip gider.","k4_p4":"Yol ancak açıldığında döner, bunu da yürüme hızıyla yapar.","k4_p5":"3,5 t üzeri bir kamyonla yerleşim yerinde sağa dönerken, düz giden bisikletlilerle veya döndüğün yerde yolu geçen yayalarla karşılaşma ihtimali varsa yürüme hızıyla gitmelisin.","l_warten":"Bekle","k5_kicker":"Unutma","k5_titel":"Akılda kalsın","k5_merk":"Dönmeden önce aynaya bak, bisikletlilerin geçmesine izin ver, yerleşim yerinde 3,5 t üzeri kamyonla sağa dönerken yürüme hızıyla git."}};
+W.FILM_SPRACHEN = {"en":{"titel":"Blind spot","ui_ueber":"Overview: the truck blind spot","ui_intro":"A short film without sound: everything is shown as text on screen. You can pause at any time or pick a chapter.","ui_start":"Start film","ui_pause":"Pause","ui_weiter":"Resume","ui_neu":"Restart","ui_kapitel":"Chapters","ui_lesen":"Read the full text","k1_kicker":"From the side","k1_titel":"The driver sits high","k1_sub":"Simplified drawing of a truck, without a front mirror.","k1_p1":"The driver's eyes are far above the road.","k1_p2":"The cab hides the ground right in front of the truck.","k1_p3":"A child right in front of the truck can be completely hidden.","k1_p4":"The farther away it stands, the sooner you see it.","l_auge":"Driver's eye","l_boden":"Ground hidden","l_kind_weg":"Child hidden","l_kind_da":"Child visible","k2_kicker":"From above","k2_titel":"Mirrors do not show everything","k2_sub":"Example with main and wide-angle mirror, without front mirror.","k2_p1":"The mirrors show the sides and the area behind the cab.","k2_p2":"Through the windows the driver sees ahead and a little to the side.","k2_p3":"In between are areas with no view: the blind spot.","k2_p4":"It is big next to and in front of the cab.","k2_p5":"An area directly behind the truck is also hidden.","k2_p6":"Extra mirrors and cameras make the blind spot smaller, but they do not replace the driver's own look.","l_spiegel":"Mirror","l_scheibe":"View through window","l_toter":"Blind spot","l_rechts":"Right of the cab","l_hinten":"Behind the truck","l_vorn":"In front of the cab","k3_kicker":"Turning right","k3_titel":"The cyclist next to the truck","k3_sub":"Simplified model: the truck turns right, a cyclist rides straight ahead.","k3_p1":"The cyclist rides to the right of the truck.","k3_p2":"At first the driver sees the cyclist in the mirror and through the side window.","k3_p3":"Now the cyclist is in the blind spot.","k3_p4":"The driver turns without looking once more.","k3_p5":"The truck swings into the bike lane. The cyclist is in danger.","l_sp_sicht":"Visible in mirror","l_sch_sicht":"Visible through window","l_verdeckt":"In the blind spot","l_gefahr":"Danger!","k4_kicker":"This is how it's done right","k4_titel":"Wait and let them pass","k4_sub":"The same situation, now done right.","k4_p1":"You must let cyclists who ride straight ahead next to you pass.","k4_p2":"The driver looks in the mirror and sees the cyclist.","k4_p3":"He stops. The cyclist rides past.","k4_p4":"Only when the way is clear does he turn, and then at walking speed.","k4_p5":"With a truck over 3.5 t, you must drive at walking speed when turning right in built-up areas if you must expect cyclists going straight ahead, or pedestrians crossing where you turn in.","l_warten":"Wait","k5_kicker":"Remember","k5_titel":"Take-away","k5_merk":"Look in the mirror before turning, let cyclists pass, and when turning right in built-up areas with a truck over 3.5 t, drive at walking speed."},"sr":{"titel":"Mrtvi ugao","ui_ueber":"Pregled: mrtvi ugao kod kamiona","ui_intro":"Kratak film bez zvuka: sve piše na ekranu. Možeš da zaustaviš film ili da izabereš poglavlje kad god želiš.","ui_start":"Pokreni film","ui_pause":"Zaustavi","ui_weiter":"Nastavi","ui_neu":"Od početka","ui_kapitel":"Poglavlja","ui_lesen":"Pročitaj ceo tekst","k1_kicker":"Sa strane","k1_titel":"Vozač sedi visoko","k1_sub":"Pojednostavljen crtež kamiona, bez prednjeg ogledala.","k1_p1":"Oči vozača su visoko iznad puta.","k1_p2":"Kabina zaklanja tlo odmah ispred kamiona.","k1_p3":"Dete odmah ispred kamiona može biti potpuno zaklonjeno.","k1_p4":"Što je dalje, to ćeš ga pre videti.","l_auge":"Oko vozača","l_boden":"Tlo zaklonjeno","l_kind_weg":"Dete zaklonjeno","l_kind_da":"Dete vidljivo","k2_kicker":"Odozgo","k2_titel":"Ogledala ne pokazuju sve","k2_sub":"Primer sa glavnim ogledalom i ogledalom širokog ugla, bez prednjeg ogledala.","k2_p1":"Ogledala pokazuju strane i prostor iza kabine.","k2_p2":"Kroz stakla vozač vidi napred i malo u stranu.","k2_p3":"Između ostaju površine bez vidljivosti: mrtvi ugao.","k2_p4":"Pored kabine i ispred nje je posebno velik.","k2_p5":"I neposredno iza kamiona postoji zaklonjen prostor.","k2_p6":"Dodatna ogledala i kamere smanjuju mrtvi ugao, ali ne zamenjuju pogled vozača.","l_spiegel":"Ogledalo","l_scheibe":"Pogled kroz staklo","l_toter":"Mrtvi ugao","l_rechts":"Desno od kabine","l_hinten":"Iza kamiona","l_vorn":"Ispred kabine","k3_kicker":"Skretanje udesno","k3_titel":"Biciklista pored kamiona","k3_sub":"Pojednostavljen model: kamion skreće udesno, biciklista vozi pravo.","k3_p1":"Biciklista vozi desno pored kamiona.","k3_p2":"Prvo ga vozač vidi u ogledalu i kroz bočno staklo.","k3_p3":"Sada je biciklista u mrtvom uglu.","k3_p4":"Vozač skreće, a da ne pogleda još jednom.","k3_p5":"Kamion zalazi u biciklističku traku. Biciklista je u opasnosti.","l_sp_sicht":"Vidi se u ogledalu","l_sch_sicht":"Vidi se kroz staklo","l_verdeckt":"U mrtvom uglu","l_gefahr":"Opasnost!","k4_kicker":"Ovako je ispravno","k4_titel":"Čekaj i propusti","k4_sub":"Ista situacija, sada ispravno.","k4_p1":"Biciklistu koji vozi pravo pored tebe moraš da propustiš.","k4_p2":"Vozač pogleda u ogledalo i vidi biciklistu.","k4_p3":"Zaustavi se. Biciklista prolazi.","k4_p4":"Tek kada je put slobodan, skreće, i to brzinom hoda.","k4_p5":"Kamionom preko 3,5 t moraš u naselju pri skretanju udesno da voziš brzinom hoda, ako treba računati na bicikliste koji idu pravo ili na pešake koji prelaze put tamo gde skrećeš.","l_warten":"Čekaj","k5_kicker":"Zapamti","k5_titel":"Za poneti","k5_merk":"Pre skretanja pogledaj u ogledalo, propusti bicikliste, u naselju kamionom preko 3,5 t pri skretanju udesno vozi brzinom hoda."},"tr":{"titel":"Ölü açı","ui_ueber":"Genel bakış: kamyonda ölü açı","ui_intro":"Sessiz kısa bir film: Her şey görüntüde yazıyla yer alır. İstediğin zaman durdurabilir veya bir bölüm seçebilirsin.","ui_start":"Filmi başlat","ui_pause":"Durdur","ui_weiter":"Devam","ui_neu":"Baştan","ui_kapitel":"Bölümler","ui_lesen":"Metnin tamamını oku","k1_kicker":"Yandan","k1_titel":"Sürücü yüksekte oturur","k1_sub":"Ön aynası olmayan, basitleştirilmiş bir kamyon çizimi.","k1_p1":"Sürücünün gözleri yolun çok üstündedir.","k1_p2":"Sürücü kabini, kamyonun hemen önündeki zemini gizler.","k1_p3":"Kamyonun hemen önündeki bir çocuk tamamen gizlenebilir.","k1_p4":"Ne kadar uzakta durursa, onu o kadar erken görürsün.","l_auge":"Sürücünün gözü","l_boden":"Zemin görünmüyor","l_kind_weg":"Çocuk görünmüyor","l_kind_da":"Çocuk görünüyor","k2_kicker":"Yukarıdan","k2_titel":"Aynalar her şeyi göstermez","k2_sub":"Ana ayna ve geniş açılı ayna ile örnek, ön ayna yok.","k2_p1":"Aynalar yanları ve sürücü kabininin arkasındaki alanı gösterir.","k2_p2":"Sürücü camlardan öne ve biraz yana doğru görür.","k2_p3":"Arada görüş olmayan alanlar kalır: ölü açı.","k2_p4":"Kabinin yanında ve önünde özellikle büyüktür.","k2_p5":"Kamyonun hemen arkasında da gizli bir alan vardır.","k2_p6":"Ek aynalar ve kameralar ölü açıyı küçültür, ama sürücünün kendi bakışının yerini tutmaz.","l_spiegel":"Ayna","l_scheibe":"Camdan görüş","l_toter":"Ölü açı","l_rechts":"Kabinin sağı","l_hinten":"Kamyonun arkası","l_vorn":"Kabinin önü","k3_kicker":"Sağa dönüş","k3_titel":"Kamyonun yanındaki bisikletli","k3_sub":"Basitleştirilmiş model: Kamyon sağa dönüyor, bir bisikletli düz gidiyor.","k3_p1":"Bisikletli kamyonun sağında gidiyor.","k3_p2":"Sürücü onu önce aynada ve yan camdan görür.","k3_p3":"Şimdi bisikletli ölü açıda.","k3_p4":"Sürücü bir kez daha bakmadan döner.","k3_p5":"Kamyon bisiklet şeridine kayar. Bisikletli tehlikede.","l_sp_sicht":"Aynada görünüyor","l_sch_sicht":"Camdan görünüyor","l_verdeckt":"Ölü açıda","l_gefahr":"Tehlike!","k4_kicker":"Doğrusu böyle","k4_titel":"Bekle ve geçmesine izin ver","k4_sub":"Aynı durum, bu sefer doğru.","k4_p1":"Yanında düz giden bisikletlilerin geçmesine izin vermelisin.","k4_p2":"Sürücü aynaya bakar ve bisikletliyi görür.","k4_p3":"Durur. Bisikletli geçip gider.","k4_p4":"Yol ancak açıldığında döner, bunu da yürüme hızıyla yapar.","k4_p5":"3,5 t üzeri bir kamyonla yerleşim yerinde sağa dönerken, düz giden bisikletlilerle veya döndüğün yerde yolu geçen yayalarla karşılaşma ihtimali varsa yürüme hızıyla gitmelisin.","l_warten":"Bekle","k5_kicker":"Unutma","k5_titel":"Akılda kalsın","k5_merk":"Dönmeden önce aynaya bak, bisikletlilerin geçmesine izin ver, yerleşim yerinde 3,5 t üzeri kamyonla sağa dönerken yürüme hızıyla git."}};
 // ---- f5-2/szenen.js ----
 (function (window) {
 /* Szenen des Films 5.2 „Toter Winkel“ – EIN Code für den MP4-Film (index.html) und die App (gebaut mit ../bauen.mjs).
@@ -1140,7 +1270,7 @@ W.FILM_SPRACHEN = {"en":{"titel":"Blind spot","ui_ueber":"Overview: the truck bl
     function radfahrer(layer, W) {
       const g = el("g", null, layer), S = W.S;
       g.style.filter = "drop-shadow(0 " + (5 / S).toFixed(3) + "px " + (5 / S).toFixed(3) + "px rgba(0,0,0,.4))";
-      const ring = el("ellipse", { cx: 0, cy: 0, rx: 1.35, ry: 0.85, fill: "none", stroke: WARN, "stroke-width": 0.1, opacity: 0, "stroke-dasharray": "0.3 0.2" }, g);
+      const ring = el("ellipse", { cx: 0, cy: 0, rx: 1.5, ry: 1.0, fill: "none", stroke: WARN, "stroke-width": 0.14, opacity: 0, "stroke-dasharray": "0.3 0.2" }, g);
       el("rect", { x: -0.98, y: -0.07, width: 0.34, height: 0.14, rx: 0.06, fill: "#1B1D1A" }, g);   // Rücklicht-Seite nicht nötig: neutrales Rad hinten
       el("rect", { x: -1.0, y: -0.06, width: 0.38, height: 0.12, rx: 0.05, fill: "#23262A" }, g);
       el("rect", { x: 0.58, y: -0.06, width: 0.38, height: 0.12, rx: 0.05, fill: "#23262A" }, g);
@@ -1153,9 +1283,10 @@ W.FILM_SPRACHEN = {"en":{"titel":"Blind spot","ui_ueber":"Overview: the truck bl
       return { g: g, setze: function (x, y) { const p = W.px(x, y); g.setAttribute("transform", "translate(" + f(p[0]) + " " + f(p[1]) + ") scale(" + S + ")"); }, ring: ring };
     }
     // Sichtfelder (Spiegelkeile blau, Blick durch die Scheibe grün) in Fahrzeugkoordinaten; die Gruppe wird mit dem Lkw bewegt
-    function sichtGruppe(layer, W, az) {
+    function sichtGruppe(layer, W, ho) {
+      const POLYH = ho ? M.sichtPolygone(FZ, ho) : POLY;
       const g = el("g", { opacity: 0 }, layer), gm = el("g", { opacity: 0 }, g), gs = el("g", { opacity: 0 }, g);
-      POLY.scheibe.forEach((q) => el("path", { d: pfad(q.pts), fill: "rgba(143,214,166,.20)", stroke: "rgba(143,214,166,.55)", "stroke-width": 0.06 }, gs));
+      POLYH.scheibe.forEach((q) => el("path", { d: pfad(q.pts), fill: "rgba(143,214,166,.20)", stroke: "rgba(143,214,166,.55)", "stroke-width": 0.06 }, gs));
       POLY.spiegel.forEach((q) => el("path", { d: pfad(q.pts), fill: "rgba(127,198,232,.26)", stroke: "rgba(127,198,232,.65)", "stroke-width": 0.06 }, gm));
       return { g: g, spiegel: gm, scheibe: gs, setze: function (z) { const A = W.px(z.A.x, z.A.y); g.setAttribute("transform", "translate(" + f(A[0]) + " " + f(A[1]) + ") rotate(" + f(z.hz * BK.DEG) + ") scale(" + W.S + ")"); } };
     }
@@ -1164,12 +1295,12 @@ W.FILM_SPRACHEN = {"en":{"titel":"Blind spot","ui_ueber":"Overview: the truck bl
     /* ---------- K1: Fahrer sitzt hoch (Seitenansicht, gerechnete Sichtlinie) ---------- */
     function K1(sc, i, T0, ch) {
       const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false);
-      const V = SE.szene(st, { S: 50, px0: 400, boden: 720 }); V.kamera(0);
+      const V = SE.szene(st, { S: 58, px0: 380, boden: 740 }); V.kamera(0);
       const lk = SE.lkw(V, 6.6); lk.setze(0, false, 0);
       const svg = V.gUeber.ownerSVGElement, defs = el("defs", null, svg);
       const pat = el("pattern", { id: "sch52", width: 0.3, height: 0.3, patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" }, defs);
       el("rect", { width: 0.3, height: 0.3, fill: "rgba(237,174,79,.22)" }, pat); el("rect", { width: 0.12, height: 0.3, fill: "rgba(237,174,79,.8)" }, pat);
-      const G = el("g", { transform: "translate(400 720) scale(50)" }, V.gUeber);
+      const G = el("g", { transform: "translate(380 740) scale(58)" }, V.gUeber);
       const E = { x: SF.auge.x - FZ.L - FZ.vorn, y: -M.SICHT.he }, Q = { x: 0, y: -M.SICHT.hw }, H = { x: M.verdecktVorn(0), y: 0 };
       // Hatch unter der Sichtlinie: Boden, den der Fahrer nicht sieht
       const hatch = el("path", { d: "M0 -" + M.SICHT.hw + " L" + H.x + " 0 L0 0 Z", fill: "url(#sch52)", opacity: 0 }, G);
@@ -1181,8 +1312,8 @@ W.FILM_SPRACHEN = {"en":{"titel":"Blind spot","ui_ueber":"Overview: the truck bl
       el("rect", { x: -0.16, y: -0.98, width: 0.32, height: 0.52, rx: 0.1, fill: kf }, kind); el("circle", { cx: 0, cy: -(HK - 0.14), r: 0.14, fill: kf }, kind);
       const geist = el("rect", { x: -0.3, y: -HK - 0.08, width: 0.6, height: HK + 0.16, rx: 0.2, fill: "none", stroke: WARN, "stroke-width": 0.05, "stroke-dasharray": "0.14 0.1" }, kind);
       const pa = pille(st, tx("l_auge"), 230, 400, F.creme), pb = pille(st, tx("l_boden"), 720, 330, GOLD), pk1 = pille(st, tx("l_kind_weg"), 0, 0, WARN), pk2 = pille(st, tx("l_kind_da"), 0, 0, GRUEN);
-      const xE = V.px(E.x), yE = 720 + E.y * 50, ln = BK.leitlinie(V, 230, 436, xE, yE, F.creme), lb = BK.leitlinie(V, 700, 366, V.px(1.9), 700, GOLD);
-      const xk = (t) => t < 14 ? 14 : t < 26 ? 14 - 13.4 * (t - 14) / 12 : t < 33.5 ? 0.6 : t < 41 ? 0.6 + 7.4 * (t - 33.5) / 7.5 : 8;
+      const xE = V.px(E.x), yE = 740 + E.y * 58, ln = BK.leitlinie(V, 230, 436, xE, yE, F.creme), lb = BK.leitlinie(V, 700, 366, V.px(1.9), 720, GOLD);
+      const xk = (t) => t < 14 ? 11 : t < 26 ? 11 - 10.4 * (t - 14) / 12 : t < 33.5 ? 0.6 : t < 41 ? 0.6 + 7.4 * (t - 33.5) / 7.5 : 8;
       uhr(T0, ch.dauer, function (t) {
         const u = klemme((t - 5) / 3);
         strahl.setAttribute("x2", f(E.x + (H.x - E.x) * u)); strahl.setAttribute("y2", f(E.y + (H.y - E.y) * u)); strahl.style.opacity = klemme((t - 5) / 0.5);
@@ -1191,8 +1322,8 @@ W.FILM_SPRACHEN = {"en":{"titel":"Blind spot","ui_ueber":"Overview: the truck bl
         const x = xk(t), sichtbar = x >= M.verdecktVorn(1.2) - 1e-9;
         kind.setAttribute("transform", "translate(" + f(x) + " 0)"); kind.style.opacity = klemme((t - 13.5) / 0.6);
         geist.style.opacity = sichtbar ? 0 : 1;
-        const px = V.px(x), py = 720 - HK * 50 - 120;
-        pk1.style.left = pk2.style.left = f(Math.min(920, Math.max(px + 110, 580))) + "px"; pk1.style.top = pk2.style.top = f(py) + "px";
+        const px = V.px(x), py = 740 - HK * 58 - 120;
+        pk1.style.left = pk2.style.left = f(Math.min(700, Math.max(px + 110, 580))) + "px"; pk1.style.top = pk2.style.top = f(py) + "px";
         zeige(pk1, t > 14 && !sichtbar ? klemme((t - 14) / 0.4) : 0); zeige(pk2, t > 14 && sichtbar ? klemme((t - 14) / 0.4) : 0);
       });
     }
@@ -1206,7 +1337,8 @@ W.FILM_SPRACHEN = {"en":{"titel":"Blind spot","ui_ueber":"Overview: the truck bl
       // Toter Winkel: Boden, den keine Sichtquelle erreicht (Zellen 0,1 m, gerechnet mit sichtfeld.quelle)
       const ctx = W.ctx, cell = 0.1, c = W.S * cell + 1;
       ctx.fillStyle = W.muster;
-      for (let x = -13; x <= 16; x += cell) for (let y = -7; y <= 7; y += cell) if (SF.quelle(x, y, 0) === null) { const q = W.px(x, y); ctx.fillRect(q[0], q[1], c, c); }
+      for (let x = -13; x <= 16; x += cell) for (let y = -7; y <= 7; y += cell) if (SF.quelle(x, y, 0) === null) { const q = W.px(x, y); ctx.globalAlpha = Math.max(0, Math.min(1, Math.min(x + 13, 16 - x, y + 7, 7 - y) / 2.5)); ctx.fillRect(q[0], q[1], c, c); }
+      ctx.globalAlpha = 1;
       W.canvas.style.opacity = 0;
       const lp = (text, wx, wy, farbe, px, py) => { const q = W.px(wx, wy), e = pille(st, text, px, py, farbe), l = BK.leitlinie(W, px, py + (py < q[1] ? 34 : -34), q[0], q[1], farbe); return { e: e, l: l, an: (a) => { zeige(e, a); l.style.opacity = a; } }; };
       const pS = lp(tx("l_spiegel"), 5.02, 1.65, BLAU, 760, 760), pW = lp(tx("l_scheibe"), 8.0, -2.2, GRUEN, 760, 300);
@@ -1224,12 +1356,12 @@ W.FILM_SPRACHEN = {"en":{"titel":"Blind spot","ui_ueber":"Overview: the truck bl
     const OFF = 30;   // Rechenkoordinate x − OFF = Bühnenkoordinate (Kurvenanfang bei x = 2 m)
     function abbiegen(sc, i, T0, ch, art) {
       const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false);
-      const W = BK.welt(st, { S: 36, ox: 540, oy: 380, raster: false, id: "k" + i });
+      const W = BK.welt(st, { S: 44, ox: 540, oy: 400, raster: false, id: "k" + i });
       const R = M.radfahrerAbbiegen(art), fr = R.frames, dt = R.P.dt;
       const raster = st.querySelector(".raster"), base = el("g", null, null); raster.insertBefore(base, raster.firstChild);
       const X = (x) => W.px(x, 0)[0], Y = (y) => W.px(0, y)[1], px26 = W.S;
       // Straßenbild: Gras, Fahrbahnen, Radstreifen, Gehweg mit gerundeter Ecke (Radius 8 m), Markierungen
-      const rc = 10, sx = 11, sw = 7;
+      const rc = 11, sx = 11, sw = 7;
       el("rect", { x: -3000, y: -1000, width: 7000, height: 4000, fill: "#34513A" }, base);
       el("rect", { x: X(-70), y: Y(-5.25), width: X(48) - X(-70), height: Y(1.75) - Y(-5.25), fill: "#4A524C" }, base);              // Hauptstraße (zwei Fahrstreifen)
       el("rect", { x: X(sx), y: Y(-5.25), width: sw * px26, height: 1200, fill: "#4A524C" }, base);                                   // Seitenstraße
@@ -1244,11 +1376,12 @@ W.FILM_SPRACHEN = {"en":{"titel":"Blind spot","ui_ueber":"Overview: the truck bl
       strich(X(-70), Y(1.75), X(sx - rc), Y(1.75), "none", 3);                             // Radstreifenlinie
       strich(X(sx + sw / 2), Y(5.5), X(sx + sw / 2), 1200, "26 22");                      // Mittellinie Seitenstraße
       // Hinweis „Radstreifen“: Fahrradsymbol (Piktogramm) kommt nicht vor; die Farbe zeigt ihn
-      const lkw = BK.fahrzeug(W.gFz, FZ, W), rad = radfahrer(W.gFz, W), sg = sichtGruppe(W.gBand, W), pan = [base, W.gBand, W.gFz, W.gSpur, W.gUeber];
+      const lkw = BK.fahrzeug(W.gFz, FZ, W), rad = radfahrer(W.gFz, W), sg = sichtGruppe(W.gBand, W, 1.0), pan = [base, W.gBand, W.gFz, W.gSpur, W.gUeber];
       const pLabel = pille(st, tx("l_sp_sicht"), 0, 0, GRUEN), pGefahr = pille(st, tx("l_gefahr"), 540, 930, WARN, { klasse: "gross" }), pWarten = pille(st, tx("l_warten"), 540, 960, F.creme, { klasse: "gross" });
       // stabile Sichtanzeige (nur wechseln, wenn der neue Zustand 0,5 s anhält)
-      const stabil = []; { let akt = fr[0].sicht, kand = akt, seit = 0; fr.forEach((q, k) => { if (q.sicht !== kand) { kand = q.sicht; seit = 0; } else seit += dt; if (kand !== akt && seit >= 0.45) akt = kand; stabil.push(akt); }); }
-      const kf = art === "A" ? [[0, 0], [4, 0], [13, 2.95], [19, 5.95], [24, 5.95], [25, 5.95], [36, R.frames[fr.length - 1].t], [ch.dauer, R.frames[fr.length - 1].t]]
+      const stabil = new Array(fr.length); {   // kurze Wechsel (< 0,45 s) übernehmen den Zustand davor; sonst gilt ein Zustand ab seinem ersten Bild
+        let i0 = 0, vorher = fr[0].sicht; while (i0 < fr.length) { let i1 = i0; while (i1 < fr.length && fr[i1].sicht === fr[i0].sicht) i1++; const lang = (i1 - i0) * dt >= 0.45 || i0 === 0; if (lang) vorher = fr[i0].sicht; for (let k = i0; k < i1; k++) stabil[k] = vorher; i0 = i1; } }
+      const kf = art === "A" ? [[0, 0], [4, 0], [13, 2.95], [19, 5.95], [24, 5.95], [33, R.frames[fr.length - 1].t], [ch.dauer, R.frames[fr.length - 1].t]]
         : [[0, 0], [4, 0], [16, 2.5], [25, 5.9], [33, R.losBei], [52, fr[fr.length - 1].t], [ch.dauer, fr[fr.length - 1].t]];
       uhr(T0, ch.dauer, function (t) {
         const idx = Math.max(0, Math.min(fr.length - 1, Math.round(interp(kf, t) / dt))), q = fr[idx], z = q.z;
@@ -1256,7 +1389,7 @@ W.FILM_SPRACHEN = {"en":{"titel":"Blind spot","ui_ueber":"Overview: the truck bl
         const bl = Math.floor(t * 2.5) % 2 === 0, brems = art === "A" ? (idx > 0 && q.v < fr[Math.max(0, idx - 1)].v + 1e-9 && q.t < 2.0) : (q.t >= 2.5 && q.t < R.losBei - 0.3);
         const xc = Math.min(11, zz.F.x + 2), yc = Math.max(0, zz.F.y - 7), dxp = -xc * W.S, dyp = -yc * W.S;
         pan.forEach((g) => g.setAttribute("transform", "translate(" + f(dxp) + " " + f(dyp) + ")"));
-        lkw.setze(zz, bl ? 1 : 0, brems, 0); sg.setze(zz);
+        lkw.setze(zz, bl && Math.abs(zz.hz) < 1.2 ? 1 : 0, brems, 0); sg.setze(zz);
         sg.g.style.opacity = 0.7 * glatt((t - 1.0) / 1.0); sg.spiegel.style.opacity = 1; sg.scheibe.style.opacity = 1;
         rad.setze(q.bx - OFF, q.by, 0);
         const sicht = stabil[idx], farbe = sicht === "verdeckt" ? WARN : GRUEN, txt = sicht === "spiegel" ? tx("l_sp_sicht") : sicht === "scheibe" ? tx("l_sch_sicht") : tx("l_verdeckt");
@@ -1265,7 +1398,7 @@ W.FILM_SPRACHEN = {"en":{"titel":"Blind spot","ui_ueber":"Overview: the truck bl
         zeige(pLabel, auf ? glatt((t - 2) / 0.6) : 0);
         rad.ring.style.opacity = sicht === "verdeckt" && auf ? 0.6 + 0.4 * Math.sin(t * 6) : 0;
         const ende = art === "A" && R.kontakt && idx === fr.length - 1;
-        zeige(pGefahr, art === "A" ? (ende ? fenster(t, 35, ch.dauer, 0.4) * (0.75 + 0.25 * Math.sin(t * 7)) : 0) : 0);
+        zeige(pGefahr, art === "A" ? (ende ? fenster(t, 31, ch.dauer, 0.4) : 0) : 0);
         zeige(pWarten, art === "B" ? fenster(t, 25.5, 32.5, 0.5) : 0);
       });
     }

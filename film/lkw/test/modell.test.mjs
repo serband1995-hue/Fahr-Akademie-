@@ -200,11 +200,11 @@ test("polyAbstand: Abstand, Berührung, Überlappung", () => {
 
 test("Rechtsabbiegen mit Radfahrer: Art A endet kurz vor dem Zusammenstoß, Art B bleibt sicher (mit Gegenproben)", () => {
   const A = M.radfahrerAbbiegen("A"), B = M.radfahrerAbbiegen("B");
-  // A: Anhalten bei Abstand < 0,35 m, vorher nie unter 0,35 m, nie Überlappung
+  // A: Anhalten bei Abstand < 0,2 m, vorher nie unter 0,35 m, nie Überlappung
   assert.equal(A.kontakt, true);
   const letzte = A.frames[A.frames.length - 1];
-  assert.ok(letzte.abstand < 0.35 && letzte.abstand > 0.1, "Endabstand " + letzte.abstand);
-  assert.ok(A.frames.slice(0, -1).every((q) => q.abstand >= 0.35));
+  assert.ok(letzte.abstand < 0.2 && letzte.abstand > 0.1, "Endabstand " + letzte.abstand);
+  assert.ok(A.frames.slice(0, -1).every((q) => q.abstand >= 0.2));
   // Der Radfahrer wird zuerst gesehen (Spiegel), liegt aber in den letzten gut 1 s vor dem Anhalten im toten Winkel
   assert.ok(A.frames.some((q) => q.sicht === "spiegel"));
   let k = A.frames.length - 1, verdeckt = 0; while (k >= 0 && A.frames[k].sicht === "verdeckt") { verdeckt += A.P.dt; k--; }
@@ -249,4 +249,25 @@ test("Druckluft-Bremse: Zweikreis, Zweileitung, Federspeicher, Anschlussreihenfo
   assert.equal(M.kuppelnZustand({ gelb: true, rot: false }).unsicher, false);
   assert.equal(M.kuppelnZustand({ gelb: false, rot: true }).unsicher, true);                           // „rot nie allein“
   assert.equal(M.kuppelnZustand({ gelb: true, rot: true }).vomZugSteuerbar, true);
+});
+
+test("Kuppeln: Höhe, Fluchten, Wegrollen (mit Gegenproben)", () => {
+  // Höhe: abgesenkt passt unter, Normalhöhe gerade nicht (Zapfen ragt unter die Platte), Kontakt erst mit angehobener Zugmaschine
+  assert.equal(M.sattelUnterfahren(-0.12).passtUnter, true);
+  assert.equal(M.sattelUnterfahren(0).passtUnter, false);                  // Gegenprobe: ohne Absenken stößt die Platte an den Zapfen
+  assert.equal(M.sattelUnterfahren(-0.12).kontakt, false);
+  assert.equal(M.sattelUnterfahren(0.05).kontakt, true);
+  assert.equal(M.sattelUnterfahren(0.05).hebtAuf, false);
+  assert.equal(M.sattelUnterfahren(0.15).hebtAuf, true);                   // Gegenprobe: zu hoch, der Auflieger würde angehoben
+  // Fluchten: gerade trifft, schief nicht, seitlicher Versatz nicht
+  assert.equal(M.sattelTreffer({ winkel: 0, versatz: 0, abstand: 6 }).ok, true);
+  assert.equal(M.sattelTreffer({ winkel: 6, versatz: 0, abstand: 6 }).ok, false);
+  assert.equal(M.sattelTreffer({ winkel: 0, versatz: 0.4, abstand: 6 }).ok, false);
+  assert.equal(M.sattelTreffer({ winkel: 3, versatz: 0.4, abstand: 6 }).ok, false);
+  // Wegrollen: nur rot angeschlossen und nichts gesichert = rollt; Feststellbremse oder Keile = rollt nicht; ohne Gefälle rollt nichts
+  assert.equal(M.rollen({ rot: true, gefaelle: 0.01 }).rollt, true);
+  assert.equal(M.rollen({ rot: true, festZug: true, festAnh: true, keile: true, gefaelle: 0.01 }).rollt, false);
+  assert.equal(M.rollen({ rot: true, keile: true, gefaelle: 0.01 }).rollt, false);
+  assert.equal(M.rollen({ rot: false, gefaelle: 0.01 }).rollt, false);     // Betriebsbremse des Anhängers noch angelegt
+  assert.equal(M.rollen({ rot: true, gefaelle: 0 }).rollt, false);
 });

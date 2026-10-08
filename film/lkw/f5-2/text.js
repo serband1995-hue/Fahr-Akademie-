@@ -22,7 +22,7 @@ window.FILM_TEXT = {
     k2_p1: "Die Spiegel zeigen die Seiten und den Bereich hinter dem Fahrerhaus.",
     k2_p2: "Durch die Scheiben sieht der Fahrer nach vorn und etwas zur Seite.",
     k2_p3: "Dazwischen bleiben Flächen ohne Sicht: der tote Winkel.",
-    k2_p4: "Rechts neben und vor dem Fahrerhaus ist er besonders groß.",
+    k2_p4: "Neben und vor dem Fahrerhaus ist er besonders groß.",
     k2_p5: "Auch direkt hinter dem Lkw ist ein Bereich verdeckt.",
     k2_p6: "Zusätzliche Spiegel und Kameras verkleinern den toten Winkel, ersetzen aber nicht den Blick des Fahrers.",
     l_spiegel: "Spiegel", l_scheibe: "Blick durch die Scheibe", l_toter: "Toter Winkel", l_rechts: "Rechts neben dem Fahrerhaus", l_hinten: "Hinter dem Lkw", l_vorn: "Vor dem Fahrerhaus",
@@ -48,11 +48,11 @@ window.FILM_TEXT = {
   },
   kapitel: [
     { id: "k1", titel: "k1_titel", kicker: "k1_kicker", dauer: 44, sub: { k: "k1_sub", t: 0.6 },
-      punkte: [{ k: "k1_p1", t: 3.5 }, { k: "k1_p2", t: 11.0 }, { k: "k1_p3", t: 24.5 }, { k: "k1_p4", t: 32.0 }] },
+      punkte: [{ k: "k1_p1", t: 3.5 }, { k: "k1_p2", t: 11.0 }, { k: "k1_p3", t: 25.5 }, { k: "k1_p4", t: 33.0 }] },
     { id: "k2", titel: "k2_titel", kicker: "k2_kicker", dauer: 68, sub: { k: "k2_sub", t: 0.6 },
       punkte: [{ k: "k2_p1", t: 4.0 }, { k: "k2_p2", t: 14.0 }, { k: "k2_p3", t: 24.0 }, { k: "k2_p4", t: 36.0 }, { k: "k2_p5", t: 48.0 }, { k: "k2_p6", t: 56.0 }] },
-    { id: "k3", titel: "k3_titel", kicker: "k3_kicker", dauer: 52, sub: { k: "k3_sub", t: 0.6 },
-      punkte: [{ k: "k3_p1", t: 1.8 }, { k: "k3_p2", t: 7.6 }, { k: "k3_p3", t: 19.0 }, { k: "k3_p4", t: 25.0 }, { k: "k3_p5", t: 33.0, stil: "gold" }] },
+    { id: "k3", titel: "k3_titel", kicker: "k3_kicker", dauer: 46, sub: { k: "k3_sub", t: 0.6 },
+      punkte: [{ k: "k3_p1", t: 1.8 }, { k: "k3_p2", t: 7.6 }, { k: "k3_p3", t: 18.5 }, { k: "k3_p4", t: 24.0 }, { k: "k3_p5", t: 31.0, stil: "gold" }] },
     { id: "k4", titel: "k4_titel", kicker: "k4_kicker", dauer: 64, sub: { k: "k4_sub", t: 0.6 },
       punkte: [{ k: "k4_p1", t: 2.0, ref: "§ 9 Abs. 3 StVO" }, { k: "k4_p2", t: 9.0 }, { k: "k4_p3", t: 16.0 }, { k: "k4_p4", t: 33.5 }, { k: "k4_p5", t: 44.0, ref: "§ 9 Abs. 6 StVO", stil: "gold" }] },
     { id: "k5", titel: "k5_titel", kicker: "k5_kicker", dauer: 18, merk: { k: "k5_merk", t: 1.2 } }

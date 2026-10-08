@@ -29,7 +29,7 @@
     function radfahrer(layer, W) {
       const g = el("g", null, layer), S = W.S;
       g.style.filter = "drop-shadow(0 " + (5 / S).toFixed(3) + "px " + (5 / S).toFixed(3) + "px rgba(0,0,0,.4))";
-      const ring = el("ellipse", { cx: 0, cy: 0, rx: 1.35, ry: 0.85, fill: "none", stroke: WARN, "stroke-width": 0.1, opacity: 0, "stroke-dasharray": "0.3 0.2" }, g);
+      const ring = el("ellipse", { cx: 0, cy: 0, rx: 1.5, ry: 1.0, fill: "none", stroke: WARN, "stroke-width": 0.14, opacity: 0, "stroke-dasharray": "0.3 0.2" }, g);
       el("rect", { x: -0.98, y: -0.07, width: 0.34, height: 0.14, rx: 0.06, fill: "#1B1D1A" }, g);   // Rücklicht-Seite nicht nötig: neutrales Rad hinten
       el("rect", { x: -1.0, y: -0.06, width: 0.38, height: 0.12, rx: 0.05, fill: "#23262A" }, g);
       el("rect", { x: 0.58, y: -0.06, width: 0.38, height: 0.12, rx: 0.05, fill: "#23262A" }, g);
@@ -42,9 +42,10 @@
       return { g: g, setze: function (x, y) { const p = W.px(x, y); g.setAttribute("transform", "translate(" + f(p[0]) + " " + f(p[1]) + ") scale(" + S + ")"); }, ring: ring };
     }
     // Sichtfelder (Spiegelkeile blau, Blick durch die Scheibe grün) in Fahrzeugkoordinaten; die Gruppe wird mit dem Lkw bewegt
-    function sichtGruppe(layer, W, az) {
+    function sichtGruppe(layer, W, ho) {
+      const POLYH = ho ? M.sichtPolygone(FZ, ho) : POLY;
       const g = el("g", { opacity: 0 }, layer), gm = el("g", { opacity: 0 }, g), gs = el("g", { opacity: 0 }, g);
-      POLY.scheibe.forEach((q) => el("path", { d: pfad(q.pts), fill: "rgba(143,214,166,.20)", stroke: "rgba(143,214,166,.55)", "stroke-width": 0.06 }, gs));
+      POLYH.scheibe.forEach((q) => el("path", { d: pfad(q.pts), fill: "rgba(143,214,166,.20)", stroke: "rgba(143,214,166,.55)", "stroke-width": 0.06 }, gs));
       POLY.spiegel.forEach((q) => el("path", { d: pfad(q.pts), fill: "rgba(127,198,232,.26)", stroke: "rgba(127,198,232,.65)", "stroke-width": 0.06 }, gm));
       return { g: g, spiegel: gm, scheibe: gs, setze: function (z) { const A = W.px(z.A.x, z.A.y); g.setAttribute("transform", "translate(" + f(A[0]) + " " + f(A[1]) + ") rotate(" + f(z.hz * BK.DEG) + ") scale(" + W.S + ")"); } };
     }
@@ -53,12 +54,12 @@
     /* ---------- K1: Fahrer sitzt hoch (Seitenansicht, gerechnete Sichtlinie) ---------- */
     function K1(sc, i, T0, ch) {
       const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false);
-      const V = SE.szene(st, { S: 50, px0: 400, boden: 720 }); V.kamera(0);
+      const V = SE.szene(st, { S: 58, px0: 380, boden: 740 }); V.kamera(0);
       const lk = SE.lkw(V, 6.6); lk.setze(0, false, 0);
       const svg = V.gUeber.ownerSVGElement, defs = el("defs", null, svg);
       const pat = el("pattern", { id: "sch52", width: 0.3, height: 0.3, patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" }, defs);
       el("rect", { width: 0.3, height: 0.3, fill: "rgba(237,174,79,.22)" }, pat); el("rect", { width: 0.12, height: 0.3, fill: "rgba(237,174,79,.8)" }, pat);
-      const G = el("g", { transform: "translate(400 720) scale(50)" }, V.gUeber);
+      const G = el("g", { transform: "translate(380 740) scale(58)" }, V.gUeber);
       const E = { x: SF.auge.x - FZ.L - FZ.vorn, y: -M.SICHT.he }, Q = { x: 0, y: -M.SICHT.hw }, H = { x: M.verdecktVorn(0), y: 0 };
       // Hatch unter der Sichtlinie: Boden, den der Fahrer nicht sieht
       const hatch = el("path", { d: "M0 -" + M.SICHT.hw + " L" + H.x + " 0 L0 0 Z", fill: "url(#sch52)", opacity: 0 }, G);
@@ -70,8 +71,8 @@
       el("rect", { x: -0.16, y: -0.98, width: 0.32, height: 0.52, rx: 0.1, fill: kf }, kind); el("circle", { cx: 0, cy: -(HK - 0.14), r: 0.14, fill: kf }, kind);
       const geist = el("rect", { x: -0.3, y: -HK - 0.08, width: 0.6, height: HK + 0.16, rx: 0.2, fill: "none", stroke: WARN, "stroke-width": 0.05, "stroke-dasharray": "0.14 0.1" }, kind);
       const pa = pille(st, tx("l_auge"), 230, 400, F.creme), pb = pille(st, tx("l_boden"), 720, 330, GOLD), pk1 = pille(st, tx("l_kind_weg"), 0, 0, WARN), pk2 = pille(st, tx("l_kind_da"), 0, 0, GRUEN);
-      const xE = V.px(E.x), yE = 720 + E.y * 50, ln = BK.leitlinie(V, 230, 436, xE, yE, F.creme), lb = BK.leitlinie(V, 700, 366, V.px(1.9), 700, GOLD);
-      const xk = (t) => t < 14 ? 14 : t < 26 ? 14 - 13.4 * (t - 14) / 12 : t < 33.5 ? 0.6 : t < 41 ? 0.6 + 7.4 * (t - 33.5) / 7.5 : 8;
+      const xE = V.px(E.x), yE = 740 + E.y * 58, ln = BK.leitlinie(V, 230, 436, xE, yE, F.creme), lb = BK.leitlinie(V, 700, 366, V.px(1.9), 720, GOLD);
+      const xk = (t) => t < 14 ? 11 : t < 26 ? 11 - 10.4 * (t - 14) / 12 : t < 33.5 ? 0.6 : t < 41 ? 0.6 + 7.4 * (t - 33.5) / 7.5 : 8;
       uhr(T0, ch.dauer, function (t) {
         const u = klemme((t - 5) / 3);
         strahl.setAttribute("x2", f(E.x + (H.x - E.x) * u)); strahl.setAttribute("y2", f(E.y + (H.y - E.y) * u)); strahl.style.opacity = klemme((t - 5) / 0.5);
@@ -80,8 +81,8 @@
         const x = xk(t), sichtbar = x >= M.verdecktVorn(1.2) - 1e-9;
         kind.setAttribute("transform", "translate(" + f(x) + " 0)"); kind.style.opacity = klemme((t - 13.5) / 0.6);
         geist.style.opacity = sichtbar ? 0 : 1;
-        const px = V.px(x), py = 720 - HK * 50 - 120;
-        pk1.style.left = pk2.style.left = f(Math.min(920, Math.max(px + 110, 580))) + "px"; pk1.style.top = pk2.style.top = f(py) + "px";
+        const px = V.px(x), py = 740 - HK * 58 - 120;
+        pk1.style.left = pk2.style.left = f(Math.min(700, Math.max(px + 110, 580))) + "px"; pk1.style.top = pk2.style.top = f(py) + "px";
         zeige(pk1, t > 14 && !sichtbar ? klemme((t - 14) / 0.4) : 0); zeige(pk2, t > 14 && sichtbar ? klemme((t - 14) / 0.4) : 0);
       });
     }
@@ -95,7 +96,8 @@
       // Toter Winkel: Boden, den keine Sichtquelle erreicht (Zellen 0,1 m, gerechnet mit sichtfeld.quelle)
       const ctx = W.ctx, cell = 0.1, c = W.S * cell + 1;
       ctx.fillStyle = W.muster;
-      for (let x = -13; x <= 16; x += cell) for (let y = -7; y <= 7; y += cell) if (SF.quelle(x, y, 0) === null) { const q = W.px(x, y); ctx.fillRect(q[0], q[1], c, c); }
+      for (let x = -13; x <= 16; x += cell) for (let y = -7; y <= 7; y += cell) if (SF.quelle(x, y, 0) === null) { const q = W.px(x, y); ctx.globalAlpha = Math.max(0, Math.min(1, Math.min(x + 13, 16 - x, y + 7, 7 - y) / 2.5)); ctx.fillRect(q[0], q[1], c, c); }
+      ctx.globalAlpha = 1;
       W.canvas.style.opacity = 0;
       const lp = (text, wx, wy, farbe, px, py) => { const q = W.px(wx, wy), e = pille(st, text, px, py, farbe), l = BK.leitlinie(W, px, py + (py < q[1] ? 34 : -34), q[0], q[1], farbe); return { e: e, l: l, an: (a) => { zeige(e, a); l.style.opacity = a; } }; };
       const pS = lp(tx("l_spiegel"), 5.02, 1.65, BLAU, 760, 760), pW = lp(tx("l_scheibe"), 8.0, -2.2, GRUEN, 760, 300);
@@ -113,12 +115,12 @@
     const OFF = 30;   // Rechenkoordinate x − OFF = Bühnenkoordinate (Kurvenanfang bei x = 2 m)
     function abbiegen(sc, i, T0, ch, art) {
       const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false);
-      const W = BK.welt(st, { S: 36, ox: 540, oy: 380, raster: false, id: "k" + i });
+      const W = BK.welt(st, { S: 44, ox: 540, oy: 400, raster: false, id: "k" + i });
       const R = M.radfahrerAbbiegen(art), fr = R.frames, dt = R.P.dt;
       const raster = st.querySelector(".raster"), base = el("g", null, null); raster.insertBefore(base, raster.firstChild);
       const X = (x) => W.px(x, 0)[0], Y = (y) => W.px(0, y)[1], px26 = W.S;
       // Straßenbild: Gras, Fahrbahnen, Radstreifen, Gehweg mit gerundeter Ecke (Radius 8 m), Markierungen
-      const rc = 10, sx = 11, sw = 7;
+      const rc = 11, sx = 11, sw = 7;
       el("rect", { x: -3000, y: -1000, width: 7000, height: 4000, fill: "#34513A" }, base);
       el("rect", { x: X(-70), y: Y(-5.25), width: X(48) - X(-70), height: Y(1.75) - Y(-5.25), fill: "#4A524C" }, base);              // Hauptstraße (zwei Fahrstreifen)
       el("rect", { x: X(sx), y: Y(-5.25), width: sw * px26, height: 1200, fill: "#4A524C" }, base);                                   // Seitenstraße
@@ -133,11 +135,12 @@
       strich(X(-70), Y(1.75), X(sx - rc), Y(1.75), "none", 3);                             // Radstreifenlinie
       strich(X(sx + sw / 2), Y(5.5), X(sx + sw / 2), 1200, "26 22");                      // Mittellinie Seitenstraße
       // Hinweis „Radstreifen“: Fahrradsymbol (Piktogramm) kommt nicht vor; die Farbe zeigt ihn
-      const lkw = BK.fahrzeug(W.gFz, FZ, W), rad = radfahrer(W.gFz, W), sg = sichtGruppe(W.gBand, W), pan = [base, W.gBand, W.gFz, W.gSpur, W.gUeber];
+      const lkw = BK.fahrzeug(W.gFz, FZ, W), rad = radfahrer(W.gFz, W), sg = sichtGruppe(W.gBand, W, 1.0), pan = [base, W.gBand, W.gFz, W.gSpur, W.gUeber];
       const pLabel = pille(st, tx("l_sp_sicht"), 0, 0, GRUEN), pGefahr = pille(st, tx("l_gefahr"), 540, 930, WARN, { klasse: "gross" }), pWarten = pille(st, tx("l_warten"), 540, 960, F.creme, { klasse: "gross" });
       // stabile Sichtanzeige (nur wechseln, wenn der neue Zustand 0,5 s anhält)
-      const stabil = []; { let akt = fr[0].sicht, kand = akt, seit = 0; fr.forEach((q, k) => { if (q.sicht !== kand) { kand = q.sicht; seit = 0; } else seit += dt; if (kand !== akt && seit >= 0.45) akt = kand; stabil.push(akt); }); }
-      const kf = art === "A" ? [[0, 0], [4, 0], [13, 2.95], [19, 5.95], [24, 5.95], [25, 5.95], [36, R.frames[fr.length - 1].t], [ch.dauer, R.frames[fr.length - 1].t]]
+      const stabil = new Array(fr.length); {   // kurze Wechsel (< 0,45 s) übernehmen den Zustand davor; sonst gilt ein Zustand ab seinem ersten Bild
+        let i0 = 0, vorher = fr[0].sicht; while (i0 < fr.length) { let i1 = i0; while (i1 < fr.length && fr[i1].sicht === fr[i0].sicht) i1++; const lang = (i1 - i0) * dt >= 0.45 || i0 === 0; if (lang) vorher = fr[i0].sicht; for (let k = i0; k < i1; k++) stabil[k] = vorher; i0 = i1; } }
+      const kf = art === "A" ? [[0, 0], [4, 0], [13, 2.95], [19, 5.95], [24, 5.95], [33, R.frames[fr.length - 1].t], [ch.dauer, R.frames[fr.length - 1].t]]
         : [[0, 0], [4, 0], [16, 2.5], [25, 5.9], [33, R.losBei], [52, fr[fr.length - 1].t], [ch.dauer, fr[fr.length - 1].t]];
       uhr(T0, ch.dauer, function (t) {
         const idx = Math.max(0, Math.min(fr.length - 1, Math.round(interp(kf, t) / dt))), q = fr[idx], z = q.z;
@@ -145,7 +148,7 @@
         const bl = Math.floor(t * 2.5) % 2 === 0, brems = art === "A" ? (idx > 0 && q.v < fr[Math.max(0, idx - 1)].v + 1e-9 && q.t < 2.0) : (q.t >= 2.5 && q.t < R.losBei - 0.3);
         const xc = Math.min(11, zz.F.x + 2), yc = Math.max(0, zz.F.y - 7), dxp = -xc * W.S, dyp = -yc * W.S;
         pan.forEach((g) => g.setAttribute("transform", "translate(" + f(dxp) + " " + f(dyp) + ")"));
-        lkw.setze(zz, bl ? 1 : 0, brems, 0); sg.setze(zz);
+        lkw.setze(zz, bl && Math.abs(zz.hz) < 1.2 ? 1 : 0, brems, 0); sg.setze(zz);
         sg.g.style.opacity = 0.7 * glatt((t - 1.0) / 1.0); sg.spiegel.style.opacity = 1; sg.scheibe.style.opacity = 1;
         rad.setze(q.bx - OFF, q.by, 0);
         const sicht = stabil[idx], farbe = sicht === "verdeckt" ? WARN : GRUEN, txt = sicht === "spiegel" ? tx("l_sp_sicht") : sicht === "scheibe" ? tx("l_sch_sicht") : tx("l_verdeckt");
@@ -154,7 +157,7 @@
         zeige(pLabel, auf ? glatt((t - 2) / 0.6) : 0);
         rad.ring.style.opacity = sicht === "verdeckt" && auf ? 0.6 + 0.4 * Math.sin(t * 6) : 0;
         const ende = art === "A" && R.kontakt && idx === fr.length - 1;
-        zeige(pGefahr, art === "A" ? (ende ? fenster(t, 35, ch.dauer, 0.4) * (0.75 + 0.25 * Math.sin(t * 7)) : 0) : 0);
+        zeige(pGefahr, art === "A" ? (ende ? fenster(t, 31, ch.dauer, 0.4) : 0) : 0);
         zeige(pWarten, art === "B" ? fenster(t, 25.5, 32.5, 0.5) : 0);
       });
     }
