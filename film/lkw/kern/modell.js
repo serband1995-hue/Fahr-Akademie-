@@ -184,7 +184,7 @@
     let kollision = null;
     for (let i = 0; i <= n; i++) {
       const t = i * dt;
-      z.push({ t: t, xV: xV, xH: xH, vV: vV, vH: vH, bremstV: t >= 0 && vV > 0, bremstH: t >= o.reaktion && vH > 0, abstand: xV - xH });
+      z.push({ t: t, xV: xV, xH: xH, vV: vV, vH: vH, bremstV: t >= 0, bremstH: t >= o.reaktion, abstand: xV - xH });
       if (xV - xH <= 0 && kollision == null) kollision = t;
       vV = Math.max(0, vV - o.aVorn * dt); xV += vV * dt;
       if (t >= o.reaktion) vH = Math.max(0, vH - o.aHinten * dt);

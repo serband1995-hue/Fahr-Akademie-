@@ -44,9 +44,9 @@ window.FILM_TEXT = {
     { id: "k1", titel: "k1_titel", kicker: "k1_kicker", dauer: 24, sub: { k: "k1_sub", t: 0.6 },
       punkte: [{ k: "k1_p1", t: 3.0 }, { k: "k1_p2", t: 8.5 }, { k: "k1_p3", t: 14.5 }] },
     { id: "k2", titel: "k2_titel", kicker: "k2_kicker", dauer: 52, sub: { k: "k2_sub", t: 0.6 },
-      punkte: [{ k: "k2_p1", t: 3.5, ref: "§ 4 Abs. 1 StVO" }, { k: "k2_p2", t: 17.5 }, { k: "k2_p3", t: 29.0 }, { k: "k2_p4", t: 41.0, ref: "§ 4 Abs. 1 StVO", stil: "gold" }] },
+      punkte: [{ k: "k2_p1", t: 3.5, ref: "§ 4 Abs. 1 StVO" }, { k: "k2_p2", t: 17.5 }, { k: "k2_p3", t: 26.8 }, { k: "k2_p4", t: 41.0, ref: "§ 4 Abs. 1 StVO", stil: "gold" }] },
     { id: "k3", titel: "k3_titel", kicker: "k3_kicker", dauer: 46, sub: { k: "k3_sub", t: 0.6 },
-      punkte: [{ k: "k3_p1", t: 3.5, ref: "§ 4 Abs. 3 StVO" }, { k: "k3_p2", t: 14.5, ref: "§ 4 Abs. 3 StVO" }, { k: "k3_p3", t: 24.0 }, { k: "k3_p4", t: 32.0, stil: "gold" }] },
+      punkte: [{ k: "k3_p1", t: 3.5, ref: "§ 4 Abs. 3 StVO" }, { k: "k3_p2", t: 14.5, ref: "§ 4 Abs. 3 StVO" }, { k: "k3_p3", t: 23.0 }, { k: "k3_p4", t: 28.5, stil: "gold" }] },
     { id: "k4", titel: "k4_titel", kicker: "k4_kicker", dauer: 64, sub: { k: "k4_sub", t: 0.6 },
       punkte: [{ k: "k4_p1", t: 4.0, ref: "§ 4 Abs. 2 StVO" }, { k: "k4_p2", t: 18.0, ref: "§ 4 Abs. 2 Nr. 2 StVO" }, { k: "k4_p3", t: 29.5, ref: "§ 4 Abs. 2 Nr. 3 StVO" }, { k: "k4_p4", t: 39.5, ref: "§ 4 Abs. 2 Nr. 1 StVO" }] },
     { id: "k5", titel: "k5_titel", kicker: "k5_kicker", dauer: 16, merk: { k: "k5_merk", t: 1.2 } }

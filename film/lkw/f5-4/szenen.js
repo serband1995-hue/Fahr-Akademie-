@@ -26,7 +26,7 @@
 
     /* ---------- Seitenansicht: Lkw (oder Bus) hinter Pkw ---------- */
     function seitenBuehne(st) {
-      const V = SE.szene(st, { S: 14.5, px0: 150, boden: 700 });
+      const V = SE.szene(st, { S: 14.5, px0: 185, boden: 700 });
       const lkw = SE.lkw(V), bus = SE.bus(V), pkw = SE.pkw(V), kl = SE.klammer(V, 570);
       bus.g.style.visibility = "hidden";
       return {
@@ -132,12 +132,16 @@
       };
       // Teil B: der Lastzug schert aus und überholt den Pkw (Bahn aus zwei Spurwechseln, gerechnet)
       const TB0 = 38, TENDE = ch.dauer, DT = 0.01;
-      const vB = (t) => { const u = t - TB0; return u < 3 ? 14 : u < 6.5 ? 14 + 2 * (u - 3) : t < 52.5 ? 21 : t < 56 ? 21 - 2 * (t - 52.5) : 14; };
-      const sB = [0]; for (let t = TB0; t < TENDE; t += DT) sB.push(sB[sB.length - 1] + vB(t) * DT);
+      const VPKW = 11, VMAX = 16.5;   // Pkw 40 km/h, Lastzug beim Überholen 60 km/h (außerorts erlaubt)
+      let tBr = 1e9;   // Beginn des Zurückbremsens (nach dem Zurückscheren, unten gesetzt)
+      const vB = (t) => { const u = t - TB0; return u < 3 ? VPKW : t < tBr ? Math.min(VMAX, VPKW + 2 * (u - 3)) : Math.max(VPKW, VMAX - 2 * (t - tBr)); };
+      const baueS = () => { const a = [0]; for (let t = TB0; t < TENDE; t += DT) a.push(a[a.length - 1] + vB(t) * DT); return a; };
+      let sB = baueS();
       const sBei = (t) => sB[Math.max(0, Math.min(sB.length - 1, Math.round((t - TB0) / DT)))];
-      const R = 70, a = Math.acos(1 - 3.5 / (2 * R)), lenArc = R * a;
-      const carRear = (t) => 25 + 14 * (t - TB0);
-      let tRet = TB0 + 3; for (let t = TB0 + 3; t < TENDE; t += DT) { if (sBei(t) - 17.6 - (carRear(t) + 4.4) >= 14) { tRet = t; break; } }
+      const R = 70, a = Math.acos(1 - 3.3 / (2 * R)), lenArc = R * a;
+      const carRear = (t) => 25 + VPKW * (t - TB0);
+      let tRet = TB0 + 3; for (let t = TB0 + 3; t < TENDE; t += DT) { if (sBei(t) + 1.4 - 17.6 - (carRear(t) + 4.4) >= 14) { tRet = t; break; } }
+      tBr = tRet + 4; sB = baueS();
       const sOut = sBei(TB0 + 3), sRet = sBei(tRet);
       const bahnB = M.bahn([{ gerade: sOut }, { bogen: R, winkel: a, rechts: false }, { bogen: R, winkel: a, rechts: true }, { gerade: sRet - sOut - 2 * lenArc }, { bogen: R, winkel: a, rechts: true }, { bogen: R, winkel: a, rechts: false }, { gerade: 400 }]);
       const simB = M.simuliere(fzL, bahnB, -25, sB[sB.length - 1] + 5, 0.05);
@@ -155,9 +159,9 @@
           pkwV.setze(pos(xF + 30 + 2.2), 0, 0, false, false);
           const u = glatt((t - tm) / tmD), rel = t < tm + tmD ? -45 + 4 * (t - tU) : 16;
           const y = -3.5 * (1 - u), tau = klemme((t - tm) / tmD), dydt = 3.5 * 6 * tau * (1 - tau) / tmD;
-          pkwO.setze(pos(xF + rel), y, Math.atan2(dydt, 18), t > tm - 1.2 && t < tm + tmD + 0.6, false);
-          pl.setze(pos(xF - 17.6 / 2) * S, 830, fenster(t, 4.5, 17.5)); linie(klL, klA, klB, pos(xF - 17.6) * S, pos(xF) * S, 770); kl.style.opacity = fenster(t, 4.5, 17.5);
-          pp.setze(pos(xF + 15) * S, 545, fenster(t, 9.5, 19.5)); linie(kgL, kgA, kgB, pos(xF) * S, pos(xF + 30) * S, 590); klGap.style.opacity = fenster(t, 9.5, 19.5);
+          pkwO.setze(pos(xF + rel), y, Math.atan2(dydt, 18), t > tm - 1.2 && t < tm + tmD + 0.6 && Math.floor(t * 3) % 2 === 0, false);
+          pl.setze(pos(xF + 1.4 - 17.6 / 2) * S, 830, fenster(t, 4.5, 17.5)); linie(klL, klA, klB, pos(xF + 1.4 - 17.6) * S, pos(xF + 1.4) * S, 770); kl.style.opacity = fenster(t, 4.5, 17.5);
+          pp.setze(pos(xF + 15.7) * S, 520, fenster(t, 9.5, 19.5)); linie(kgL, kgA, kgB, pos(xF + 1.4) * S, pos(xF + 30) * S, 590); klGap.style.opacity = fenster(t, 9.5, 19.5);
           pfGroup.style.opacity = t >= tPfeil ? klemme((t - tPfeil) / 0.8) : 0;
           vis = Math.min(1, (TB0 - 0.2 - t) / 0.4);
           pkwO.g.style.visibility = "visible";
@@ -167,7 +171,7 @@
           kam(z.F.x);
           const sh = (p) => ({ x: pos(p.x), y: p.y });
           const zz = { A: sh(z.A), hz: z.hz, F: { x: pos(z.F.x), y: z.F.y, h: z.F.h }, K: sh(z.K), T: sh(z.T), ha: z.ha };
-          const links = t > TB0 + 1.2 && s < sOut + 2 * lenArc, rechts = s > sRet - 12 && s < sRet + 2 * lenArc + 4;
+          const links = t > TB0 + 1.2 && s < sOut + 2 * lenArc, rechts = s > sRet - 45 && s < sRet + 2 * lenArc + 4;
           const bl = Math.floor(t * 3) % 2 === 0; lz.setze(zz, rechts && bl ? 1 : 0, false, links && bl ? 1 : 0);
           pkwV.setze(pos(carRear(t) + 2.2), 0, 0, false, false);
           pkwO.g.style.visibility = "hidden";
