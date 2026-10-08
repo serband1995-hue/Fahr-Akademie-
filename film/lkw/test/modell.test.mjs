@@ -271,3 +271,24 @@ test("Kuppeln: Höhe, Fluchten, Wegrollen (mit Gegenproben)", () => {
   assert.equal(M.rollen({ rot: false, gefaelle: 0.01 }).rollt, false);     // Betriebsbremse des Anhängers noch angelegt
   assert.equal(M.rollen({ rot: true, gefaelle: 0 }).rollt, false);
 });
+
+test("Abreißen: rot weg = Anhänger bremst sofort; nur gelb weg = erst bei der nächsten Bremsung (mit Gegenproben)", () => {
+  assert.equal(M.abreissen({ rot: true }).anhaengerBremst, true);
+  assert.equal(M.abreissen({ rot: true }).sofort, true);
+  assert.equal(M.abreissen({ gelb: true, bremst: false }).anhaengerBremst, false);          // beim Fahren unbemerkt
+  assert.equal(M.abreissen({ gelb: true, bremst: false }).wartetAufBremsung, true);
+  assert.equal(M.abreissen({ gelb: true, bremst: true }).anhaengerBremst, true);            // beim Bremsen bremst der Anhänger notfallmäßig
+  assert.equal(M.abreissen({ gelb: true, bremst: true }).sofort, false);
+  assert.equal(M.abreissen({ bremst: true }).anhaengerBremst, false);                       // Gegenprobe: nichts gerissen, normale Bremsung ist keine Abrissbremsung
+  assert.equal(M.abreissen({ rot: true, gelb: true }).sofort, true);                        // beide weg: wie rot
+  assert.equal(M.abreissen({ rot: true }).zugBremstWeiter, true);
+  // Zeit-Weg: der Anhänger steht, bevor die langsamer bremsende Zugmaschine ganz steht; nichts rollt rückwärts, Weg wächst nur
+  const fa = M.abrissFahrt();
+  const e = fa.zustaende[fa.zustaende.length - 1];
+  assert.equal(e.vA, 0); assert.equal(e.vZ, 0);
+  assert.ok(fa.zustaende.every((q, k) => k === 0 || (q.xA >= fa.zustaende[k - 1].xA && q.xZ >= fa.zustaende[k - 1].xZ)));
+  const tStopA = fa.zustaende.find((q) => q.vA === 0).t, tStopZ = fa.zustaende.find((q) => q.vZ === 0).t;
+  assert.ok(tStopA < tStopZ);
+  // Gegenprobe: ohne Bremsung des Anhängers (a = 0) steht er nie
+  assert.ok(M.abrissFahrt({ a: 0 }).zustaende.every((q) => q.vA > 0));
+});

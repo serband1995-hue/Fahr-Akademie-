@@ -28,7 +28,7 @@
       uhr(T0, ch.dauer, function (t) {
         S.zeichne(t);
         const a1 = fenster(t, 3.5, ch.dauer - 1, 0.6), a2 = fenster(t, 16, ch.dauer - 1, 0.6);
-        platz(pr, 540, 880, a1); platz(pg, 540, 950, a2);
+        platz(pr, 540, 900, a1); platz(pg, 540, 990, a2);
       });
     }
 
@@ -63,7 +63,7 @@
       const sch = { gelb: KU.schlauch(W, GELB, { laenge: 1.05 }), rot: KU.schlauch(W, ROT, { laenge: 1.05 }) };
       return { W: W, au: au, zm: zm, kz: kz, ka: ka, fehl: fehl, gk: gk, sch: sch,
         setze: function (X, o2) {
-          o2 = o2 || {}; au.setze(X, { stuetze: 1, keil: o2.keil ? 1 : 0, bremst: !!o2.bremst }); zm.setze(X + A_G, LUFT_K); zm.kupplung(1); gk.setAttribute("transform", "translate(" + f(X) + " 0)");
+          o2 = o2 || {}; au.setze(X, { stuetze: o2.stuetze == null ? 1 : o2.stuetze, keil: o2.keil ? 1 : 0, bremst: !!o2.bremst }); zm.setze(X + A_G, LUFT_K); zm.kupplung(1); gk.setAttribute("transform", "translate(" + f(X) + " 0)");
           const verb = { gelb: o2.gelb == null ? 0 : o2.gelb, rot: o2.rot == null ? 0 : o2.rot };
           [["gelb", 0], ["rot", 1]].forEach((p) => { const k = p[1], u = verb[p[0]], a = KU.ankerWelt(X, k), ruhe = KU.ruheWelt(X, k), d = { x: X + MA.steckdose.x, y: MA.steckdose.y[k] }; sch[p[0]].setze(a, { x: lerp(ruhe.x, d.x, u), y: lerp(ruhe.y, d.y, u) - Math.sin(Math.PI * u) * 0.35 }); });
         } };
@@ -91,7 +91,7 @@
         W.kamera(Math.max(0, s.x - 2) - 1);
         const rotU = t < 12 ? 0 : t < 18 ? glatt((t - 12) / 6) : t < 40 ? 1 : 1 - glatt((t - 40) / 4);
         const bremst = rotU < 1 - 1e-6 && (t < 18 || t >= 44);
-        H.setze(X, { rot: rotU, bremst: bremst, keil: false }); H.fehl.style.opacity = fenster(t, 3, 30, 0.6);
+        H.setze(X, { rot: rotU, bremst: bremst, keil: false, stuetze: 0 }); H.fehl.style.opacity = fenster(t, 3, 30, 0.6);
         const a1 = fenster(t, 3.5, 24, 0.6), a2 = fenster(t, 22, 40, 0.6), a3 = fenster(t, 36, ch.dauer - 1, 0.6);
         platz(pn, 540, 220, a1); platz(pr, 540, 880, a2); platz(pt, 540, 220, a3);
       });
@@ -107,11 +107,11 @@
       const pg = pille(st, tx("l_gesichert"), GRUEN), ps = pille(st, tx("l_steht"), GRUEN, { klasse: "gross" }), pko = pille(st, tx("l_kombi"), GOLD);
       uhr(T0, ch.dauer, function (t) {
         W.kamera(interp(kam, t));
-        const gU = t < 14 ? 0 : t < 22 ? glatt((t - 14) / 8) : 1, rU = t < 24 ? 0 : t < 32 ? glatt((t - 24) / 8) : 1;
+        const gU = t < 14 ? 0 : t < 22 ? glatt((t - 14) / 8) : 1, rU = t < 34 ? 0 : t < 42 ? glatt((t - 34) / 8) : 1;
         H.setze(X, { gelb: gU, rot: rU, keil: t >= 6, bremst: rU < 0.98 });
         H.kz.style.opacity = fenster(t, 3.5, ch.dauer - 1, 0.5) * (t >= 3.5 ? 1 : 0); H.ka.style.opacity = H.kz.style.opacity;
-        const a1 = fenster(t, 5, 30, 0.6), a2 = fenster(t, 32, ch.dauer - 1, 0.6);
-        platz(pg, 540, 220, a1); platz(ps, 540, 880, a2); kombi.style.opacity = fenster(t, 38, ch.dauer - 1, 0.6); platz(pko, 880, 290, fenster(t, 38, ch.dauer - 1, 0.6));
+        const a1 = fenster(t, 5, 40, 0.6), a2 = fenster(t, 42, ch.dauer - 1, 0.6);
+        platz(pg, 540, 220, a1); platz(ps, 540, 880, a2); kombi.style.opacity = fenster(t, 46, ch.dauer - 1, 0.6); platz(pko, 880, 290, fenster(t, 46, ch.dauer - 1, 0.6));
       });
     }
 

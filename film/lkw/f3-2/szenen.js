@@ -16,9 +16,9 @@
     if (!M.sattelUnterfahren(LUFT_TIEF).passtUnter || M.sattelUnterfahren(LUFT_KONTAKT).hebtAuf) throw new Error("Höhenbeispiel passt nicht zum Modell");
     // Knopf der Feststellbremse (rot) am Auflieger und „P“-Zeichen der Zugmaschine
     function knoepfe(W) {
-      const kz = el("g", { opacity: 0 }, W.gVorn); el("circle", { cx: 4.1, cy: -1.55, r: 0.22, fill: ROT, stroke: "#23262A", "stroke-width": 0.05 }, kz);
-      const t = el("text", { x: 4.1, y: -1.46, "text-anchor": "middle", "font-size": 0.3, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#FAF6EC" }, kz); t.textContent = "P";
-      const ka = el("g", { opacity: 0 }, W.gVorn); el("line", { x1: 0.9, y1: -1.0, x2: 0.9, y2: -1.3, stroke: "#8D949C", "stroke-width": 0.08 }, ka); el("circle", { cx: 0.9, cy: -0.95, r: 0.16, fill: ROT, stroke: "#23262A", "stroke-width": 0.04 }, ka);
+      const kz = el("g", { opacity: 0 }, W.gVorn); el("circle", { cx: 4.1, cy: -1.55, r: 0.38, fill: ROT, stroke: "#23262A", "stroke-width": 0.05 }, kz);
+      const t = el("text", { x: 4.1, y: -1.33, "text-anchor": "middle", "font-size": 0.5, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#FAF6EC" }, kz); t.textContent = "P";
+      const ka = el("g", { opacity: 0 }, W.gVorn); el("line", { x1: 0.9, y1: -1.0, x2: 0.9, y2: -1.3, stroke: "#8D949C", "stroke-width": 0.14 }, ka); el("circle", { cx: 0.9, cy: -0.95, r: 0.32, fill: ROT, stroke: "#23262A", "stroke-width": 0.04 }, ka);
       return { zug: kz, auf: ka };
     }
 
@@ -30,7 +30,7 @@
       const mitte = BK.el("line", { stroke: "rgba(143,214,166,.8)", "stroke-width": 3, "stroke-dasharray": "14 10", opacity: 0 }, W.gUeber), q0 = W.px(-4, 0), q1 = W.px(24, 0);
       mitte.setAttribute("x1", f(q0[0])); mitte.setAttribute("y1", f(q0[1])); mitte.setAttribute("x2", f(q1[0])); mitte.setAttribute("y2", f(q1[1]));
       const x0 = A.x + FZ.L + FZ.vorn, fr = el("rect", { x: W.px(x0 + 0.5, -2.2)[0], y: W.px(0, -2.2)[1], width: 9 * 40, height: 4.4 * 40, rx: 12, fill: "rgba(143,214,166,.14)", stroke: GRUEN, "stroke-width": 4, "stroke-dasharray": "14 10", opacity: 0 }, W.gUeber);
-      const pg = BK.pille(st, tx("l_gestreckt"), 380, 330, { punkt: GRUEN }), pp = BK.pille(st, tx("l_platz"), 760, 330, { punkt: GRUEN });
+      const pg = BK.pille(st, tx("l_gestreckt"), 300, 330, { punkt: GRUEN }), pp = BK.pille(st, tx("l_platz"), 800, 420, { punkt: GRUEN });
       uhr(T0, ch.dauer, function (t) { const a1 = fenster(t, 3, ch.dauer - 1, 0.6), a2 = fenster(t, 12, ch.dauer - 1, 0.6); mitte.setAttribute("opacity", a1); fr.setAttribute("opacity", a2); pg.style.opacity = a1; pp.style.opacity = a2; });
     }
 
@@ -60,7 +60,7 @@
         const e = glatt((t - 5) / 9);
         V.au.setze(0, { stuetze: e, keil: 1 }); V.zm.setze(A_GEKUPPELT, LUFT_KONTAKT);
         const s = W.px(MA.auflieger.stuetzX, -0.5), b = W.px(MA.auflieger.stuetzX, 0.05), h = W.px(0.55, -SA.unterkante);
-        bohle.setAttribute("opacity", fenster(t, 16, ch.dauer - 1, 0.6) * 0 + (t > 17 ? 1 : 0));
+        bohle.setAttribute("opacity", 0);
         const a1 = fenster(t, 4, 40, 0.6), a2 = fenster(t, 17, ch.dauer - 1, 0.6), a3 = fenster(t, 28, ch.dauer - 1, 0.6);
         platz(ps, 320, 190, a1); l1.setze(320, 224, s[0], s[1], a1);
         platz(pt, 320, 790, a2); l2.setze(320, 758, b[0], b[1], a2);
@@ -92,7 +92,7 @@
         platz(pg, gl[0] - 330, gl[1] - 160, a1); lg.setze(gl[0] - 330, gl[1] - 134, gl[0], gl[1], a1);
         platz(pe, e[0] - 250, e[1] + 250, a2); le.setze(e[0] - 250, e[1] + 224, e[0], e[1], a2);
         const brems = fenster(t, 38, 54, 0.6) * (1 - nah) > 0 || (t > 38 && t < 54);
-        bl.setAttribute("opacity", (t > 38 && t < 54) ? 0.6 + 0.4 * Math.sin(t * 6) : 0); Vw.au.setze(0, { stuetze: 1, keil: 1, bremst: t > 38 });
+        bl.setAttribute("opacity", (t > 38 && t < 54) ? 0.6 + 0.4 * Math.sin(t * 6) : 0); Vw.au.setze(0, { stuetze: 1, keil: 1, bremst: false });
         platz(pb, 540, 840, fenster(t, 54, ch.dauer - 1, 0.6));
         pw.style.opacity = 0;
       });

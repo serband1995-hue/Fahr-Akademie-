@@ -27,7 +27,7 @@
  "k2_kicker": "Stützen",
  "k2_titel": "Stützwinden ausfahren",
  "k2_sub": "Der Auflieger muss danach sicher stehen.",
- "k2_p1": "Die Stützwinden werden ausgefahren, bis die Füße den Boden berühren.",
+ "k2_p1": "Die Stützwinden werden ausgefahren: bei Luftfederung, bis die Füße den Boden berühren, bei Blattfederung, bis die Federn der Zugmaschine entlastet sind.",
  "k2_p2": "Der Boden muss tragen. Sonst werden die Füße unterbaut.",
  "k2_p3": "Der Auflieger wird nicht von der Sattelkupplung abgehoben.",
  "l_stuetzen": "Stützwinden aus",

@@ -1,5 +1,5 @@
-/* GENERIERT von film/lkw/bauen.mjs – nicht von Hand ändern (Quellen: film/lkw/kern/*, film/lkw/f3-3/*).
-   Erklärfilm „f3-3“ für „Lkw und Zug verstehen“: Animation läuft live (GSAP) und wird aus dem Rechenmodell gezeichnet, nur der Text wechselt je Sprache. Keine Videodatei.
+/* GENERIERT von film/lkw/bauen.mjs – nicht von Hand ändern (Quellen: film/lkw/kern/*, film/lkw/f6-1/*).
+   Erklärfilm „f6-1“ für „Lkw und Zug verstehen“: Animation läuft live (GSAP) und wird aus dem Rechenmodell gezeichnet, nur der Text wechselt je Sprache. Keine Videodatei.
    starte(platz, { sprache }) -> { zerstoeren, zustand, zeitleiste, gesamt }. Braucht window.gsap (vendor/gsap-3.14.2.min.js). */
 const W = {};
 const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; left:0; top:0; width:1080px; height:1080px; overflow:hidden; background:#434B45; direction:ltr;}\n.lk .stage > *{position:absolute;}\n.lk .pill{padding:10px 28px; border-radius:42px; background:#FAF6EC; color:#2F4A34; border:3px solid var(--lk-gold,#D9954C); font:700 44px/1.15 var(--lk-text,'Barlow',sans-serif); text-align:center; max-width:560px; box-shadow:0 5px 12px rgba(0,0,0,.35);}\n.lk .pill.gross{font-size:62px; padding:16px 44px; border-radius:60px; max-width:900px;}\n.lk .pill.klein{font-size:38px; padding:6px 20px;}\n.lk .lkw-pill{text-wrap:balance;}\n.lk-rtl .pill{direction:rtl;}\n.lk .panel .kicker{font-family:var(--lk-text,'Barlow',sans-serif); font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#8F5A14;}\n.lk .panel .ttl,.lk .panel .merk{font-variant-numeric:lining-nums;}\n.lk .panel .ttl{font-family:var(--lk-titel,'Playfair Display',serif); font-weight:700; color:#2F4A34;}\n.lk .panel .sub{font-family:var(--lk-text,'Barlow',sans-serif); font-weight:500; color:#6F6857; opacity:0;}\n.lk .pts{display:grid;}\n.lk .pts > *{grid-area:1 / 1; align-self:start; opacity:0;}\n.lk .pt .tx{text-wrap:balance; font-family:var(--lk-text,'Barlow',sans-serif); font-weight:600; color:#2B2A22;}\n.lk .pt.gold .tx{color:#8F5A14;}\n.lk .pt .rf{font-family:var(--lk-text,'Barlow',sans-serif); font-weight:500; color:#6F6857;}\n.lk .merk{font-variant-numeric:lining-nums; background:#2F4A34; color:#FAF6EC; border-left:12px solid #D9954C; border-radius:6px 18px 18px 6px; font-family:var(--lk-titel,'Playfair Display',serif); font-weight:600; box-shadow:0 10px 24px rgba(43,42,34,.25);}\n\n/* Erklärfilme „Lkw und Zug verstehen“ in der App: Bild oben, Text darunter, Steuerung darunter (keine Knöpfe auf dem Bild).\n   Handy zuerst (360–412 px). Ab ~660 px Breite (Querformat/Tablet) steht der Text neben dem Bild. */\n.lk { --lk-titel:var(--ff-titel,'Playfair Display',Georgia,serif); --lk-text:var(--ff-body,'Barlow',sans-serif); --lk-gold:var(--gold,#D9954C); margin:var(--sp-m,12px) 0 var(--sp-l,18px); }\n.lk-kopf { font-family:var(--lk-titel); font-weight:600; font-size:19px; margin:0 0 4px; }\n.lk-intro { color:var(--muted,#6F6857); font-size:14.5px; line-height:1.45; margin:0 0 10px; }\n.lk-kasten { background:var(--surface,#EEE6D3); border:1px solid var(--border,rgba(43,40,30,.16)); border-radius:var(--r-l,16px); padding:10px; overflow:hidden; }\n.lk-szenen { display:grid; position:relative; }\n.lk-szenen .scene { grid-area:1 / 1; display:flex; flex-direction:column; gap:12px; min-width:0; pointer-events:none; direction:ltr; }\n.lk-szenen .stagewrap { width:100%; aspect-ratio:1 / 1; border-radius:var(--r-m,12px); overflow:hidden; flex:none; background:#434B45; }\n.lk-szenen .stage { transform-origin:0 0; transform:scale(var(--lk-s,.3)); }\n.lk-szenen .panel { min-width:0; padding:2px 4px 4px; }\n.lk-szenen .dots, .lk-szenen .foot { display:none; }\n.lk-szenen .kicker { font-size:12.5px; line-height:1.3; letter-spacing:.12em; }\n.lk-szenen .ttl { font-size:24px; line-height:1.15; margin:4px 0 0; }\n.lk-szenen .sub { font-size:16px; line-height:1.4; margin-top:8px; }\n.lk-szenen .pts { margin-top:12px; }\n.lk-szenen .pt .tx { font-size:18px; line-height:1.42; }\n.lk-szenen .pt .rf { font-size:13px; line-height:1.35; margin-top:6px; }\n.lk-szenen .step .nr { font-size:36px; }\n.lk-szenen .step .nm { font-size:22px; line-height:1.2; margin-top:2px; }\n.lk-szenen .step .tx { font-size:17px; line-height:1.42; margin-top:8px; }\n.lk-szenen .step .px { font-size:15px; line-height:1.4; margin-top:8px; }\n.lk-szenen .step .rf { font-size:13px; line-height:1.35; margin-top:6px; }\n.lk-szenen .merk { padding:14px 16px; font-size:20px; line-height:1.3; border-left-width:8px; }\n.lk-breit .lk-szenen .scene { flex-direction:row; align-items:flex-start; gap:20px; }\n.lk-breit .lk-szenen .stagewrap { flex:0 0 46%; }\n.lk-breit .lk-szenen .panel { flex:1; }\n.lk-rtl .lk-szenen .panel, .lk-rtl .lk-text, .lk-rtl .lk-intro, .lk-rtl .lk-kopf { direction:rtl; text-align:right; }\n.lk-steuer { display:flex; flex-direction:column; gap:10px; margin-top:12px; }\n.lk-reihe { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }\n.lk-knopf { min-height:44px; padding:0 16px; border-radius:999px; border:1px solid var(--border,rgba(43,40,30,.16)); background:var(--bg,#FAF6EC); color:var(--text,#2B2A22); font:600 15px/1.2 var(--lk-text); display:inline-flex; align-items:center; gap:8px; cursor:pointer; }\n.lk-knopf svg { width:18px; height:18px; flex:none; fill:currentColor; }\n.lk-play { background:var(--lk-gold); color:var(--auf-gold,#2B2A22); border-color:transparent; }\n.lk-zeit { margin-inline-start:auto; font-size:13px; color:var(--muted,#6F6857); font-variant-numeric:tabular-nums; direction:ltr; }\n.lk-regler { width:100%; height:28px; margin:0; accent-color:var(--gold-text,#8F5A14); direction:ltr; }\n.lk-kapitel { display:grid; grid-template-columns:repeat(auto-fit,minmax(40px,1fr)); gap:4px; direction:ltr; }   /* 7 Kapitel müssen bei 360 px in eine Zeile passen, sonst wickeln sie um */\n.lk-kap { min-width:0; min-height:44px; border-radius:12px; border:1px solid var(--border,rgba(43,40,30,.16)); background:var(--bg,#FAF6EC); color:var(--text,#2B2A22); font:700 15px/1 var(--lk-text); cursor:pointer; }\n.lk-kap[aria-current=\"true\"] { background:var(--gruen,#2F4A34); color:var(--auf-tief,#fff); border-color:transparent; }\n.lk-knopf:focus-visible, .lk-kap:focus-visible, .lk-regler:focus-visible, .lk-text summary:focus-visible { outline:3px solid var(--gold-text,#8F5A14); outline-offset:2px; }\n.lk-text { margin-top:12px; font-size:15px; line-height:1.5; }\n.lk-text summary { min-height:44px; display:flex; align-items:center; cursor:pointer; font-weight:600; }\n.lk-text h3 { font-family:var(--lk-titel); font-size:16px; margin:14px 0 4px; }\n.lk-text p { margin:0 0 6px; }\n.lk-text .lk-ref { color:var(--muted,#6F6857); font-size:13px; }\n@media (prefers-reduced-motion: reduce) { .lk-szenen .stage { transition:none; } }\n/* Paragrafen-Verweise nie verdrehen (RTL-Sprachen), Regel 8 der Sprachen-Notiz */\n.lk-szenen .rf, .lk-szenen .step .rf, .lk-text .lk-ref { unicode-bidi:plaintext; }\n/* Schriften ohne Playfair-Zeichen (ar, ckb, ur, hi, fa, ps, el, am, ti): Überschriften in Barlow, mehr Zeilenhöhe */\n.lk-barlow { --lk-titel:var(--ff-body,'Barlow',sans-serif); }\n.lk-barlow .ttl, .lk-barlow .nm, .lk-barlow .merk, .lk-barlow .bigcard, .lk-barlow .lk-kopf, .lk-barlow .lk-text h3 { font-weight:700; }\n.lk[lang=\"ur\"] .lk-szenen :is(.pt .tx,.step .tx,.step .px,.sub,.merk,.ttl,.step .nm), .lk[lang=\"ur\"] .lk-text, .lk[lang=\"ur\"] .lk-intro { line-height:1.7; }\n.lk[lang=\"ps\"] .lk-szenen :is(.pt .tx,.step .tx,.step .px,.sub,.merk,.ttl,.step .nm), .lk[lang=\"ps\"] .lk-text, .lk[lang=\"ps\"] .lk-intro { line-height:1.55; }\n";
@@ -1397,214 +1397,117 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
 
 })(W);
 
-// ---- f3-3/text.js ----
+// ---- f6-1/text.js ----
 (function (window) {
-/* Film 3.3 „Gelb zuerst, rot nie allein“ – EINE Quelle für allen Text (Deutsch) samt Zeiten. Keine Stimme (Stimmen kommen später in einer eigenen Sitzung).
-   Quelle: DGUV Information 214-080 „Kuppeln“ (S. 20, 28/29; Kap. 2.2.1 Schritt 9 und 11, 2.3.1 Schritt 11), BG Verkehr („Richtige Reihenfolge beim Anschließen der Luftleitungen rettet Leben“; „Abstellen und kuppeln“),
-   Prüfungsablauf Klasse CE, Theoriefragen 2.7.07-319/-320; Funktionsbeschreibung Zweileitungsbremse: Serbands Dropbox-Folien CE (Abend 6), WABCO-Katalog (Anhängerbremsventil). Belege im Vault, Faktenblatt Film 3.3.
-   Der Film zeigt die FOLGE (Rot löst die Betriebsbremse des Anhängers, ohne Sicherung rollt der Zug), nicht den Ventilvorgang im Detail. Keine Zahlen im Bild.
-   Druck und Bewegung kommen aus kern/modell.js (anhaengerBremse, kuppelnZustand, rollen) mit Tests. */
+/* Film 6.1 „Zweikreis- und Zweileitungsbremse“ – EINE Quelle für allen Text (Deutsch) samt Zeiten. Keine Stimme (Stimmen kommen später in einer eigenen Sitzung).
+   Quellen: WABCO-Produktkatalog Druckluftbremsanlage (Zweileitungsbremse, Anhängerbremsventil, Überströmventil), Haldex Einbauhinweise, kfz-tech (Fachbuch Druckluftbremse), Wikipedia Zweikreisbremsanlage/Vierkreisschutzventil,
+   amtliche Theoriefragen 2.7.02-304, 2.7.06-317, Serbands Dropbox-Folien C3–C6 (Zweikreisbremse achsweise) und CE (Zweileitungsbremse). Belege und Grenzen: Vault, Faktenblatt Film 6.1.
+   Prinzipbilder, keine Herstellerpläne; Drücke sind Anteile (0 bis voll), keine bar-Werte. Modell: kern/modell.js (zweikreis, anhaengerBremse) mit Tests. */
 window.FILM_TEXT = {
-  film: "lkw-f3-3",
-  poster: 60,
+  film: "lkw-f6-1",
+  poster: 70,
   de: {
-    titel: "Gelb zuerst, rot nie allein",
-    ui_ueber: "Überblick: Druckluftleitungen beim Kuppeln",
+    titel: "Zweikreis- und Zweileitungsbremse",
+    ui_ueber: "Überblick: Zweikreis- und Zweileitungsbremse",
     ui_intro: "Ein kurzer Film ohne Ton: Alles steht als Text im Bild. Du kannst jederzeit anhalten oder ein Kapitel wählen.",
     ui_start: "Film starten", ui_pause: "Anhalten", ui_weiter: "Weiter", ui_neu: "Von vorn", ui_kapitel: "Kapitel", ui_lesen: "Den ganzen Text lesen",
 
-    k1_kicker: "Die Leitungen", k1_titel: "Zwei Leitungen, zwei Aufgaben", k1_sub: "Schema der Zweileitungsbremse.",
-    k1_p1: "Rot ist die Vorratsleitung: Sie füllt den Vorratsbehälter des Anhängers.",
-    k1_p2: "Gelb ist die Bremsleitung: Sie überträgt das Bremssignal.",
-    k1_p3: "Sind beide verbunden, bremst der Anhänger mit, wenn die Zugmaschine bremst.",
-    l_rot: "Rot: Vorrat", l_gelb: "Gelb: Bremssignal", l_zug: "Zugmaschine", l_anh: "Anhänger", l_pedal: "Bremspedal", l_behaelter: "Vorratsbehälter", l_ventil: "Anhängerbremsventil",
+    k1_kicker: "Der Lkw", k1_titel: "Zwei Bremskreise", k1_sub: "Schema: ein Kreis je Achse.",
+    k1_p1: "Die Betriebsbremse des Lkw hat zwei voneinander getrennte Bremskreise.",
+    k1_p2: "Im Beispiel gehört ein Kreis zur Vorderachse und einer zur Hinterachse.",
+    k1_p3: "Tritt der Fahrer aufs Pedal, bekommen beide Kreise Druck.",
+    k1_p4: "Wird ein Kreis undicht, entweicht seine Luft. Der andere Kreis bleibt gefüllt.",
+    k1_p5: "Der Lkw bremst weiter, aber schwächer. Der Bremsweg wird länger.",
+    k1_p6: "Er zieht dabei nicht zur Seite. Der Fahrer hält sofort an.",
+    l_kreis1: "Kreis 1", l_kreis2: "Kreis 2", l_bremsventil: "Bremsventil", l_vorderachse: "Vorderachse", l_hinterachse: "Hinterachse", l_pedal: "Bremspedal", l_wirkung: "Bremswirkung", l_leck: "Leck", l_geringer: "Bremswirkung geringer",
 
-    k2_kicker: "Die Gefahr", k2_titel: "Rot löst die Bremse", k2_sub: "Was passiert, wenn rot allein verbunden ist?",
-    k2_p1: "Ein abgekuppelter Anhänger ist gebremst: In der Vorratsleitung fehlt der Druck.",
-    k2_p2: "Wird rot angeschlossen, löst die Betriebsbremse des Anhängers.",
-    k2_p3: "Ohne gelb kommt kein Bremssignal von der Zugmaschine.",
-    k2_p4: "Erst mit gelb bremst der Anhänger wieder mit.",
-    l_gebremst: "Anhänger gebremst", l_geloest: "Bremse gelöst", l_kein_signal: "Kein Bremssignal", l_bremst_mit: "Bremst mit",
+    k2_kicker: "Der Anhänger", k2_titel: "Die Zweileitungsbremse", k2_sub: "Schema: Zugmaschine und Anhänger.",
+    k2_p1: "Zum Anhänger führen zwei Druckluftleitungen.",
+    k2_p2: "Rot ist die Vorratsleitung. Sie hält den Vorratsbehälter des Anhängers gefüllt.",
+    k2_p3: "Gelb ist die Bremsleitung. Ihr Druck steigt nur beim Bremsen.",
+    k2_p4: "Der Anhänger bremst mit der Luft aus seinem eigenen Behälter. Gelb sagt nur, wie stark.",
+    k2_p5: "Lässt der Fahrer das Pedal los, entlüftet gelb und die Anhängerbremse löst.",
+    l_zug: "Zugmaschine", l_anh: "Anhänger", l_ventil: "Anhängerbremsventil", l_behaelter: "Vorratsbehälter", l_rot: "Rot: Vorrat", l_gelb: "Gelb: Bremssignal",
 
-    k3_kicker: "Am Hang", k3_titel: "Rot allein: der Zug rollt", k3_sub: "Keine Feststellbremse, keine Keile.",
-    k3_p1: "Hier ist nichts gesichert: keine Feststellbremse, keine Keile.",
-    k3_p2: "Rot wird allein angeschlossen. Die Betriebsbremse des Anhängers löst.",
-    k3_p3: "Der Zug setzt sich in Bewegung, schon bei kleinem Gefälle.",
-    k3_p4: "Rollt der Zug, trenne die rote Leitung. Versuche nie, ins Führerhaus zu gelangen.",
-    l_nichts: "Nichts gesichert", l_rollt: "Der Zug rollt", l_rot_trennen: "Rot trennen",
+    k3_kicker: "Der Grund", k3_titel: "Sicher auch im Notfall", k3_sub: "Was passiert, wenn rot ausfällt?",
+    k3_p1: "Fällt der Druck in der roten Leitung ab, bremst der Anhänger von selbst.",
+    k3_p2: "Er nutzt die Luft aus seinem eigenen Vorratsbehälter.",
+    k3_p3: "Darum ist ein abgekuppelter Anhänger gebremst.",
+    l_selbst: "Bremst selbsttätig", l_verbunden: "Rot verbunden", l_getrennt: "Rot getrennt",
 
-    k4_kicker: "Richtig", k4_titel: "Erst sichern, dann gelb, dann rot", k4_sub: "Dieselbe Stelle, jetzt richtig.",
-    k4_p1: "Erst sichern: Feststellbremsen und Keile.",
-    k4_p2: "Dann gelb anschließen: die Bremsleitung.",
-    k4_p3: "Dann rot: die Vorratsleitung. Der Zug bleibt stehen.",
-    k4_p4: "Bei kombinierten Kupplungsköpfen gibt es keine Reihenfolge: Beide werden gleichzeitig angeschlossen.",
-    k4_p5: "Die Feststellbremse der Zugmaschine gibt Druck auf gelb: Der Anhänger bleibt gebremst.",
-    l_gesichert: "Gesichert", l_steht: "Der Zug steht", l_kombi: "Kombinierter Kopf",
-
-    k5_kicker: "Abkuppeln", k5_titel: "Umgekehrt: erst rot ab", k5_sub: "Beim Trennen kommt rot zuerst.",
-    k5_p1: "Beim Abkuppeln wird zuerst rot getrennt, dann gelb.",
-    k5_p2: "Der Anhänger bremst danach selbsttätig. Das reicht zum Sichern nicht, denn die Luft entweicht mit der Zeit.",
-    k5_p3: "Auch dann: Feststellbremsen und Keile.",
-    l_rot_ab: "Rot zuerst ab", l_gelb_ab: "Dann gelb ab", l_reicht_nicht: "Reicht nicht zum Sichern",
-
-    k6_kicker: "Merke", k6_titel: "Zum Mitnehmen",
-    k6_merk: "Vorher sichern. Gelb zuerst, rot nie allein. Beim Abkuppeln erst rot, dann gelb."
+    k4_kicker: "Merke", k4_titel: "Zum Mitnehmen",
+    k4_merk: "Zwei Bremskreise: Fällt einer aus, bremst der andere. Rot füllt, gelb bremst. Fällt rot ab, bremst der Anhänger selbst."
   },
   kapitel: [
-    { id: "k1", titel: "k1_titel", kicker: "k1_kicker", dauer: 66, sub: { k: "k1_sub", t: 0.6 },
-      punkte: [{ k: "k1_p1", t: 3.5, ref: "DGUV Information 214-080" }, { k: "k1_p2", t: 16.0 }, { k: "k1_p3", t: 28.0 }] },
-    { id: "k2", titel: "k2_titel", kicker: "k2_kicker", dauer: 80, sub: { k: "k2_sub", t: 0.6 },
-      punkte: [{ k: "k2_p1", t: 3.5 }, { k: "k2_p2", t: 16.0, ref: "DGUV Information 214-080" }, { k: "k2_p3", t: 30.0 }, { k: "k2_p4", t: 52.0 }] },
-    { id: "k3", titel: "k3_titel", kicker: "k3_kicker", dauer: 70, sub: { k: "k3_sub", t: 0.6 },
-      punkte: [{ k: "k3_p1", t: 3.5 }, { k: "k3_p2", t: 12.0, ref: "DGUV Information 214-080" }, { k: "k3_p3", t: 24.0, stil: "gold" }, { k: "k3_p4", t: 38.0, ref: "DGUV Information 214-080" }] },
-    { id: "k4", titel: "k4_titel", kicker: "k4_kicker", dauer: 68, sub: { k: "k4_sub", t: 0.6 },
-      punkte: [{ k: "k4_p1", t: 3.5, ref: "DGUV Information 214-080; BG Verkehr" }, { k: "k4_p2", t: 14.0 }, { k: "k4_p5", t: 24.0, ref: "Folien CE, Abend 6" }, { k: "k4_p3", t: 34.0 }, { k: "k4_p4", t: 46.0, ref: "Theoriefrage 2.7.07-320" }] },
-    { id: "k5", titel: "k5_titel", kicker: "k5_kicker", dauer: 54, sub: { k: "k5_sub", t: 0.6 },
-      punkte: [{ k: "k5_p1", t: 3.5, ref: "DGUV Information 214-080; Theoriefrage 2.7.07-319" }, { k: "k5_p2", t: 20.0, ref: "DGUV Information 214-080, S. 20 und 33" }, { k: "k5_p3", t: 38.0 }] },
-    { id: "k6", titel: "k6_titel", kicker: "k6_kicker", dauer: 20, merk: { k: "k6_merk", t: 1.2 } }
+    { id: "k1", titel: "k1_titel", kicker: "k1_kicker", dauer: 84, sub: { k: "k1_sub", t: 0.6 },
+      punkte: [{ k: "k1_p1", t: 3.5, ref: "Theoriefrage 2.7.02-304" }, { k: "k1_p2", t: 14.0 }, { k: "k1_p3", t: 25.0 }, { k: "k1_p4", t: 38.0, ref: "Theoriefrage 2.7.02-304" }, { k: "k1_p5", t: 54.0 }, { k: "k1_p6", t: 70.0 }] },
+    { id: "k2", titel: "k2_titel", kicker: "k2_kicker", dauer: 74, sub: { k: "k2_sub", t: 0.6 },
+      punkte: [{ k: "k2_p1", t: 3.5 }, { k: "k2_p2", t: 12.0, ref: "WABCO, Haldex" }, { k: "k2_p3", t: 24.0, ref: "WABCO" }, { k: "k2_p4", t: 36.0, ref: "WABCO" }, { k: "k2_p5", t: 52.0, ref: "WABCO" }] },
+    { id: "k3", titel: "k3_titel", kicker: "k3_kicker", dauer: 56, sub: { k: "k3_sub", t: 0.6 },
+      punkte: [{ k: "k3_p1", t: 3.5, ref: "WABCO" }, { k: "k3_p2", t: 22.0 }, { k: "k3_p3", t: 34.0, ref: "DGUV Information 214-080" }] },
+    { id: "k4", titel: "k4_titel", kicker: "k4_kicker", dauer: 20, merk: { k: "k4_merk", t: 1.2 } }
   ]
 };
 
 })(W);
 
-W.FILM_SPRACHEN = {"en":{"titel":"Yellow first, red never alone","ui_ueber":"Overview: air lines when coupling","ui_intro":"A short film without sound: everything is shown as text in the picture. You can pause at any time or choose a chapter.","ui_start":"Start film","ui_pause":"Pause","ui_weiter":"Next","ui_neu":"From the start","ui_kapitel":"Chapters","ui_lesen":"Read the full text","k1_kicker":"The lines","k1_titel":"Two lines, two jobs","k1_sub":"Diagram of the two-line brake system.","k1_p1":"Red is the supply line: it fills the air reservoir of the trailer.","k1_p2":"Yellow is the brake line: it transmits the brake signal.","k1_p3":"When both are connected, the trailer brakes along when the tractor unit brakes.","l_rot":"Red: supply","l_gelb":"Yellow: brake signal","l_zug":"Tractor unit","l_anh":"Trailer","l_pedal":"Brake pedal","l_behaelter":"Air reservoir","l_ventil":"Trailer brake valve","k2_kicker":"The danger","k2_titel":"Red releases the brake","k2_sub":"What happens when red is connected alone?","k2_p1":"An uncoupled trailer is braked: there is no pressure in the supply line.","k2_p2":"When red is connected, the service brake of the trailer releases.","k2_p3":"Without yellow, no brake signal comes from the tractor unit.","k2_p4":"Only with yellow does the trailer brake along again.","l_gebremst":"Trailer braked","l_geloest":"Brake released","l_kein_signal":"No brake signal","l_bremst_mit":"Brakes along","k3_kicker":"On a slope","k3_titel":"Red alone: the rig rolls away","k3_sub":"No parking brake, no chocks.","k3_p1":"Nothing is secured here: no parking brake, no chocks.","k3_p2":"Red is connected alone. The service brake of the trailer releases.","k3_p3":"The rig starts to move, even on a small downhill gradient.","k3_p4":"If the rig rolls away, disconnect the red line. Never try to get into the cab.","l_nichts":"Nothing secured","l_rollt":"The rig rolls away","l_rot_trennen":"Disconnect red","k4_kicker":"Correct","k4_titel":"Secure first, then yellow, then red","k4_sub":"The same place, now done correctly.","k4_p1":"Secure first: parking brakes and chocks.","k4_p2":"Then connect yellow: the brake line.","k4_p3":"Then red: the supply line. The rig stays put.","k4_p4":"With combined coupling heads there is no order: both are connected at the same time.","k4_p5":"The tractor's parking brake puts pressure on yellow: the trailer stays braked.","l_gesichert":"Secured","l_steht":"The rig stands still","l_kombi":"Combined head","k5_kicker":"Uncoupling","k5_titel":"The other way round: red off first","k5_sub":"When disconnecting, red comes first.","k5_p1":"When uncoupling, red is disconnected first, then yellow.","k5_p2":"The trailer then brakes by itself. That is not enough to secure it, because the air escapes over time.","k5_p3":"Even then: parking brakes and chocks.","l_rot_ab":"Red off first","l_gelb_ab":"Then yellow off","l_reicht_nicht":"Not enough to secure","k6_kicker":"Remember","k6_titel":"Take-away","k6_merk":"Secure first. Yellow first, red never alone. When uncoupling, red first, then yellow."},"sr":{"titel":"Prvo žuti, crveni nikad sam","ui_ueber":"Pregled: vazdušni vodovi pri spajanju","ui_intro":"Kratak film bez zvuka: sve stoji kao tekst na slici. Možeš da zaustaviš film u svakom trenutku ili da izabereš poglavlje.","ui_start":"Pokreni film","ui_pause":"Zaustavi","ui_weiter":"Dalje","ui_neu":"Iz početka","ui_kapitel":"Poglavlja","ui_lesen":"Pročitaj ceo tekst","k1_kicker":"Vodovi","k1_titel":"Dva voda, dva zadatka","k1_sub":"Šema dvovodne kočnice.","k1_p1":"Crveni je napojni vod: puni rezervoar vazduha prikolice.","k1_p2":"Žuti je kočioni vod: prenosi signal kočenja.","k1_p3":"Kad su oba spojena, prikolica koči zajedno sa tegljačem.","l_rot":"Crveni: napajanje","l_gelb":"Žuti: signal kočenja","l_zug":"Tegljač","l_anh":"Prikolica","l_pedal":"Pedala kočnice","l_behaelter":"Rezervoar vazduha","l_ventil":"Ventil kočnice prikol.","k2_kicker":"Opasnost","k2_titel":"Crveni otpušta kočnicu","k2_sub":"Šta se dešava kad je crveni spojen sam?","k2_p1":"Otkačena prikolica je zakočena: u napojnom vodu nema pritiska.","k2_p2":"Kad se crveni spoji, radna kočnica prikolice popušta.","k2_p3":"Bez žutog ne stiže signal kočenja od tegljača.","k2_p4":"Tek sa žutim prikolica ponovo koči zajedno.","l_gebremst":"Prikolica zakočena","l_geloest":"Kočnica otpuštena","l_kein_signal":"Nema signala kočenja","l_bremst_mit":"Koči zajedno","k3_kicker":"Na nagibu","k3_titel":"Crveni sam: kompozicija se otkotrljava","k3_sub":"Nema parkirne kočnice, nema klinova.","k3_p1":"Ovde ništa nije osigurano: nema parkirne kočnice, nema klinova.","k3_p2":"Crveni se spaja sam. Radna kočnica prikolice popušta.","k3_p3":"Kompozicija kreće, već i na malom nagibu.","k3_p4":"Ako se kompozicija otkotrljava, razdvoji crveni vod. Nikad ne pokušavaj da uđeš u kabinu.","l_nichts":"Ništa nije osigurano","l_rollt":"Vozilo se otkotrljava","l_rot_trennen":"Razdvoji crveni","k4_kicker":"Ispravno","k4_titel":"Prvo osigurati, pa žuti, pa crveni","k4_sub":"Isto mesto, sada ispravno.","k4_p1":"Prvo osiguraj: parkirne kočnice i klinovi.","k4_p2":"Zatim spoji žuti: kočioni vod.","k4_p3":"Zatim crveni: napojni vod. Kompozicija ostaje da stoji.","k4_p4":"Kod kombinovanih spojnih glava nema redosleda: obe se priključuju istovremeno.","k4_p5":"Parkirna kočnica tegljača daje pritisak na žuti vod: prikolica ostaje kočena.","l_gesichert":"Osigurano","l_steht":"Kompozicija stoji","l_kombi":"Kombinovana glava","k5_kicker":"Otkačinjanje","k5_titel":"Obrnuto: prvo crveni skinuti","k5_sub":"Pri razdvajanju crveni ide prvi.","k5_p1":"Pri otkačinjanju se prvo razdvaja crveni, pa žuti.","k5_p2":"Prikolica se zatim sama koči. To nije dovoljno za obezbeđenje, jer vazduh vremenom izlazi.","k5_p3":"I tada: parkirne kočnice i klinovi.","l_rot_ab":"Prvo crveni skinuti","l_gelb_ab":"Zatim žuti skinuti","l_reicht_nicht":"Ne osigurava dovoljno","k6_kicker":"Zapamti","k6_titel":"Za poneti","k6_merk":"Prvo osiguraj. Prvo žuti, crveni nikad sam. Pri otkačinjanju prvo crveni, pa žuti."},"tr":{"titel":"Önce sarı, kırmızı asla tek başına değil","ui_ueber":"Genel bakış: kuplaj sırasında havalı hatlar","ui_intro":"Sessiz kısa bir film: Her şey görüntüde yazıyla yer alır. İstediğin zaman durdurabilir veya bir bölüm seçebilirsin.","ui_start":"Filmi başlat","ui_pause":"Durdur","ui_weiter":"Devam","ui_neu":"Baştan","ui_kapitel":"Bölümler","ui_lesen":"Metnin tamamını oku","k1_kicker":"Hatlar","k1_titel":"İki hat, iki görev","k1_sub":"İki hatlı fren sisteminin şeması.","k1_p1":"Kırmızı besleme hattıdır: römorkun hava deposunu doldurur.","k1_p2":"Sarı fren hattıdır: fren sinyalini iletir.","k1_p3":"İkisi de bağlıysa, çekici frenlediğinde römork da frenler.","l_rot":"Kırmızı: besleme","l_gelb":"Sarı: fren sinyali","l_zug":"Çekici","l_anh":"Römork","l_pedal":"Fren pedalı","l_behaelter":"Hava deposu","l_ventil":"Römork fren valfi","k2_kicker":"Tehlike","k2_titel":"Kırmızı freni serbest bırakır","k2_sub":"Kırmızı tek başına bağlanırsa ne olur?","k2_p1":"Ayrılmış bir römork frenlidir: besleme hattında basınç yoktur.","k2_p2":"Kırmızı bağlanınca römorkun çalışma freni serbest kalır.","k2_p3":"Sarı olmadan çekiciden fren sinyali gelmez.","k2_p4":"Römork ancak sarı ile yine birlikte frenler.","l_gebremst":"Römork frenli","l_geloest":"Fren serbest","l_kein_signal":"Fren sinyali yok","l_bremst_mit":"Birlikte frenler","k3_kicker":"Yokuşta","k3_titel":"Kırmızı tek başına: araç kayıyor","k3_sub":"Park freni yok, takoz yok.","k3_p1":"Burada hiçbir şey emniyete alınmamış: park freni yok, takoz yok.","k3_p2":"Kırmızı tek başına bağlanır. Römorkun çalışma freni serbest kalır.","k3_p3":"Araç hareket eder, küçük bir eğimde bile.","k3_p4":"Araç kayıyorsa kırmızı hattı ayır. Asla kabine girmeye çalışma.","l_nichts":"Emniyet yok","l_rollt":"Araç kayıyor","l_rot_trennen":"Kırmızıyı ayır","k4_kicker":"Doğru","k4_titel":"Önce emniyet, sonra sarı, sonra kırmızı","k4_sub":"Aynı yer, bu kez doğru.","k4_p1":"Önce emniyete al: park frenleri ve takozlar.","k4_p2":"Sonra sarıyı bağla: fren hattı.","k4_p3":"Sonra kırmızı: besleme hattı. Araç yerinde kalır.","k4_p4":"Birleşik kaplin başlıklarında sıra yoktur: ikisi aynı anda bağlanır.","k4_p5":"Çekicinin park freni sarı hatta basınç verir: römork frenli kalır.","l_gesichert":"Emniyette","l_steht":"Araç duruyor","l_kombi":"Birleşik başlık","k5_kicker":"Ayırma","k5_titel":"Tersi: önce kırmızı çıkar","k5_sub":"Ayırırken önce kırmızı gelir.","k5_p1":"Ayırırken önce kırmızı, sonra sarı ayrılır.","k5_p2":"Römork bundan sonra kendiliğinden frenler. Bu, sabitlemek için yetmez, çünkü hava zamanla kaçar.","k5_p3":"O zaman da: park frenleri ve takozlar.","l_rot_ab":"Önce kırmızı çıkar","l_gelb_ab":"Sonra sarı çıkar","l_reicht_nicht":"Emniyete yetmez","k6_kicker":"Unutma","k6_titel":"Akılda kalsın","k6_merk":"Önce emniyete al. Önce sarı, kırmızı asla tek başına değil. Ayırırken önce kırmızı, sonra sarı."}};
-// ---- f3-3/szenen.js ----
+W.FILM_SPRACHEN = {};
+// ---- f6-1/szenen.js ----
 (function (window) {
-/* Szenen des Films 3.3 „Gelb zuerst, rot nie allein“ – EIN Code für den MP4-Film (index.html) und die App (gebaut mit ../bauen.mjs).
-   Druck: kern/modell.js (anhaengerBremse); Wegrollen: kern/modell.js (rollen). Die Szenen zeigen die FOLGE (Rot löst die Betriebsbremse des Anhängers; ohne Sicherung rollt der Zug), nicht den Ventilvorgang.
+/* Szenen des Films 6.1 „Zweikreis- und Zweileitungsbremse“ – EIN Code für den MP4-Film (index.html) und die App (gebaut mit ../bauen.mjs).
+   Prinzipbilder aus kern/pneu.js (zweikreis, zweileitung) mit den Druckwerten aus kern/modell.js (zweikreis, anhaengerBremse). Keine Herstellerpläne, keine bar-Werte.
    bauen({ tl, T, tx, scenes, logo }) -> { starts, gesamt, refit } */
 (function (window) {
   "use strict";
   function bauen(o) {
-    const tl = o.tl, T = o.T, tx = o.tx, M = window.LKW_MODELL, BK = window.LKW_BK, KU = window.LKW_KUPPELN, PN = window.LKW_PNEU, F = BK.FARBE, el = BK.el, f = BK.f;
-    const P = window.LKW_PANEL.neu({ tl: tl, T: T, tx: tx, logo: o.logo, fussName: "Gelb zuerst, rot nie allein" });
-    const starts = P.starts, SA = M.SATTEL, MA = KU.MASS, C = PN.C;
-    const GRUEN = "#8FD6A6", WARN = "#FF9A5C", GOLD = F.gold, GELB = KU.GELB, ROT = KU.ROT, platz = KU.platz, leiter = KU.leiter;
+    const tl = o.tl, T = o.T, tx = o.tx, M = window.LKW_MODELL, BK = window.LKW_BK, PN = window.LKW_PNEU, F = BK.FARBE, KU = window.LKW_KUPPELN;
+    const P = window.LKW_PANEL.neu({ tl: tl, T: T, tx: tx, logo: o.logo, fussName: "Zweikreis- und Zweileitungsbremse" });
+    const starts = P.starts, ROT = PN.C.rot, GELB = PN.C.gelb, GRUEN = "#8FD6A6", WARN = "#FF9A5C", platz = KU.platz;
     const klemme = (u) => Math.max(0, Math.min(1, u)), fenster = (t, a, b, d) => Math.min(klemme((t - a) / (d || 0.5)), klemme((b - t) / (d || 0.5)));
-    const glatt = (u) => { u = klemme(u); return u * u * (3 - 2 * u); }, lerp = (a, b, u) => a + (b - a) * u;
+    const glatt = (u) => { u = klemme(u); return u * u * (3 - 2 * u); };
     function uhr(T0, dauer, zeichne) { const proxy = { t: 0 }; tl.to(proxy, { t: dauer, duration: dauer, ease: "none", onUpdate: function () { zeichne(proxy.t); } }, T0); zeichne(0); }
     const pille = (st, text, farbe, o2) => BK.pille(st, text, 0, 0, Object.assign({ punkt: farbe }, o2 || {}));
-    const A_G = -SA.e, LUFT_K = SA.unterkante - SA.plattenOben;
-    // Verzögerung erster Ordnung (Druck baut sich auf/ab): Werte im Raster dt vorab rechnen
-    function verlauf(dauer, ziel, tau, start) { const dt = 0.05, n = Math.round(dauer / dt) + 1, a = new Array(n); let p = start || 0; for (let i = 0; i < n; i++) { p += (ziel(i * dt) - p) * (1 - Math.exp(-dt / tau)); a[i] = p; } return (t) => a[Math.max(0, Math.min(n - 1, Math.round(t / dt)))]; }
+    const puls = (t, a, b, h) => (t < a ? 0 : t < a + 3 ? glatt((t - a) / 3) : t < b ? 1 : t < b + 3 ? 1 - glatt((t - b) / 3) : 0) * (h == null ? 1 : h);
 
-    const schema = (st, zustand, dauer) => PN.zweileitung(st, tx, zustand, dauer);
-
-    /* ---------- K1: zwei Leitungen, zwei Aufgaben ---------- */
+    /* ---------- K1: Zweikreisbremse ---------- */
     function K1(sc, i, T0, ch) {
       const st = P.buehne(sc);
-      const z = (t) => { const pedal = t < 32 ? 0 : t < 36 ? glatt((t - 32) / 3) : t < 42 ? 1 : t < 46 ? 1 - glatt((t - 42) / 3) : t < 50 ? 0 : t < 53 ? 0.5 * glatt((t - 50) / 3) : t < 58 ? 0.5 : 0.5 * (1 - glatt((t - 58) / 3)); return { rotV: 1, gelbV: 1, pedal: klemme(pedal), res0: 0 }; };
-      const S = schema(st, z, ch.dauer);
-      const p = P.standardPanel(sc, ch, i, T0, false);
-      const pr = pille(st, tx("l_rot"), ROT), pg = pille(st, tx("l_gelb"), GELB);
+      const zu = (t) => ({ pedal: klemme(puls(t, 26, 36) + puls(t, 58, 68) + puls(t, 70.5, 74, 0.0)), leck: [false, t >= 44] });
+      const S = PN.zweikreis(st, tx, zu, ch.dauer), p = P.standardPanel(sc, ch, i, T0, false);
+      const pl = pille(st, tx("l_leck"), WARN), pg = pille(st, tx("l_geringer"), WARN, { klasse: "gross" });
       uhr(T0, ch.dauer, function (t) {
         S.zeichne(t);
-        const a1 = fenster(t, 3.5, ch.dauer - 1, 0.6), a2 = fenster(t, 16, ch.dauer - 1, 0.6);
-        platz(pr, 540, 900, a1); platz(pg, 540, 990, a2);
+        platz(pl, 165, 660, fenster(t, 44, ch.dauer - 1, 0.6));
+        platz(pg, 540, 975, fenster(t, 56, 74, 0.6));
       });
     }
 
-    /* ---------- K2: Rot löst die Bremse ---------- */
+    /* ---------- K2: Zweileitungsbremse ---------- */
     function K2(sc, i, T0, ch) {
       const st = P.buehne(sc);
-      const z = (t) => {
-        const rotV = t < 18 ? 0 : t < 24 ? glatt((t - 18) / 6) : 1, gelbV = t < 54 ? 0 : t < 60 ? glatt((t - 54) / 6) : 1;
-        const pedal = t < 32 ? 0 : t < 36 ? glatt((t - 32) / 3) : t < 44 ? 1 : t < 47 ? 1 - glatt((t - 44) / 3) : t < 64 ? 0 : t < 67 ? glatt((t - 64) / 3) : t < 74 ? 1 : 1 - glatt((t - 74) / 3);
-        return { rotV: rotV, gelbV: gelbV, pedal: klemme(pedal), res0: 1 };
-      };
-      const S = schema(st, z, ch.dauer);
-      const p = P.standardPanel(sc, ch, i, T0, false);
-      const pa = pille(st, tx("l_gebremst"), WARN, { klasse: "gross" }), pb = pille(st, tx("l_geloest"), GRUEN, { klasse: "gross" }), pk = pille(st, tx("l_kein_signal"), WARN, { klasse: "gross" }), pm = pille(st, tx("l_bremst_mit"), GRUEN, { klasse: "gross" });
-      uhr(T0, ch.dauer, function (t) {
-        const r = S.zeichne(t);
-        platz(pa, 540, 880, fenster(t, 4, 17, 0.5)); platz(pb, 540, 880, fenster(t, 26, 31, 0.5));
-        platz(pk, 540, 880, fenster(t, 33, 52, 0.5)); platz(pm, 540, 880, fenster(t, 66, ch.dauer - 1, 0.5));
-      });
+      const zu = (t) => ({ rotV: 1, gelbV: 1, pedal: klemme(puls(t, 26, 33, 1) + puls(t, 38, 46, 0.5) + puls(t, 56, 62, 0.8)), res0: 0 });
+      const S = PN.zweileitung(st, tx, zu, ch.dauer), p = P.standardPanel(sc, ch, i, T0, false);
+      const pr = pille(st, tx("l_rot"), ROT), pg = pille(st, tx("l_gelb"), GELB);
+      uhr(T0, ch.dauer, function (t) { S.zeichne(t); platz(pr, 540, 880, fenster(t, 12, ch.dauer - 1, 0.6)); platz(pg, 540, 950, fenster(t, 24, ch.dauer - 1, 0.6)); });
     }
 
-    /* ---------- Hang (K3, K4, K5): Zugmaschine + Auflieger, Schläuche, Knöpfe, Keile ---------- */
-    function hang(st, S) {
-      const W = KU.szene(st, { S: S, ox: 540, boden: 720, winkel: 4 });
-      const au = KU.auflieger(W), zm = KU.zugmaschine(W);
-      const gk = el("g", null, W.gVorn);                                       // Knöpfe und Markierungen, wandern mit dem Zug
-      const kz = el("g", { opacity: 0 }, gk); el("circle", { cx: 4.1, cy: -1.55, r: 0.22, fill: ROT, stroke: "#23262A", "stroke-width": 0.05 }, kz);
-      const kt = el("text", { x: 4.1, y: -1.46, "text-anchor": "middle", "font-size": 0.3, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#FAF6EC" }, kz); kt.textContent = "P";
-      const ka = el("g", { opacity: 0 }, gk); el("line", { x1: 0.9, y1: -1.0, x2: 0.9, y2: -1.3, stroke: "#8D949C", "stroke-width": 0.08 }, ka); el("circle", { cx: 0.9, cy: -0.95, r: 0.16, fill: ROT, stroke: "#23262A", "stroke-width": 0.04 }, ka);
-      const fehl = el("g", { opacity: 0 }, gk);                                // fehlende Sicherung (gestrichelte Kreise)
-      [[4.1, -1.55, 0.36], [0.9, -1.0, 0.3], [MA.auflieger.achsX - 2.05, -0.25, 0.4]].forEach((c) => el("circle", { cx: c[0], cy: c[1], r: c[2], fill: "none", stroke: WARN, "stroke-width": 0.07, "stroke-dasharray": "0.2 0.14" }, fehl));
-      const sch = { gelb: KU.schlauch(W, GELB, { laenge: 1.05 }), rot: KU.schlauch(W, ROT, { laenge: 1.05 }) };
-      return { W: W, au: au, zm: zm, kz: kz, ka: ka, fehl: fehl, gk: gk, sch: sch,
-        setze: function (X, o2) {
-          o2 = o2 || {}; au.setze(X, { stuetze: o2.stuetze == null ? 1 : o2.stuetze, keil: o2.keil ? 1 : 0, bremst: !!o2.bremst }); zm.setze(X + A_G, LUFT_K); zm.kupplung(1); gk.setAttribute("transform", "translate(" + f(X) + " 0)");
-          const verb = { gelb: o2.gelb == null ? 0 : o2.gelb, rot: o2.rot == null ? 0 : o2.rot };
-          [["gelb", 0], ["rot", 1]].forEach((p) => { const k = p[1], u = verb[p[0]], a = KU.ankerWelt(X, k), ruhe = KU.ruheWelt(X, k), d = { x: X + MA.steckdose.x, y: MA.steckdose.y[k] }; sch[p[0]].setze(a, { x: lerp(ruhe.x, d.x, u), y: lerp(ruhe.y, d.y, u) - Math.sin(Math.PI * u) * 0.35 }); });
-        } };
-    }
-    // Wegrollen: Beschleunigung nur, wenn das Modell „rollt“ meldet; Bremsung nach dem Trennen von rot
-    function rollweg(dauer, tRot, tLos, tTrenn) {
-      const dt = 0.02, n = Math.round(dauer / dt) + 1, xs = new Array(n); let x = 0, v = 0;
-      for (let i = 0; i < n; i++) {
-        const t = i * dt, rotAn = t >= tRot && t < tTrenn;
-        const rl = M.rollen({ rot: rotAn || (t >= tTrenn && false), festZug: false, festAnh: false, keile: false, gefaelle: 0.07 });
-        if (t >= tLos && t < tTrenn && rl.rollt) v += 0.2 * dt; else if (t >= tTrenn) v = Math.max(0, v - 0.8 * dt);
-        x += v * dt; xs[i] = { x: x, v: v };
-      }
-      return (t) => xs[Math.max(0, Math.min(n - 1, Math.round(t / dt)))];
-    }
-
-    /* ---------- K3: Rot allein, der Zug rollt ---------- */
+    /* ---------- K3: Fällt rot ab, bremst der Anhänger selbsttätig ---------- */
     function K3(sc, i, T0, ch) {
-      const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), H = hang(st, 64), W = H.W;
-      const rw = rollweg(ch.dauer, 18, 18, 42), X0 = -2;
-      if (!M.rollen({ rot: true, gefaelle: 0.07 }).rollt || M.rollen({ rot: false, gefaelle: 0.07 }).rollt) throw new Error("Rollbeispiel passt nicht zum Modell");
-      const pn = pille(st, tx("l_nichts"), WARN), pr = pille(st, tx("l_rollt"), WARN, { klasse: "gross" }), pt = pille(st, tx("l_rot_trennen"), GOLD);
-      uhr(T0, ch.dauer, function (t) {
-        const s = rw(t), X = X0 + s.x, xc = Math.max(0, X + 2 - 3) * 1;
-        W.kamera(Math.max(0, s.x - 2) - 1);
-        const rotU = t < 12 ? 0 : t < 18 ? glatt((t - 12) / 6) : t < 40 ? 1 : 1 - glatt((t - 40) / 4);
-        const bremst = rotU < 1 - 1e-6 && (t < 18 || t >= 44);
-        H.setze(X, { rot: rotU, bremst: bremst, keil: false, stuetze: 0 }); H.fehl.style.opacity = fenster(t, 3, 30, 0.6);
-        const a1 = fenster(t, 3.5, 24, 0.6), a2 = fenster(t, 22, 40, 0.6), a3 = fenster(t, 36, ch.dauer - 1, 0.6);
-        platz(pn, 540, 220, a1); platz(pr, 540, 880, a2); platz(pt, 540, 220, a3);
-      });
+      const st = P.buehne(sc);
+      const zu = (t) => ({ rotV: t < 12 ? 1 : t < 20 ? 1 - glatt((t - 12) / 8) : 0, gelbV: 1, pedal: 0, res0: 1 });
+      const S = PN.zweileitung(st, tx, zu, ch.dauer), p = P.standardPanel(sc, ch, i, T0, false);
+      const pv = pille(st, tx("l_verbunden"), GRUEN), pt = pille(st, tx("l_getrennt"), WARN), ps = pille(st, tx("l_selbst"), WARN, { klasse: "gross" });
+      uhr(T0, ch.dauer, function (t) { S.zeichne(t); platz(pv, 540, 880, fenster(t, 2, 12, 0.5)); platz(pt, 540, 880, fenster(t, 20, ch.dauer - 1, 0.5)); platz(ps, 540, 950, fenster(t, 22, ch.dauer - 1, 0.5)); });
     }
 
-    /* ---------- K4: richtig ---------- */
+    /* ---------- K4: Merke ---------- */
     function K4(sc, i, T0, ch) {
-      const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), H = hang(st, 64), W = H.W, X = -2;
-      const kam = [[0, -1], [4, -1], [8, -6], [14, -6], [18, -1], [ch.dauer, -1]], interp = (kf, t) => { if (t <= kf[0][0]) return kf[0][1]; for (let q = 1; q < kf.length; q++) if (t <= kf[q][0]) { const a = kf[q - 1], b = kf[q]; return a[1] + (b[1] - a[1]) * glatt((t - a[0]) / (b[0] - a[0])); } return kf[kf.length - 1][1]; };
-      W.kamera(-1);
-      if (M.rollen({ rot: true, festZug: true, festAnh: true, keile: true, gefaelle: 0.07 }).rollt) throw new Error("Sicherungsbeispiel passt nicht zum Modell");
-      const kombi = el("g", { opacity: 0 }, W.svg); el("rect", { x: 780, y: 150, width: 200, height: 84, rx: 40, fill: "#2B3631", stroke: "#C9CFC6", "stroke-width": 5 }, kombi); el("circle", { cx: 830, cy: 192, r: 24, fill: "none", stroke: GELB, "stroke-width": 8 }, kombi); el("circle", { cx: 930, cy: 192, r: 24, fill: "none", stroke: ROT, "stroke-width": 8 }, kombi);
-      const pg = pille(st, tx("l_gesichert"), GRUEN), ps = pille(st, tx("l_steht"), GRUEN, { klasse: "gross" }), pko = pille(st, tx("l_kombi"), GOLD);
-      uhr(T0, ch.dauer, function (t) {
-        W.kamera(interp(kam, t));
-        const gU = t < 14 ? 0 : t < 22 ? glatt((t - 14) / 8) : 1, rU = t < 34 ? 0 : t < 42 ? glatt((t - 34) / 8) : 1;
-        H.setze(X, { gelb: gU, rot: rU, keil: t >= 6, bremst: rU < 0.98 });
-        H.kz.style.opacity = fenster(t, 3.5, ch.dauer - 1, 0.5) * (t >= 3.5 ? 1 : 0); H.ka.style.opacity = H.kz.style.opacity;
-        const a1 = fenster(t, 5, 40, 0.6), a2 = fenster(t, 42, ch.dauer - 1, 0.6);
-        platz(pg, 540, 220, a1); platz(ps, 540, 880, a2); kombi.style.opacity = fenster(t, 46, ch.dauer - 1, 0.6); platz(pko, 880, 290, fenster(t, 46, ch.dauer - 1, 0.6));
-      });
+      const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, true);
+      const zu = () => ({ rotV: 1, gelbV: 1, pedal: 0, res0: 1 }), S = PN.zweileitung(st, tx, zu, ch.dauer);
+      uhr(T0, ch.dauer, function (t) { S.zeichne(t); });
     }
 
-    /* ---------- K5: Abkuppeln, erst rot ab ---------- */
-    function K5(sc, i, T0, ch) {
-      const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), H = hang(st, 64), W = H.W, X = -2;
-      W.kamera(-1);
-      const pr = pille(st, tx("l_rot_ab"), ROT), pg = pille(st, tx("l_gelb_ab"), GELB), pn = pille(st, tx("l_reicht_nicht"), WARN, { klasse: "gross" });
-      uhr(T0, ch.dauer, function (t) {
-        const rU = t < 8 ? 1 : t < 16 ? 1 - glatt((t - 8) / 8) : 0, gU = t < 24 ? 1 : t < 32 ? 1 - glatt((t - 24) / 8) : 0;
-        H.setze(X, { gelb: gU, rot: rU, keil: true, bremst: rU < 0.98 }); H.kz.style.opacity = 1; H.ka.style.opacity = 1;
-        platz(pr, 540, 220, fenster(t, 5, 19, 0.5)); platz(pg, 540, 220, fenster(t, 22, 36, 0.5)); platz(pn, 540, 880, fenster(t, 20, ch.dauer - 1, 0.5));
-      });
-    }
-
-    /* ---------- K6: Merke ---------- */
-    function K6(sc, i, T0, ch) {
-      const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, true), H = hang(st, 64); H.W.kamera(-1); H.setze(-2, { gelb: 1, rot: 1, keil: true }); H.kz.style.opacity = 1; H.ka.style.opacity = 1;
-    }
-
-    const bauer = { k1: K1, k2: K2, k3: K3, k4: K4, k5: K5, k6: K6 };
+    const bauer = { k1: K1, k2: K2, k3: K3, k4: K4 };
     T.kapitel.forEach((ch, i) => { const sc = o.scenes[i], T0 = starts[i]; bauer[ch.id](sc, i, T0, ch); P.sceneFade(sc, T0, ch.dauer); });
     return { starts: starts, gesamt: P.gesamt, refit: function () {} };
   }

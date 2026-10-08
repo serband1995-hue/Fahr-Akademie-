@@ -452,7 +452,26 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
     return { rollt: !betriebsbremseAnhaenger && !gesichert && (o.gefaelle || 0) > 0, betriebsbremseAnhaenger: betriebsbremseAnhaenger, gesichert: gesichert };
   }
 
-  const api = { lenkdauerBei: lenkdauerBei, pruefeTag: pruefeTag, pruefeWochen: pruefeWochen, folgefahrt: folgefahrt, FAHRZEUGE: FAHRZEUGE, bahn: bahn, simuliere: simuliere, koerper: koerper, rechteck: rechteck, maxUeberschnitt: maxUeberschnitt, gesamtLaenge: gesamtLaenge, radien: radien, vorderachsRadius: vorderachsRadius, innenRadius: innenRadius, abstandLinks: abstandLinks, folge: folge, SICHT: SICHT, sichtfeld: sichtfeld, insFahrzeug: insFahrzeug, polyAbstand: polyAbstand, verdecktVorn: verdecktVorn, radfahrerAbbiegen: radfahrerAbbiegen, ABBIEGEN: ABBIEGEN, sichtPolygone: sichtPolygone, zweikreis: zweikreis, anhaengerBremse: anhaengerBremse, federspeicher: federspeicher, kuppelnZustand: kuppelnZustand, DRUCK: DRUCK, FEDER: FEDER, SATTEL: SATTEL, sattelUnterfahren: sattelUnterfahren, sattelTreffer: sattelTreffer, rollen: rollen };
+  // Abreißen (Film 6.2): Was passiert mit dem Anhänger, wenn die rote Vorratsleitung bzw. nur die gelbe Bremsleitung abreißt?
+  // rot weg: Druckabfall in der Vorratsleitung → Anhänger bremst sofort selbsttätig (aus dem eigenen Vorrat). gelb weg: beim Fahren unbemerkt; erst wenn die Zugmaschine bremst, fehlt der Gegendruck,
+  // das Anhängersteuerventil entlüftet die rote Leitung und der Anhänger bremst. Die Bremskreise der Zugmaschine bleiben durch Überström- und Vierkreisschutzventil gefüllt.
+  function abreissen(o) {
+    const rot = !!o.rot, gelb = !!o.gelb && !rot, bremst = !!o.bremst;
+    return { anhaengerBremst: rot || (gelb && bremst), sofort: rot, wartetAufBremsung: gelb && !bremst, zugBremstWeiter: true };
+  }
+  // Zeit-Weg des Abreißens: beide Fahrzeuge fahren mit v0; die Kupplung reißt bei t = 0; der Anhänger bremst nach der Verzögerung tV mit a, die Zugmaschine bremst nach der Reaktionszeit tR mit aZ
+  function abrissFahrt(o) {
+    const P = Object.assign({ v0: 15, tV: 0.4, a: 4.5, tR: 1.2, aZ: 3.0, dt: 0.02, dauer: 12 }, o || {}), n = Math.round(P.dauer / P.dt) + 1, z = [];
+    let xA = 0, vA = P.v0, xZ = 0, vZ = P.v0;
+    for (let i = 0; i < n; i++) {
+      const t = i * P.dt; z.push({ t: t, xA: xA, vA: vA, bremstA: t >= P.tV && vA > 0, xZ: xZ, vZ: vZ, bremstZ: t >= P.tR && vZ > 0 });
+      if (t >= P.tV) vA = Math.max(0, vA - P.a * P.dt); if (t >= P.tR) vZ = Math.max(0, vZ - P.aZ * P.dt);
+      xA += vA * P.dt; xZ += vZ * P.dt;
+    }
+    return { zustaende: z, P: P };
+  }
+
+  const api = { lenkdauerBei: lenkdauerBei, pruefeTag: pruefeTag, pruefeWochen: pruefeWochen, folgefahrt: folgefahrt, FAHRZEUGE: FAHRZEUGE, bahn: bahn, simuliere: simuliere, koerper: koerper, rechteck: rechteck, maxUeberschnitt: maxUeberschnitt, gesamtLaenge: gesamtLaenge, radien: radien, vorderachsRadius: vorderachsRadius, innenRadius: innenRadius, abstandLinks: abstandLinks, folge: folge, SICHT: SICHT, sichtfeld: sichtfeld, insFahrzeug: insFahrzeug, polyAbstand: polyAbstand, verdecktVorn: verdecktVorn, radfahrerAbbiegen: radfahrerAbbiegen, ABBIEGEN: ABBIEGEN, sichtPolygone: sichtPolygone, zweikreis: zweikreis, anhaengerBremse: anhaengerBremse, federspeicher: federspeicher, kuppelnZustand: kuppelnZustand, DRUCK: DRUCK, FEDER: FEDER, SATTEL: SATTEL, sattelUnterfahren: sattelUnterfahren, sattelTreffer: sattelTreffer, rollen: rollen, abreissen: abreissen, abrissFahrt: abrissFahrt };
   if (typeof module !== "undefined" && module.exports) module.exports = api; else root.LKW_MODELL = api;
 })(typeof window !== "undefined" ? window : globalThis);
 
@@ -944,6 +963,26 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
       dreher.forEach((d) => d.setAttribute("transform", "rotate(" + f((weg / 0.5) * 57.2958 % 360) + ")"));
     } };
   }
+
+  // Anhänger mit Deichsel (Zentralachs) von der Seite. Ursprung: Zugöse (vorn), Boden; Fahrzeug erstreckt sich nach links (Deichsel 1,6 m, Aufbau 7,5 m).
+  function anhaenger(W) {
+    const g = el("g", null, W.gFz), s = W.S, dreher = [], D = 1.6, L = 7.5;
+    g.style.filter = "drop-shadow(0 " + (5 / s).toFixed(3) + "px " + (5 / s).toFixed(3) + "px rgba(0,0,0,.4))";
+    el("rect", { x: -D, y: -1.05, width: D, height: 0.14, fill: "#8D949C", stroke: "#4B5057", "stroke-width": 0.04 }, g);                   // Deichsel
+    el("circle", { cx: 0, cy: -0.98, r: 0.2, fill: "none", stroke: "#C4C9CF", "stroke-width": 0.09 }, g);                                     // Zugöse
+    el("rect", { x: -D - L, y: -1.0, width: L, height: 0.3, fill: "#3A3E43" }, g);
+    el("rect", { x: -D - L, y: -3.45, width: L, height: 2.45, rx: 0.12, fill: F.kasten, stroke: F.kastenD, "stroke-width": 0.07 }, g);
+    for (let x = -D - L + 0.9; x < -D - 0.4; x += 1.2) el("line", { x1: x, y1: -3.35, x2: x, y2: -1.1, stroke: "rgba(120,108,80,.28)", "stroke-width": 0.04 }, g);
+    const glut = el("circle", { cx: -D - L, cy: -1.4, r: 0.55, fill: "rgba(255,59,43,.7)", opacity: 0 }, g);
+    el("rect", { x: -D - L - 0.02, y: -1.55, width: 0.12, height: 0.45, fill: F.ruecklicht, opacity: 0.9 }, g);
+    const brems = el("rect", { x: -D - L - 0.02, y: -1.55, width: 0.12, height: 0.45, fill: "#FF3B2B", opacity: 0 }, g);
+    [-D - L + 2.2, -D - L + 3.5].forEach((cx) => dreher.push(rad(g, cx, 0.5)));
+    return { g: g, laenge: D + L, setze: function (xTip, bremst, weg) {
+      g.setAttribute("transform", "translate(" + f(W.px(xTip)) + " " + W.boden + ") scale(" + W.S + ")");
+      brems.setAttribute("opacity", bremst ? 1 : 0); glut.setAttribute("opacity", bremst ? 0.45 : 0);
+      dreher.forEach((d) => d.setAttribute("transform", "rotate(" + f((weg / 0.5) * 57.2958 % 360) + ")"));
+    } };
+  }
   // Maßklammer zwischen zwei Weltpunkten über der Straße (Pille mit Text kommt von außen)
   function klammer(W, y, farbe) {
     const g = el("g", { opacity: 0 }, W.gUeber), c = farbe || F.gold;
@@ -956,7 +995,7 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
       return [(p1 + p2) / 2, y];
     } };
   }
-  window.LKW_SEITE = { szene: szene, bus: bus, lkw: lkw, pkw: pkw, klammer: klammer };
+  window.LKW_SEITE = { anhaenger: anhaenger, szene: szene, bus: bus, lkw: lkw, pkw: pkw, klammer: klammer };
 })(window);
 
 })(W);
@@ -1069,6 +1108,7 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
 (function (window) {
   "use strict";
   const BK = window.LKW_BK, F = BK.FARBE, el = BK.el, f = BK.f;
+  let clipZaehler = 0;
   const C = { luft: "#6EC1E4", gelb: "#F2C94C", rot: "#E5584B", stahl: "#C9CFC6", dunkel: "#23262A", linie: "rgba(250,246,236,.30)", feder: "#E8B77F", belag: "#B08A5A" };
 
   function buehne(stage) {
@@ -1098,9 +1138,9 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
   function behaelter(B, o) {
     const g = el("g", null, B.g), x = o.x, y = o.y, w = o.w || 150, h = o.h || 90;
     el("rect", { x: x, y: y, width: w, height: h, rx: h / 2, fill: "#2B3631", stroke: C.stahl, "stroke-width": 5 }, g);
-    const cp = "cl" + Math.round(x) + "_" + Math.round(y) + "_" + (o.id || "");
+    const cp = "cl" + (++clipZaehler) + "_" + Math.round(x) + "_" + Math.round(y) + "_" + (o.id || "");
     const defs = el("defs", null, g), clip = el("clipPath", { id: cp }, defs); el("rect", { x: x + 3, y: y + 3, width: w - 6, height: h - 6, rx: h / 2 - 3 }, clip);
-    const fuell = el("rect", { x: x, y: y + h, width: w, height: 0, fill: C.luft, opacity: 0.85, "clip-path": "url(#" + cp + ")" }, g);
+    const fuell = el("rect", { x: x, y: y + h, width: w, height: 0, fill: o.farbe || C.luft, opacity: 0.85, "clip-path": "url(#" + cp + ")" }, g);
     if (o.name) text(g, o.name, x + w / 2, y + h + 34, { gr: 26 });
     return { g: g, setze: function (p) { p = Math.max(0, Math.min(1, p)); fuell.setAttribute("y", f(y + h - p * h)); fuell.setAttribute("height", f(p * h)); }, x: x, y: y, w: w, h: h };
   }
@@ -1108,7 +1148,7 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
   function zylinder(B, o) {
     const g = el("g", null, B.g), x = o.x, y = o.y, w = o.w || 150, h = o.h || 80, hub = o.hub || 60;
     const kam = el("rect", { x: x, y: y, width: w * 0.6, height: h, rx: 10, fill: "#2B3631", stroke: C.stahl, "stroke-width": 5 }, g);
-    const luft = el("rect", { x: x + 4, y: y + 4, width: 0, height: h - 8, rx: 6, fill: C.luft, opacity: 0.85 }, g);
+    const luft = el("rect", { x: x + 4, y: y + 4, width: 0, height: h - 8, rx: 6, fill: o.farbe || C.luft, opacity: 0.85 }, g);
     const kolben = el("rect", { x: x + 4, y: y + 4, width: 10, height: h - 8, rx: 3, fill: C.stahl }, g);
     const stange = el("rect", { x: x + w * 0.6, y: y + h / 2 - 7, width: w * 0.4, height: 14, fill: C.stahl }, g);
     const beleg = el("rect", { x: x + w, y: y + h / 2 - 28, width: 14, height: 56, rx: 4, fill: C.belag }, g);
@@ -1166,7 +1206,79 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
       trommel.setAttribute("stroke", r.gebremst ? C.belag : "rgba(250,246,236,.45)"); return r;
     } };
   }
-  window.LKW_PNEU = { C: C, buehne: buehne, text: text, leitung: leitung, behaelter: behaelter, zylinder: zylinder, ventil: ventil, kupplung: kupplung, kombi: kombi, mix: mix };
+
+  /* Verzögerung erster Ordnung (Druck baut sich auf/ab): Werte im Raster dt vorab rechnen, Abruf per Zeit */
+  function verlauf(dauer, ziel, tau, start) { const dt = 0.05, n = Math.round(dauer / dt) + 1, a = new Array(n); let p = start || 0; for (let i = 0; i < n; i++) { p += (ziel(i * dt) - p) * (1 - Math.exp(-dt / tau)); a[i] = p; } return (t) => a[Math.max(0, Math.min(n - 1, Math.round(t / dt)))]; }
+  const klemme = (u) => Math.max(0, Math.min(1, u));
+
+  /* Schema der Zweileitungsbremse (Zugmaschine links, Anhänger rechts, Köpfe in der Mitte). Bühne B (aus buehne()), tx = Textfunktion.
+     zustand(t) -> { rotV, gelbV (Verbindung 0…1), pedal (0…1), res0 (Vorrat des Anhängers, solange rot nicht verbunden), rotDruck (optional, Druck auf der roten Leitung; Standard 1), gelbDefekt (optional: gelbe Leitung abgerissen) }
+     Die Drücke im Anhänger kommen aus modell.anhaengerBremse. zeichne(t) -> { c (Zylinderdruck), r (Vorrat) } */
+  function zweileitung(st, tx, zustand, dauer) {
+    const B = buehne(st), g = B.g, M = window.LKW_MODELL, ROT = C.rot, GELB = C.gelb;
+    el("rect", { x: 40, y: 150, width: 250, height: 640, rx: 22, fill: "rgba(250,246,236,.06)", stroke: "rgba(250,246,236,.30)", "stroke-width": 3 }, g);
+    el("rect", { x: 580, y: 150, width: 460, height: 640, rx: 22, fill: "rgba(250,246,236,.06)", stroke: "rgba(250,246,236,.30)", "stroke-width": 3 }, g);
+    text(g, tx("l_zug"), 165, 120, { gr: 30, fett: true }); text(g, tx("l_anh"), 810, 120, { gr: 30, fett: true });
+    const vorratZ = behaelter(B, { x: 70, y: 190, w: 190, h: 90 });
+    const pedal = el("g", null, g), pedalPlatte = el("rect", { x: 100, y: 620, width: 130, height: 46, rx: 10, fill: "#8D949C", stroke: "#4B5057", "stroke-width": 5 }, pedal);
+    text(g, tx("l_pedal"), 165, 720, { gr: 26 });
+    const rot = { y: 300 }, gelb = { y: 520 };
+    const teil = (y, farbe) => ({ l: el("line", { x1: 0, y1: y, x2: 0, y2: y, stroke: "#2B3631", "stroke-width": 16, "stroke-linecap": "round" }, g), f: el("line", { x1: 0, y1: y, x2: 0, y2: y, stroke: farbe, "stroke-width": 16, "stroke-linecap": "round", opacity: 0 }, g) });
+    const rz = teil(rot.y, ROT), ra = teil(rot.y, ROT), gz = teil(gelb.y, GELB), ga = teil(gelb.y, GELB);
+    const setzeTeil = (t, x1, x2, p) => { [t.l, t.f].forEach((e) => { e.setAttribute("x1", f(x1)); e.setAttribute("x2", f(x2)); }); t.f.setAttribute("opacity", f(klemme(p) * 0.95)); };
+    const kr = kupplung(B, { x: 430, y: rot.y, farbe: ROT, r: 26, abstand: 150 }), kg = kupplung(B, { x: 430, y: gelb.y, farbe: GELB, r: 26, abstand: 150 });
+    const ventil1 = ventil(B, { x: 660, y: 380, w: 130, h: 100 }); text(g, tx("l_ventil"), 725, 360, { gr: 24 });
+    const vorratA = behaelter(B, { x: 840, y: 190, w: 170, h: 90 }); text(g, tx("l_behaelter"), 955, 322, { gr: 22 });
+    const zyl = zylinder(B, { x: 640, y: 650, w: 150, h: 80 });
+    const l1 = leitung(B, [[580, rot.y], [725, rot.y], [725, 380]], { farbe: ROT }), l2 = leitung(B, [[790, 430], [865, 430], [865, 280]], { farbe: ROT });
+    const l3 = leitung(B, [[580, gelb.y], [620, gelb.y], [620, 430], [660, 430]], { farbe: GELB }), l4 = leitung(B, [[725, 480], [725, 650]], { farbe: C.luft });
+    const rotP = (z) => (z.rotV >= 1 ? (z.rotDruck == null ? 1 : z.rotDruck) : 0);
+    const res = verlauf(dauer, (t) => { const z = zustand(t); return rotP(z) >= M.DRUCK.schwelle ? 1 : z.res0; }, 1.5, zustand(0).res0);
+    const zielZyl = (t) => { const z = zustand(t); return M.anhaengerBremse({ rot: rotP(z), gelb: z.gelbV >= 1 ? z.pedal : 0, vorratAnh: res(t) }).zyl; };
+    const zy = verlauf(dauer, zielZyl, 0.5, zielZyl(0));
+    const rotZug = verlauf(dauer, (t) => { const z = zustand(t); return z.rotDruck == null ? 1 : z.rotDruck; }, 0.25, 1);
+    return { B: B, zeichne: function (t) {
+      const z = zustand(t), r = res(t), c = zy(t), rd = rotZug(t), rp = rotP(z) >= M.DRUCK.schwelle ? Math.min(1, rd) : 0;
+      pedalPlatte.setAttribute("y", f(620 + 16 * z.pedal)); pedalPlatte.setAttribute("fill", z.pedal > 0.05 ? C.gelb : "#8D949C");
+      vorratZ.setze(1);
+      kr.setze(z.rotV); kg.setze(z.gelbV);
+      const dr = (1 - z.rotV) * 75, dg = (1 - z.gelbV) * 75;
+      setzeTeil(rz, 290, 430 - 26 - dr, rd); setzeTeil(ra, 430 + 26 + dr, 580, z.rotV >= 1 ? rd : 0);
+      setzeTeil(gz, 290, 430 - 26 - dg, z.gelbDefekt ? 0 : z.pedal); setzeTeil(ga, 430 + 26 + dg, 580, z.gelbV >= 1 ? z.pedal : 0);
+      l1.setze(rp); l2.setze(rp); l3.setze(z.gelbV >= 1 ? z.pedal : 0); l4.setze(c); vorratA.setze(r); zyl.setze(c); ventil1.setze(c > 0.05 ? 1 : 0);
+      return { c: c, r: r };
+    }, g: g, kr: kr, kg: kg };
+  }
+
+
+  /* Schema der Zweikreis-Betriebsbremse: zwei Vorratsbehälter (Kreis 1 und 2), Bremsventil mit zwei Ausgängen, zwei Bremszylinder (Vorder- und Hinterachse).
+     zustand(t) -> { pedal (0…1), leck: [bool, bool] }. Rechnet mit modell.zweikreis; Behälter entleeren sich bei Leck, der andere Kreis bleibt gefüllt. Gibt { wirkung } zurück. */
+  function zweikreis(st, tx, zustand, dauer) {
+    const B = buehne(st), g = B.g, M = window.LKW_MODELL, K = [C.luft, "#8FD6A6"];
+    const r1 = behaelter(B, { x: 70, y: 200, w: 190, h: 90, farbe: K[0] }), r2 = behaelter(B, { x: 70, y: 480, w: 190, h: 90, farbe: K[1] });
+    text(g, tx("l_kreis1"), 165, 180, { gr: 26 }); text(g, tx("l_kreis2"), 165, 460, { gr: 26 });
+    const vent = ventil(B, { x: 420, y: 340, w: 150, h: 130 }); text(g, tx("l_bremsventil"), 495, 320, { gr: 26 });
+    const z1 = zylinder(B, { x: 700, y: 190, w: 150, h: 80, farbe: K[0] }), z2 = zylinder(B, { x: 700, y: 480, w: 150, h: 80, farbe: K[1] });
+    text(g, tx("l_vorderachse"), 790, 170, { gr: 26 }); text(g, tx("l_hinterachse"), 790, 460, { gr: 26 });
+    const a1 = leitung(B, [[260, 245], [340, 245], [340, 375], [420, 375]], { farbe: K[0] }), a2 = leitung(B, [[260, 525], [340, 525], [340, 440], [420, 440]], { farbe: K[1] });
+    const o1 = leitung(B, [[570, 380], [640, 380], [640, 230], [700, 230]], { farbe: K[0] }), o2 = leitung(B, [[570, 435], [640, 435], [640, 520], [700, 520]], { farbe: K[1] });
+    const pedal = el("rect", { x: 420, y: 640, width: 150, height: 46, rx: 10, fill: "#8D949C", stroke: "#4B5057", "stroke-width": 5 }, g); text(g, tx("l_pedal"), 495, 730, { gr: 26 });
+    el("rect", { x: 70, y: 850, width: 520, height: 44, rx: 14, fill: "rgba(250,246,236,.1)", stroke: "rgba(250,246,236,.3)", "stroke-width": 2 }, g);
+    const wBalken = el("rect", { x: 70, y: 850, width: 0, height: 44, rx: 14, fill: C.gelb }, g); text(g, tx("l_wirkung"), 70, 835, { gr: 26, anker: "start" });
+    // Leck: Tropfen unter Behälter 2
+    const leck = el("g", { opacity: 0 }, g); [[130, 600], [180, 612], [225, 598]].forEach((p) => el("path", { d: "M" + p[0] + " " + p[1] + " q-10 20 0 28 q10 -8 0 -28", fill: "#FF9A5C" }, leck));
+    const V = [0, 1].map((k) => verlauf(dauer, (t) => (zustand(t).leck[k] ? 0 : 1), 1.6, 1));
+    const Z = [0, 1].map((k) => verlauf(dauer, (t) => M.zweikreis({ pedal: zustand(t).pedal, leck: [V[0](t) < 0.05, V[1](t) < 0.05] }).zyl[k], 0.4, 0));
+    return { B: B, zeichne: function (t) {
+      const z = zustand(t), v = [V[0](t), V[1](t)], c = [Z[0](t), Z[1](t)];
+      r1.setze(v[0]); r2.setze(v[1]); a1.setze(v[0]); a2.setze(v[1]); o1.setze(c[0]); o2.setze(c[1]); z1.setze(c[0]); z2.setze(c[1]);
+      vent.setze(z.pedal > 0.05 ? 1 : 0); pedal.setAttribute("y", f(640 + 16 * z.pedal)); pedal.setAttribute("fill", z.pedal > 0.05 ? C.gelb : "#8D949C");
+      const w = (c[0] + c[1]) / 2; wBalken.setAttribute("width", f(w * 520)); leck.setAttribute("opacity", z.leck[1] || z.leck[0] ? 1 : 0);
+      return { wirkung: w, v: v, c: c };
+    } };
+  }
+
+  window.LKW_PNEU = { zweikreis: zweikreis, zweileitung: zweileitung, verlauf: verlauf, C: C, buehne: buehne, text: text, leitung: leitung, behaelter: behaelter, zylinder: zylinder, ventil: ventil, kupplung: kupplung, kombi: kombi, mix: mix };
 })(window);
 
 })(W);
@@ -1215,7 +1327,7 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
     const kasten = el("rect", { x: A.hinterKante, y: -A.hoehe, width: A.vorderKante - A.hinterKante, height: A.hoehe - 1.45, rx: 0.12, fill: F.kasten, stroke: F.kastenD, "stroke-width": 0.07 }, g);
     for (let x = A.hinterKante + 1.0; x < A.vorderKante - 0.5; x += 1.2) el("line", { x1: x, y1: -A.hoehe + 0.1, x2: x, y2: -1.55, stroke: "rgba(120,108,80,.28)", "stroke-width": 0.04 }, g);
     el("rect", { x: A.hinterKante + 0.2, y: -1.45, width: A.vorderKante - A.hinterKante - 0.4, height: 0.15, fill: "#3A3E43" }, g);                   // Fahrgestell
-    el("path", { d: "M" + A.vorderKante + " -" + (A.unterkante - 0.12) + " L0.6 -" + A.unterkante + " L" + A.vorderKante + " -" + A.unterkante + " Z", fill: "#5A5F66" }, g);   // Aufgleitplatte (vorn angeschrägt)
+    el("path", { d: "M" + A.vorderKante + " -" + (A.unterkante + 0.12) + " L0.6 -" + A.unterkante + " L" + A.vorderKante + " -" + A.unterkante + " Z", fill: "#5A5F66" }, g);   // Aufgleitplatte (vorn angeschrägt)
     el("rect", { x: -0.09, y: -A.unterkante, width: 0.18, height: A.unterkante - A.zapfenUnten, fill: "#33373C" }, g);                                                            // Königszapfen
     el("rect", { x: A.vorderKante - 0.05, y: -3.2, width: 0.06, height: 1.7, fill: "#9AA3AC" }, g);                                                      // Stirnwand
     // Stützwinde (Seitenansicht: ein Bein)
@@ -1223,7 +1335,7 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
     const fuss = el("rect", { x: A.stuetzX - 0.3, y: -0.12, width: 0.6, height: 0.1, rx: 0.03, fill: "#33373C" }, g);
     const kurbel = el("g", null, g); el("line", { x1: A.stuetzX + 0.1, y1: -0.9, x2: A.stuetzX + 0.55, y2: -0.9, stroke: "#23262A", "stroke-width": 0.06 }, kurbel); el("circle", { cx: A.stuetzX + 0.55, cy: -0.9, r: 0.07, fill: "#23262A" }, kurbel);
     // Räder (drei Achsen)
-    [A.achsX - 1.3, A.achsX, A.achsX + 1.3].forEach((cx) => rad(g, cx, 0.5));
+    const dreherA = [A.achsX - 1.3, A.achsX, A.achsX + 1.3].map((cx) => rad(g, cx, 0.5));
     // Keile (vor und hinter dem letzten Rad)
     const keil = el("g", { opacity: 0 }, g);
     el("path", { d: "M" + (A.achsX - 1.3 - 0.52) + " 0 L" + (A.achsX - 1.3 - 0.95) + " 0 L" + (A.achsX - 1.3 - 0.52) + " -0.28 Z", fill: "#D9B35C", stroke: "#8F5A14", "stroke-width": 0.04 }, keil);
@@ -1232,7 +1344,7 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
     [GELB, ROT, ELEK].forEach((c, k) => el("circle", { cx: MASS.steckdose.x, cy: MASS.steckdose.y[k], r: 0.075, fill: c, stroke: "#23262A", "stroke-width": 0.03 }, g));
     const glut = el("circle", { cx: A.hinterKante, cy: -1.75, r: 0.55, fill: "rgba(255,59,43,.7)", opacity: 0 }, g), licht = el("rect", { x: A.hinterKante - 0.03, y: -1.9, width: 0.12, height: 0.34, fill: F.ruecklicht, opacity: 0.9 }, g), bremslicht = el("rect", { x: A.hinterKante - 0.03, y: -1.9, width: 0.12, height: 0.34, fill: "#FF3B2B", opacity: 0 }, g);
     return { g: g, setze: function (x, s) {
-      s = s || {}; g.setAttribute("transform", "translate(" + f(x) + " 0)");
+      s = s || {}; g.setAttribute("transform", "translate(" + f(x) + " 0)"); dreherA.forEach((d) => d.setAttribute("transform", "rotate(" + f(((x + A.achsX) / 0.5) * 57.2958 % 360) + ")"));
       const e = s.stuetze == null ? 1 : s.stuetze; bein.setAttribute("height", f(A.unterkante - 0.45 * (1 - e))); fuss.setAttribute("y", f(-0.12 - 0.45 * (1 - e) * 1));
       kurbel.setAttribute("transform", "translate(0 " + f(-0.45 * (1 - e) * 0) + ")");
       keil.setAttribute("opacity", s.keil == null ? 0 : Number(s.keil)); bremslicht.setAttribute("opacity", s.bremst ? 1 : 0); glut.setAttribute("opacity", s.bremst ? 0.45 : 0); licht.setAttribute("opacity", s.licht == null ? 0.9 : (s.licht ? 1 : 0.35));
@@ -1311,7 +1423,7 @@ window.FILM_TEXT = {
     l_fest_zug: "Feststellbremse Zugmaschine", l_fest_auf: "Feststellbremse Auflieger", l_keile: "Unterlegkeile",
 
     k2_kicker: "Stützen", k2_titel: "Stützwinden ausfahren", k2_sub: "Der Auflieger muss danach sicher stehen.",
-    k2_p1: "Die Stützwinden werden ausgefahren, bis die Füße den Boden berühren.",
+    k2_p1: "Die Stützwinden werden ausgefahren: bei Luftfederung, bis die Füße den Boden berühren, bei Blattfederung, bis die Federn der Zugmaschine entlastet sind.",
     k2_p2: "Der Boden muss tragen. Sonst werden die Füße unterbaut.",
     k2_p3: "Der Auflieger wird nicht von der Sattelkupplung abgehoben.",
     l_stuetzen: "Stützwinden aus", l_tragfaehig: "Boden trägt", l_nicht_abheben: "Nicht abheben",
@@ -1339,8 +1451,8 @@ window.FILM_TEXT = {
       punkte: [{ k: "k1_p1", t: 3.0, ref: "DGUV Information 214-080" }, { k: "k1_p2", t: 12.0, ref: "DGUV Information 214-080" }] },
     { id: "k1b", titel: "k1b_titel", kicker: "k1b_kicker", dauer: 50, sub: { k: "k1b_sub", t: 0.6 },
       punkte: [{ k: "k1b_p1", t: 3.0, ref: "DGUV Information 214-080" }, { k: "k1b_p2", t: 15.0 }, { k: "k1b_p3", t: 28.0 }] },
-    { id: "k2", titel: "k2_titel", kicker: "k2_kicker", dauer: 44, sub: { k: "k2_sub", t: 0.6 },
-      punkte: [{ k: "k2_p1", t: 3.5, ref: "DGUV Information 214-080" }, { k: "k2_p2", t: 16.0 }, { k: "k2_p3", t: 28.0 }] },
+    { id: "k2", titel: "k2_titel", kicker: "k2_kicker", dauer: 50, sub: { k: "k2_sub", t: 0.6 },
+      punkte: [{ k: "k2_p1", t: 3.5, ref: "DGUV Information 214-080" }, { k: "k2_p2", t: 22.0 }, { k: "k2_p3", t: 32.0 }] },
     { id: "k3", titel: "k3_titel", kicker: "k3_kicker", dauer: 74, sub: { k: "k3_sub", t: 0.6 },
       punkte: [{ k: "k3_p1", t: 3.5, ref: "DGUV Information 214-080; Theoriefrage 2.7.07-319" }, { k: "k3_p2", t: 14.0 }, { k: "k3_p3", t: 24.0 }, { k: "k3_p4", t: 38.0, ref: "DGUV Information 214-080", stil: "gold" }, { k: "k3_p5", t: 54.0, ref: "DGUV Information 214-080", stil: "gold" }] },
     { id: "k4", titel: "k4_titel", kicker: "k4_kicker", dauer: 70, sub: { k: "k4_sub", t: 0.6 },
@@ -1351,7 +1463,7 @@ window.FILM_TEXT = {
 
 })(W);
 
-W.FILM_SPRACHEN = {"en":{"titel":"Uncoupling an articulated lorry","ui_ueber":"Overview: uncoupling an articulated lorry","ui_intro":"A short film without sound: everything is shown as text on screen. You can pause at any time or pick a chapter.","ui_start":"Start film","ui_pause":"Pause","ui_weiter":"Resume","ui_neu":"Restart","ui_kapitel":"Chapters","ui_lesen":"Read the full text","k1_kicker":"Uncoupling","k1_titel":"Park in a straight line","k1_sub":"Articulated lorry: the vehicle stands straight.","k1_p1":"The vehicle stands in a straight line, if possible.","k1_p2":"Leave space in front of the tractor unit so it can later be coupled straight again.","l_gestreckt":"In line","l_platz":"Room to couple","k1b_kicker":"Secure","k1b_titel":"Secure first","k1b_sub":"Both parking brakes, plus chocks.","k1b_p1":"When the vehicle stands, the parking brake of the tractor unit is applied first.","k1b_p2":"Then that of the semi-trailer: pull the red knob.","k1b_p3":"Wheel chocks are also placed at a rigid axle.","l_fest_zug":"Tractor parking brake","l_fest_auf":"Trailer parking brake","l_keile":"Wheel chocks","k2_kicker":"Support","k2_titel":"Extend the landing gear","k2_sub":"The semi-trailer must then stand securely.","k2_p1":"The landing gear is extended until the feet touch the ground.","k2_p2":"The ground must bear the load. Otherwise the feet are packed underneath.","k2_p3":"The semi-trailer is not lifted off the fifth wheel coupling.","l_stuetzen":"Landing gear down","l_tragfaehig":"Ground bears load","l_nicht_abheben":"Do not lift","k3_kicker":"Lines","k3_titel":"First red, then yellow","k3_sub":"Disconnect the supply line first.","k3_p1":"Red is disconnected first: the supply line.","k3_p2":"Then comes yellow: the brake line.","k3_p3":"The electrical cable is disconnected as well. The heads go into the parking sockets.","k3_p4":"When red is disconnected, the trailer brakes automatically. That is not enough to secure it.","k3_p5":"The air is lost over time. That is why the parking brake and chocks stay.","l_rot_ab":"Red off: supply line","l_gelb_ab":"Yellow off: brake line","l_elektro_ab":"Electrics off","l_reicht_nicht":"Not enough to secure","k4_kicker":"Pulling away","k4_titel":"Open the coupling","k4_sub":"Pull forward slowly and straight.","k4_p1":"The lock of the fifth wheel coupling is released and the coupling is opened.","k4_p2":"The tractor unit drives slowly and straight forward a short way.","k4_p3":"With air suspension it is then lowered a little and drives out completely.","k4_p4":"This way the rear of the tractor unit does not jump up.","l_oeffnen":"Open coupling","l_vorziehen":"Pull forward straight","l_absenken":"Lower, then drive out","k5_kicker":"Remember","k5_titel":"To take away","k5_merk":"Park in a straight line, both parking brakes, chocks, landing gear down. First red, then yellow off. Red alone does not secure."},"sr":{"titel":"Razdvajanje šlepera","ui_ueber":"Pregled: razdvajanje šlepera","ui_intro":"Kratak film bez zvuka: sve piše na ekranu. Možeš da zaustaviš film ili da izabereš poglavlje kad god želiš.","ui_start":"Pokreni film","ui_pause":"Zaustavi","ui_weiter":"Nastavi","ui_neu":"Od početka","ui_kapitel":"Poglavlja","ui_lesen":"Pročitaj ceo tekst","k1_kicker":"Razdvajanje","k1_titel":"Parkiraj ravno","k1_sub":"Šleper: vozilo stoji ravno.","k1_p1":"Vozilo stoji što je moguće ravnije.","k1_p2":"Ispred tegljača ostaje mesta da se kasnije opet spoji ravno.","l_gestreckt":"Ravno","l_platz":"Mesto za spajanje","k1b_kicker":"Osiguranje","k1b_titel":"Prvo osiguraj","k1b_sub":"Obe parkirne kočnice i klinovi.","k1b_p1":"Kad vozilo stoji, prvo se povlači parkirna kočnica tegljača.","k1b_p2":"Zatim ona na poluprikolici: povuci crveno dugme.","k1b_p3":"Pored toga se postavljaju klinovi ispod točkova na krutoj osovini.","l_fest_zug":"Kočnica tegljača","l_fest_auf":"Kočnica poluprikolice","l_keile":"Klinovi (podmetači)","k2_kicker":"Oslanjanje","k2_titel":"Spusti oslonce","k2_sub":"Poluprikolica posle mora da stoji sigurno.","k2_p1":"Oslonci se spuštaju dok stopala ne dodirnu tlo.","k2_p2":"Tlo mora da nosi. Inače se stopala podmeću.","k2_p3":"Poluprikolica se ne podiže sa spojnice sedla.","l_stuetzen":"Oslonci spušteni","l_tragfaehig":"Tlo nosi","l_nicht_abheben":"Ne podizati","k3_kicker":"Vodovi","k3_titel":"Prvo crveni, pa žuti","k3_sub":"Prvo razdvoj napojni vod.","k3_p1":"Prvo se razdvaja crveni: napojni vod.","k3_p2":"Zatim ide žuti: kočioni vod.","k3_p3":"Razdvaja se i električni kabl. Glave idu u parkirne utičnice.","k3_p4":"Kad se crveni razdvoji, prikolica sama koči. To nije dovoljno za osiguranje.","k3_p5":"Vazduh vremenom izlazi. Zato parkirna kočnica i klinovi ostaju.","l_rot_ab":"Crveni skini: napojni","l_gelb_ab":"Žuti skini: kočioni","l_elektro_ab":"Struja skinuta","l_reicht_nicht":"Ne osigurava dovoljno","k4_kicker":"Odlazak","k4_titel":"Otvori spojnicu","k4_sub":"Polako i ravno povuci napred.","k4_p1":"Osigurač spojnice sedla se otkači, spojnica se otvori.","k4_p2":"Tegljač polako i ravno vozi malo napred.","k4_p3":"Kod vazdušnog oprugašenja se zatim malo spusti i potpuno izađe.","k4_p4":"Tako zadnji deo tegljača ne poskoči uvis.","l_oeffnen":"Otvori spojnicu","l_vorziehen":"Ravno povući napred","l_absenken":"Spusti, pa izađi","k5_kicker":"Zapamti","k5_titel":"Za poneti","k5_merk":"Parkiraj ravno, obe parkirne kočnice, klinovi, oslonci spušteni. Prvo crveni, pa žuti skini. Samo crveni ne osigurava."},"tr":{"titel":"Çekici ile yarı römorku ayırmak","ui_ueber":"Genel bakış: çekici ile yarı römorku ayırmak","ui_intro":"Sessiz kısa bir film: Her şey görüntüde yazıyla yer alır. İstediğin zaman durdurabilir veya bir bölüm seçebilirsin.","ui_start":"Filmi başlat","ui_pause":"Durdur","ui_weiter":"Devam","ui_neu":"Baştan","ui_kapitel":"Bölümler","ui_lesen":"Metnin tamamını oku","k1_kicker":"Ayırma","k1_titel":"Düz park et","k1_sub":"Tır: Araç düz duruyor.","k1_p1":"Araç mümkün olduğunca düz durur.","k1_p2":"Çekicinin önünde, sonra tekrar düz birleştirmek için yer kalır.","l_gestreckt":"Düz","l_platz":"Düz birleştirme alanı","k1b_kicker":"Emniyet","k1b_titel":"Önce emniyete al","k1b_sub":"İki park freni ve takozlar.","k1b_p1":"Araç durunca önce çekicinin park freni çekilir.","k1b_p2":"Sonra yarı römorkunki: kırmızı düğmeyi çek.","k1b_p3":"Ayrıca sabit bir akstaki tekerleklerin önüne takoz konur.","l_fest_zug":"Çekicinin park freni","l_fest_auf":"Römorkun park freni","l_keile":"Takozlar","k2_kicker":"Destek","k2_titel":"Destek ayaklarını indir","k2_sub":"Yarı römork bundan sonra sağlam durmalıdır.","k2_p1":"Destek ayakları, tabanlar zemine değene kadar indirilir.","k2_p2":"Zemin taşımalıdır. Yoksa tabanların altına destek konur.","k2_p3":"Yarı römork beşinci teker kuplajından kaldırılmaz.","l_stuetzen":"Destekler aşağıda","l_tragfaehig":"Zemin taşıyor","l_nicht_abheben":"Kaldırma","k3_kicker":"Hatlar","k3_titel":"Önce kırmızı, sonra sarı","k3_sub":"Önce besleme hattını ayır.","k3_p1":"Önce kırmızı ayrılır: besleme hattı.","k3_p2":"Sonra sarı gelir: fren hattı.","k3_p3":"Elektrik kablosu da ayrılır. Başlıklar park yuvalarına konur.","k3_p4":"Kırmızı ayrılınca römork kendiliğinden frenler. Bu, emniyet için yetmez.","k3_p5":"Hava zamanla kaçar. Bu yüzden park freni ve takozlar kalır.","l_rot_ab":"Kırmızı çıkar: besleme","l_gelb_ab":"Sarı çıkar: fren hattı","l_elektro_ab":"Elektrik çıkar","l_reicht_nicht":"Emniyete yetmez","k4_kicker":"Uzaklaşma","k4_titel":"Kuplajı aç","k4_sub":"Yavaş ve düz ileri çek.","k4_p1":"Beşinci teker kuplajının emniyeti çıkarılır, kuplaj açılır.","k4_p2":"Çekici yavaşça ve düz bir miktar ileri gider.","k4_p3":"Hava süspansiyonunda biraz alçaltılır ve tamamen çıkar.","k4_p4":"Böylece çekicinin arka kısmı yukarı sıçramaz.","l_oeffnen":"Kuplajı aç","l_vorziehen":"Düz ileri çek","l_absenken":"Alçalt, sonra çık","k5_kicker":"Unutma","k5_titel":"Akılda kalsın","k5_merk":"Düz park et, iki park freni, takozlar, destek ayakları aşağı. Önce kırmızıyı, sonra sarıyı çıkar. Tek başına kırmızı emniyet sağlamaz."}};
+W.FILM_SPRACHEN = {"en":{"titel":"Uncoupling an articulated lorry","ui_ueber":"Overview: uncoupling an articulated lorry","ui_intro":"A short film without sound: everything is shown as text on screen. You can pause at any time or pick a chapter.","ui_start":"Start film","ui_pause":"Pause","ui_weiter":"Resume","ui_neu":"Restart","ui_kapitel":"Chapters","ui_lesen":"Read the full text","k1_kicker":"Uncoupling","k1_titel":"Park in a straight line","k1_sub":"Articulated lorry: the vehicle stands straight.","k1_p1":"The vehicle stands in a straight line, if possible.","k1_p2":"Leave space in front of the tractor unit so it can later be coupled straight again.","l_gestreckt":"In line","l_platz":"Room to couple","k1b_kicker":"Secure","k1b_titel":"Secure first","k1b_sub":"Both parking brakes, plus chocks.","k1b_p1":"When the vehicle stands, the parking brake of the tractor unit is applied first.","k1b_p2":"Then that of the semi-trailer: pull the red knob.","k1b_p3":"Wheel chocks are also placed at a rigid axle.","l_fest_zug":"Tractor parking brake","l_fest_auf":"Semi-trailer parking brake","l_keile":"Wheel chocks","k2_kicker":"Support","k2_titel":"Extend the landing gear","k2_sub":"The semi-trailer must then stand securely.","k2_p1":"The landing gear is extended: with air suspension until the feet touch the ground, with leaf springs until the tractor unit's springs are relieved.","k2_p2":"The ground must bear the load. Otherwise the feet are packed underneath.","k2_p3":"The semi-trailer is not lifted off the fifth wheel coupling.","l_stuetzen":"Landing gear down","l_tragfaehig":"Ground bears load","l_nicht_abheben":"Do not lift","k3_kicker":"Lines","k3_titel":"First red, then yellow","k3_sub":"Disconnect the supply line first.","k3_p1":"Red is disconnected first: the supply line.","k3_p2":"Then comes yellow: the brake line.","k3_p3":"The electrical cable is disconnected as well. The heads go into the parking sockets.","k3_p4":"When red is disconnected, the trailer brakes automatically. That is not enough to secure it.","k3_p5":"The air is lost over time. That is why the parking brake and chocks stay.","l_rot_ab":"Red off: supply line","l_gelb_ab":"Yellow off: brake line","l_elektro_ab":"Electrics off","l_reicht_nicht":"Not enough to secure","k4_kicker":"Pulling away","k4_titel":"Open the coupling","k4_sub":"Pull forward slowly and straight.","k4_p1":"The lock of the fifth wheel coupling is released and the coupling is opened.","k4_p2":"The tractor unit drives slowly and straight forward a short way.","k4_p3":"With air suspension it is then lowered a little and drives out completely.","k4_p4":"This way the rear of the tractor unit does not jump up.","l_oeffnen":"Open coupling","l_vorziehen":"Pull forward straight","l_absenken":"Lower, then drive out","k5_kicker":"Remember","k5_titel":"To take away","k5_merk":"Park in a straight line, both parking brakes, chocks, landing gear down. First red, then yellow off. Red alone does not secure."},"sr":{"titel":"Razdvajanje šlepera","ui_ueber":"Pregled: razdvajanje šlepera","ui_intro":"Kratak film bez zvuka: sve piše na ekranu. Možeš da zaustaviš film ili da izabereš poglavlje kad god želiš.","ui_start":"Pokreni film","ui_pause":"Zaustavi","ui_weiter":"Nastavi","ui_neu":"Od početka","ui_kapitel":"Poglavlja","ui_lesen":"Pročitaj ceo tekst","k1_kicker":"Razdvajanje","k1_titel":"Parkiraj ravno","k1_sub":"Šleper: vozilo stoji ravno.","k1_p1":"Vozilo stoji što je moguće ravnije.","k1_p2":"Ispred tegljača ostaje mesta da se kasnije opet spoji ravno.","l_gestreckt":"Ravno","l_platz":"Mesto za spajanje","k1b_kicker":"Osiguranje","k1b_titel":"Prvo osiguraj","k1b_sub":"Obe parkirne kočnice i klinovi.","k1b_p1":"Kad vozilo stoji, prvo se povlači parkirna kočnica tegljača.","k1b_p2":"Zatim ona na poluprikolici: povuci crveno dugme.","k1b_p3":"Pored toga se postavljaju klinovi ispod točkova na krutoj osovini.","l_fest_zug":"Kočnica tegljača","l_fest_auf":"Kočnica poluprikolice","l_keile":"Klinovi (podmetači)","k2_kicker":"Oslanjanje","k2_titel":"Spusti oslonce","k2_sub":"Poluprikolica posle mora da stoji sigurno.","k2_p1":"Oslonci se izvlače: kod vazdušnog oslanjanja dok stopala ne dodirnu tlo, kod lisnatih opruga dok se opruge tegljača ne rasterete.","k2_p2":"Tlo mora da nosi. Inače se stopala podmeću.","k2_p3":"Poluprikolica se ne podiže sa spojnice sedla.","l_stuetzen":"Oslonci spušteni","l_tragfaehig":"Tlo nosi","l_nicht_abheben":"Ne podizati","k3_kicker":"Vodovi","k3_titel":"Prvo crveni, pa žuti","k3_sub":"Prvo razdvoj napojni vod.","k3_p1":"Prvo se razdvaja crveni: napojni vod.","k3_p2":"Zatim ide žuti: kočioni vod.","k3_p3":"Razdvaja se i električni kabl. Glave idu u parkirne utičnice.","k3_p4":"Kad se crveni razdvoji, prikolica sama koči. To nije dovoljno za osiguranje.","k3_p5":"Vazduh vremenom izlazi. Zato parkirna kočnica i klinovi ostaju.","l_rot_ab":"Crveni skini: napojni","l_gelb_ab":"Žuti skini: kočioni","l_elektro_ab":"Električni kabl skinut","l_reicht_nicht":"Ne osigurava dovoljno","k4_kicker":"Odlazak","k4_titel":"Otvori spojnicu","k4_sub":"Polako i ravno povuci napred.","k4_p1":"Osigurač spojnice sedla se otkači, spojnica se otvori.","k4_p2":"Tegljač polako i ravno vozi malo napred.","k4_p3":"Kod vazdušnog oslanjanja se zatim malo spusti i potpuno izađe.","k4_p4":"Tako zadnji deo tegljača ne poskoči uvis.","l_oeffnen":"Otvori spojnicu","l_vorziehen":"Ravno povući napred","l_absenken":"Spusti, pa izađi","k5_kicker":"Zapamti","k5_titel":"Za poneti","k5_merk":"Parkiraj ravno, obe parkirne kočnice, klinovi, oslonci spušteni. Prvo crveni, pa žuti skini. Samo crveni ne osigurava."},"tr":{"titel":"Çekici ile yarı römorku ayırmak","ui_ueber":"Genel bakış: çekici ile yarı römorku ayırmak","ui_intro":"Sessiz kısa bir film: Her şey görüntüde yazıyla yer alır. İstediğin zaman durdurabilir veya bir bölüm seçebilirsin.","ui_start":"Filmi başlat","ui_pause":"Durdur","ui_weiter":"Devam","ui_neu":"Baştan","ui_kapitel":"Bölümler","ui_lesen":"Metnin tamamını oku","k1_kicker":"Ayırma","k1_titel":"Düz park et","k1_sub":"Tır: Araç düz duruyor.","k1_p1":"Araç mümkün olduğunca düz durur.","k1_p2":"Çekicinin önünde, sonra tekrar düz birleştirmek için yer kalır.","l_gestreckt":"Düz","l_platz":"Düz birleştirme alanı","k1b_kicker":"Emniyet","k1b_titel":"Önce emniyete al","k1b_sub":"İki park freni ve takozlar.","k1b_p1":"Araç durunca önce çekicinin park freni çekilir.","k1b_p2":"Sonra yarı römorkunki: kırmızı düğmeyi çek.","k1b_p3":"Ayrıca rijit bir akstaki tekerleklerin önüne takoz konur.","l_fest_zug":"Çekicinin park freni","l_fest_auf":"Römorkun park freni","l_keile":"Takozlar","k2_kicker":"Destek","k2_titel":"Destek ayaklarını indir","k2_sub":"Yarı römork bundan sonra sağlam durmalıdır.","k2_p1":"Destek ayakları indirilir: hava süspansiyonunda ayaklar zemine değene kadar, yaprak yaylı süspansiyonda çekicinin yayları rahatlayana kadar.","k2_p2":"Zemin taşımalıdır. Yoksa tabanların altına destek konur.","k2_p3":"Yarı römork beşinci teker kuplajından kaldırılmaz.","l_stuetzen":"Destekler aşağıda","l_tragfaehig":"Zemin taşıyor","l_nicht_abheben":"Kaldırma","k3_kicker":"Hatlar","k3_titel":"Önce kırmızı, sonra sarı","k3_sub":"Önce besleme hattını ayır.","k3_p1":"Önce kırmızı ayrılır: besleme hattı.","k3_p2":"Sonra sarı gelir: fren hattı.","k3_p3":"Elektrik kablosu da ayrılır. Başlıklar park yuvalarına konur.","k3_p4":"Kırmızı ayrılınca römork kendiliğinden frenler. Bu, emniyet için yetmez.","k3_p5":"Hava zamanla kaçar. Bu yüzden park freni ve takozlar kalır.","l_rot_ab":"Kırmızı çıkar: besleme","l_gelb_ab":"Sarı çıkar: fren hattı","l_elektro_ab":"Elektrik çıkar","l_reicht_nicht":"Emniyete yetmez","k4_kicker":"Uzaklaşma","k4_titel":"Kuplajı aç","k4_sub":"Yavaş ve düz ileri çek.","k4_p1":"Beşinci teker kuplajının emniyeti çıkarılır, kuplaj açılır.","k4_p2":"Çekici yavaşça ve düz bir miktar ileri gider.","k4_p3":"Hava süspansiyonunda biraz alçaltılır ve tamamen çıkar.","k4_p4":"Böylece çekicinin arka kısmı yukarı sıçramaz.","l_oeffnen":"Kuplajı aç","l_vorziehen":"Düz ileri çek","l_absenken":"Alçalt, sonra çık","k5_kicker":"Unutma","k5_titel":"Akılda kalsın","k5_merk":"Düz park et, iki park freni, takozlar, destek ayakları aşağı. Önce kırmızıyı, sonra sarıyı çıkar. Tek başına kırmızı emniyet sağlamaz."}};
 // ---- f3-2/szenen.js ----
 (function (window) {
 /* Szenen des Films 3.2 „Abkuppeln“ (Sattelzug) – EIN Code für den MP4-Film (index.html) und die App (gebaut mit ../bauen.mjs).
@@ -1372,9 +1484,9 @@ W.FILM_SPRACHEN = {"en":{"titel":"Uncoupling an articulated lorry","ui_ueber":"O
     if (!M.sattelUnterfahren(LUFT_TIEF).passtUnter || M.sattelUnterfahren(LUFT_KONTAKT).hebtAuf) throw new Error("Höhenbeispiel passt nicht zum Modell");
     // Knopf der Feststellbremse (rot) am Auflieger und „P“-Zeichen der Zugmaschine
     function knoepfe(W) {
-      const kz = el("g", { opacity: 0 }, W.gVorn); el("circle", { cx: 4.1, cy: -1.55, r: 0.22, fill: ROT, stroke: "#23262A", "stroke-width": 0.05 }, kz);
-      const t = el("text", { x: 4.1, y: -1.46, "text-anchor": "middle", "font-size": 0.3, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#FAF6EC" }, kz); t.textContent = "P";
-      const ka = el("g", { opacity: 0 }, W.gVorn); el("line", { x1: 0.9, y1: -1.0, x2: 0.9, y2: -1.3, stroke: "#8D949C", "stroke-width": 0.08 }, ka); el("circle", { cx: 0.9, cy: -0.95, r: 0.16, fill: ROT, stroke: "#23262A", "stroke-width": 0.04 }, ka);
+      const kz = el("g", { opacity: 0 }, W.gVorn); el("circle", { cx: 4.1, cy: -1.55, r: 0.38, fill: ROT, stroke: "#23262A", "stroke-width": 0.05 }, kz);
+      const t = el("text", { x: 4.1, y: -1.33, "text-anchor": "middle", "font-size": 0.5, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#FAF6EC" }, kz); t.textContent = "P";
+      const ka = el("g", { opacity: 0 }, W.gVorn); el("line", { x1: 0.9, y1: -1.0, x2: 0.9, y2: -1.3, stroke: "#8D949C", "stroke-width": 0.14 }, ka); el("circle", { cx: 0.9, cy: -0.95, r: 0.32, fill: ROT, stroke: "#23262A", "stroke-width": 0.04 }, ka);
       return { zug: kz, auf: ka };
     }
 
@@ -1386,7 +1498,7 @@ W.FILM_SPRACHEN = {"en":{"titel":"Uncoupling an articulated lorry","ui_ueber":"O
       const mitte = BK.el("line", { stroke: "rgba(143,214,166,.8)", "stroke-width": 3, "stroke-dasharray": "14 10", opacity: 0 }, W.gUeber), q0 = W.px(-4, 0), q1 = W.px(24, 0);
       mitte.setAttribute("x1", f(q0[0])); mitte.setAttribute("y1", f(q0[1])); mitte.setAttribute("x2", f(q1[0])); mitte.setAttribute("y2", f(q1[1]));
       const x0 = A.x + FZ.L + FZ.vorn, fr = el("rect", { x: W.px(x0 + 0.5, -2.2)[0], y: W.px(0, -2.2)[1], width: 9 * 40, height: 4.4 * 40, rx: 12, fill: "rgba(143,214,166,.14)", stroke: GRUEN, "stroke-width": 4, "stroke-dasharray": "14 10", opacity: 0 }, W.gUeber);
-      const pg = BK.pille(st, tx("l_gestreckt"), 380, 330, { punkt: GRUEN }), pp = BK.pille(st, tx("l_platz"), 760, 330, { punkt: GRUEN });
+      const pg = BK.pille(st, tx("l_gestreckt"), 300, 330, { punkt: GRUEN }), pp = BK.pille(st, tx("l_platz"), 800, 420, { punkt: GRUEN });
       uhr(T0, ch.dauer, function (t) { const a1 = fenster(t, 3, ch.dauer - 1, 0.6), a2 = fenster(t, 12, ch.dauer - 1, 0.6); mitte.setAttribute("opacity", a1); fr.setAttribute("opacity", a2); pg.style.opacity = a1; pp.style.opacity = a2; });
     }
 
@@ -1416,7 +1528,7 @@ W.FILM_SPRACHEN = {"en":{"titel":"Uncoupling an articulated lorry","ui_ueber":"O
         const e = glatt((t - 5) / 9);
         V.au.setze(0, { stuetze: e, keil: 1 }); V.zm.setze(A_GEKUPPELT, LUFT_KONTAKT);
         const s = W.px(MA.auflieger.stuetzX, -0.5), b = W.px(MA.auflieger.stuetzX, 0.05), h = W.px(0.55, -SA.unterkante);
-        bohle.setAttribute("opacity", fenster(t, 16, ch.dauer - 1, 0.6) * 0 + (t > 17 ? 1 : 0));
+        bohle.setAttribute("opacity", 0);
         const a1 = fenster(t, 4, 40, 0.6), a2 = fenster(t, 17, ch.dauer - 1, 0.6), a3 = fenster(t, 28, ch.dauer - 1, 0.6);
         platz(ps, 320, 190, a1); l1.setze(320, 224, s[0], s[1], a1);
         platz(pt, 320, 790, a2); l2.setze(320, 758, b[0], b[1], a2);
@@ -1448,7 +1560,7 @@ W.FILM_SPRACHEN = {"en":{"titel":"Uncoupling an articulated lorry","ui_ueber":"O
         platz(pg, gl[0] - 330, gl[1] - 160, a1); lg.setze(gl[0] - 330, gl[1] - 134, gl[0], gl[1], a1);
         platz(pe, e[0] - 250, e[1] + 250, a2); le.setze(e[0] - 250, e[1] + 224, e[0], e[1], a2);
         const brems = fenster(t, 38, 54, 0.6) * (1 - nah) > 0 || (t > 38 && t < 54);
-        bl.setAttribute("opacity", (t > 38 && t < 54) ? 0.6 + 0.4 * Math.sin(t * 6) : 0); Vw.au.setze(0, { stuetze: 1, keil: 1, bremst: t > 38 });
+        bl.setAttribute("opacity", (t > 38 && t < 54) ? 0.6 + 0.4 * Math.sin(t * 6) : 0); Vw.au.setze(0, { stuetze: 1, keil: 1, bremst: false });
         platz(pb, 540, 840, fenster(t, 54, ch.dauer - 1, 0.6));
         pw.style.opacity = 0;
       });

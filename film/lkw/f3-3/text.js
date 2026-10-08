@@ -36,12 +36,13 @@ window.FILM_TEXT = {
     k4_p1: "Erst sichern: Feststellbremsen und Keile.",
     k4_p2: "Dann gelb anschließen: die Bremsleitung.",
     k4_p3: "Dann rot: die Vorratsleitung. Der Zug bleibt stehen.",
-    k4_p4: "Kombinierte Kupplungsköpfe werden beide gleichzeitig angeschlossen.",
+    k4_p4: "Bei kombinierten Kupplungsköpfen gibt es keine Reihenfolge: Beide werden gleichzeitig angeschlossen.",
+    k4_p5: "Die Feststellbremse der Zugmaschine gibt Druck auf gelb: Der Anhänger bleibt gebremst.",
     l_gesichert: "Gesichert", l_steht: "Der Zug steht", l_kombi: "Kombinierter Kopf",
 
     k5_kicker: "Abkuppeln", k5_titel: "Umgekehrt: erst rot ab", k5_sub: "Beim Trennen kommt rot zuerst.",
     k5_p1: "Beim Abkuppeln wird zuerst rot getrennt, dann gelb.",
-    k5_p2: "Der Anhänger bremst danach selbsttätig. Das reicht zum Sichern nicht.",
+    k5_p2: "Der Anhänger bremst danach selbsttätig. Das reicht zum Sichern nicht, denn die Luft entweicht mit der Zeit.",
     k5_p3: "Auch dann: Feststellbremsen und Keile.",
     l_rot_ab: "Rot zuerst ab", l_gelb_ab: "Dann gelb ab", l_reicht_nicht: "Reicht nicht zum Sichern",
 
@@ -55,10 +56,10 @@ window.FILM_TEXT = {
       punkte: [{ k: "k2_p1", t: 3.5 }, { k: "k2_p2", t: 16.0, ref: "DGUV Information 214-080" }, { k: "k2_p3", t: 30.0 }, { k: "k2_p4", t: 52.0 }] },
     { id: "k3", titel: "k3_titel", kicker: "k3_kicker", dauer: 70, sub: { k: "k3_sub", t: 0.6 },
       punkte: [{ k: "k3_p1", t: 3.5 }, { k: "k3_p2", t: 12.0, ref: "DGUV Information 214-080" }, { k: "k3_p3", t: 24.0, stil: "gold" }, { k: "k3_p4", t: 38.0, ref: "DGUV Information 214-080" }] },
-    { id: "k4", titel: "k4_titel", kicker: "k4_kicker", dauer: 60, sub: { k: "k4_sub", t: 0.6 },
-      punkte: [{ k: "k4_p1", t: 3.5, ref: "DGUV Information 214-080; BG Verkehr" }, { k: "k4_p2", t: 14.0 }, { k: "k4_p3", t: 24.0 }, { k: "k4_p4", t: 38.0, ref: "Theoriefrage 2.7.07-320" }] },
+    { id: "k4", titel: "k4_titel", kicker: "k4_kicker", dauer: 68, sub: { k: "k4_sub", t: 0.6 },
+      punkte: [{ k: "k4_p1", t: 3.5, ref: "DGUV Information 214-080; BG Verkehr" }, { k: "k4_p2", t: 14.0 }, { k: "k4_p5", t: 24.0, ref: "Folien CE, Abend 6" }, { k: "k4_p3", t: 34.0 }, { k: "k4_p4", t: 46.0, ref: "Theoriefrage 2.7.07-320" }] },
     { id: "k5", titel: "k5_titel", kicker: "k5_kicker", dauer: 54, sub: { k: "k5_sub", t: 0.6 },
-      punkte: [{ k: "k5_p1", t: 3.5, ref: "DGUV Information 214-080; Theoriefrage 2.7.07-319" }, { k: "k5_p2", t: 20.0, ref: "DGUV Information 214-080" }, { k: "k5_p3", t: 38.0 }] },
+      punkte: [{ k: "k5_p1", t: 3.5, ref: "DGUV Information 214-080; Theoriefrage 2.7.07-319" }, { k: "k5_p2", t: 20.0, ref: "DGUV Information 214-080, S. 20 und 33" }, { k: "k5_p3", t: 38.0 }] },
     { id: "k6", titel: "k6_titel", kicker: "k6_kicker", dauer: 20, merk: { k: "k6_merk", t: 1.2 } }
   ]
 };
