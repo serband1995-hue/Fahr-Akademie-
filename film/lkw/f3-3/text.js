@@ -5,9 +5,11 @@
    Druck und Bewegung kommen aus kern/modell.js (anhaengerBremse, kuppelnZustand, rollen) mit Tests. */
 window.FILM_TEXT = {
   film: "lkw-f3-3",
+  fotos: ["kupplungskoepfe"],
   poster: 60,
   de: {
     titel: "Gelb zuerst, rot nie allein",
+    l_foto: "Beispielbild, KI-erzeugt", f_koepfe: "Gelb, rot und Elektrik",
     ui_ueber: "Überblick: Druckluftleitungen beim Kuppeln",
     ui_intro: "Ein kurzer Film ohne Ton: Alles steht als Text im Bild. Du kannst jederzeit anhalten oder ein Kapitel wählen.",
     ui_start: "Film starten", ui_pause: "Anhalten", ui_weiter: "Weiter", ui_neu: "Von vorn", ui_kapitel: "Kapitel", ui_lesen: "Den ganzen Text lesen",

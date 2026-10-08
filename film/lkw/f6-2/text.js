@@ -15,14 +15,14 @@ window.FILM_TEXT = {
     k1_p1: "Der Lastzug fährt mit Anhänger.",
     k1_p2: "Plötzlich reißt die Kupplung. Die Luftleitungen reißen mit ab.",
     k1_p3: "Die rote Leitung ist offen: Der Anhänger bremst von selbst.",
-    k1_p4: "Die Zugmaschine behält ihre Bremsen und bleibt lenkbar.",
+    k1_p4: "Die Zugmaschine behält ihre Bremsen.",
     l_zeitlupe: "Zeitlupe", l_riss: "Riss", l_anh_bremst: "Anhänger bremst selbsttätig", l_zug_bremst: "Zugmaschine bremst",
 
     k2_kicker: "Im Schema", k2_titel: "Was in den Leitungen passiert", k2_sub: "Beide Leitungen reißen ab.",
     k2_p1: "Reißen die Leitungen ab, verliert die rote Leitung ihren Druck.",
     k2_p2: "Das Anhängerbremsventil bremst den Anhänger mit der Luft aus seinem Behälter.",
     k2_p3: "Ein Rückschlagventil hält die Luft im Behälter des Anhängers.",
-    k2_p4: "Die Bremskreise der Zugmaschine bleiben durch Schutzventile gefüllt.",
+    k2_p4: "Schutzventile halten den Druck in den Bremskreisen der Zugmaschine.",
     k2_p5: "Wie lange die Bremswirkung hält, hängt vom Luftvorrat im Anhänger ab.",
     l_zug: "Zugmaschine", l_anh: "Anhänger", l_ventil: "Anhängerbremsventil", l_behaelter: "Vorratsbehälter", l_pedal: "Bremspedal", l_selbst: "Bremst selbsttätig", l_voll: "Zugmaschine: Druck bleibt",
 
@@ -38,11 +38,11 @@ window.FILM_TEXT = {
   },
   kapitel: [
     { id: "k1", titel: "k1_titel", kicker: "k1_kicker", dauer: 52, sub: { k: "k1_sub", t: 0.6 },
-      punkte: [{ k: "k1_p1", t: 3.0 }, { k: "k1_p2", t: 10.0 }, { k: "k1_p3", t: 17.0, ref: "WABCO; Theoriefrage 2.7.02-302" }, { k: "k1_p4", t: 28.0, ref: "Theoriefrage 2.7.06-317" }] },
+      punkte: [{ k: "k1_p1", t: 3.0 }, { k: "k1_p2", t: 10.0 }, { k: "k1_p3", t: 17.0, ref: "WABCO; Theoriefrage 2.7.02-302" }, { k: "k1_p4", t: 28.0, ref: "Theoriefrage 2.7.02-302" }] },
     { id: "k2", titel: "k2_titel", kicker: "k2_kicker", dauer: 66, sub: { k: "k2_sub", t: 0.6 },
-      punkte: [{ k: "k2_p1", t: 3.5, ref: "WABCO" }, { k: "k2_p2", t: 14.0, ref: "WABCO; Theoriefrage 2.7.02-302" }, { k: "k2_p3", t: 26.0, ref: "Haldex, WABCO" }, { k: "k2_p4", t: 38.0, ref: "WABCO Überströmventil; Theoriefrage 2.7.06-317" }, { k: "k2_p5", t: 52.0 }] },
+      punkte: [{ k: "k2_p1", t: 3.5, ref: "WABCO" }, { k: "k2_p2", t: 14.0, ref: "WABCO; Theoriefrage 2.7.02-302" }, { k: "k2_p3", t: 26.0, ref: "Haldex; Theoriefrage 2.7.02-302" }, { k: "k2_p4", t: 38.0, ref: "WABCO Überströmventil; Theoriefrage 2.7.06-317" }, { k: "k2_p5", t: 52.0 }] },
     { id: "k3", titel: "k3_titel", kicker: "k3_kicker", dauer: 62, sub: { k: "k3_sub", t: 0.6 },
-      punkte: [{ k: "k3_p1", t: 3.5, ref: "Folien CE F. 116–120" }, { k: "k3_p2", t: 18.0, ref: "kfz-tech; WABCO" }, { k: "k3_p3", t: 30.0, ref: "Theoriefrage 2.7.06-317" }, { k: "k3_p4", t: 46.0, ref: "Prüfungsablauf Klasse CE" }] },
+      punkte: [{ k: "k3_p1", t: 3.5, ref: "Folien CE F. 116–120" }, { k: "k3_p2", t: 18.0, ref: "kfz-tech; WABCO" }, { k: "k3_p3", t: 30.0, ref: "Theoriefrage 2.7.06-317; kfz-tech; WABCO Abreißkolben" }, { k: "k3_p4", t: 46.0, ref: "Prüfungsablauf Klasse CE" }] },
     { id: "k4", titel: "k4_titel", kicker: "k4_kicker", dauer: 22, merk: { k: "k4_merk", t: 1.2 } }
   ]
 };

@@ -35,7 +35,7 @@
  "k3_kicker": "Wenn Druck fehlt",
  "k3_titel": "Druckverlust: die Feder bremst von selbst",
  "k3_sub": "Auch ohne dass jemand bremst.",
- "k3_p1": "Verliert die Anlage Druck, sinkt auch der Druck im Federteil.",
+ "k3_p1": "Verliert der Federteil Druck, zum Beispiel durch ein Leck, wird die Feder nicht mehr gehalten.",
  "k3_p2": "Fällt er zu tief, drückt die Feder die Bremse zu.",
  "k3_p3": "So bremst das Fahrzeug von selbst, zum Beispiel bei einem Leck.",
  "k3_p4": "Darum erst losfahren, wenn der Druck aufgebaut ist.",
@@ -47,5 +47,7 @@
  "l_bremst_selbst": "Bremst von selbst",
  "k4_kicker": "Merke",
  "k4_titel": "Zum Mitnehmen",
- "k4_merk": "Feder bremst, Luft löst. Ohne Druck bremst die Feder von selbst. Erst losfahren, wenn der Druck aufgebaut ist."
+ "k4_merk": "Feder bremst, Luft löst. Ohne Druck bremst die Feder von selbst. Erst losfahren, wenn der Druck aufgebaut ist.",
+ "l_foto": "Beispielbild, KI-erzeugt",
+ "f_feder": "Kombizylinder an der Achse"
 }

@@ -34,7 +34,9 @@
     function K2(sc, i, T0, ch) {
       const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), Z = zyl(st);
       const pm = pille(st, tx("l_membran"), LUFT), pfe = pille(st, tx("l_federteil"), WARN), pb = pille(st, tx("l_betrieb"), GOLD, { klasse: "gross" }), pfs = pille(st, tx("l_fest"), WARN, { klasse: "gross" }), pe = pille(st, tx("l_entlueftet"), WARN);
+      const foto = window.LKW_FOTO.karte(st, "federspeicher", tx("f_feder"), tx("l_foto"));
       uhr(T0, ch.dauer, function (t) {
+        foto.setze(fenster(t, 0.8, 10.0, 0.7));
         const pF = t < 30 ? 1 : t < 40 ? 1 - glatt((t - 30) / 10) : t < 52 ? 0 : t < 62 ? glatt((t - 52) / 10) : 1;
         const pM = t < 12 ? 0 : t < 18 ? glatt((t - 12) / 6) : t < 24 ? 1 : t < 28 ? 1 - glatt((t - 24) / 4) : 0;
         Z.k.setze(pM, pF);

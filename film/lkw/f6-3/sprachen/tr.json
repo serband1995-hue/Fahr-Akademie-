@@ -35,7 +35,7 @@
  "k3_kicker": "Basınç yoksa",
  "k3_titel": "Basınç kaybı: yay kendiliğinden frenler",
  "k3_sub": "Kimse fren yapmasa da.",
- "k3_p1": "Sistem basınç kaybederse yaylı kısımdaki basınç da düşer.",
+ "k3_p1": "Yaylı kısım basınç kaybederse, örneğin bir kaçak yüzünden, yay artık tutulmaz.",
  "k3_p2": "Çok düşerse yay freni sıkar.",
  "k3_p3": "Böylece araç kendiliğinden frenler, örneğin bir kaçakta.",
  "k3_p4": "Bu yüzden basınç oluştuktan sonra yola çık.",
@@ -47,5 +47,7 @@
  "l_bremst_selbst": "Kendiliğinden frenler",
  "k4_kicker": "Not al",
  "k4_titel": "Akılda kalsın",
- "k4_merk": "Yay frenler, hava serbest bırakır. Basınç yoksa yay kendiliğinden frenler. Basınç oluştuktan sonra yola çık."
+ "k4_merk": "Yay frenler, hava serbest bırakır. Basınç yoksa yay kendiliğinden frenler. Basınç oluştuktan sonra yola çık.",
+ "l_foto": "Örnek görsel, yapay zekâ ile üretildi",
+ "f_feder": "Aksta kombine silindir"
 }

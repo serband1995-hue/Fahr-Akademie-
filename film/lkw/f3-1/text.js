@@ -4,9 +4,11 @@
    Höhen und Bewegungen kommen aus kern/modell.js (SATTEL, sattelUnterfahren, sattelTreffer, kuppelnZustand, rollen) mit Tests. */
 window.FILM_TEXT = {
   film: "lkw-f3-1",
+  fotos: ["sattelkupplung", "kupplungskoepfe"],
   poster: 60,
   de: {
     titel: "Ankuppeln eines Sattelzugs",
+    l_foto: "Beispielbild, KI-erzeugt", f_sattel: "Die Sattelkupplung", f_koepfe: "Gelb, rot und Elektrik",
     ui_ueber: "Überblick: Ankuppeln eines Sattelzugs",
     ui_intro: "Ein kurzer Film ohne Ton: Alles steht als Text im Bild. Du kannst jederzeit anhalten oder ein Kapitel wählen.",
     ui_start: "Film starten", ui_pause: "Anhalten", ui_weiter: "Weiter", ui_neu: "Von vorn", ui_kapitel: "Kapitel", ui_lesen: "Den ganzen Text lesen",

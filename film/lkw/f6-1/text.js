@@ -15,9 +15,9 @@ window.FILM_TEXT = {
     k1_p1: "Die Betriebsbremse des Lkw hat zwei voneinander getrennte Bremskreise.",
     k1_p2: "Im Beispiel gehört ein Kreis zur Vorderachse und einer zur Hinterachse.",
     k1_p3: "Tritt der Fahrer aufs Pedal, bekommen beide Kreise Druck.",
-    k1_p4: "Wird ein Kreis undicht, entweicht seine Luft. Der andere Kreis bleibt gefüllt.",
+    k1_p4: "Wird ein Kreis undicht, entweicht seine Luft. Der andere Kreis behält seinen Druck.",
     k1_p5: "Der Lkw bremst weiter, aber schwächer. Der Bremsweg wird länger.",
-    k1_p6: "Er zieht dabei nicht zur Seite. Der Fahrer hält sofort an.",
+    k1_p6: "Der Fahrer bremst ab und hält an.",
     l_kreis1: "Kreis 1", l_kreis2: "Kreis 2", l_bremsventil: "Bremsventil", l_vorderachse: "Vorderachse", l_hinterachse: "Hinterachse", l_pedal: "Bremspedal", l_wirkung: "Bremswirkung", l_leck: "Leck", l_geringer: "Bremswirkung geringer",
 
     k2_kicker: "Der Anhänger", k2_titel: "Die Zweileitungsbremse", k2_sub: "Schema: Zugmaschine und Anhänger.",
@@ -43,7 +43,7 @@ window.FILM_TEXT = {
     { id: "k2", titel: "k2_titel", kicker: "k2_kicker", dauer: 74, sub: { k: "k2_sub", t: 0.6 },
       punkte: [{ k: "k2_p1", t: 3.5 }, { k: "k2_p2", t: 12.0, ref: "WABCO, Haldex" }, { k: "k2_p3", t: 24.0, ref: "WABCO" }, { k: "k2_p4", t: 36.0, ref: "WABCO" }, { k: "k2_p5", t: 52.0, ref: "WABCO" }] },
     { id: "k3", titel: "k3_titel", kicker: "k3_kicker", dauer: 56, sub: { k: "k3_sub", t: 0.6 },
-      punkte: [{ k: "k3_p1", t: 3.5, ref: "WABCO" }, { k: "k3_p2", t: 22.0 }, { k: "k3_p3", t: 34.0, ref: "DGUV Information 214-080" }] },
+      punkte: [{ k: "k3_p1", t: 3.5, ref: "WABCO" }, { k: "k3_p2", t: 22.0 }, { k: "k3_p3", t: 34.0, ref: "WABCO; Theoriefrage 2.7.02-302" }] },
     { id: "k4", titel: "k4_titel", kicker: "k4_kicker", dauer: 20, merk: { k: "k4_merk", t: 1.2 } }
   ]
 };

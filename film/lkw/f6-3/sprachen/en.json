@@ -35,7 +35,7 @@
  "k3_kicker": "When pressure is missing",
  "k3_titel": "Pressure loss: the spring brakes by itself",
  "k3_sub": "Even if nobody brakes.",
- "k3_p1": "If the system loses pressure, the pressure in the spring part drops too.",
+ "k3_p1": "If the spring part loses pressure, for example through a leak, the spring is no longer held.",
  "k3_p2": "If it falls too low, the spring presses the brake on.",
  "k3_p3": "So the vehicle brakes by itself, for example with a leak.",
  "k3_p4": "That is why you only drive off once the pressure has built up.",
@@ -47,5 +47,7 @@
  "l_bremst_selbst": "Brakes by itself",
  "k4_kicker": "Remember",
  "k4_titel": "To take away",
- "k4_merk": "Spring brakes, air releases. Without pressure the spring brakes by itself. Only drive off once the pressure has built up."
+ "k4_merk": "Spring brakes, air releases. Without pressure the spring brakes by itself. Only drive off once the pressure has built up.",
+ "l_foto": "Example image, AI-generated",
+ "f_feder": "Combination chamber on the axle"
 }

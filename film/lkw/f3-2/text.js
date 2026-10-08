@@ -3,9 +3,11 @@
    Recherche und Belege: Vault, Faktenblatt Film 3.2. Keine Zahlen im Bild (Vorziehen in cm und Absenken in cm stehen nur in einer Quelle und bleiben draußen). */
 window.FILM_TEXT = {
   film: "lkw-f3-2",
+  fotos: ["sattelkupplung"],
   poster: 60,
   de: {
     titel: "Abkuppeln eines Sattelzugs",
+    l_foto: "Beispielbild, KI-erzeugt", f_sattel: "Die Sattelkupplung",
     ui_ueber: "Überblick: Abkuppeln eines Sattelzugs",
     ui_intro: "Ein kurzer Film ohne Ton: Alles steht als Text im Bild. Du kannst jederzeit anhalten oder ein Kapitel wählen.",
     ui_start: "Film starten", ui_pause: "Anhalten", ui_weiter: "Weiter", ui_neu: "Von vorn", ui_kapitel: "Kapitel", ui_lesen: "Den ganzen Text lesen",

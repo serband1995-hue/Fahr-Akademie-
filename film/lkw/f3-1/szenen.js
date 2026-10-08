@@ -92,7 +92,9 @@
       const kontakt = el("line", { x1: -0.2, y1: -SA.unterkante, x2: 1.3, y2: -SA.unterkante, stroke: GOLD, "stroke-width": 0.05, opacity: 0 }, W.gVorn);
       const ph = pille(st, tx("l_hoch"), GRUEN), po = pille(st, tx("l_offen"), GOLD), pa = pille(st, tx("l_nicht_anheben"), WARN), pr = pille(st, tx("l_ruck"), GOLD), l1 = leiter(W, GRUEN), l2 = leiter(W, GOLD), l3 = leiter(W, WARN);
       const pfeil = el("path", { d: "M0 -3.9 L0.9 -3.9 L0.9 -4.15 L1.5 -3.75 L0.9 -3.35 L0.9 -3.6 L0 -3.6 Z", fill: GOLD, opacity: 0 }, W.gVorn);
+      const foto = window.LKW_FOTO.karte(st, "sattelkupplung", tx("f_sattel"), tx("l_foto"));
       uhr(T0, ch.dauer, function (t) {
+        foto.setze(fenster(t, 15.5, 22.5, 0.7));
         const luft = t < 5 ? 0 : t < 9 ? lerp(0, LUFT_TIEF, glatt((t - 5) / 4)) : t < 46 ? LUFT_TIEF : t < 50 ? lerp(LUFT_TIEF, LUFT_KONTAKT, glatt((t - 46) / 4)) : LUFT_KONTAKT;
         const x = t < 26 ? A0 : t < 46 ? lerp(A0, A1, glatt((t - 26) / 20)) : A1;
         // Anfahrruck: kurze Vorwärtsbewegung, danach wieder Stand
@@ -141,7 +143,9 @@
       const ka = el("g", { opacity: 0 }, W.gVorn); el("line", { x1: 0.9, y1: -1.0, x2: 0.9, y2: -1.3, stroke: "#8D949C", "stroke-width": 0.08 }, ka); el("circle", { cx: 0.9, cy: -0.95, r: 0.16, fill: ROT, stroke: "#23262A", "stroke-width": 0.04 }, ka);
       const wann = [[12, 20], [22, 30], [32, 38]];
       const pv = pille(st, tx("l_vorher"), WARN), pg = pille(st, tx("l_gelb"), GELB), pr = pille(st, tx("l_rot"), ROT), pe = pille(st, tx("l_elektro"), "#B9BEC4"), lv = leiter(W, WARN), lg = leiter(W, GELB), lr = leiter(W, ROT), le = leiter(W, "#B9BEC4");
+      const foto = window.LKW_FOTO.karte(st, "kupplungskoepfe", tx("f_koepfe"), tx("l_foto"));
       uhr(T0, ch.dauer, function (t) {
+        foto.setze(fenster(t, 6.0, 13.5, 0.7));
         sch.forEach((s, k) => { const u = glatt((t - wann[k][0]) / (wann[k][1] - wann[k][0])), r = KU.ruheWelt(0, k), d = dose(k), a = KU.ankerWelt(0, k); s.setze(a, { x: lerp(r.x, d.x, u), y: lerp(r.y, d.y, u) - Math.sin(Math.PI * u) * 0.3 }); });
         kn.style.opacity = fenster(t, 4, ch.dauer - 1, 0.6); ka.style.opacity = kn.style.opacity;
         const kp = W.px(0.9, -1.0), g = W.px(MA.steckdose.x, MA.steckdose.y[0]), r = W.px(MA.steckdose.x, MA.steckdose.y[1]), e = W.px(MA.steckdose.x, MA.steckdose.y[2]);

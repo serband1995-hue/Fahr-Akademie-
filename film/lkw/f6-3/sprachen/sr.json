@@ -35,7 +35,7 @@
  "k3_kicker": "Kad nema pritiska",
  "k3_titel": "Pad pritiska: opruga koči sama",
  "k3_sub": "I kad niko ne koči.",
- "k3_p1": "Ako sistem izgubi pritisak, pada i pritisak u opružnom delu.",
+ "k3_p1": "Ako opružni deo izgubi pritisak, na primer zbog curenja, opruga se više ne drži.",
  "k3_p2": "Ako padne prenisko, opruga steže kočnicu.",
  "k3_p3": "Tako vozilo koči samo, na primer kod curenja.",
  "k3_p4": "Zato kreni tek kad se pritisak napuni.",
@@ -47,5 +47,7 @@
  "l_bremst_selbst": "Koči sama",
  "k4_kicker": "Zapamti",
  "k4_titel": "Za poneti",
- "k4_merk": "Opruga koči, vazduh otpušta. Bez pritiska opruga koči sama. Kreni tek kad se pritisak napuni."
+ "k4_merk": "Opruga koči, vazduh otpušta. Bez pritiska opruga koči sama. Kreni tek kad se pritisak napuni.",
+ "l_foto": "Primer slike, napravljen veštačkom inteligencijom",
+ "f_feder": "Kombinovani cilindar na osovini"
 }

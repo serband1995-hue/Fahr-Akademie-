@@ -25,7 +25,9 @@
       const S = schema(st, z, ch.dauer);
       const p = P.standardPanel(sc, ch, i, T0, false);
       const pr = pille(st, tx("l_rot"), ROT), pg = pille(st, tx("l_gelb"), GELB);
+      const foto = window.LKW_FOTO.karte(st, "kupplungskoepfe", tx("f_koepfe"), tx("l_foto"));
       uhr(T0, ch.dauer, function (t) {
+        foto.setze(fenster(t, 6.0, 13.5, 0.7));
         S.zeichne(t);
         const a1 = fenster(t, 3.5, ch.dauer - 1, 0.6), a2 = fenster(t, 16, ch.dauer - 1, 0.6);
         platz(pr, 540, 900, a1); platz(pg, 540, 990, a2);

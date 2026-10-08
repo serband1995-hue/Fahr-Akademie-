@@ -37,3 +37,6 @@ Ansehen ohne App: `verkehr/lkw-vorschau.html` (nicht in der App verlinkt, `?spra
 4. Keine Zahl im Bild, die nicht belegt ist. Beispielwerte als „Beispiel“ kennzeichnen.
 5. Text nur über `text.js` (Schlüssel). **Lkw-Filme nur in 4 Sprachen** (Entscheidung Serban 08.10.2026): Deutsch, Englisch, Türkisch, Serbisch (`sprachen/en.json`, `tr.json`, `sr.json`, Rückübersetzung durch zweiten Prüfer, Muttersprachler-Gegenlesen offen). Stimmen kommen später in einer eigenen Sitzung (nichts jetzt generieren).
 6. Handy 360/412 px und quer: nichts abgeschnitten, nichts seitlich wischbar (`scrollWidth = clientWidth`).
+
+## Fotos (KI-erzeugte Beispielbilder)
+`fotos/*.jpg` sind mit Higgsfield (gpt_image_2_5) erzeugte Bauteilbilder (Sattelkupplung, Kupplungsköpfe, Kombizylinder). Sie zeigen Beispiele, keine Herstellerbilder, und tragen immer den Hinweis „Beispielbild, KI-erzeugt“ (`l_foto`, in allen 4 Sprachen). Einbau: `kern/foto.js` (`LKW_FOTO.karte`), im Film als abgedunkelte Einblendung in einem Zeitfenster; in text.js `fotos: ["name"]` nennen, `bauen.mjs` bettet sie als Data-URI ein. Jedes Foto vor Verwendung auf Fehler prüfen (keine Marken, keine Kennzeichen, keine Gesichter, Teile technisch plausibel).

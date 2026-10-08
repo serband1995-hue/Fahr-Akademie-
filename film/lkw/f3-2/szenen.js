@@ -105,7 +105,9 @@
       const A_VOR = A_GEKUPPELT + 0.9, A_ENDE = 4.4;
       const pfeil = el("path", { d: "M0 -3.9 L0.9 -3.9 L0.9 -4.15 L1.5 -3.75 L0.9 -3.35 L0.9 -3.6 L0 -3.6 Z", fill: GOLD, opacity: 0 }, W.gVorn);
       V.au.setze(0, { stuetze: 1, keil: 1 });
+      const foto = window.LKW_FOTO.karte(st, "sattelkupplung", tx("f_sattel"), tx("l_foto"));
       uhr(T0, ch.dauer, function (t) {
+        foto.setze(fenster(t, 0.8, 5.8, 0.7));
         const zu = 1 - glatt((t - 6) / 5);
         const x = t < 16 ? A_GEKUPPELT : t < 24 ? lerp(A_GEKUPPELT, A_VOR, glatt((t - 16) / 8)) : t < 38 ? A_VOR : lerp(A_VOR, A_ENDE, glatt((t - 38) / 22));
         const luft = t < 30 ? LUFT_KONTAKT : t < 35 ? lerp(LUFT_KONTAKT, LUFT_TIEF, glatt((t - 30) / 5)) : LUFT_TIEF;
