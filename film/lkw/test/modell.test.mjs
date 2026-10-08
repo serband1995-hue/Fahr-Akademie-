@@ -160,3 +160,12 @@ test("Lenkdauer-Messer (Film 8.1) folgt der Prüfung: nach 45 min und nach 15 + 
   assert.equal(M.lenkdauerBei([{ art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }], h(4.5) + 45).seit, 0);
   assert.ok(M.lenkdauerBei(ev(30, 15), h(2) + 30 + h(2.5) + 15 + 30).seit > h(4.5), "weiterfahren über 4:30");
 });
+
+test("Tagesruhe geteilt: erst mind. 3 h, dann mind. 9 h = regelmäßig (Gegenproben: 3+8, 2+9, falsche Reihenfolge)", () => {
+  const tag = (a, b) => [{ art: "arbeit", min: 480 }, { art: "ruhe", min: a * 60 }, { art: "arbeit", min: 24 * 60 - 480 - a * 60 - b * 60 }, { art: "ruhe", min: b * 60 }];
+  assert.equal(M.pruefeTag(tag(3, 9)).ruhe, "regelmaessigGeteilt");
+  assert.equal(M.pruefeTag(tag(3, 9)).ok, true);
+  assert.equal(M.pruefeTag(tag(3, 8)).ok, false);
+  assert.equal(M.pruefeTag(tag(2, 9)).ok, false);
+  assert.equal(M.pruefeTag(tag(9, 3)).ok, false);
+});

@@ -208,7 +208,7 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
      Gibt { fehler: [..], lenkMin, ruhe: "regelmaessig" | "reduziert" | "zuKurz" | null } zurück. */
   function pruefeTag(ev, opt) {
     opt = opt || {};
-    const fehler = []; let seit = 0, teil15 = false, lenk = 0, zeit = 0, ruheTeil = null;
+    const fehler = []; let seit = 0, teil15 = false, lenk = 0, zeit = 0, ruheTeil = null; const ruheListe = [];
     for (let i = 0; i < ev.length; i++) {
       const e = ev[i];
       if (e.art === "fahren") {
@@ -221,11 +221,13 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
         else if (e.min >= 30 && teil15) { seit = 0; teil15 = false; }
         else if (e.min >= 15 && !teil15) { teil15 = true; }
       } else if (e.art === "ruhe") {
-        const imFenster = Math.min(e.min, 24 * 60 - zeit);
-        ruheTeil = imFenster >= 660 ? "regelmaessig" : imFenster >= 540 ? "reduziert" : "zuKurz";
-        if (ruheTeil === "zuKurz") fehler.push("Tagesruhe im 24-Stunden-Zeitraum kürzer als 9 h");
+        zeit += 0; ruheListe.push(Math.min(e.min, 24 * 60 - zeit)); zeit += e.min;
       }
     }
+    // tägliche Ruhezeit (Art. 4 Buchst. g, Art. 8 Abs. 2): eine Ruhezeit ≥ 11 h regelmäßig, ≥ 9 h reduziert; zwei Abschnitte: erst ≥ 3 h, dann ≥ 9 h = regelmäßig, geteilt
+    if (ruheListe.length === 1) ruheTeil = ruheListe[0] >= 660 ? "regelmaessig" : ruheListe[0] >= 540 ? "reduziert" : "zuKurz";
+    else if (ruheListe.length === 2) ruheTeil = ruheListe[0] >= 180 && ruheListe[1] >= 540 ? "regelmaessigGeteilt" : "zuKurz";
+    if (ruheTeil === "zuKurz") fehler.push("Tagesruhe im 24-Stunden-Zeitraum kürzer als 9 h");
     const grenze = opt.verlaengert ? 600 : 540;
     if (lenk > grenze) fehler.push("Tageslenkzeit über " + (grenze / 60) + " h");
     return { fehler: fehler, lenkMin: lenk, ruhe: ruheTeil, ok: fehler.length === 0 };
@@ -258,7 +260,83 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
     return { fehler: fehler, ok: fehler.length === 0 };
   }
 
-  const api = { lenkdauerBei: lenkdauerBei, pruefeTag: pruefeTag, pruefeWochen: pruefeWochen, folgefahrt: folgefahrt, FAHRZEUGE: FAHRZEUGE, bahn: bahn, simuliere: simuliere, koerper: koerper, rechteck: rechteck, maxUeberschnitt: maxUeberschnitt, gesamtLaenge: gesamtLaenge, radien: radien, vorderachsRadius: vorderachsRadius, innenRadius: innenRadius, abstandLinks: abstandLinks, folge: folge };
+  /* ---------- Sichtfeld des Fahrers (Film 5.2 „Toter Winkel“) ----------
+     Vereinfachtes Modell eines Solo-Lkw (Maße schematisch, siehe SICHT): Draufsicht, Koordinaten im Fahrzeug (Ursprung Hinterachse, x vorn, y rechts).
+     Direkt gesehen wird, was hinter der Unterkante einer Scheibe liegt (Strahl von der Augenhöhe über die Kante auf den Boden, Höhe des Objekts zählt);
+     Spiegel sind Sichtkeile ab der Spiegelposition nach hinten; der eigene Aufbau verdeckt (Strahl-Rechteck-Test). Kein Frontspiegel, keine Kamera. */
+  const SICHT = {
+    he: 2.55, hw: 1.85, hs: 1.35,                       // Augenhöhe, Unterkante Frontscheibe, Unterkante Seitenscheibe (m)
+    spiegel: [                                            // Keile: Achsrichtung nach hinten, um phi nach außen gedreht, Halbwinkel alpha, Reichweite
+      { id: "haupt", seite: 1, phi: 5, alpha: 7.5, reichweite: 50 }, { id: "weit", seite: 1, phi: 22, alpha: 12, reichweite: 30 },
+      { id: "haupt", seite: -1, phi: 5, alpha: 7.5, reichweite: 50 }, { id: "weit", seite: -1, phi: 22, alpha: 12, reichweite: 30 }
+    ]
+  };
+  function sichtfeld(fz) {
+    const b2 = fz.breite / 2, xv = fz.L + fz.vorn, kl = 2.3;
+    const auge = { x: xv - 1.45, y: -0.55 }, mx = xv - 1.35 + 0.17, my = b2 + 0.4;
+    // Öffnungen: Frontscheibe (Ebene x = xv), rechte und linke Seitenscheibe (Ebene y = ±(b2 − 0.1))
+    const oeff = [
+      { id: "front", A: { x: xv, y: -b2 + 0.16 }, B: { x: xv, y: b2 - 0.16 }, h: SICHT.hw },
+      { id: "rechts", A: { x: auge.x - 0.4, y: b2 - 0.1 }, B: { x: auge.x + 0.4, y: b2 - 0.1 }, h: SICHT.hs },
+      { id: "links", A: { x: auge.x - 0.4, y: -b2 + 0.1 }, B: { x: auge.x + 0.4, y: -b2 + 0.1 }, h: SICHT.hs }
+    ];
+    const spiegel = SICHT.spiegel.map(function (m) {
+      const ph = m.phi * Math.PI / 180, al = m.alpha * Math.PI / 180;
+      return { id: m.id, seite: m.seite, pos: { x: mx, y: m.seite * my }, achse: Math.atan2(m.seite * Math.sin(ph), -Math.cos(ph)), halb: al, reichweite: m.reichweite };
+    });
+    const koerper = { x0: -fz.hinten, x1: xv, y0: -b2, y1: b2 };
+    function schnittKoerper(a, b) {     // Strecke a→b trifft das Rechteck?
+      const r = koerper; let t0 = 0, t1 = 1; const dx = b.x - a.x, dy = b.y - a.y;
+      const pr = [-dx, dx, -dy, dy], qr = [a.x - r.x0 - 1e-9, r.x1 - a.x - 1e-9, a.y - r.y0 - 1e-9, r.y1 - a.y - 1e-9];
+      for (let i = 0; i < 4; i++) {
+        if (pr[i] === 0) { if (qr[i] < 0) return false; } else {
+          const u = qr[i] / pr[i]; if (pr[i] < 0) { if (u > t1) return false; if (u > t0) t0 = u; } else { if (u < t0) return false; if (u < t1) t1 = u; }
+        }
+      }
+      return t0 < t1;
+    }
+    // Strahl vom Auge durch die Öffnung: sichtbar, wenn der Punkt hinter der auf Faktor k gestreckten Öffnungslinie liegt
+    function ueberOeffnung(o, x, y, ho) {
+      const k = Math.max(1, (SICHT.he - ho) / (SICHT.he - o.h));
+      const ax = auge.x + k * (o.A.x - auge.x), ay = auge.y + k * (o.A.y - auge.y), bx = auge.x + k * (o.B.x - auge.x), by = auge.y + k * (o.B.y - auge.y);
+      const dx = x - auge.x, dy = y - auge.y, ex = bx - ax, ey = by - ay, det = dx * (-ey) - dy * (-ex);
+      if (Math.abs(det) < 1e-12) return false;
+      const rx = ax - auge.x, ry = ay - auge.y, t = (rx * (-ey) - ry * (-ex)) / det, u = (dx * ry - dy * rx) / det;
+      return u >= 0 && u <= 1 && t > 0 && t <= 1;   // Punkt liegt (auf dem Strahl) hinter oder auf der gestreckten Öffnungslinie
+    }
+    function imKeil(m, x, y) {
+      const dx = x - m.pos.x, dy = y - m.pos.y, d = Math.hypot(dx, dy); if (d > m.reichweite || d < 0.3) return false;
+      let w = Math.atan2(dy, dx) - m.achse; while (w > Math.PI) w -= 2 * Math.PI; while (w < -Math.PI) w += 2 * Math.PI;
+      return Math.abs(w) <= m.halb && !schnittKoerper(m.pos, { x: x, y: y });
+    }
+    /* Quelle der Sicht: "front" | "rechts" | "links" | spiegel-id+Seite | null (verdeckt). ho = Höhe des Objekts (m) */
+    function quelle(x, y, ho) {
+      ho = ho || 0;
+      if (x >= koerper.x0 && x <= koerper.x1 && y >= koerper.y0 && y <= koerper.y1) return "fahrzeug";
+      for (let i = 0; i < oeff.length; i++) if (ueberOeffnung(oeff[i], x, y, ho)) return oeff[i].id;
+      for (let i = 0; i < spiegel.length; i++) if (imKeil(spiegel[i], x, y)) return spiegel[i].id + (spiegel[i].seite > 0 ? "R" : "L");
+      return null;
+    }
+    return { auge: auge, oeff: oeff, spiegel: spiegel, koerper: koerper, quelle: quelle, sichtbar: (x, y, ho) => { const q = quelle(x, y, ho); return q != null && q !== "fahrzeug"; } };
+  }
+  // Weltpunkt -> Fahrzeugkoordinaten (z: Zustand der Simulation mit A, hz)
+  function insFahrzeug(z, p) { const c = Math.cos(z.hz), s = Math.sin(z.hz), dx = p.x - z.A.x, dy = p.y - z.A.y; return { x: c * dx + s * dy, y: -s * dx + c * dy }; }
+
+
+  // Kleinster Abstand zweier Vielecke (0, wenn sie sich berühren oder überlappen); Eckenlisten [{x,y}]
+  function polyAbstand(P, Q) {
+    const inside = (pt, poly) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const a = poly[i], b = poly[j]; if ((a.y > pt.y) !== (b.y > pt.y) && pt.x < (b.x - a.x) * (pt.y - a.y) / (b.y - a.y) + a.x) c = !c; } return c; };
+    const segD = (p, a, b) => { const dx = b.x - a.x, dy = b.y - a.y, l2 = dx * dx + dy * dy, t = l2 ? Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / l2)) : 0; return Math.hypot(p.x - a.x - t * dx, p.y - a.y - t * dy); };
+    if (P.some((p) => inside(p, Q)) || Q.some((q) => inside(q, P))) return 0;
+    let d = Infinity;
+    P.forEach((p, i) => { const n = Q.length; for (let j = 0; j < n; j++) d = Math.min(d, segD(p, Q[j], Q[(j + 1) % n])); });
+    Q.forEach((q, i) => { const n = P.length; for (let j = 0; j < n; j++) d = Math.min(d, segD(q, P[j], P[(j + 1) % n])); });
+    return d;
+  }
+  // Wie weit vor der Stoßstange (m) ein Objekt der Höhe ho vom Fahrerauge aus noch verdeckt ist (Strahl über die Unterkante der Frontscheibe)
+  function verdecktVorn(ho) { const k = Math.max(1, (SICHT.he - ho) / (SICHT.he - SICHT.hw)); return 1.45 * (k - 1); }
+
+  const api = { lenkdauerBei: lenkdauerBei, pruefeTag: pruefeTag, pruefeWochen: pruefeWochen, folgefahrt: folgefahrt, FAHRZEUGE: FAHRZEUGE, bahn: bahn, simuliere: simuliere, koerper: koerper, rechteck: rechteck, maxUeberschnitt: maxUeberschnitt, gesamtLaenge: gesamtLaenge, radien: radien, vorderachsRadius: vorderachsRadius, innenRadius: innenRadius, abstandLinks: abstandLinks, folge: folge, SICHT: SICHT, sichtfeld: sichtfeld, insFahrzeug: insFahrzeug, polyAbstand: polyAbstand, verdecktVorn: verdecktVorn };
   if (typeof module !== "undefined" && module.exports) module.exports = api; else root.LKW_MODELL = api;
 })(typeof window !== "undefined" ? window : globalThis);
 
@@ -883,71 +961,73 @@ window.FILM_TEXT = {
     ui_start: "Film starten", ui_pause: "Anhalten", ui_weiter: "Weiter", ui_neu: "Von vorn", ui_kapitel: "Kapitel", ui_lesen: "Den ganzen Text lesen",
 
     k1_kicker: "Die Frage", k1_titel: "Wie lange darf ein Fahrer fahren?", k1_sub: "Für Berufskraftfahrer gilt ein EU-Gesetz.",
-    k1_p1: "Wer beruflich Lkw fährt, muss Pausen und Ruhezeiten einhalten.",
-    k1_p2: "Der Fahrtenschreiber im Lkw zeichnet alles auf.",
+    k1_p1: "Wer beruflich Lkw fährt, muss in der Regel Pausen und Ruhezeiten einhalten.",
+    k1_p2: "Der Fahrtenschreiber im Lkw zeichnet Lenk- und Ruhezeiten auf.",
     k1_p3: "Die Regeln stehen in der Verordnung (EG) Nr. 561/2006.",
     l_lenk: "Lenkzeit", l_pause: "Pause", l_ruhe: "Ruhezeit", l_arbeit: "Andere Arbeit",
 
     k2_kicker: "Am Tag", k2_titel: "Die Lenkzeit", k2_sub: "Lenkzeit ist die Zeit, in der du fährst.",
     k2_p1: "Die tägliche Lenkzeit darf 9 Stunden nicht überschreiten.",
-    k2_p2: "Zweimal in der Woche darf sie auf höchstens 10 Stunden verlängert werden.",
+    k2_p2: "Höchstens zweimal in der Woche darf sie auf 10 Stunden verlängert werden.",
     k2_p3: "Tägliche Lenkzeit: alles Fahren zwischen zwei täglichen Ruhezeiten.",
     k2_p4: "Andere Arbeit zählt nicht zur Lenkzeit.",
     l_tag9: "Ein Tag mit 9 Stunden", l_tag10: "Ein Tag mit 10 Stunden",
 
     k3_kicker: "Pause", k3_titel: "Nach viereinhalb Stunden", k3_sub: "Die Lenkdauer zählt seit der letzten anrechenbaren Pause.",
     k3_p1: "Lenkdauer ist die Fahrzeit zwischen zwei Pausen.",
-    k3_p2: "Nach 4,5 Stunden Lenkdauer musst du mindestens 45 Minuten Pause machen.",
+    k3_p2: "Nach 4,5 Stunden Lenkdauer musst du mindestens 45 Minuten ununterbrochen Pause machen.",
     k3_p3: "Du darfst die Pause teilen: erst mindestens 15 Minuten, danach mindestens 30 Minuten.",
     k3_p4: "Erst 30 und dann 15 Minuten zählt nicht.",
     l_ok: "Erlaubt", l_nicht: "Nicht erlaubt", l_p45: "45 Minuten", l_p1530: "15 + 30 Minuten", l_p3015: "30 + 15 Minuten", l_dauer: "Lenkdauer seit der Pause",
 
     k4_kicker: "Ruhe", k4_titel: "Die tägliche Ruhezeit", k4_sub: "Nach der Arbeit kommt die Erholung.",
-    k4_p1: "Innerhalb von 24 Stunden brauchst du eine neue tägliche Ruhezeit.",
+    k4_p1: "Nach dem Ende der letzten Ruhezeit brauchst du innerhalb von 24 Stunden eine neue tägliche Ruhezeit.",
     k4_p2: "Regelmäßig sind das mindestens 11 Stunden.",
     k4_p3: "Du darfst sie teilen: erst mindestens 3, danach mindestens 9 Stunden.",
     k4_p4: "Reduziert sind es mindestens 9, aber weniger als 11 Stunden.",
     k4_p5: "Reduzieren darfst du höchstens dreimal zwischen zwei Wochenruhezeiten.",
+    k4_p6: "Weniger als 9 Stunden sind keine gültige tägliche Ruhezeit.",
+    l_geteilt: "Geteilt: 3 + 9 Stunden", l_arbeitstag: "Arbeitstag",
     l_reg: "Regelmäßig", l_red: "Reduziert", l_kurz: "Zu kurz", l_fenster: "24 Stunden",
 
     k5_kicker: "In der Woche", k5_titel: "Die Woche", k5_sub: "Lenkstunden je Tag, zwei Wochen im Beispiel.",
     k5_p1: "Eine Woche geht von Montag 0 Uhr bis Sonntag 24 Uhr.",
     k5_p2: "In einer Woche darfst du höchstens 56 Stunden lenken.",
-    k5_p3: "In zwei Wochen zusammen höchstens 90 Stunden.",
+    k5_p3: "In zwei aufeinanderfolgenden Wochen zusammen höchstens 90 Stunden.",
     k5_p4: "Im Beispiel hat Woche 1 genau 56 Stunden. Woche 2 darf also nur noch 34 haben.",
     k5_p5: "Die regelmäßige Wochenruhe dauert mindestens 45 Stunden. Du darfst sie nicht im Fahrzeug verbringen.",
-    k5_p6: "Eine verkürzte Wochenruhe von mindestens 24 Stunden musst du später ausgleichen.",
+    k5_p6: "Eine reduzierte Wochenruhe von mindestens 24 Stunden musst du ausgleichen: in einem Stück, bis zum Ende der dritten Woche danach.",
     l_w1: "Woche 1", l_w2: "Woche 2", l_h: "h", l_wruhe: "Wochenruhe: mindestens 45 h",
     l_mo: "Mo", l_di: "Di", l_mi: "Mi", l_do: "Do", l_fr: "Fr", l_sa: "Sa", l_so: "So",
 
     k6_kicker: "Fahrschule und Beruf", k6_titel: "Und in der Fahrschule?", k6_sub: "Ein Unterschied, den du kennen solltest.",
-    k6_p1: "Im Fahrschul-Lkw, der nicht gewerblich fährt, gelten Lenk- und Ruhezeiten nicht.",
-    k6_p2: "Im Beruf danach gelten sie.",
-    l_schule: "Fahrschul-Lkw", l_beruf: "Beruf",
+    k6_p1: "Ein Fahrschul-Lkw, der nur für Unterricht und Prüfung dient und nicht gewerblich Güter oder Personen befördert, ist von den Lenk- und Ruhezeiten ausgenommen.",
+    k6_p2: "Wird derselbe Lkw gewerblich zum Transport eingesetzt, gelten sie.",
+    l_schule: "Fahrschul-Lkw", l_beruf: "Beruf", l_gilt: "Gilt", l_gilt_nicht: "Gilt nicht",
 
     k7_kicker: "Merke", k7_titel: "Zum Mitnehmen",
-    k7_merk: "9 Stunden Lenkzeit, nach 4,5 Stunden 45 Minuten Pause, danach 11 Stunden Ruhe. Pro Woche höchstens 56 Stunden."
+    k7_merk: "Täglich höchstens 9 Stunden lenken, nach 4,5 Stunden 45 Minuten Pause, täglich 11 Stunden Ruhe. Pro Woche höchstens 56 Stunden."
   },
   kapitel: [
-    { id: "k1", titel: "k1_titel", kicker: "k1_kicker", dauer: 28, sub: { k: "k1_sub", t: 0.6 },
-      punkte: [{ k: "k1_p1", t: 3.5 }, { k: "k1_p2", t: 11.0 }, { k: "k1_p3", t: 17.5, ref: "VO (EG) Nr. 561/2006" }] },
+    { id: "k1", titel: "k1_titel", kicker: "k1_kicker", dauer: 30, sub: { k: "k1_sub", t: 0.6 },
+      punkte: [{ k: "k1_p1", t: 3.5 }, { k: "k1_p2", t: 12.0 }, { k: "k1_p3", t: 19.0, ref: "VO (EG) Nr. 561/2006" }] },
     { id: "k2", titel: "k2_titel", kicker: "k2_kicker", dauer: 50, sub: { k: "k2_sub", t: 0.6 },
-      punkte: [{ k: "k2_p1", t: 4.0, ref: "Art. 6 Abs. 1" }, { k: "k2_p2", t: 12.5, ref: "Art. 6 Abs. 1" }, { k: "k2_p3", t: 23.5, ref: "Art. 4 Buchst. k" }, { k: "k2_p4", t: 33.0, ref: "Art. 4 Buchst. e", stil: "gold" }] },
+      punkte: [{ k: "k2_p1", t: 4.0, ref: "Art. 6 Abs. 1" }, { k: "k2_p2", t: 18.5, ref: "Art. 6 Abs. 1" }, { k: "k2_p3", t: 26.5, ref: "Art. 4 Buchst. k" }, { k: "k2_p4", t: 33.0, ref: "Art. 4 Buchst. e", stil: "gold" }] },
     { id: "k3", titel: "k3_titel", kicker: "k3_kicker", dauer: 58, sub: { k: "k3_sub", t: 0.6 },
-      punkte: [{ k: "k3_p1", t: 4.0, ref: "Art. 4 Buchst. q" }, { k: "k3_p2", t: 11.0, ref: "Art. 7" }, { k: "k3_p3", t: 21.5, ref: "Art. 7" }, { k: "k3_p4", t: 33.0, stil: "gold" }] },
-    { id: "k4", titel: "k4_titel", kicker: "k4_kicker", dauer: 62, sub: { k: "k4_sub", t: 0.6 },
-      punkte: [{ k: "k4_p1", t: 4.0, ref: "Art. 8 Abs. 2" }, { k: "k4_p2", t: 12.0, ref: "Art. 4 Buchst. g" }, { k: "k4_p3", t: 18.0, ref: "Art. 4 Buchst. g" }, { k: "k4_p4", t: 28.0, ref: "Art. 4 Buchst. g" }, { k: "k4_p5", t: 38.0, ref: "Art. 8 Abs. 4" }] },
+      punkte: [{ k: "k3_p1", t: 4.0, ref: "Art. 4 Buchst. q" }, { k: "k3_p2", t: 11.0, ref: "Art. 7" }, { k: "k3_p3", t: 20.0, ref: "Art. 7" }, { k: "k3_p4", t: 40.0, stil: "gold" }] },
+    { id: "k4", titel: "k4_titel", kicker: "k4_kicker", dauer: 74, sub: { k: "k4_sub", t: 0.6 },
+      punkte: [{ k: "k4_p1", t: 3.0, ref: "Art. 8 Abs. 2" }, { k: "k4_p2", t: 13.0, ref: "Art. 4 Buchst. g" }, { k: "k4_p3", t: 19.0, ref: "Art. 4 Buchst. g" }, { k: "k4_p4", t: 36.0, ref: "Art. 4 Buchst. g" }, { k: "k4_p5", t: 50.0, ref: "Art. 8 Abs. 4" }, { k: "k4_p6", t: 58.0, stil: "gold" }] },
     { id: "k5", titel: "k5_titel", kicker: "k5_kicker", dauer: 78, sub: { k: "k5_sub", t: 0.6 },
       punkte: [{ k: "k5_p1", t: 4.0, ref: "Art. 4 Buchst. i" }, { k: "k5_p2", t: 12.0, ref: "Art. 6 Abs. 2" }, { k: "k5_p3", t: 20.0, ref: "Art. 6 Abs. 3" }, { k: "k5_p4", t: 28.0 }, { k: "k5_p5", t: 41.0, ref: "Art. 4 Buchst. h, Art. 8 Abs. 8" }, { k: "k5_p6", t: 57.0, ref: "Art. 8 Abs. 6 und 6b" }] },
-    { id: "k6", titel: "k6_titel", kicker: "k6_kicker", dauer: 30, sub: { k: "k6_sub", t: 0.6 },
-      punkte: [{ k: "k6_p1", t: 4.0, ref: "§ 18 Abs. 1 Nr. 7 FPersV" }, { k: "k6_p2", t: 16.0, stil: "gold" }] },
+    { id: "k6", titel: "k6_titel", kicker: "k6_kicker", dauer: 36, sub: { k: "k6_sub", t: 0.6 },
+      punkte: [{ k: "k6_p1", t: 4.0, ref: "Art. 13 Abs. 1 Buchst. g VO (EG) 561/2006; § 18 Abs. 1 Nr. 7 FPersV" }, { k: "k6_p2", t: 24.0, stil: "gold" }] },
     { id: "k7", titel: "k7_titel", kicker: "k7_kicker", dauer: 20, merk: { k: "k7_merk", t: 1.2 } }
   ]
 };
 
 })(W);
 
-W.FILM_SPRACHEN = {"en":{"titel":"Driving and rest times","ui_ueber":"Overview: driving and rest times","ui_intro":"A short film without sound: everything is shown as text on screen. You can pause at any time or pick a chapter.","ui_start":"Start film","ui_pause":"Pause","ui_weiter":"Resume","ui_neu":"Restart","ui_kapitel":"Chapters","ui_lesen":"Read the full text","k1_kicker":"The question","k1_titel":"How long may a driver drive?","k1_sub":"An EU law applies to professional drivers.","k1_p1":"If you drive a truck for work, you must keep to breaks and rest periods.","k1_p2":"The tachograph in the truck records everything.","k1_p3":"The rules are in Regulation (EC) No 561/2006.","l_lenk":"Driving time","l_pause":"Break","l_ruhe":"Rest period","l_arbeit":"Other work","k2_kicker":"During the day","k2_titel":"Driving time","k2_sub":"Driving time is the time you spend driving.","k2_p1":"Daily driving time must not exceed 9 hours.","k2_p2":"Twice a week it may be extended to a maximum of 10 hours.","k2_p3":"Daily driving time: all driving between two daily rest periods.","k2_p4":"Other work does not count as driving time.","l_tag9":"Day with 9 hours","l_tag10":"Day with 10 hours","k3_kicker":"Break","k3_titel":"After four and a half hours","k3_sub":"Continuous driving time counts from the last qualifying break.","k3_p1":"Continuous driving time is the driving time between two breaks.","k3_p2":"After 4.5 hours of continuous driving time, you must take a break of at least 45 minutes.","k3_p3":"You may split the break: first at least 15 minutes, then at least 30 minutes.","k3_p4":"First 30 and then 15 minutes does not count.","l_ok":"Allowed","l_nicht":"Not allowed","l_p45":"45 minutes","l_p1530":"15 + 30 minutes","l_p3015":"30 + 15 minutes","l_dauer":"Driving since break","k4_kicker":"Rest","k4_titel":"The daily rest period","k4_sub":"After work comes recovery.","k4_p1":"Within 24 hours you need a new daily rest period.","k4_p2":"A regular one is at least 11 hours.","k4_p3":"You may split it: first at least 3, then at least 9 hours.","k4_p4":"A reduced one is at least 9, but less than 11 hours.","k4_p5":"You may reduce it at most three times between two weekly rest periods.","l_reg":"Regular","l_red":"Reduced","l_kurz":"Too short","l_fenster":"24 hours","k5_kicker":"During the week","k5_titel":"The week","k5_sub":"Driving hours per day, two weeks in the example.","k5_p1":"A week runs from Monday 0:00 to Sunday 24:00.","k5_p2":"In one week you may drive at most 56 hours.","k5_p3":"In two weeks together at most 90 hours.","k5_p4":"In the example, week 1 has exactly 56 hours. So week 2 may only have 34.","k5_p5":"A regular weekly rest period lasts at least 45 hours. You must not spend it in the vehicle.","k5_p6":"A reduced weekly rest period of at least 24 hours must be compensated later.","l_w1":"Week 1","l_w2":"Week 2","l_h":"h","l_wruhe":"Weekly rest: min. 45 h","l_mo":"Mo","l_di":"Tu","l_mi":"We","l_do":"Th","l_fr":"Fr","l_sa":"Sa","l_so":"Su","k6_kicker":"Driving school and job","k6_titel":"And in driving school?","k6_sub":"A difference you should know.","k6_p1":"In a driving school truck that is not used commercially, driving and rest times do not apply.","k6_p2":"In the job afterwards, they do.","l_schule":"Driving school truck","l_beruf":"Job","k7_kicker":"Remember","k7_titel":"Take-away","k7_merk":"9 hours of driving time, after 4.5 hours a 45-minute break, then 11 hours of rest. At most 56 hours per week."},"sr":{"titel":"Vreme vožnje i odmora","ui_ueber":"Pregled: vreme vožnje i odmora","ui_intro":"Kratak film bez zvuka: sve piše na ekranu. Možeš da zaustaviš film ili da izabereš poglavlje kad god želiš.","ui_start":"Pokreni film","ui_pause":"Zaustavi","ui_weiter":"Nastavi","ui_neu":"Od početka","ui_kapitel":"Poglavlja","ui_lesen":"Pročitaj ceo tekst","k1_kicker":"Pitanje","k1_titel":"Koliko dugo vozač sme da vozi?","k1_sub":"Za profesionalne vozače važi zakon EU.","k1_p1":"Ko profesionalno vozi kamion, mora da poštuje pauze i odmore.","k1_p2":"Tahograf u kamionu beleži sve.","k1_p3":"Pravila su u Uredbi (EZ) br. 561/2006.","l_lenk":"Vreme vožnje","l_pause":"Pauza","l_ruhe":"Odmor","l_arbeit":"Ostali rad","k2_kicker":"Tokom dana","k2_titel":"Vreme vožnje","k2_sub":"Vreme vožnje je vreme dok voziš.","k2_p1":"Dnevno vreme vožnje ne sme da pređe 9 sati.","k2_p2":"Dvaput nedeljno sme da se produži na najviše 10 sati.","k2_p3":"Dnevno vreme vožnje: sva vožnja između dva dnevna odmora.","k2_p4":"Ostali rad se ne računa u vreme vožnje.","l_tag9":"Dan sa 9 sati","l_tag10":"Dan sa 10 sati","k3_kicker":"Pauza","k3_titel":"Posle četiri i po sata","k3_sub":"Neprekidno vreme vožnje računa se od poslednje pauze koja se priznaje.","k3_p1":"Neprekidno vreme vožnje je vreme vožnje između dve pauze.","k3_p2":"Posle 4,5 sati neprekidnog vremena vožnje moraš da napraviš pauzu od najmanje 45 minuta.","k3_p3":"Pauzu smeš da podeliš: prvo najmanje 15 minuta, zatim najmanje 30 minuta.","k3_p4":"Prvo 30, pa 15 minuta se ne priznaje.","l_ok":"Dozvoljeno","l_nicht":"Nije dozvoljeno","l_p45":"45 minuta","l_p1530":"15 + 30 minuta","l_p3015":"30 + 15 minuta","l_dauer":"Vožnja od pauze","k4_kicker":"Odmor","k4_titel":"Dnevni odmor","k4_sub":"Posle posla sledi odmor.","k4_p1":"U roku od 24 sata potreban ti je novi dnevni odmor.","k4_p2":"Redovan traje najmanje 11 sati.","k4_p3":"Smeš da ga podeliš: prvo najmanje 3, zatim najmanje 9 sati.","k4_p4":"Skraćeni traje najmanje 9, ali manje od 11 sati.","k4_p5":"Smeš da ga skratiš najviše tri puta između dva nedeljna odmora.","l_reg":"Redovan","l_red":"Skraćen","l_kurz":"Prekratko","l_fenster":"24 sata","k5_kicker":"Tokom nedelje","k5_titel":"Nedelja","k5_sub":"Sati vožnje po danu, u primeru dve nedelje.","k5_p1":"Nedelja traje od ponedeljka u 0 časova do nedelje u 24 časa.","k5_p2":"U jednoj nedelji smeš da voziš najviše 56 sati.","k5_p3":"U dve nedelje zajedno najviše 90 sati.","k5_p4":"U primeru 1. nedelja ima tačno 56 sati. Dakle, 2. nedelja sme da ima samo još 34.","k5_p5":"Redovan nedeljni odmor traje najmanje 45 sati. Ne smeš da ga provedeš u vozilu.","k5_p6":"Skraćeni nedeljni odmor od najmanje 24 sata moraš kasnije da nadoknadiš.","l_w1":"1. nedelja","l_w2":"2. nedelja","l_h":"h","l_wruhe":"Nedeljni odmor ≥ 45 h","l_mo":"Po","l_di":"Ut","l_mi":"Sr","l_do":"Če","l_fr":"Pe","l_sa":"Su","l_so":"Ne","k6_kicker":"Autoškola i posao","k6_titel":"A u autoškoli?","k6_sub":"Razlika koju treba da znaš.","k6_p1":"U kamionu autoškole, koji se ne koristi komercijalno, vreme vožnje i odmora ne važi.","k6_p2":"U poslu posle toga važi.","l_schule":"Kamion autoškole","l_beruf":"Posao","k7_kicker":"Zapamti","k7_titel":"Za poneti","k7_merk":"9 sati vožnje, posle 4,5 sati pauza od 45 minuta, zatim 11 sati odmora. Nedeljno najviše 56 sati."},"tr":{"titel":"Sürüş ve dinlenme süreleri","ui_ueber":"Genel bakış: sürüş ve dinlenme süreleri","ui_intro":"Sessiz kısa bir film: Her şey görüntüde yazıyla yer alır. İstediğin zaman durdurabilir veya bir bölüm seçebilirsin.","ui_start":"Filmi başlat","ui_pause":"Durdur","ui_weiter":"Devam","ui_neu":"Baştan","ui_kapitel":"Bölümler","ui_lesen":"Metnin tamamını oku","k1_kicker":"Soru","k1_titel":"Bir sürücü ne kadar süre araç kullanabilir?","k1_sub":"Profesyonel sürücüler için bir AB yasası geçerlidir.","k1_p1":"Mesleki olarak kamyon kullanıyorsan, mola ve dinlenme sürelerine uymak zorundasın.","k1_p2":"Kamyondaki takograf her şeyi kaydeder.","k1_p3":"Kurallar (AT) 561/2006 sayılı Tüzükte yer alır.","l_lenk":"Sürüş süresi","l_pause":"Mola","l_ruhe":"Dinlenme süresi","l_arbeit":"Diğer işler","k2_kicker":"Gün içinde","k2_titel":"Sürüş süresi","k2_sub":"Sürüş süresi, araç kullandığın süredir.","k2_p1":"Günlük sürüş süresi 9 saati aşmamalıdır.","k2_p2":"Haftada iki kez en fazla 10 saate uzatılabilir.","k2_p3":"Günlük sürüş süresi: iki günlük dinlenme süresi arasındaki tüm sürüş.","k2_p4":"Diğer işler sürüş süresine sayılmaz.","l_tag9":"9 saatlik gün","l_tag10":"10 saatlik gün","k3_kicker":"Mola","k3_titel":"Dört buçuk saat sonra","k3_sub":"Kesintisiz sürüş süresi, sayılan son moladan itibaren hesaplanır.","k3_p1":"Kesintisiz sürüş süresi, iki mola arasındaki sürüş süresidir.","k3_p2":"4,5 saatlik kesintisiz sürüşten sonra en az 45 dakika mola vermelisin.","k3_p3":"Molayı bölebilirsin: önce en az 15 dakika, sonra en az 30 dakika.","k3_p4":"Önce 30, sonra 15 dakika sayılmaz.","l_ok":"İzinli","l_nicht":"İzinli değil","l_p45":"45 dakika","l_p1530":"15 + 30 dakika","l_p3015":"30 + 15 dakika","l_dauer":"Moladan beri sürüş","k4_kicker":"Dinlenme","k4_titel":"Günlük dinlenme süresi","k4_sub":"İşten sonra dinlenme gelir.","k4_p1":"24 saat içinde yeni bir günlük dinlenme süresine ihtiyacın var.","k4_p2":"Düzenli olanı en az 11 saattir.","k4_p3":"Bölebilirsin: önce en az 3, sonra en az 9 saat.","k4_p4":"Kısaltılmış olanı en az 9, ama 11 saatten azdır.","k4_p5":"İki haftalık dinlenme süresi arasında en fazla üç kez kısaltabilirsin.","l_reg":"Düzenli","l_red":"Kısaltılmış","l_kurz":"Çok kısa","l_fenster":"24 saat","k5_kicker":"Hafta içinde","k5_titel":"Hafta","k5_sub":"Günlük sürüş saatleri, örnekte iki hafta.","k5_p1":"Bir hafta, Pazartesi 00:00'dan Pazar 24:00'a kadar sürer.","k5_p2":"Bir haftada en fazla 56 saat araç kullanabilirsin.","k5_p3":"İki haftada toplam en fazla 90 saat.","k5_p4":"Örnekte 1. hafta tam 56 saat. Yani 2. hafta en fazla 34 saat olabilir.","k5_p5":"Düzenli haftalık dinlenme süresi en az 45 saattir. Bunu araçta geçirmemelisin.","k5_p6":"En az 24 saatlik kısaltılmış haftalık dinlenme süresini daha sonra telafi etmelisin.","l_w1":"1. hafta","l_w2":"2. hafta","l_h":"sa","l_wruhe":"Haftalık: en az 45 sa","l_mo":"Pt","l_di":"Sa","l_mi":"Ça","l_do":"Pe","l_fr":"Cu","l_sa":"Ct","l_so":"Pz","k6_kicker":"Sürücü kursu ve meslek","k6_titel":"Peki sürücü kursunda?","k6_sub":"Bilmen gereken bir fark.","k6_p1":"Ticari amaçla kullanılmayan sürücü kursu kamyonunda sürüş ve dinlenme süreleri geçerli değildir.","k6_p2":"Sonraki meslek hayatında geçerlidir.","l_schule":"Sürücü kursu kamyonu","l_beruf":"Meslek","k7_kicker":"Unutma","k7_titel":"Akılda kalsın","k7_merk":"9 saat sürüş süresi, 4,5 saat sonra 45 dakika mola, ardından 11 saat dinlenme. Haftada en fazla 56 saat."}};
+W.FILM_SPRACHEN = {"en":{"titel":"Driving and rest times","ui_ueber":"Overview: driving and rest times","ui_intro":"A short film without sound: everything is shown as text on screen. You can pause at any time or pick a chapter.","ui_start":"Start film","ui_pause":"Pause","ui_weiter":"Resume","ui_neu":"Restart","ui_kapitel":"Chapters","ui_lesen":"Read the full text","k1_kicker":"The question","k1_titel":"How long may a driver drive?","k1_sub":"An EU law applies to professional drivers.","k1_p1":"If you drive a truck for work, you must, as a rule, keep to breaks and rest periods.","k1_p2":"The tachograph in the truck records driving and rest times.","k1_p3":"The rules are in Regulation (EC) No 561/2006.","l_lenk":"Driving time","l_pause":"Break","l_ruhe":"Rest period","l_arbeit":"Other work","k2_kicker":"During the day","k2_titel":"Driving time","k2_sub":"Driving time is the time you spend driving.","k2_p1":"Daily driving time must not exceed 9 hours.","k2_p2":"At most twice a week it may be extended to 10 hours.","k2_p3":"Daily driving time: all driving between two daily rest periods.","k2_p4":"Other work does not count as driving time.","l_tag9":"Day with 9 hours","l_tag10":"Day with 10 hours","k3_kicker":"Break","k3_titel":"After four and a half hours","k3_sub":"Continuous driving time counts from the last qualifying break.","k3_p1":"Continuous driving time is the driving time between two breaks.","k3_p2":"After 4.5 hours of continuous driving time, you must take an uninterrupted break of at least 45 minutes.","k3_p3":"You may split the break: first at least 15 minutes, then at least 30 minutes.","k3_p4":"First 30 and then 15 minutes does not count.","l_ok":"Allowed","l_nicht":"Not allowed","l_p45":"45 minutes","l_p1530":"15 + 30 minutes","l_p3015":"30 + 15 minutes","l_dauer":"Driving since break","k4_kicker":"Rest","k4_titel":"The daily rest period","k4_sub":"After work comes recovery.","k4_p1":"After the end of your last rest period, you need a new daily rest period within 24 hours.","k4_p2":"A regular one is at least 11 hours.","k4_p3":"You may split it: first at least 3, then at least 9 hours.","k4_p4":"A reduced one is at least 9, but less than 11 hours.","k4_p5":"You may reduce it at most three times between two weekly rest periods.","k4_p6":"Less than 9 hours is not a valid daily rest period.","l_reg":"Regular","l_red":"Reduced","l_kurz":"Too short","l_fenster":"24 hours","l_geteilt":"Split: 3 + 9 hours","l_arbeitstag":"Working day","k5_kicker":"During the week","k5_titel":"The week","k5_sub":"Driving hours per day, two weeks in the example.","k5_p1":"A week runs from Monday 0:00 to Sunday 24:00.","k5_p2":"In one week you may drive at most 56 hours.","k5_p3":"In two consecutive weeks together at most 90 hours.","k5_p4":"In the example, week 1 has exactly 56 hours. So week 2 may only have 34.","k5_p5":"A regular weekly rest period lasts at least 45 hours. You must not spend it in the vehicle.","k5_p6":"You must make up a reduced weekly rest period of at least 24 hours: in one block, by the end of the third week after it.","l_w1":"Week 1","l_w2":"Week 2","l_h":"h","l_wruhe":"Weekly rest: min. 45 h","l_mo":"Mo","l_di":"Tu","l_mi":"We","l_do":"Th","l_fr":"Fr","l_sa":"Sa","l_so":"Su","k6_kicker":"Driving school and job","k6_titel":"And in driving school?","k6_sub":"A difference you should know.","k6_p1":"A driving school truck that is only used for lessons and tests, and does not carry goods or passengers commercially, is exempt from driving and rest times.","k6_p2":"If the same truck is used commercially for transport, they apply.","l_schule":"Driving school truck","l_beruf":"Job","l_gilt":"Applies","l_gilt_nicht":"Does not apply","k7_kicker":"Remember","k7_titel":"Take-away","k7_merk":"Drive at most 9 hours a day, take a 45-minute break after 4.5 hours, rest 11 hours daily. At most 56 hours per week."},"sr":{"titel":"Vreme vožnje i odmora","ui_ueber":"Pregled: vreme vožnje i odmora","ui_intro":"Kratak film bez zvuka: sve piše na ekranu. Možeš da zaustaviš film ili da izabereš poglavlje kad god želiš.","ui_start":"Pokreni film","ui_pause":"Zaustavi","ui_weiter":"Nastavi","ui_neu":"Od početka","ui_kapitel":"Poglavlja","ui_lesen":"Pročitaj ceo tekst","k1_kicker":"Pitanje","k1_titel":"Koliko dugo vozač sme da vozi?","k1_sub":"Za profesionalne vozače važi zakon EU.","k1_p1":"Ko profesionalno vozi kamion, mora po pravilu da poštuje pauze i odmore.","k1_p2":"Tahograf u kamionu beleži vreme vožnje i odmora.","k1_p3":"Pravila su u Uredbi (EZ) br. 561/2006.","l_lenk":"Vreme vožnje","l_pause":"Pauza","l_ruhe":"Odmor","l_arbeit":"Ostali rad","k2_kicker":"Tokom dana","k2_titel":"Vreme vožnje","k2_sub":"Vreme vožnje je vreme dok voziš.","k2_p1":"Dnevno vreme vožnje ne sme da pređe 9 sati.","k2_p2":"Najviše dvaput nedeljno sme da se produži na 10 sati.","k2_p3":"Dnevno vreme vožnje: sva vožnja između dva dnevna odmora.","k2_p4":"Ostali rad se ne računa u vreme vožnje.","l_tag9":"Dan sa 9 sati","l_tag10":"Dan sa 10 sati","k3_kicker":"Pauza","k3_titel":"Posle četiri i po sata","k3_sub":"Neprekidno vreme vožnje računa se od poslednje pauze koja se priznaje.","k3_p1":"Neprekidno vreme vožnje je vreme vožnje između dve pauze.","k3_p2":"Posle 4,5 sati neprekidnog vremena vožnje moraš da napraviš neprekidnu pauzu od najmanje 45 minuta.","k3_p3":"Pauzu smeš da podeliš: prvo najmanje 15 minuta, zatim najmanje 30 minuta.","k3_p4":"Prvo 30, pa 15 minuta se ne priznaje.","l_ok":"Dozvoljeno","l_nicht":"Nije dozvoljeno","l_p45":"45 minuta","l_p1530":"15 + 30 minuta","l_p3015":"30 + 15 minuta","l_dauer":"Vožnja od pauze","k4_kicker":"Odmor","k4_titel":"Dnevni odmor","k4_sub":"Posle posla sledi odmor.","k4_p1":"Posle završetka poslednjeg odmora, u roku od 24 sata potreban ti je novi dnevni odmor.","k4_p2":"Redovan traje najmanje 11 sati.","k4_p3":"Smeš da ga podeliš: prvo najmanje 3, zatim najmanje 9 sati.","k4_p4":"Skraćeni traje najmanje 9, ali manje od 11 sati.","k4_p5":"Smeš da ga skratiš najviše tri puta između dva nedeljna odmora.","k4_p6":"Manje od 9 sati nije važeći dnevni odmor.","l_reg":"Redovan","l_red":"Skraćen","l_kurz":"Prekratko","l_fenster":"24 sata","l_geteilt":"Podeljen: 3 + 9 sati","l_arbeitstag":"Radni dan","k5_kicker":"Tokom nedelje","k5_titel":"Nedelja","k5_sub":"Sati vožnje po danu, u primeru dve nedelje.","k5_p1":"Nedelja traje od ponedeljka u 0 časova do nedelje u 24 časa.","k5_p2":"U jednoj nedelji smeš da voziš najviše 56 sati.","k5_p3":"U dve uzastopne nedelje zajedno najviše 90 sati.","k5_p4":"U primeru 1. nedelja ima tačno 56 sati. Dakle, 2. nedelja sme da ima samo još 34.","k5_p5":"Redovan nedeljni odmor traje najmanje 45 sati. Ne smeš da ga provedeš u vozilu.","k5_p6":"Smanjeni nedeljni odmor od najmanje 24 sata moraš da nadoknadiš: u jednom komadu, do kraja treće nedelje posle njega.","l_w1":"1. nedelja","l_w2":"2. nedelja","l_h":"h","l_wruhe":"Nedeljni odmor ≥ 45 h","l_mo":"Po","l_di":"Ut","l_mi":"Sr","l_do":"Če","l_fr":"Pe","l_sa":"Su","l_so":"Ne","k6_kicker":"Autoškola i posao","k6_titel":"A u autoškoli?","k6_sub":"Razlika koju treba da znaš.","k6_p1":"Kamion autoškole koji služi samo za nastavu i ispit i ne prevozi komercijalno robu ili putnike izuzet je od vremena vožnje i odmora.","k6_p2":"Ako se isti kamion koristi komercijalno za prevoz, ona važe.","l_schule":"Kamion autoškole","l_beruf":"Posao","l_gilt":"Važi","l_gilt_nicht":"Ne važi","k7_kicker":"Zapamti","k7_titel":"Za poneti","k7_merk":"Najviše 9 sati vožnje dnevno, posle 4,5 sata pauza od 45 minuta, svaki dan 11 sati odmora. Nedeljno najviše 56 sati."},"tr":{"titel":"Sürüş ve dinlenme süreleri","ui_ueber":"Genel bakış: sürüş ve dinlenme süreleri","ui_intro":"Sessiz kısa bir film: Her şey görüntüde yazıyla yer alır. İstediğin zaman durdurabilir veya bir bölüm seçebilirsin.","ui_start":"Filmi başlat","ui_pause":"Durdur","ui_weiter":"Devam","ui_neu":"Baştan","ui_kapitel":"Bölümler","ui_lesen":"Metnin tamamını oku","k1_kicker":"Soru","k1_titel":"Bir sürücü ne kadar süre araç kullanabilir?","k1_sub":"Profesyonel sürücüler için bir AB yasası geçerlidir.","k1_p1":"Mesleki olarak kamyon kullanıyorsan, kural olarak mola ve dinlenme sürelerine uymak zorundasın.","k1_p2":"Kamyondaki takograf sürüş ve dinlenme sürelerini kaydeder.","k1_p3":"Kurallar (AT) 561/2006 sayılı Tüzükte yer alır.","l_lenk":"Sürüş süresi","l_pause":"Mola","l_ruhe":"Dinlenme süresi","l_arbeit":"Diğer işler","k2_kicker":"Gün içinde","k2_titel":"Sürüş süresi","k2_sub":"Sürüş süresi, araç kullandığın süredir.","k2_p1":"Günlük sürüş süresi 9 saati aşmamalıdır.","k2_p2":"Haftada en fazla iki kez 10 saate uzatılabilir.","k2_p3":"Günlük sürüş süresi: ardışık iki günlük dinlenme (gece dinlenmesi) arasındaki tüm sürüş.","k2_p4":"Diğer işler sürüş süresine sayılmaz.","l_tag9":"9 saatlik gün","l_tag10":"10 saatlik gün","k3_kicker":"Mola","k3_titel":"Dört buçuk saat sonra","k3_sub":"Kesintisiz sürüş süresi, sayılan son moladan itibaren hesaplanır.","k3_p1":"Kesintisiz sürüş süresi, iki mola arasındaki sürüş süresidir.","k3_p2":"4,5 saatlik kesintisiz sürüşten sonra en az 45 dakika kesintisiz mola vermelisin.","k3_p3":"Molayı bölebilirsin: önce en az 15 dakika, sonra en az 30 dakika.","k3_p4":"Önce 30, sonra 15 dakika sayılmaz.","l_ok":"İzinli","l_nicht":"İzinli değil","l_p45":"45 dakika","l_p1530":"15 + 30 dakika","l_p3015":"30 + 15 dakika","l_dauer":"Moladan beri sürüş","k4_kicker":"Dinlenme","k4_titel":"Günlük dinlenme süresi","k4_sub":"İşten sonra dinlenme gelir.","k4_p1":"Son dinlenme süresi bittikten sonra 24 saat içinde yeni bir günlük dinlenme süresine ihtiyacın var.","k4_p2":"Düzenli olanı en az 11 saattir.","k4_p3":"Bölebilirsin: önce en az 3, sonra en az 9 saat.","k4_p4":"Kısaltılmış olanı en az 9, ama 11 saatten azdır.","k4_p5":"Bir haftalık dinlenme ile bir sonraki haftalık dinlenme arasında en fazla üç kez kısaltabilirsin.","k4_p6":"9 saatten kısa süre geçerli bir günlük dinlenme süresi değildir.","l_reg":"Düzenli","l_red":"Kısaltılmış","l_kurz":"Çok kısa","l_fenster":"24 saat","l_geteilt":"Bölünmüş: 3 + 9 saat","l_arbeitstag":"Çalışma günü","k5_kicker":"Hafta içinde","k5_titel":"Hafta","k5_sub":"Günlük sürüş saatleri, örnekte iki hafta.","k5_p1":"Bir hafta, Pazartesi 00:00'dan Pazar 24:00'a kadar sürer.","k5_p2":"Bir haftada en fazla 56 saat araç kullanabilirsin.","k5_p3":"Birbirini izleyen iki haftada toplam en fazla 90 saat.","k5_p4":"Örnekte 1. hafta tam 56 saat. Yani 2. hafta en fazla 34 saat olabilir.","k5_p5":"Düzenli haftalık dinlenme süresi en az 45 saattir. Bunu araçta geçirmemelisin.","k5_p6":"En az 24 saatlik azaltılmış haftalık dinlenmeyi telafi etmelisin: tek parça halinde, sonraki üçüncü haftanın sonuna kadar.","l_w1":"1. hafta","l_w2":"2. hafta","l_h":"sa","l_wruhe":"Haftalık dinlenme: en az 45 sa","l_mo":"Pt","l_di":"Sa","l_mi":"Ça","l_do":"Pe","l_fr":"Cu","l_sa":"Ct","l_so":"Pz","k6_kicker":"Sürücü kursu ve meslek","k6_titel":"Peki sürücü kursunda?","k6_sub":"Bilmen gereken bir fark.","k6_p1":"Yalnızca ders ve sınav için kullanılan, ticari olarak yük veya yolcu taşımayan sürücü kursu kamyonu, sürüş ve dinlenme sürelerinden muaftır.","k6_p2":"Aynı kamyon ticari taşımacılıkta kullanılırsa bu süreler geçerlidir.","l_schule":"Sürücü kursu kamyonu","l_beruf":"Meslek","l_gilt":"Geçerli","l_gilt_nicht":"Geçerli değil","k7_kicker":"Unutma","k7_titel":"Akılda kalsın","k7_merk":"Günde en fazla 9 saat sürüş, 4,5 saat sonra 45 dakika mola, her gün 11 saat dinlenme. Haftada en fazla 56 saat."}};
 // ---- f8-1/szenen.js ----
 (function (window) {
 /* Szenen des Films 8.1 „Lenk- und Ruhezeiten“ – Zeitleisten und Kalender. Die Beispiele werden mit kern/modell.js geprüft (pruefeTag, pruefeWochen, lenkdauerBei);
@@ -991,40 +1071,39 @@ W.FILM_SPRACHEN = {"en":{"titel":"Driving and rest times","ui_ueber":"Overview: 
       const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), B = Z.buehne(st);
       const L = Z.leiste(B, { y: 330 }), Mm = Z.messer(B, { y: 560, max: h(11), marken: [{ min: h(9), farbe: A.fahren, text: "9:00" }, { min: h(10), farbe: "#F2C16E", text: "10:00" }] });
       const ev9 = [{ art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(4.5) }, { art: "arbeit", min: h(1) }, { art: "ruhe", min: h(11) }];
-      const ev10 = [{ art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(1) }, { art: "ruhe", min: h(11) }];
+      const ev10 = [{ art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(1) }, { art: "arbeit", min: h(1) }, { art: "ruhe", min: h(11) }];
       if (!M.pruefeTag(ev9).ok || !M.pruefeTag(ev10, { verlaengert: true }).ok || M.pruefeTag(ev10).ok) throw new Error("Beispieltage passen nicht zum Modell");
-      const p9 = pille(st, tx("l_tag9"), 540, 200, A.fahren, true), p10 = pille(st, tx("l_tag10"), 540, 200, "#F2C16E", true);
+      const p9 = pille(st, tx("l_tag9"), 540, 200, A.fahren, true), p10 = pille(st, tx("l_tag10"), 540, 200, "#F2C16E", true), pa = pille(st, tx("l_arbeit"), L.px(12), 262, A.arbeit);
       const lenkBei = (e, m) => { let s = 0, u = 0; for (const x of e) { const d = Math.max(0, Math.min(x.min, m - u)); if (x.art === "fahren") s += d; u += x.min; } return s; };
       const t9 = [3, 15], t10 = [18.5, 31.5];
       uhr(T0, ch.dauer, function (t) {
         const zweiter = t >= 17.5, ev = zweiter ? ev10 : ev9, hh = zweiter ? lauf(t, t10[0], t10[1], summe(ev10)) : lauf(t, t9[0], t9[1], summe(ev9));
         L.zeichne(ev, hh);
         Mm.setze(lenkBei(ev, hh * 60), zweiter && lenkBei(ev, hh * 60) > h(9) ? "#F2C16E" : A.fahren);
-        p9.setze(!zweiter ? fenster(t, 3.5, 17, 0.5) : 0); p10.setze(zweiter ? fenster(t, 18.5, 40, 0.5) : 0);
+        p9.setze(!zweiter ? fenster(t, 3.5, 17, 0.5) : 0); p10.setze(zweiter ? fenster(t, 18.5, 40, 0.5) : 0); pa.setze(zweiter ? fenster(t, 33.0, ch.dauer - 1, 0.5) : 0);
       });
     }
 
     /* ---------- K3: Pause ---------- */
     function K3(sc, i, T0, ch) {
       const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), B = Z.buehne(st);
-      const L = Z.leiste(B, { y: 330, span: 9, tick: 1 }), Mm = Z.messer(B, { y: 560, max: h(5), marken: [{ min: 270, farbe: WARN, text: "4:30" }] });
+      const L = Z.leiste(B, { y: 330, span: 9, tick: 1 }), Mm = Z.messer(B, { y: 560, max: h(6), marken: [{ min: 270, farbe: WARN, text: "4:30" }] });
       const szen = [
-        { ev: [{ art: "fahren", min: 270 }, { art: "pause", min: 45 }, { art: "fahren", min: 90 }], name: tx("l_p45"), t0: 4, t1: 18 },
-        { ev: [{ art: "fahren", min: 120 }, { art: "pause", min: 15 }, { art: "fahren", min: 150 }, { art: "pause", min: 30 }, { art: "fahren", min: 90 }], name: tx("l_p1530"), t0: 19, t1: 34 },
-        { ev: [{ art: "fahren", min: 120 }, { art: "pause", min: 30 }, { art: "fahren", min: 150 }, { art: "pause", min: 15 }, { art: "fahren", min: 60 }], name: tx("l_p3015"), t0: 35, t1: 52 }
+        { ev: [{ art: "fahren", min: 270 }, { art: "pause", min: 45 }, { art: "fahren", min: 90 }], name: tx("l_p45"), t0: 4, t1: 16 },
+        { ev: [{ art: "fahren", min: 120 }, { art: "pause", min: 15 }, { art: "fahren", min: 150 }, { art: "pause", min: 30 }, { art: "fahren", min: 90 }], name: tx("l_p1530"), t0: 20, t1: 36 },
+        { ev: [{ art: "fahren", min: 120 }, { art: "pause", min: 30 }, { art: "fahren", min: 150 }, { art: "pause", min: 15 }, { art: "fahren", min: 60 }], name: tx("l_p3015"), t0: 40, t1: 54 }
       ];
       const erg = szen.map((s) => M.pruefeTag(s.ev.concat([{ art: "ruhe", min: h(11) }])).ok);
       if (!(erg[0] && erg[1] && !erg[2])) throw new Error("Pausen-Beispiele passen nicht zum Modell: " + erg.join());
       const pn = szen.map((s, k) => pille(st, s.name, 540, 200, k < 2 ? A.pause : WARN, true));
       const pok = pille(st, tx("l_ok"), 540, 840, GRUEN, true), pnicht = pille(st, tx("l_nicht"), 540, 840, WARN, true), titel = pille(st, tx("l_dauer"), 540, 700, A.fahren);
       uhr(T0, ch.dauer, function (t) {
-        let k = t < 18.8 ? 0 : t < 34.8 ? 1 : 2; const s = szen[k], hh = lauf(t, s.t0, s.t1, summe(s.ev));
+        const k = t < 19.8 ? 0 : t < 39.8 ? 1 : 2, s = szen[k], hh = lauf(t, s.t0, s.t1, summe(s.ev));
         L.zeichne(s.ev, hh); const z = M.lenkdauerBei(s.ev, hh * 60);
         Mm.setze(z.seit, z.seit > 270 ? WARN : A.fahren);
-        szen.forEach((_, j) => pn[j].setze(j === k ? fenster(t, szen[j].t0, szen[j].t1 + 1.5, 0.4) : 0));
-        const fertig = t >= s.t1 + 0.3 && t < s.t1 + 1.6;
-        pok.setze(k < 2 ? (fertig || (t > szen[k].t1 && t < szen[k].t1 + 1.6) ? 1 : 0) : 0);
-        pnicht.setze(k === 2 && t >= s.t1 - 0.5 ? klemme((t - (s.t1 - 0.5)) / 0.4) : 0);
+        szen.forEach((_, j) => pn[j].setze(j === k ? fenster(t, szen[j].t0, szen[j].t1 + 3.5, 0.4) : 0));
+        pok.setze(k < 2 ? fenster(t, s.t1 + 0.3, s.t1 + 3.6, 0.4) : 0);
+        pnicht.setze(k === 2 ? fenster(t, s.t1 - 0.5, ch.dauer - 0.5, 0.5) : 0);
         titel.setze(t > 3 ? 1 : 0);
       });
     }
@@ -1034,20 +1113,21 @@ W.FILM_SPRACHEN = {"en":{"titel":"Driving and rest times","ui_ueber":"Overview: 
       const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), B = Z.buehne(st);
       const L = Z.leiste(B, { y: 400 });
       const szen = [
-        { ev: [{ art: "arbeit", min: h(13) }, { art: "ruhe", min: h(11) }], t0: 4, t1: 16, name: tx("l_reg"), farbe: GRUEN },
-        { ev: [{ art: "arbeit", min: h(15) }, { art: "ruhe", min: h(9) }], t0: 19, t1: 32, name: tx("l_red"), farbe: A.fahren },
-        { ev: [{ art: "arbeit", min: h(16) }, { art: "ruhe", min: h(8) }], t0: 40, t1: 52, name: tx("l_kurz"), farbe: WARN }
+        { ev: [{ art: "arbeit", min: h(13) }, { art: "ruhe", min: h(11) }], t0: 4, t1: 12, name: tx("l_reg"), farbe: GRUEN, soll: "regelmaessig" },
+        { ev: [{ art: "arbeit", min: h(8) }, { art: "ruhe", min: h(3) }, { art: "arbeit", min: h(4) }, { art: "ruhe", min: h(9) }], t0: 20, t1: 32, name: tx("l_geteilt"), farbe: GRUEN, soll: "regelmaessigGeteilt" },
+        { ev: [{ art: "arbeit", min: h(15) }, { art: "ruhe", min: h(9) }], t0: 36, t1: 46, name: tx("l_red"), farbe: A.fahren, soll: "reduziert" },
+        { ev: [{ art: "arbeit", min: h(16) }, { art: "ruhe", min: h(8) }], t0: 58, t1: 68, name: tx("l_kurz"), farbe: WARN, soll: "zuKurz" }
       ];
-      const kl = szen.map((s) => M.pruefeTag(s.ev).ruhe);
-      if (kl.join() !== "regelmaessig,reduziert,zuKurz") throw new Error("Ruhezeit-Beispiele passen nicht zum Modell: " + kl.join());
-      const pn = szen.map((s) => pille(st, s.name, 540, 250, s.farbe, true)), f24 = pille(st, tx("l_fenster"), 540, 620, A.ruhe);
+      szen.forEach((s) => { const r = M.pruefeTag(s.ev).ruhe; if (r !== s.soll) throw new Error("Ruhezeit-Beispiel passt nicht zum Modell: " + r + " statt " + s.soll); });
+      const pn = szen.map((s) => pille(st, s.name, 540, 250, s.farbe, true)), f24 = pille(st, tx("l_fenster"), 540, 620, A.ruhe), pt = pille(st, tx("l_arbeitstag"), L.px(6), 325, A.arbeit);
       // Klammer 24 Stunden
       const kg = el("g", { opacity: 0.0 }, B.ueber), ky = 372; el("line", { x1: L.px(0), y1: ky, x2: L.px(24), y2: ky, stroke: F.creme, "stroke-width": 4 }, kg); [0, 24].forEach((hh) => el("line", { x1: L.px(hh), y1: ky - 12, x2: L.px(hh), y2: ky + 12, stroke: F.creme, "stroke-width": 4 }, kg));
+      const wahl = (t) => t < 18 ? 0 : t < 34 ? 1 : t < 56 ? 2 : 3;
       uhr(T0, ch.dauer, function (t) {
-        const k = t < 18 ? 0 : t < 38 ? 1 : 2, s = szen[k];
-        L.zeichne(s.ev, lauf(t, s.t0, s.t1, summe(s.ev)));
-        kg.style.opacity = t > 4 ? 1 : 0; f24.setze(t > 4 ? 1 : 0);
-        pn.forEach((q, j) => q.setze(j === k && t >= szen[j].t1 - 0.5 && (j < 2 ? t < szen[j].t1 + 5.5 : true) ? 1 : 0));
+        const k = wahl(t), s = szen[k];
+        L.zeichne(s.ev, k === 0 || t >= s.t0 ? lauf(t, s.t0, s.t1, summe(s.ev)) : 0);
+        kg.style.opacity = t > 4 ? 1 : 0; f24.setze(t > 4 ? 1 : 0); pt.setze(t > 6 ? 1 : 0);
+        pn.forEach((q, j) => q.setze(j === k && t >= szen[j].t1 - 0.5 ? (j === 3 ? klemme((t - (szen[j].t1 - 0.5)) / 0.4) : (j < 3 ? Math.min(1, klemme((t - (szen[j].t1 - 0.5)) / 0.4)) : 1)) : 0));
       });
     }
 
@@ -1058,16 +1138,16 @@ W.FILM_SPRACHEN = {"en":{"titel":"Driving and rest times","ui_ueber":"Overview: 
       if (!M.pruefeWochen(stunden).ok) throw new Error("Wochen-Beispiel passt nicht zum Modell");
       const tage = ["l_mo", "l_di", "l_mi", "l_do", "l_fr", "l_sa", "l_so"].map((k) => tx(k));
       const Kal = Z.kalender(B, { stunden: stunden, ys: [330, 700], hoehe: 150, tage: tage, breite: 130, x0: 60 });
-      const w1 = pille(st, tx("l_w1"), 150, 150, A.fahren), w2 = pille(st, tx("l_w2"), 150, 520, A.fahren), ruhe = pille(st, tx("l_wruhe"), 540, 950, A.ruhe);
+      const w1 = BK.pille(st, tx("l_w1"), 60, 85, { punkt: A.fahren, ax: "0" }), w2 = BK.pille(st, tx("l_w2"), 60, 455, { punkt: A.fahren, ax: "0" }), ruhe = pille(st, tx("l_wruhe"), 540, 950, A.ruhe), summ = pille(st, "56 + 34 = 90 " + tx("l_h"), 540, 890, A.fahren, true);
       const wp = [pille(st, "", 800, 150, A.fahren), pille(st, "", 800, 520, A.fahren)];
       // Wochenruhe: Balken über Sa/So Woche 1
-      const rb = el("rect", { x: 60 + 6 * 130 + 16, y: 215, width: 130 - 20, height: 170, rx: 14, fill: "rgba(129,144,232,.25)", stroke: A.ruhe, "stroke-width": 4, opacity: 0 }, B.ueber);
+      const rb = el("rect", { x: 60 + 5 * 130 + 76, y: 215, width: 244, height: 170, rx: 14, fill: "rgba(129,144,232,.25)", stroke: A.ruhe, "stroke-width": 4, opacity: 0 }, B.ueber);
       uhr(T0, ch.dauer, function (t) {
         const a = lauf(t, 13, 27, 14); Kal.setze(a, { vorlage: (wi, s) => s + " " + tx("l_h") });
-        w1.setze(t > 5 ? 1 : 0); w2.setze(t > 5 && a > 7 ? 1 : 0);
+        w1.style.opacity = t > 5 ? 1 : 0; w2.style.opacity = t > 5 && a > 7 ? 1 : 0;
         const wh = (wi) => stunden[wi].reduce((x, y) => x + y, 0);
         wp[0].el.style.opacity = 0; wp[1].el.style.opacity = 0;
-        rb.style.opacity = fenster(t, 41, ch.dauer - 1, 0.6); ruhe.setze(fenster(t, 43, ch.dauer - 1, 0.5));
+        rb.style.opacity = fenster(t, 41, ch.dauer - 1, 0.6); ruhe.setze(fenster(t, 43, ch.dauer - 1, 0.5)); summ.setze(fenster(t, 20.5, 40, 0.5));
       });
     }
 
@@ -1083,10 +1163,11 @@ W.FILM_SPRACHEN = {"en":{"titel":"Driving and rest times","ui_ueber":"Overview: 
         return g;
       };
       const ks = kartei(60, "", A.arbeit, false), kb = kartei(580, "", GRUEN, true);
-      const ps = pille(st, tx("l_schule"), 280, 270, A.arbeit, true), pb = pille(st, tx("l_beruf"), 800, 270, GRUEN, true);
+      const ps = pille(st, tx("l_schule"), 280, 232, A.arbeit, true), pb = pille(st, tx("l_beruf"), 800, 250, GRUEN, true), gn = pille(st, tx("l_gilt_nicht"), 280, 780, A.arbeit), gj = pille(st, tx("l_gilt"), 800, 780, GRUEN);
+      ps.el.style.maxWidth = "430px"; pb.el.style.maxWidth = "430px";
       uhr(T0, ch.dauer, function (t) {
-        const a = fenster(t, 4.5, ch.dauer - 1, 0.6), b = fenster(t, 16.5, ch.dauer - 1, 0.6);
-        ks.style.opacity = a; ps.setze(a); kb.style.opacity = b; pb.setze(b);
+        const a = fenster(t, 4.5, ch.dauer - 1, 0.6), b = fenster(t, 24.5, ch.dauer - 1, 0.6);
+        ks.style.opacity = a; ps.setze(a); gn.setze(a); kb.style.opacity = b; pb.setze(b); gj.setze(b);
       });
     }
 

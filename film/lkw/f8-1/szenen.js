@@ -39,40 +39,39 @@
       const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), B = Z.buehne(st);
       const L = Z.leiste(B, { y: 330 }), Mm = Z.messer(B, { y: 560, max: h(11), marken: [{ min: h(9), farbe: A.fahren, text: "9:00" }, { min: h(10), farbe: "#F2C16E", text: "10:00" }] });
       const ev9 = [{ art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(4.5) }, { art: "arbeit", min: h(1) }, { art: "ruhe", min: h(11) }];
-      const ev10 = [{ art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(1) }, { art: "ruhe", min: h(11) }];
+      const ev10 = [{ art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(1) }, { art: "arbeit", min: h(1) }, { art: "ruhe", min: h(11) }];
       if (!M.pruefeTag(ev9).ok || !M.pruefeTag(ev10, { verlaengert: true }).ok || M.pruefeTag(ev10).ok) throw new Error("Beispieltage passen nicht zum Modell");
-      const p9 = pille(st, tx("l_tag9"), 540, 200, A.fahren, true), p10 = pille(st, tx("l_tag10"), 540, 200, "#F2C16E", true);
+      const p9 = pille(st, tx("l_tag9"), 540, 200, A.fahren, true), p10 = pille(st, tx("l_tag10"), 540, 200, "#F2C16E", true), pa = pille(st, tx("l_arbeit"), L.px(12), 262, A.arbeit);
       const lenkBei = (e, m) => { let s = 0, u = 0; for (const x of e) { const d = Math.max(0, Math.min(x.min, m - u)); if (x.art === "fahren") s += d; u += x.min; } return s; };
       const t9 = [3, 15], t10 = [18.5, 31.5];
       uhr(T0, ch.dauer, function (t) {
         const zweiter = t >= 17.5, ev = zweiter ? ev10 : ev9, hh = zweiter ? lauf(t, t10[0], t10[1], summe(ev10)) : lauf(t, t9[0], t9[1], summe(ev9));
         L.zeichne(ev, hh);
         Mm.setze(lenkBei(ev, hh * 60), zweiter && lenkBei(ev, hh * 60) > h(9) ? "#F2C16E" : A.fahren);
-        p9.setze(!zweiter ? fenster(t, 3.5, 17, 0.5) : 0); p10.setze(zweiter ? fenster(t, 18.5, 40, 0.5) : 0);
+        p9.setze(!zweiter ? fenster(t, 3.5, 17, 0.5) : 0); p10.setze(zweiter ? fenster(t, 18.5, 40, 0.5) : 0); pa.setze(zweiter ? fenster(t, 33.0, ch.dauer - 1, 0.5) : 0);
       });
     }
 
     /* ---------- K3: Pause ---------- */
     function K3(sc, i, T0, ch) {
       const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), B = Z.buehne(st);
-      const L = Z.leiste(B, { y: 330, span: 9, tick: 1 }), Mm = Z.messer(B, { y: 560, max: h(5), marken: [{ min: 270, farbe: WARN, text: "4:30" }] });
+      const L = Z.leiste(B, { y: 330, span: 9, tick: 1 }), Mm = Z.messer(B, { y: 560, max: h(6), marken: [{ min: 270, farbe: WARN, text: "4:30" }] });
       const szen = [
-        { ev: [{ art: "fahren", min: 270 }, { art: "pause", min: 45 }, { art: "fahren", min: 90 }], name: tx("l_p45"), t0: 4, t1: 18 },
-        { ev: [{ art: "fahren", min: 120 }, { art: "pause", min: 15 }, { art: "fahren", min: 150 }, { art: "pause", min: 30 }, { art: "fahren", min: 90 }], name: tx("l_p1530"), t0: 19, t1: 34 },
-        { ev: [{ art: "fahren", min: 120 }, { art: "pause", min: 30 }, { art: "fahren", min: 150 }, { art: "pause", min: 15 }, { art: "fahren", min: 60 }], name: tx("l_p3015"), t0: 35, t1: 52 }
+        { ev: [{ art: "fahren", min: 270 }, { art: "pause", min: 45 }, { art: "fahren", min: 90 }], name: tx("l_p45"), t0: 4, t1: 16 },
+        { ev: [{ art: "fahren", min: 120 }, { art: "pause", min: 15 }, { art: "fahren", min: 150 }, { art: "pause", min: 30 }, { art: "fahren", min: 90 }], name: tx("l_p1530"), t0: 20, t1: 36 },
+        { ev: [{ art: "fahren", min: 120 }, { art: "pause", min: 30 }, { art: "fahren", min: 150 }, { art: "pause", min: 15 }, { art: "fahren", min: 60 }], name: tx("l_p3015"), t0: 40, t1: 54 }
       ];
       const erg = szen.map((s) => M.pruefeTag(s.ev.concat([{ art: "ruhe", min: h(11) }])).ok);
       if (!(erg[0] && erg[1] && !erg[2])) throw new Error("Pausen-Beispiele passen nicht zum Modell: " + erg.join());
       const pn = szen.map((s, k) => pille(st, s.name, 540, 200, k < 2 ? A.pause : WARN, true));
       const pok = pille(st, tx("l_ok"), 540, 840, GRUEN, true), pnicht = pille(st, tx("l_nicht"), 540, 840, WARN, true), titel = pille(st, tx("l_dauer"), 540, 700, A.fahren);
       uhr(T0, ch.dauer, function (t) {
-        let k = t < 18.8 ? 0 : t < 34.8 ? 1 : 2; const s = szen[k], hh = lauf(t, s.t0, s.t1, summe(s.ev));
+        const k = t < 19.8 ? 0 : t < 39.8 ? 1 : 2, s = szen[k], hh = lauf(t, s.t0, s.t1, summe(s.ev));
         L.zeichne(s.ev, hh); const z = M.lenkdauerBei(s.ev, hh * 60);
         Mm.setze(z.seit, z.seit > 270 ? WARN : A.fahren);
-        szen.forEach((_, j) => pn[j].setze(j === k ? fenster(t, szen[j].t0, szen[j].t1 + 1.5, 0.4) : 0));
-        const fertig = t >= s.t1 + 0.3 && t < s.t1 + 1.6;
-        pok.setze(k < 2 ? (fertig || (t > szen[k].t1 && t < szen[k].t1 + 1.6) ? 1 : 0) : 0);
-        pnicht.setze(k === 2 && t >= s.t1 - 0.5 ? klemme((t - (s.t1 - 0.5)) / 0.4) : 0);
+        szen.forEach((_, j) => pn[j].setze(j === k ? fenster(t, szen[j].t0, szen[j].t1 + 3.5, 0.4) : 0));
+        pok.setze(k < 2 ? fenster(t, s.t1 + 0.3, s.t1 + 3.6, 0.4) : 0);
+        pnicht.setze(k === 2 ? fenster(t, s.t1 - 0.5, ch.dauer - 0.5, 0.5) : 0);
         titel.setze(t > 3 ? 1 : 0);
       });
     }
@@ -82,20 +81,21 @@
       const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), B = Z.buehne(st);
       const L = Z.leiste(B, { y: 400 });
       const szen = [
-        { ev: [{ art: "arbeit", min: h(13) }, { art: "ruhe", min: h(11) }], t0: 4, t1: 16, name: tx("l_reg"), farbe: GRUEN },
-        { ev: [{ art: "arbeit", min: h(15) }, { art: "ruhe", min: h(9) }], t0: 19, t1: 32, name: tx("l_red"), farbe: A.fahren },
-        { ev: [{ art: "arbeit", min: h(16) }, { art: "ruhe", min: h(8) }], t0: 40, t1: 52, name: tx("l_kurz"), farbe: WARN }
+        { ev: [{ art: "arbeit", min: h(13) }, { art: "ruhe", min: h(11) }], t0: 4, t1: 12, name: tx("l_reg"), farbe: GRUEN, soll: "regelmaessig" },
+        { ev: [{ art: "arbeit", min: h(8) }, { art: "ruhe", min: h(3) }, { art: "arbeit", min: h(4) }, { art: "ruhe", min: h(9) }], t0: 20, t1: 32, name: tx("l_geteilt"), farbe: GRUEN, soll: "regelmaessigGeteilt" },
+        { ev: [{ art: "arbeit", min: h(15) }, { art: "ruhe", min: h(9) }], t0: 36, t1: 46, name: tx("l_red"), farbe: A.fahren, soll: "reduziert" },
+        { ev: [{ art: "arbeit", min: h(16) }, { art: "ruhe", min: h(8) }], t0: 58, t1: 68, name: tx("l_kurz"), farbe: WARN, soll: "zuKurz" }
       ];
-      const kl = szen.map((s) => M.pruefeTag(s.ev).ruhe);
-      if (kl.join() !== "regelmaessig,reduziert,zuKurz") throw new Error("Ruhezeit-Beispiele passen nicht zum Modell: " + kl.join());
-      const pn = szen.map((s) => pille(st, s.name, 540, 250, s.farbe, true)), f24 = pille(st, tx("l_fenster"), 540, 620, A.ruhe);
+      szen.forEach((s) => { const r = M.pruefeTag(s.ev).ruhe; if (r !== s.soll) throw new Error("Ruhezeit-Beispiel passt nicht zum Modell: " + r + " statt " + s.soll); });
+      const pn = szen.map((s) => pille(st, s.name, 540, 250, s.farbe, true)), f24 = pille(st, tx("l_fenster"), 540, 620, A.ruhe), pt = pille(st, tx("l_arbeitstag"), L.px(6), 325, A.arbeit);
       // Klammer 24 Stunden
       const kg = el("g", { opacity: 0.0 }, B.ueber), ky = 372; el("line", { x1: L.px(0), y1: ky, x2: L.px(24), y2: ky, stroke: F.creme, "stroke-width": 4 }, kg); [0, 24].forEach((hh) => el("line", { x1: L.px(hh), y1: ky - 12, x2: L.px(hh), y2: ky + 12, stroke: F.creme, "stroke-width": 4 }, kg));
+      const wahl = (t) => t < 18 ? 0 : t < 34 ? 1 : t < 56 ? 2 : 3;
       uhr(T0, ch.dauer, function (t) {
-        const k = t < 18 ? 0 : t < 38 ? 1 : 2, s = szen[k];
-        L.zeichne(s.ev, lauf(t, s.t0, s.t1, summe(s.ev)));
-        kg.style.opacity = t > 4 ? 1 : 0; f24.setze(t > 4 ? 1 : 0);
-        pn.forEach((q, j) => q.setze(j === k && t >= szen[j].t1 - 0.5 && (j < 2 ? t < szen[j].t1 + 5.5 : true) ? 1 : 0));
+        const k = wahl(t), s = szen[k];
+        L.zeichne(s.ev, k === 0 || t >= s.t0 ? lauf(t, s.t0, s.t1, summe(s.ev)) : 0);
+        kg.style.opacity = t > 4 ? 1 : 0; f24.setze(t > 4 ? 1 : 0); pt.setze(t > 6 ? 1 : 0);
+        pn.forEach((q, j) => q.setze(j === k && t >= szen[j].t1 - 0.5 ? (j === 3 ? klemme((t - (szen[j].t1 - 0.5)) / 0.4) : (j < 3 ? Math.min(1, klemme((t - (szen[j].t1 - 0.5)) / 0.4)) : 1)) : 0));
       });
     }
 
@@ -106,16 +106,16 @@
       if (!M.pruefeWochen(stunden).ok) throw new Error("Wochen-Beispiel passt nicht zum Modell");
       const tage = ["l_mo", "l_di", "l_mi", "l_do", "l_fr", "l_sa", "l_so"].map((k) => tx(k));
       const Kal = Z.kalender(B, { stunden: stunden, ys: [330, 700], hoehe: 150, tage: tage, breite: 130, x0: 60 });
-      const w1 = pille(st, tx("l_w1"), 150, 150, A.fahren), w2 = pille(st, tx("l_w2"), 150, 520, A.fahren), ruhe = pille(st, tx("l_wruhe"), 540, 950, A.ruhe);
+      const w1 = BK.pille(st, tx("l_w1"), 60, 85, { punkt: A.fahren, ax: "0" }), w2 = BK.pille(st, tx("l_w2"), 60, 455, { punkt: A.fahren, ax: "0" }), ruhe = pille(st, tx("l_wruhe"), 540, 950, A.ruhe), summ = pille(st, "56 + 34 = 90 " + tx("l_h"), 540, 890, A.fahren, true);
       const wp = [pille(st, "", 800, 150, A.fahren), pille(st, "", 800, 520, A.fahren)];
       // Wochenruhe: Balken über Sa/So Woche 1
-      const rb = el("rect", { x: 60 + 6 * 130 + 16, y: 215, width: 130 - 20, height: 170, rx: 14, fill: "rgba(129,144,232,.25)", stroke: A.ruhe, "stroke-width": 4, opacity: 0 }, B.ueber);
+      const rb = el("rect", { x: 60 + 5 * 130 + 76, y: 215, width: 244, height: 170, rx: 14, fill: "rgba(129,144,232,.25)", stroke: A.ruhe, "stroke-width": 4, opacity: 0 }, B.ueber);
       uhr(T0, ch.dauer, function (t) {
         const a = lauf(t, 13, 27, 14); Kal.setze(a, { vorlage: (wi, s) => s + " " + tx("l_h") });
-        w1.setze(t > 5 ? 1 : 0); w2.setze(t > 5 && a > 7 ? 1 : 0);
+        w1.style.opacity = t > 5 ? 1 : 0; w2.style.opacity = t > 5 && a > 7 ? 1 : 0;
         const wh = (wi) => stunden[wi].reduce((x, y) => x + y, 0);
         wp[0].el.style.opacity = 0; wp[1].el.style.opacity = 0;
-        rb.style.opacity = fenster(t, 41, ch.dauer - 1, 0.6); ruhe.setze(fenster(t, 43, ch.dauer - 1, 0.5));
+        rb.style.opacity = fenster(t, 41, ch.dauer - 1, 0.6); ruhe.setze(fenster(t, 43, ch.dauer - 1, 0.5)); summ.setze(fenster(t, 20.5, 40, 0.5));
       });
     }
 
@@ -131,10 +131,11 @@
         return g;
       };
       const ks = kartei(60, "", A.arbeit, false), kb = kartei(580, "", GRUEN, true);
-      const ps = pille(st, tx("l_schule"), 280, 270, A.arbeit, true), pb = pille(st, tx("l_beruf"), 800, 270, GRUEN, true);
+      const ps = pille(st, tx("l_schule"), 280, 232, A.arbeit, true), pb = pille(st, tx("l_beruf"), 800, 250, GRUEN, true), gn = pille(st, tx("l_gilt_nicht"), 280, 780, A.arbeit), gj = pille(st, tx("l_gilt"), 800, 780, GRUEN);
+      ps.el.style.maxWidth = "430px"; pb.el.style.maxWidth = "430px";
       uhr(T0, ch.dauer, function (t) {
-        const a = fenster(t, 4.5, ch.dauer - 1, 0.6), b = fenster(t, 16.5, ch.dauer - 1, 0.6);
-        ks.style.opacity = a; ps.setze(a); kb.style.opacity = b; pb.setze(b);
+        const a = fenster(t, 4.5, ch.dauer - 1, 0.6), b = fenster(t, 24.5, ch.dauer - 1, 0.6);
+        ks.style.opacity = a; ps.setze(a); gn.setze(a); kb.style.opacity = b; pb.setze(b); gj.setze(b);
       });
     }
 
