@@ -25,7 +25,7 @@
       const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), B = Z.buehne(st);
       const L = Z.leiste(B, { y: 420 });
       const ev = [{ art: "arbeit", min: h(1) }, { art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(4.5) }, { art: "arbeit", min: h(1) }, { art: "ruhe", min: h(11) }];
-      const pl = [[tx("l_lenk"), A.fahren, 60 * 1 / 60], [tx("l_pause"), A.pause, 5.5], [tx("l_ruhe"), A.ruhe, 10.75], [tx("l_arbeit"), A.arbeit, 0]].map((d, k) => ({ d: d, p: pille(st, d[0], 150 + (k % 2) * 420 + (k > 1 ? 70 : 0), 640 + Math.floor(k / 2) * 100, d[1]) }));
+      const pl = [[tx("l_lenk"), A.fahren, 60 * 1 / 60], [tx("l_pause"), A.pause, 5.5], [tx("l_ruhe"), A.ruhe, 10.75], [tx("l_arbeit"), A.arbeit, 0]].map((d, k) => ({ d: d, p: pille(st, d[0], 230 + (k % 2) * 420 + (k > 1 ? 60 : 0), 640 + Math.floor(k / 2) * 100, d[1]) }));
       const hS = (t) => lauf(t, 3, 21, summe(ev));
       const zeigeAb = [5.0, 12.0, 17.0, 3.8];
       uhr(T0, ch.dauer, function (t) {
@@ -41,7 +41,7 @@
       const ev9 = [{ art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(4.5) }, { art: "arbeit", min: h(1) }, { art: "ruhe", min: h(11) }];
       const ev10 = [{ art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(1) }, { art: "ruhe", min: h(11) }];
       if (!M.pruefeTag(ev9).ok || !M.pruefeTag(ev10, { verlaengert: true }).ok || M.pruefeTag(ev10).ok) throw new Error("Beispieltage passen nicht zum Modell");
-      const p9 = pille(st, tx("l_tag9"), 540, 200, A.fahren, true), p10 = pille(st, tx("l_tag10"), 540, 200, "#F2C16E", true), pa = pille(st, tx("l_arbeit"), 0, 0, A.arbeit);
+      const p9 = pille(st, tx("l_tag9"), 540, 200, A.fahren, true), p10 = pille(st, tx("l_tag10"), 540, 200, "#F2C16E", true);
       const lenkBei = (e, m) => { let s = 0, u = 0; for (const x of e) { const d = Math.max(0, Math.min(x.min, m - u)); if (x.art === "fahren") s += d; u += x.min; } return s; };
       const t9 = [3, 15], t10 = [18.5, 31.5];
       uhr(T0, ch.dauer, function (t) {
@@ -49,13 +49,7 @@
         L.zeichne(ev, hh);
         Mm.setze(lenkBei(ev, hh * 60), zweiter && lenkBei(ev, hh * 60) > h(9) ? "#F2C16E" : A.fahren);
         p9.setze(!zweiter ? fenster(t, 3.5, 17, 0.5) : 0); p10.setze(zweiter ? fenster(t, 18.5, 40, 0.5) : 0);
-        // Hervorhebung „andere Arbeit“ (Satz 4)
-        const arbeitStart = L.px((h(4.5) + 45 + h(4.5)) / 60), an = fenster(t, 33.0, ch.dauer - 1, 0.5);
-        pa.el.style.left = BK.f(arbeitStart + 40) + "px"; pa.el.style.top = "470px"; pa.setze(zweiter ? 0 : 0);
-        if (t >= 33) { Z.leiste; }
       });
-      // „Andere Arbeit“-Beispiel: kurz zurück zu Tag 9 h, Markierung der Arbeitsstrecke
-      const L2 = null;
     }
 
     /* ---------- K3: Pause ---------- */
@@ -70,7 +64,7 @@
       const erg = szen.map((s) => M.pruefeTag(s.ev.concat([{ art: "ruhe", min: h(11) }])).ok);
       if (!(erg[0] && erg[1] && !erg[2])) throw new Error("Pausen-Beispiele passen nicht zum Modell: " + erg.join());
       const pn = szen.map((s, k) => pille(st, s.name, 540, 200, k < 2 ? A.pause : WARN, true));
-      const pok = pille(st, tx("l_ok"), 540, 760, GRUEN, true), pnicht = pille(st, tx("l_nicht"), 540, 760, WARN, true), titel = pille(st, tx("l_dauer"), 540, 480, A.fahren);
+      const pok = pille(st, tx("l_ok"), 540, 840, GRUEN, true), pnicht = pille(st, tx("l_nicht"), 540, 840, WARN, true), titel = pille(st, tx("l_dauer"), 540, 700, A.fahren);
       uhr(T0, ch.dauer, function (t) {
         let k = t < 18.8 ? 0 : t < 34.8 ? 1 : 2; const s = szen[k], hh = lauf(t, s.t0, s.t1, summe(s.ev));
         L.zeichne(s.ev, hh); const z = M.lenkdauerBei(s.ev, hh * 60);
@@ -112,10 +106,10 @@
       if (!M.pruefeWochen(stunden).ok) throw new Error("Wochen-Beispiel passt nicht zum Modell");
       const tage = ["l_mo", "l_di", "l_mi", "l_do", "l_fr", "l_sa", "l_so"].map((k) => tx(k));
       const Kal = Z.kalender(B, { stunden: stunden, ys: [330, 700], hoehe: 150, tage: tage, breite: 130, x0: 60 });
-      const w1 = pille(st, tx("l_w1"), 150, 150, A.fahren), w2 = pille(st, tx("l_w2"), 150, 520, A.fahren), ruhe = pille(st, tx("l_wruhe"), 540, 880, A.ruhe);
+      const w1 = pille(st, tx("l_w1"), 150, 150, A.fahren), w2 = pille(st, tx("l_w2"), 150, 520, A.fahren), ruhe = pille(st, tx("l_wruhe"), 540, 950, A.ruhe);
       const wp = [pille(st, "", 800, 150, A.fahren), pille(st, "", 800, 520, A.fahren)];
       // Wochenruhe: Balken über Sa/So Woche 1
-      const rb = el("rect", { x: 60 + 5 * 130 + 16, y: 215, width: 2 * 130 - 20, height: 170, rx: 14, fill: "rgba(129,144,232,.25)", stroke: A.ruhe, "stroke-width": 4, opacity: 0 }, B.ueber);
+      const rb = el("rect", { x: 60 + 6 * 130 + 16, y: 215, width: 130 - 20, height: 170, rx: 14, fill: "rgba(129,144,232,.25)", stroke: A.ruhe, "stroke-width": 4, opacity: 0 }, B.ueber);
       uhr(T0, ch.dauer, function (t) {
         const a = lauf(t, 13, 27, 14); Kal.setze(a, { vorlage: (wi, s) => s + " " + tx("l_h") });
         w1.setze(t > 5 ? 1 : 0); w2.setze(t > 5 && a > 7 ? 1 : 0);
