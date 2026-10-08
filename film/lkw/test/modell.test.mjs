@@ -169,3 +169,56 @@ test("Tagesruhe geteilt: erst mind. 3 h, dann mind. 9 h = regelmäßig (Gegenpro
   assert.equal(M.pruefeTag(tag(2, 9)).ok, false);
   assert.equal(M.pruefeTag(tag(9, 3)).ok, false);
 });
+
+test("Sichtfeld: verdeckter Bereich vor der Kabine (Handrechnung) und Gegenproben", () => {
+  const near = (a, b, e) => assert.ok(Math.abs(a - b) < e, a + " ≠ " + b);
+  near(M.verdecktVorn(0), 1.45 * (2.55 / 0.7 - 1), 1e-9);             // Boden: Strahl über die Unterkante der Scheibe (1,45 m Auge–Scheibe, 0,70 m Höhenunterschied)
+  near(M.verdecktVorn(1.2), 1.45 * ((2.55 - 1.2) / 0.7 - 1), 1e-9);   // Kind 1,2 m
+  assert.equal(M.verdecktVorn(1.85), 0);                              // Objekt höher als die Scheibenunterkante: sofort sichtbar
+  const sf = M.sichtfeld(M.FAHRZEUGE.solo), xv = 6.2;
+  assert.equal(sf.sichtbar(xv + 1.0, 0, 1.2), false);                 // Kind 1 m vor der Stoßstange: verdeckt
+  assert.equal(sf.sichtbar(xv + 1.5, 0, 1.2), true);                  // 1,5 m vor der Stoßstange: Kopf über der Sichtlinie
+  assert.equal(sf.sichtbar(xv + 3.0, 0, 0), false);                   // Boden 3 m vor der Stoßstange: noch verdeckt
+  assert.equal(sf.sichtbar(xv + 4.5, 0, 0), true);                    // Boden 4,5 m davor: sichtbar
+  assert.equal(sf.sichtbar(xv + 1.0, 0, 1.8), true);                  // Erwachsener ab fast sofort
+  // toter Winkel hinter dem Lkw (Aufbau verdeckt) und im Spiegel seitlich dahinter
+  assert.equal(sf.sichtbar(-8, 0, 0), false);
+  assert.equal(sf.sichtbar(-8, 3.5, 0), true);
+  // rechts neben dem Fahrerhaus: Boden verdeckt; hinter dem Spiegel (weiter hinten) im Spiegel sichtbar
+  assert.equal(sf.sichtbar(7.0, 2.4, 0), false);
+  assert.equal(sf.sichtbar(1.0, 2.4, 0), true);
+  // die Quelle „fahrzeug“ gilt nie als sichtbar
+  assert.equal(sf.sichtbar(2, 0, 0), false);
+});
+
+test("polyAbstand: Abstand, Berührung, Überlappung", () => {
+  const q = (x, y, w) => [{ x, y }, { x: x + w, y }, { x: x + w, y: y + w }, { x, y: y + w }];
+  assert.equal(M.polyAbstand(q(0, 0, 1), q(3, 0, 1)), 2);
+  assert.equal(M.polyAbstand(q(0, 0, 2), q(1, 1, 2)), 0);
+  assert.ok(Math.abs(M.polyAbstand(q(0, 0, 1), q(2, 2, 1)) - Math.SQRT2) < 1e-12);
+});
+
+test("Rechtsabbiegen mit Radfahrer: Art A endet kurz vor dem Zusammenstoß, Art B bleibt sicher (mit Gegenproben)", () => {
+  const A = M.radfahrerAbbiegen("A"), B = M.radfahrerAbbiegen("B");
+  // A: Anhalten bei Abstand < 0,35 m, vorher nie unter 0,35 m, nie Überlappung
+  assert.equal(A.kontakt, true);
+  const letzte = A.frames[A.frames.length - 1];
+  assert.ok(letzte.abstand < 0.35 && letzte.abstand > 0.1, "Endabstand " + letzte.abstand);
+  assert.ok(A.frames.slice(0, -1).every((q) => q.abstand >= 0.35));
+  // Der Radfahrer wird zuerst gesehen (Spiegel), liegt aber in den letzten gut 1 s vor dem Anhalten im toten Winkel
+  assert.ok(A.frames.some((q) => q.sicht === "spiegel"));
+  let k = A.frames.length - 1, verdeckt = 0; while (k >= 0 && A.frames[k].sicht === "verdeckt") { verdeckt += A.P.dt; k--; }
+  assert.ok(verdeckt >= 1.0, "verdeckt vor dem Anhalten: " + verdeckt);
+  // B: kein Kontakt, Mindestabstand = seitlicher Abstand zu Beginn (0,83 m); Lkw steht, solange der Radfahrer vorbeifährt
+  assert.equal(B.kontakt, false);
+  assert.ok(B.minAbstand > 0.8);
+  assert.ok(B.frames.some((q) => q.v === 0));
+  assert.ok(B.losBei != null && B.frames.every((q) => q.t < B.losBei || q.bx > 32 + 10.75));   // Abbiegen erst, wenn der Radfahrer weit genug vorbei ist
+  const vorStart = B.frames.filter((q) => q.t < B.losBei);
+  assert.ok(vorStart.every((q) => q.s < 32 - 1.0), "Lkw biegt vor dem Losfahren nicht ab");
+  // Gegenprobe 1: Lkw fährt von Anfang an im Schritttempo (A-Verlauf mit 1,8 m/s): Radfahrer ist längst vorbei, kein Kontakt
+  assert.equal(M.radfahrerAbbiegen("A", { v0: 1.8, v1: 1.8 }).kontakt, false);
+  // Gegenprobe 2: wäre der Radfahrer sichtbar (Sicht-Probe an einem Punkt hinter dem Spiegel), meldet das Modell „spiegel“
+  const sf = M.sichtfeld(M.FAHRZEUGE.solo);
+  assert.ok(sf.quelle(1.0, 2.4, 1.0) && /^(haupt|weit)/.test(sf.quelle(1.0, 2.4, 1.0)));
+});
