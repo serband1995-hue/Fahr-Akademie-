@@ -128,3 +128,35 @@ test("Folgefahrt (Film 5.4): mit 50 m Lücke kommt der Lkw hinter dem Pkw zum St
   assert.ok(ideal.minAbstand >= 19.99, "gleiche Verzögerung ohne Reaktionszeit: Abstand bleibt " + ideal.minAbstand.toFixed(2));
   console.log("  Folgefahrt 50 m: Rest-Abstand " + gut.minAbstand.toFixed(1) + " m; 20 m: Berührung nach " + knapp.kollision.toFixed(2) + " s");
 });
+
+test("Sozialvorschriften (Film 8.1): gültige Tage bestehen, Gegenproben mit absichtlich falscher Eingabe schlagen an", () => {
+  const h = (x) => x * 60;
+  const gut = [{ art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(4.5) }, { art: "arbeit", min: h(1) }, { art: "ruhe", min: h(11) }];
+  const r = M.pruefeTag(gut); assert.ok(r.ok && r.lenkMin === 540 && r.ruhe === "regelmaessig", JSON.stringify(r));
+  // geteilte Pause 15 + 30 (richtige Reihenfolge) zählt, 30 + 15 nicht
+  const geteilt = (a, b) => [{ art: "fahren", min: h(2) }, { art: "pause", min: a }, { art: "fahren", min: h(2.5) }, { art: "pause", min: b }, { art: "fahren", min: h(2) }, { art: "ruhe", min: h(11) }];
+  assert.ok(M.pruefeTag(geteilt(15, 30)).ok, "15 + 30 ist erlaubt");
+  assert.ok(!M.pruefeTag(geteilt(30, 15)).ok, "30 + 15 reicht nicht");
+  assert.ok(!M.pruefeTag([{ art: "fahren", min: h(4.6) }, { art: "pause", min: 45 }, { art: "ruhe", min: h(11) }]).ok, "4,6 h ohne Pause");
+  assert.ok(!M.pruefeTag([{ art: "fahren", min: h(4.5) }, { art: "pause", min: 40 }, { art: "fahren", min: h(1) }, { art: "ruhe", min: h(11) }]).ok, "40 min Pause reicht nicht");
+  // Tageslenkzeit 9 h, 10 h nur mit Verlängerung
+  const zehn = [{ art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(1) }, { art: "ruhe", min: h(11) }];
+  assert.ok(!M.pruefeTag(zehn).ok && M.pruefeTag(zehn, { verlaengert: true }).ok, "10 h nur zweimal pro Woche erlaubt");
+  // Tagesruhe im 24-h-Fenster: 13 h Schicht + 11 h Ruhe regelmäßig, 15 h + 9 h reduziert, 16 h + 8 h Verstoß
+  const tag = (arbeit, ruhe) => [{ art: "arbeit", min: h(arbeit) }, { art: "ruhe", min: h(ruhe) }];
+  assert.equal(M.pruefeTag(tag(13, 11)).ruhe, "regelmaessig"); assert.equal(M.pruefeTag(tag(15, 9)).ruhe, "reduziert"); assert.equal(M.pruefeTag(tag(16, 9)).ruhe, "zuKurz");
+  assert.equal(M.pruefeTag(tag(13, 12)).ruhe, "regelmaessig");
+  // Woche: 56 h und 90 h über zwei Wochen
+  assert.ok(M.pruefeWochen([[9, 9, 10, 10, 9, 9, 0], [9, 9, 8, 8, 0, 0, 0]]).ok, "56 + 34 = 90 ist erlaubt");
+  assert.ok(!M.pruefeWochen([[9, 9, 10, 10, 9, 9, 0], [9, 9, 8, 8, 1, 0, 0]]).ok, "56 + 35 = 91 ist zu viel");
+  assert.ok(!M.pruefeWochen([[10, 10, 10, 9, 9, 0, 0]]).ok, "dreimal 10 h in einer Woche");
+  assert.ok(!M.pruefeWochen([[9, 9, 9, 9, 9, 9, 3]]).ok, "57 h in einer Woche");
+});
+
+test("Lenkdauer-Messer (Film 8.1) folgt der Prüfung: nach 45 min und nach 15 + 30 min zurück auf 0, nach 30 + 15 min nicht", () => {
+  const h = (x) => x * 60, ev = (a, b) => [{ art: "fahren", min: h(2) }, { art: "pause", min: a }, { art: "fahren", min: h(2.5) }, { art: "pause", min: b }, { art: "fahren", min: 30 }];
+  assert.equal(M.lenkdauerBei(ev(15, 30), h(2) + 15 + h(2.5) + 30).seit, 0, "15 + 30 setzt zurück");
+  assert.equal(M.lenkdauerBei(ev(30, 15), h(2) + 30 + h(2.5) + 15).seit, h(4.5), "30 + 15 setzt nicht zurück");
+  assert.equal(M.lenkdauerBei([{ art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }], h(4.5) + 45).seit, 0);
+  assert.ok(M.lenkdauerBei(ev(30, 15), h(2) + 30 + h(2.5) + 15 + 30).seit > h(4.5), "weiterfahren über 4:30");
+});

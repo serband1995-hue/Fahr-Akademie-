@@ -1,5 +1,5 @@
-/* GENERIERT von film/lkw/bauen.mjs – nicht von Hand ändern (Quellen: film/lkw/kern/*, film/lkw/f5-1/*).
-   Erklärfilm „f5-1“ für „Lkw und Zug verstehen“: Animation läuft live (GSAP) und wird aus dem Rechenmodell gezeichnet, nur der Text wechselt je Sprache. Keine Videodatei.
+/* GENERIERT von film/lkw/bauen.mjs – nicht von Hand ändern (Quellen: film/lkw/kern/*, film/lkw/f5-4/*).
+   Erklärfilm „f5-4“ für „Lkw und Zug verstehen“: Animation läuft live (GSAP) und wird aus dem Rechenmodell gezeichnet, nur der Text wechselt je Sprache. Keine Videodatei.
    starte(platz, { sprache }) -> { zerstoeren, zustand, zeitleiste, gesamt }. Braucht window.gsap (vendor/gsap-3.14.2.min.js). */
 const W = {};
 const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; left:0; top:0; width:1080px; height:1080px; overflow:hidden; background:#434B45; direction:ltr;}\n.lk .stage > *{position:absolute;}\n.lk .pill{padding:10px 28px; border-radius:42px; background:#FAF6EC; color:#2F4A34; border:3px solid var(--lk-gold,#D9954C); font:700 44px/1.15 var(--lk-text,'Barlow',sans-serif); text-align:center; max-width:560px; box-shadow:0 5px 12px rgba(0,0,0,.35);}\n.lk .pill.gross{font-size:62px; padding:16px 44px; border-radius:60px; max-width:900px;}\n.lk .pill.klein{font-size:38px; padding:6px 20px;}\n.lk .lkw-pill{text-wrap:balance;}\n.lk-rtl .pill{direction:rtl;}\n.lk .panel .kicker{font-family:var(--lk-text,'Barlow',sans-serif); font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#8F5A14;}\n.lk .panel .ttl{font-family:var(--lk-titel,'Playfair Display',serif); font-weight:700; color:#2F4A34;}\n.lk .panel .sub{font-family:var(--lk-text,'Barlow',sans-serif); font-weight:500; color:#6F6857; opacity:0;}\n.lk .pts{display:grid;}\n.lk .pts > *{grid-area:1 / 1; align-self:start; opacity:0;}\n.lk .pt .tx{text-wrap:balance; font-family:var(--lk-text,'Barlow',sans-serif); font-weight:600; color:#2B2A22;}\n.lk .pt.gold .tx{color:#8F5A14;}\n.lk .pt .rf{font-family:var(--lk-text,'Barlow',sans-serif); font-weight:500; color:#6F6857;}\n.lk .merk{background:#2F4A34; color:#FAF6EC; border-left:12px solid #D9954C; border-radius:6px 18px 18px 6px; font-family:var(--lk-titel,'Playfair Display',serif); font-weight:600; box-shadow:0 10px 24px rgba(43,42,34,.25);}\n\n/* Erklärfilme „Lkw und Zug verstehen“ in der App: Bild oben, Text darunter, Steuerung darunter (keine Knöpfe auf dem Bild).\n   Handy zuerst (360–412 px). Ab ~660 px Breite (Querformat/Tablet) steht der Text neben dem Bild. */\n.lk { --lk-titel:var(--ff-titel,'Playfair Display',Georgia,serif); --lk-text:var(--ff-body,'Barlow',sans-serif); --lk-gold:var(--gold,#D9954C); margin:var(--sp-m,12px) 0 var(--sp-l,18px); }\n.lk-kopf { font-family:var(--lk-titel); font-weight:600; font-size:19px; margin:0 0 4px; }\n.lk-intro { color:var(--muted,#6F6857); font-size:14.5px; line-height:1.45; margin:0 0 10px; }\n.lk-kasten { background:var(--surface,#EEE6D3); border:1px solid var(--border,rgba(43,40,30,.16)); border-radius:var(--r-l,16px); padding:10px; overflow:hidden; }\n.lk-szenen { display:grid; position:relative; }\n.lk-szenen .scene { grid-area:1 / 1; display:flex; flex-direction:column; gap:12px; min-width:0; pointer-events:none; direction:ltr; }\n.lk-szenen .stagewrap { width:100%; aspect-ratio:1 / 1; border-radius:var(--r-m,12px); overflow:hidden; flex:none; background:#434B45; }\n.lk-szenen .stage { transform-origin:0 0; transform:scale(var(--lk-s,.3)); }\n.lk-szenen .panel { min-width:0; padding:2px 4px 4px; }\n.lk-szenen .dots, .lk-szenen .foot { display:none; }\n.lk-szenen .kicker { font-size:12.5px; line-height:1.3; letter-spacing:.12em; }\n.lk-szenen .ttl { font-size:24px; line-height:1.15; margin:4px 0 0; }\n.lk-szenen .sub { font-size:16px; line-height:1.4; margin-top:8px; }\n.lk-szenen .pts { margin-top:12px; }\n.lk-szenen .pt .tx { font-size:18px; line-height:1.42; }\n.lk-szenen .pt .rf { font-size:13px; line-height:1.35; margin-top:6px; }\n.lk-szenen .step .nr { font-size:36px; }\n.lk-szenen .step .nm { font-size:22px; line-height:1.2; margin-top:2px; }\n.lk-szenen .step .tx { font-size:17px; line-height:1.42; margin-top:8px; }\n.lk-szenen .step .px { font-size:15px; line-height:1.4; margin-top:8px; }\n.lk-szenen .step .rf { font-size:13px; line-height:1.35; margin-top:6px; }\n.lk-szenen .merk { padding:14px 16px; font-size:20px; line-height:1.3; border-left-width:8px; }\n.lk-breit .lk-szenen .scene { flex-direction:row; align-items:flex-start; gap:20px; }\n.lk-breit .lk-szenen .stagewrap { flex:0 0 46%; }\n.lk-breit .lk-szenen .panel { flex:1; }\n.lk-rtl .lk-szenen .panel, .lk-rtl .lk-text, .lk-rtl .lk-intro, .lk-rtl .lk-kopf { direction:rtl; text-align:right; }\n.lk-steuer { display:flex; flex-direction:column; gap:10px; margin-top:12px; }\n.lk-reihe { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }\n.lk-knopf { min-height:44px; padding:0 16px; border-radius:999px; border:1px solid var(--border,rgba(43,40,30,.16)); background:var(--bg,#FAF6EC); color:var(--text,#2B2A22); font:600 15px/1.2 var(--lk-text); display:inline-flex; align-items:center; gap:8px; cursor:pointer; }\n.lk-knopf svg { width:18px; height:18px; flex:none; fill:currentColor; }\n.lk-play { background:var(--lk-gold); color:var(--auf-gold,#2B2A22); border-color:transparent; }\n.lk-zeit { margin-inline-start:auto; font-size:13px; color:var(--muted,#6F6857); font-variant-numeric:tabular-nums; direction:ltr; }\n.lk-regler { width:100%; height:28px; margin:0; accent-color:var(--gold-text,#8F5A14); direction:ltr; }\n.lk-kapitel { display:grid; grid-template-columns:repeat(auto-fit,minmax(40px,1fr)); gap:4px; direction:ltr; }   /* 7 Kapitel müssen bei 360 px in eine Zeile passen, sonst wickeln sie um */\n.lk-kap { min-width:0; min-height:44px; border-radius:12px; border:1px solid var(--border,rgba(43,40,30,.16)); background:var(--bg,#FAF6EC); color:var(--text,#2B2A22); font:700 15px/1 var(--lk-text); cursor:pointer; }\n.lk-kap[aria-current=\"true\"] { background:var(--gruen,#2F4A34); color:var(--auf-tief,#fff); border-color:transparent; }\n.lk-knopf:focus-visible, .lk-kap:focus-visible, .lk-regler:focus-visible, .lk-text summary:focus-visible { outline:3px solid var(--gold-text,#8F5A14); outline-offset:2px; }\n.lk-text { margin-top:12px; font-size:15px; line-height:1.5; }\n.lk-text summary { min-height:44px; display:flex; align-items:center; cursor:pointer; font-weight:600; }\n.lk-text h3 { font-family:var(--lk-titel); font-size:16px; margin:14px 0 4px; }\n.lk-text p { margin:0 0 6px; }\n.lk-text .lk-ref { color:var(--muted,#6F6857); font-size:13px; }\n@media (prefers-reduced-motion: reduce) { .lk-szenen .stage { transition:none; } }\n/* Paragrafen-Verweise nie verdrehen (RTL-Sprachen), Regel 8 der Sprachen-Notiz */\n.lk-szenen .rf, .lk-szenen .step .rf, .lk-text .lk-ref { unicode-bidi:plaintext; }\n/* Schriften ohne Playfair-Zeichen (ar, ckb, ur, hi, fa, ps, el, am, ti): Überschriften in Barlow, mehr Zeilenhöhe */\n.lk-barlow { --lk-titel:var(--ff-body,'Barlow',sans-serif); }\n.lk-barlow .ttl, .lk-barlow .nm, .lk-barlow .merk, .lk-barlow .bigcard, .lk-barlow .lk-kopf, .lk-barlow .lk-text h3 { font-weight:700; }\n.lk[lang=\"ur\"] .lk-szenen :is(.pt .tx,.step .tx,.step .px,.sub,.merk,.ttl,.step .nm), .lk[lang=\"ur\"] .lk-text, .lk[lang=\"ur\"] .lk-intro { line-height:1.7; }\n.lk[lang=\"ps\"] .lk-szenen :is(.pt .tx,.step .tx,.step .px,.sub,.merk,.ttl,.step .nm), .lk[lang=\"ps\"] .lk-text, .lk[lang=\"ps\"] .lk-intro { line-height:1.55; }\n";
@@ -709,399 +709,260 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
 
 })(W);
 
-// ---- f5-1/text.js ----
+// ---- f5-4/text.js ----
 (function (window) {
-/* Film 5.1 „Schleppkurven: Solo, Lastzug, Sattelzug“ – EINE Quelle für allen Text (Deutsch) samt Zeiten. KEINE Stimme: alles steht als Text im Bild.
-   Faktenblatt (jede Aussage mit Norm/Wortlaut): Obsidian-Vault, „Film 5.1 Schleppkurven – Faktenblatt“.
-   Norm: § 32d StVZO (Kurvenlaufeigenschaften), Wortlaut geprüft am 07.10.2026 gegen gesetze-im-internet.de. Die Spuren im Bild sind GERECHNET
-   (kern/modell.js, Tests in test/modell.test.mjs), die Fahrzeugmaße sind Beispielwerte, keine Daten eines bestimmten Fahrzeugs.
-
-   Aufbau wie beim Film „Vorfahrt“: de = alle Sätze mit Schlüssel (werden in 17 Sprachen übersetzt, Schlüssel bleiben gleich);
-   kapitel = Reihenfolge, Zeiten (t = Sekunden ab Kapitelanfang). Paragrafen-Verweise ("ref") sind Zitate und werden NICHT übersetzt.
-   Lesezeit: jeder Satz bleibt mindestens 2,0 s + 0,5 s je Wort stehen (Deutsch); geprüft mit `node pruefe-lesezeit.mjs`. */
+/* Film 5.4 „Abstand: 50 Meter auf der Autobahn“ – EINE Quelle für allen Text (Deutsch) samt Zeiten. Keine Stimme (Stimmen kommen später in einer eigenen Sitzung).
+   Norm: § 4 Abs. 1, 2, 3 StVO, Wortlaut geprüft am 08.10.2026 gegen gesetze-im-internet.de (stvo_2013 § 4).
+   Die Fahrzeugbewegungen im Bild kommen aus dem Rechenmodell (kern/modell.js, folgefahrt); Beispielwerte, keine Zahlen im Film außer 50 m, 3,5 t, 50 km/h, 7 m.
+   Aufbau und Regeln wie film/lkw/f5-1/text.js. */
 window.FILM_TEXT = {
-  film: "lkw-f5-1",
+  film: "lkw-f5-4",
+  poster: 40,
   de: {
-    titel: "Schleppkurven – wo fährt der Anhänger?",
-    ui_ueber: "Überblick: Schleppkurven in 4 Minuten",
+    titel: "Abstand – wie viel braucht ein Lkw?",
+    ui_ueber: "Überblick: Abstand für Lkw in 3 Minuten",
     ui_intro: "Ein kurzer Film ohne Ton: Alles steht als Text im Bild. Du kannst jederzeit anhalten oder ein Kapitel wählen.",
-    ui_start: "Film starten",
-    ui_pause: "Anhalten",
-    ui_weiter: "Weiter",
-    ui_neu: "Von vorn",
-    ui_kapitel: "Kapitel",
-    ui_lesen: "Den ganzen Text lesen",
+    ui_start: "Film starten", ui_pause: "Anhalten", ui_weiter: "Weiter", ui_neu: "Von vorn", ui_kapitel: "Kapitel", ui_lesen: "Den ganzen Text lesen",
 
-    k1_kicker: "Die Frage",
-    k1_titel: "Wohin läuft das Heck?",
-    k1_sub: "Ein Lkw biegt rechts ab.",
-    k1_p1: "Die Vorderräder fahren eine Kurve.",
-    k1_p2: "Aber wo fahren die hinteren Räder? Und wo der Anhänger?",
-    k1_p3: "Die Spuren aller Achsen in der Kurve heißen Schleppkurven.",
+    k1_kicker: "Die Frage", k1_titel: "Wie viel Abstand braucht ein Lkw?", k1_sub: "Ein Lkw folgt einem Auto.",
+    k1_p1: "Vor dem Lkw fährt ein Auto.",
+    k1_p2: "Wie groß muss der Abstand sein?",
+    k1_p3: "Das Gesetz kennt eine Grundregel und eine feste Zahl.",
 
-    k2_kicker: "Der Lkw allein",
-    k2_titel: "Die Hinterachse läuft enger",
-    k2_sub: "Ein Lkw ohne Anhänger, maßstabsgetreu gezeichnet.",
-    k2_p1: "Beim Lkw im Beispiel lenkt nur die Vorderachse. Die Hinterachse läuft hinterher.",
-    k2_p2: "Darum läuft die Hinterachse auf einem engeren Radius.",
-    k2_p3: "Der Raum zwischen den Spuren wird überstrichen.",
-    k2_p4: "Das ist der Gefahrenbereich.",
-    l_vorn: "Vorderachse",
-    l_hinten: "Hinterachse",
-    l_gefahr: "Gefahrenbereich",
+    k2_kicker: "Die Grundregel", k2_titel: "Anhalten können", k2_sub: "Das gilt für alle Fahrzeuge.",
+    k2_p1: "Der Abstand muss in der Regel so groß sein, dass du hinter dem Vordermann halten kannst, wenn er plötzlich bremst.",
+    k2_p2: "Hier reicht der Abstand: Der Lkw hält hinter dem Auto.",
+    k2_p3: "Hier nicht: Der Lkw kommt nicht mehr rechtzeitig zum Stehen.",
+    k2_p4: "Wer vorausfährt, darf nicht ohne zwingenden Grund stark bremsen.",
+    l_genug: "Genug Abstand", l_zuwenig: "Zu wenig Abstand",
 
-    k3_kicker: "Mit Anhänger",
-    k3_titel: "Der Lastzug",
-    k3_sub: "Lkw mit Anhänger an einer starren Deichsel.",
-    k3_p1: "Die Anhängerachse folgt dem Kupplungspunkt, nicht dem Lkw.",
-    k3_p2: "In diesem Beispiel läuft sie noch enger als die Hinterachse.",
-    k3_p3: "Im Beispiel wird der Gefahrenbereich breiter.",
-    l_anhaenger: "Anhängerachse",
-    l_kupplung: "Kupplungspunkt",
+    k3_kicker: "Autobahn", k3_titel: "Mindestens 50 Meter", k3_sub: "Eine feste Zahl für schwere Lkw und Busse.",
+    k3_p1: "Auf Autobahnen müssen Lkw mit mehr als 3,5 t zulässiger Gesamtmasse mindestens 50 m Abstand halten.",
+    k3_p2: "Das gilt, wenn die Geschwindigkeit mehr als 50 km/h beträgt.",
+    k3_p3: "Das gilt auch für Kraftomnibusse.",
+    k3_p4: "Weniger als 50 m ist nicht erlaubt.",
+    l_mindest: "Mindestens 50 m", l_zukurz: "Weniger als 50 m",
 
-    k4_kicker: "Mit Auflieger",
-    k4_titel: "Der Sattelzug",
-    k4_sub: "Zugmaschine und Auflieger.",
-    k4_p1: "Der Auflieger hängt am Königszapfen der Sattelkupplung.",
-    k4_p2: "In der Kurve knickt der Auflieger nach und nach ab.",
-    k4_p3: "Im Beispiel läuft seine Spur am weitesten innen.",
-    l_auflieger: "Aufliegerachsen",
-    l_zapfen: "Königszapfen",
-    l_knick: "Knickwinkel",
+    k4_kicker: "Außerorts", k4_titel: "Die Sieben", k4_sub: "Die 7 sind Meter Zuglänge, keine Tonnen.",
+    k4_p1: "Ein Zug, der länger als 7 m ist, muss außerorts so viel Abstand halten, dass ein überholendes Kraftfahrzeug einscheren kann.",
+    k4_p2: "Das gilt nicht, wenn in deiner Richtung mehr als ein Fahrstreifen vorhanden ist.",
+    k4_p3: "Es gilt auch nicht auf Strecken mit Überholverbot.",
+    k4_p4: "Und nicht, wenn du selbst zum Überholen ausscherst und das angekündigt hast.",
+    l_platz: "Platz zum Einscheren", l_zug: "Zug länger als 7 m",
 
-    k5_kicker: "Im Vergleich",
-    k5_titel: "Gleiche Kurve, drei Fahrzeuge",
-    k5_sub: "Die Vorderachse fährt jedes Mal dieselbe Kurve.",
-    k5_p1: "Im Beispiel rückt die hintere Spur immer weiter nach innen: Lkw, Lastzug, Sattelzug.",
-    l_lkw: "Lkw",
-    l_lastzug: "Lastzug",
-    l_sattel: "Sattelzug",
-
-    k6_kicker: "Das Gesetz",
-    k6_titel: "Der Kreisring",
-    k6_sub: "Wie viel Platz darf die Bauart eines Fahrzeugs brauchen?",
-    k6_p1: "Eine Kreisfahrt hat den äußeren Radius 12,50 m.",
-    k6_p2: "Die überstrichene Ringfläche darf höchstens 7,20 m breit sein.",
-    k6_p3: "Der freie Innenkreis hat also mindestens 5,30 m Radius.",
-    k6_p4: "Beim Einfahren in den Kreis darf kein Teil die gerade Anfahrlinie um mehr als 0,80 m nach außen überschreiten.",
-    k6_p5: "Der Beispiel-Sattelzug hält beides ein.",
-    l_r_aussen: "12,50 m",
-    l_r_ring: "höchstens 7,20 m",
-    l_r_innen: "5,30 m",
-    l_r_gerade: "0,80 m",
-
-    k7_kicker: "Merke",
-    k7_titel: "Zum Mitnehmen",
-    k7_merk: "Meist läuft hinten enger. Zwischen den Spuren ist Gefahrenbereich."
+    k5_kicker: "Merke", k5_titel: "Zum Mitnehmen",
+    k5_merk: "Autobahn: mindestens 50 m. Außerorts mit langem Zug: Platz zum Einscheren."
   },
   kapitel: [
-    { id: "k1", titel: "k1_titel", kicker: "k1_kicker", dauer: 24,
-      sub: { k: "k1_sub", t: 0.6 },
-      punkte: [{ k: "k1_p1", t: 3.2 }, { k: "k1_p2", t: 8.8 }, { k: "k1_p3", t: 16.4 }] },
-    { id: "k2", titel: "k2_titel", kicker: "k2_kicker", dauer: 36,
-      sub: { k: "k2_sub", t: 0.6 },
-      punkte: [{ k: "k2_p1", t: 4.5 }, { k: "k2_p2", t: 13.5 }, { k: "k2_p3", t: 20.0 }, { k: "k2_p4", t: 26.5, stil: "gold" }] },
-    { id: "k3", titel: "k3_titel", kicker: "k3_kicker", dauer: 34,
-      sub: { k: "k3_sub", t: 0.6 },
-      punkte: [{ k: "k3_p1", t: 4.5 }, { k: "k3_p2", t: 12.5 }, { k: "k3_p3", t: 21.0, stil: "gold" }] },
-    { id: "k4", titel: "k4_titel", kicker: "k4_kicker", dauer: 36,
-      sub: { k: "k4_sub", t: 0.6 },
-      punkte: [{ k: "k4_p1", t: 4.5 }, { k: "k4_p2", t: 12.0 }, { k: "k4_p3", t: 20.0, stil: "gold" }] },
-    { id: "k5", titel: "k5_titel", kicker: "k5_kicker", dauer: 20,
-      sub: { k: "k5_sub", t: 0.6 },
-      punkte: [{ k: "k5_p1", t: 5.0, stil: "gold" }] },
-    { id: "k6", titel: "k6_titel", kicker: "k6_kicker", dauer: 76,
-      sub: { k: "k6_sub", t: 0.6 },
-      punkte: [
-        { k: "k6_p1", t: 4.5, ref: "§ 32d Abs. 1 StVZO" },
-        { k: "k6_p2", t: 11.5, ref: "§ 32d Abs. 1 StVZO" },
-        { k: "k6_p3", t: 19.5, ref: "§ 32d Abs. 1 StVZO: 12,50 m − 7,20 m" },
-        { k: "k6_p4", t: 28.0, ref: "§ 32d Abs. 2 StVZO" },
-        { k: "k6_p5", t: 69.0, stil: "gold" }] },
-    { id: "k7", titel: "k7_titel", kicker: "k7_kicker", dauer: 14,
-      merk: { k: "k7_merk", t: 1.2 } }
+    { id: "k1", titel: "k1_titel", kicker: "k1_kicker", dauer: 24, sub: { k: "k1_sub", t: 0.6 },
+      punkte: [{ k: "k1_p1", t: 3.0 }, { k: "k1_p2", t: 8.5 }, { k: "k1_p3", t: 14.5 }] },
+    { id: "k2", titel: "k2_titel", kicker: "k2_kicker", dauer: 52, sub: { k: "k2_sub", t: 0.6 },
+      punkte: [{ k: "k2_p1", t: 3.5, ref: "§ 4 Abs. 1 StVO" }, { k: "k2_p2", t: 17.5 }, { k: "k2_p3", t: 29.0 }, { k: "k2_p4", t: 41.0, ref: "§ 4 Abs. 1 StVO", stil: "gold" }] },
+    { id: "k3", titel: "k3_titel", kicker: "k3_kicker", dauer: 46, sub: { k: "k3_sub", t: 0.6 },
+      punkte: [{ k: "k3_p1", t: 3.5, ref: "§ 4 Abs. 3 StVO" }, { k: "k3_p2", t: 14.5, ref: "§ 4 Abs. 3 StVO" }, { k: "k3_p3", t: 24.0 }, { k: "k3_p4", t: 32.0, stil: "gold" }] },
+    { id: "k4", titel: "k4_titel", kicker: "k4_kicker", dauer: 64, sub: { k: "k4_sub", t: 0.6 },
+      punkte: [{ k: "k4_p1", t: 4.0, ref: "§ 4 Abs. 2 StVO" }, { k: "k4_p2", t: 18.0, ref: "§ 4 Abs. 2 Nr. 2 StVO" }, { k: "k4_p3", t: 29.5, ref: "§ 4 Abs. 2 Nr. 3 StVO" }, { k: "k4_p4", t: 39.5, ref: "§ 4 Abs. 2 Nr. 1 StVO" }] },
+    { id: "k5", titel: "k5_titel", kicker: "k5_kicker", dauer: 16, merk: { k: "k5_merk", t: 1.2 } }
   ]
 };
 
 })(W);
 
-W.FILM_SPRACHEN = {"en":{"titel":"Swept paths – where does the trailer go?","ui_ueber":"Overview: swept paths in 4 minutes","ui_intro":"A short film without sound: everything is shown as text on screen. You can pause at any time or pick a chapter.","ui_start":"Start film","ui_pause":"Pause","ui_weiter":"Resume","ui_neu":"Restart","ui_kapitel":"Chapters","ui_lesen":"Read the full text","k1_kicker":"The question","k1_titel":"Where does the rear end go?","k1_sub":"A truck turns right.","k1_p1":"The front wheels follow a curve.","k1_p2":"But where do the rear wheels go? And the trailer?","k1_p3":"The tracks of all axles in a turn are called swept paths.","k2_kicker":"The truck alone","k2_titel":"The rear axle runs tighter","k2_sub":"A truck without a trailer, drawn to scale.","k2_p1":"On the example truck, only the front axle steers. The rear axle follows.","k2_p2":"That is why the rear axle follows a tighter radius.","k2_p3":"The area between the tracks is swept by the vehicle.","k2_p4":"That is the danger zone.","l_vorn":"Front axle","l_hinten":"Rear axle","l_gefahr":"Danger zone","k3_kicker":"With a trailer","k3_titel":"The truck-trailer combination","k3_sub":"A truck with a trailer on a rigid drawbar.","k3_p1":"The trailer axle follows the coupling point, not the truck.","k3_p2":"In this example it runs even tighter than the rear axle.","k3_p3":"In the example, the danger zone gets wider.","l_anhaenger":"Trailer axle","l_kupplung":"Coupling point","k4_kicker":"With a semi-trailer","k4_titel":"The articulated truck","k4_sub":"Tractor unit and semi-trailer.","k4_p1":"The semi-trailer is coupled to the kingpin of the fifth wheel.","k4_p2":"In a turn, the semi-trailer gradually bends away from the tractor unit.","k4_p3":"In the example, its track runs furthest inside.","l_auflieger":"Semi-trailer axles","l_zapfen":"Kingpin","l_knick":"Articulation angle","k5_kicker":"Comparison","k5_titel":"Same turn, three vehicles","k5_sub":"The front axle drives the same turn every time.","k5_p1":"In the example, the rear track moves further and further inside: truck, truck-trailer combination, articulated truck.","l_lkw":"Truck","l_lastzug":"Truck + trailer","l_sattel":"Articulated truck","k6_kicker":"The law","k6_titel":"The turning ring","k6_sub":"How much space may a vehicle's design need?","k6_p1":"A full-circle drive has an outer radius of 12.50 m.","k6_p2":"The swept ring area may be at most 7.20 m wide.","k6_p3":"So the free inner circle has a radius of at least 5.30 m.","k6_p4":"When entering the circle, no part may cross the straight approach line by more than 0.80 m to the outside.","k6_p5":"The example articulated truck meets both limits.","l_r_aussen":"12.50 m","l_r_ring":"at most 7.20 m","l_r_innen":"5.30 m","l_r_gerade":"0.80 m","k7_kicker":"Remember","k7_titel":"Take-away","k7_merk":"The rear usually runs tighter. Between the tracks is a danger zone."},"sr":{"titel":"Putanje u krivini – kuda ide prikolica?","ui_ueber":"Pregled: putanje u krivini za 4 minuta","ui_intro":"Kratak film bez zvuka: sve piše na ekranu. Možeš da zaustaviš film ili da izabereš poglavlje kad god želiš.","ui_start":"Pokreni film","ui_pause":"Zaustavi","ui_weiter":"Nastavi","ui_neu":"Od početka","ui_kapitel":"Poglavlja","ui_lesen":"Pročitaj ceo tekst","k1_kicker":"Pitanje","k1_titel":"Kuda ide zadnji deo?","k1_sub":"Kamion skreće udesno.","k1_p1":"Prednji točkovi prave luk.","k1_p2":"Ali kuda idu zadnji točkovi? A prikolica?","k1_p3":"Tragovi svih osovina u krivini zovu se putanje (Schleppkurve).","k2_kicker":"Kamion sam","k2_titel":"Zadnja osovina ide užim lukom","k2_sub":"Kamion bez prikolice, nacrtan u razmeri.","k2_p1":"Na primeru kamiona samo prednja osovina skreće. Zadnja osovina je prati.","k2_p2":"Zato zadnja osovina ide po užem poluprečniku.","k2_p3":"Prostor između tragova vozilo prekriva.","k2_p4":"To je opasna zona.","l_vorn":"Prednja osovina","l_hinten":"Zadnja osovina","l_gefahr":"Opasna zona","k3_kicker":"Sa prikolicom","k3_titel":"Kamion sa prikolicom","k3_sub":"Kamion sa prikolicom na krutoj rudi.","k3_p1":"Osovina prikolice prati tačku spajanja, a ne kamion.","k3_p2":"U ovom primeru ide još uže od zadnje osovine.","k3_p3":"U primeru se opasna zona širi.","l_anhaenger":"Osovina prikolice","l_kupplung":"Tačka spajanja","k4_kicker":"Sa poluprikolicom","k4_titel":"Šleper","k4_sub":"Tegljač i poluprikolica.","k4_p1":"Poluprikolica je spojena sa kingpinom sedlaste spojnice.","k4_p2":"U krivini se poluprikolica postepeno lomi.","k4_p3":"U primeru njen trag ide najviše unutra.","l_auflieger":"Osovine poluprikolice","l_zapfen":"Kingpin","l_knick":"Ugao loma","k5_kicker":"Poređenje","k5_titel":"Ista krivina, tri vozila","k5_sub":"Prednja osovina svaki put vozi istu krivinu.","k5_p1":"U primeru zadnji trag sve više ide unutra: kamion, kamion sa prikolicom, šleper.","l_lkw":"Kamion","l_lastzug":"Kamion + prikolica","l_sattel":"Šleper","k6_kicker":"Zakon","k6_titel":"Kružni prsten","k6_sub":"Koliko prostora sme da zauzme konstrukcija vozila?","k6_p1":"Vožnja u krugu ima spoljašnji poluprečnik 12,50 m.","k6_p2":"Površina prstena koju vozilo prekrije sme biti široka najviše 7,20 m.","k6_p3":"Dakle, slobodan unutrašnji krug ima poluprečnik od najmanje 5,30 m.","k6_p4":"Pri ulasku u krug nijedan deo ne sme da pređe ravnu liniju prilaza više od 0,80 m ka spolja.","k6_p5":"Šleper iz primera ispunjava oba uslova.","l_r_aussen":"12,50 m","l_r_ring":"najviše 7,20 m","l_r_innen":"5,30 m","l_r_gerade":"0,80 m","k7_kicker":"Zapamti","k7_titel":"Najvažnije","k7_merk":"Pozadi najčešće ide uže. Između tragova je opasna zona."},"tr":{"titel":"Dönüş izleri – römork nereden gider?","ui_ueber":"Genel bakış: 4 dakikada dönüş izleri","ui_intro":"Sessiz kısa bir film: Her şey görüntüde yazıyla yer alır. İstediğin zaman durdurabilir veya bir bölüm seçebilirsin.","ui_start":"Filmi başlat","ui_pause":"Durdur","ui_weiter":"Devam","ui_neu":"Baştan","ui_kapitel":"Bölümler","ui_lesen":"Metnin tamamını oku","k1_kicker":"Soru","k1_titel":"Arka kısım nereye gider?","k1_sub":"Bir kamyon sağa dönüyor.","k1_p1":"Ön tekerlekler bir viraj alır.","k1_p2":"Peki arka tekerlekler nereden gider? Ya römork?","k1_p3":"Bir virajda tüm akslar tarafından bırakılan izlere dönüş izi (Schleppkurve) denir.","k2_kicker":"Tek başına kamyon","k2_titel":"Arka aks daha dar gider","k2_sub":"Römorksuz bir kamyon, ölçekli çizilmiştir.","k2_p1":"Örnekteki kamyonda yalnızca ön aks yönlendirir. Arka aks onu takip eder.","k2_p2":"Bu yüzden arka aks daha dar bir yarıçapta ilerler.","k2_p3":"İki iz arasındaki alan süpürülür.","k2_p4":"Burası tehlike bölgesidir.","l_vorn":"Ön aks","l_hinten":"Arka aks","l_gefahr":"Tehlike bölgesi","k3_kicker":"Römorklu","k3_titel":"Römorklu kamyon","k3_sub":"Sabit çeki koluna bağlı römorklu kamyon.","k3_p1":"Römork aksı kamyonu değil, bağlantı noktasını takip eder.","k3_p2":"Bu örnekte arka akstan bile daha dar gider.","k3_p3":"Örnekte tehlike bölgesi genişler.","l_anhaenger":"Römork aksı","l_kupplung":"Bağlantı noktası","k4_kicker":"Yarı römorklu","k4_titel":"Tır (çekici ve yarı römork)","k4_sub":"Çekici ve yarı römork.","k4_p1":"Yarı römork, beşinci tekerlek bağlantısının kingpin'ine takılıdır.","k4_p2":"Virajda yarı römork yavaş yavaş çekiciye göre açı yapar.","k4_p3":"Örnekte onun izi en içeriden gider.","l_auflieger":"Yarı römork aksları","l_zapfen":"Kingpin","l_knick":"Katlanma açısı","k5_kicker":"Karşılaştırma","k5_titel":"Aynı viraj, üç araç","k5_sub":"Ön aks her seferinde aynı virajı alır.","k5_p1":"Örnekte arka iz giderek daha içeri kayar: kamyon, römorklu kamyon, çekici ve yarı römork.","l_lkw":"Kamyon","l_lastzug":"Römorklu kamyon","l_sattel":"Çekici + yarı römork","k6_kicker":"Yasa","k6_titel":"Dairesel halka","k6_sub":"Bir aracın yapısı ne kadar yer kaplayabilir?","k6_p1":"Dairesel yolda sürüşte dış yarıçap 12,50 m'dir.","k6_p2":"Süpürülen halka alanı en fazla 7,20 m genişliğinde olabilir.","k6_p3":"Yani boş iç dairenin yarıçapı en az 5,30 m'dir.","k6_p4":"Daireye girerken hiçbir parça, düz yaklaşma çizgisini dışa doğru 0,80 m'den fazla aşamaz.","k6_p5":"Örnekteki çekici ve yarı römork her iki sınıra da uyar.","l_r_aussen":"12,50 m","l_r_ring":"en fazla 7,20 m","l_r_innen":"5,30 m","l_r_gerade":"0,80 m","k7_kicker":"Aklında tut","k7_titel":"Özet","k7_merk":"Çoğunlukla arka daha dar gider. İzlerin arasında tehlike bölgesi vardır."}};
-// ---- f5-1/szenen.js ----
+W.FILM_SPRACHEN = {"en":{"titel":"Following distance – how much does a truck need?","ui_ueber":"Overview: following distance for trucks in 3 minutes","ui_intro":"A short film without sound: everything is shown as text on screen. You can pause at any time or pick a chapter.","ui_start":"Start film","ui_pause":"Pause","ui_weiter":"Resume","ui_neu":"Restart","ui_kapitel":"Chapters","ui_lesen":"Read the full text","k1_kicker":"The question","k1_titel":"How much distance does a truck need?","k1_sub":"A truck follows a car.","k1_p1":"A car drives in front of the truck.","k1_p2":"How big must the distance be?","k1_p3":"The law has one basic rule and one fixed number.","k2_kicker":"The basic rule","k2_titel":"Being able to stop","k2_sub":"This applies to all vehicles.","k2_p1":"As a rule, the distance must be large enough that you can stop behind the vehicle ahead if it brakes suddenly.","k2_p2":"Here the distance is enough: the truck stops behind the car.","k2_p3":"Not here: the truck can no longer stop in time.","k2_p4":"Whoever drives ahead must not brake hard without a compelling reason.","l_genug":"Enough distance","l_zuwenig":"Too little distance","k3_kicker":"Motorway","k3_titel":"At least 50 metres","k3_sub":"A fixed number for heavy trucks and buses.","k3_p1":"On motorways, trucks with a permissible gross mass over 3.5 t must keep at least 50 m distance.","k3_p2":"This applies when the speed is more than 50 km/h.","k3_p3":"It also applies to buses.","k3_p4":"Less than 50 m is not allowed.","l_mindest":"At least 50 m","l_zukurz":"Less than 50 m","k4_kicker":"Outside built-up areas","k4_titel":"The seven","k4_sub":"The 7 is metres of combination length, not tonnes.","k4_p1":"A combination longer than 7 m must keep enough distance outside built-up areas for an overtaking motor vehicle to pull in.","k4_p2":"This does not apply if there is more than one lane in your direction.","k4_p3":"It also does not apply on stretches where overtaking is prohibited.","k4_p4":"And not if you pull out to overtake yourself and have signalled it.","l_platz":"Room to pull in","l_zug":"Over 7 m long","k5_kicker":"Remember","k5_titel":"Take-away","k5_merk":"Motorway: at least 50 m. Outside built-up areas with a long combination: room to pull in."},"sr":{"titel":"Odnos rastojanja – koliko treba kamionu?","ui_ueber":"Pregled: rastojanje za kamione za 3 minuta","ui_intro":"Kratak film bez zvuka: sve piše na ekranu. Možeš da zaustaviš film ili da izabereš poglavlje kad god želiš.","ui_start":"Pokreni film","ui_pause":"Zaustavi","ui_weiter":"Nastavi","ui_neu":"Od početka","ui_kapitel":"Poglavlja","ui_lesen":"Pročitaj ceo tekst","k1_kicker":"Pitanje","k1_titel":"Koliko rastojanja treba kamionu?","k1_sub":"Kamion prati automobil.","k1_p1":"Ispred kamiona vozi automobil.","k1_p2":"Koliko veliko mora biti rastojanje?","k1_p3":"Zakon poznaje jedno osnovno pravilo i jedan fiksan broj.","k2_kicker":"Osnovno pravilo","k2_titel":"Moći da se zaustaviš","k2_sub":"Ovo važi za sva vozila.","k2_p1":"Rastojanje u pravilu mora biti dovoljno veliko da možeš da staneš iza vozila ispred, ako ono iznenada zakoči.","k2_p2":"Ovde je rastojanje dovoljno: kamion staje iza automobila.","k2_p3":"Ovde nije: kamion više ne može na vreme da stane.","k2_p4":"Ko vozi ispred ne sme bez ozbiljnog razloga jako da koči.","l_genug":"Dovoljno rastojanje","l_zuwenig":"Premalo rastojanje","k3_kicker":"Autoput","k3_titel":"Najmanje 50 metara","k3_sub":"Fiksan broj za teške kamione i autobuse.","k3_p1":"Na autoputevima kamioni sa dozvoljenom ukupnom masom većom od 3,5 t moraju držati rastojanje od najmanje 50 m.","k3_p2":"Ovo važi kada je brzina veća od 50 km/h.","k3_p3":"Ovo važi i za autobuse.","k3_p4":"Manje od 50 m nije dozvoljeno.","l_mindest":"Najmanje 50 m","l_zukurz":"Manje od 50 m","k4_kicker":"Van naselja","k4_titel":"Sedmica","k4_sub":"Broj 7 su metri dužine kombinacije, a ne tone.","k4_p1":"Kombinacija duža od 7 m mora van naselja držati toliko rastojanje da motorno vozilo koje preticanjem prolazi može da se ubaci.","k4_p2":"Ovo ne važi ako u tvom smeru ima više od jedne trake.","k4_p3":"Ne važi ni na deonicama gde je preticanje zabranjeno.","k4_p4":"I ne važi ako i sam izlaziš iz trake radi preticanja i to si najavio.","l_platz":"Mesto za ubacivanje","l_zug":"Duža od 7 m","k5_kicker":"Zapamti","k5_titel":"Najvažnije","k5_merk":"Autoput: najmanje 50 m. Van naselja sa dugom kombinacijom: mesta za ubacivanje."},"tr":{"titel":"Takip mesafesi – bir kamyon ne kadar ister?","ui_ueber":"Genel bakış: kamyonlar için takip mesafesi, 3 dakikada","ui_intro":"Sessiz kısa bir film: Her şey görüntüde yazıyla yer alır. İstediğin zaman durdurabilir veya bir bölüm seçebilirsin.","ui_start":"Filmi başlat","ui_pause":"Durdur","ui_weiter":"Devam","ui_neu":"Baştan","ui_kapitel":"Bölümler","ui_lesen":"Metnin tamamını oku","k1_kicker":"Soru","k1_titel":"Bir kamyon ne kadar mesafe bırakmalı?","k1_sub":"Bir kamyon bir otomobili takip ediyor.","k1_p1":"Kamyonun önünde bir otomobil gidiyor.","k1_p2":"Mesafe ne kadar olmalı?","k1_p3":"Yasada bir temel kural ve bir sabit sayı vardır.","k2_kicker":"Temel kural","k2_titel":"Durabilmek","k2_sub":"Bu, tüm araçlar için geçerlidir.","k2_p1":"Mesafe, kural olarak, öndeki araç ani fren yaparsa onun arkasında durabilecek kadar büyük olmalıdır.","k2_p2":"Burada mesafe yeterli: Kamyon otomobilin arkasında durur.","k2_p3":"Burada değil: Kamyon zamanında duramaz.","k2_p4":"Önde giden, zorunlu bir neden olmadan sert fren yapmamalıdır.","l_genug":"Yeterli mesafe","l_zuwenig":"Yetersiz mesafe","k3_kicker":"Otoyol","k3_titel":"En az 50 metre","k3_sub":"Ağır kamyonlar ve otobüsler için sabit bir sayı.","k3_p1":"Otoyollarda izin verilen toplam ağırlığı 3,5 tonu aşan kamyonlar en az 50 m mesafe bırakmalıdır.","k3_p2":"Bu, hız 50 km/saati aştığında geçerlidir.","k3_p3":"Bu kural otobüsler için de geçerlidir.","k3_p4":"50 m'den az mesafe yasaktır.","l_mindest":"En az 50 m","l_zukurz":"50 m'den az","k4_kicker":"Şehir dışı","k4_titel":"Yedi","k4_sub":"Buradaki 7, ton değil, kombinasyon uzunluğunun metresidir.","k4_p1":"7 m'den uzun bir araç kombinasyonu, şehir dışında, sollayan bir motorlu aracın araya girebileceği kadar mesafe bırakmalıdır.","k4_p2":"Bu, yönünde birden fazla şerit varsa geçerli değildir.","k4_p3":"Sollamanın yasak olduğu yollarda da geçerli değildir.","k4_p4":"Kendin sollamak için şeritten çıkıyorsan ve bunu işaret ettiysen de geçerli değildir.","l_platz":"Araya girmek için yer","l_zug":"7 m üzeri","k5_kicker":"Aklında tut","k5_titel":"Özet","k5_merk":"Otoyol: en az 50 m. Şehir dışında uzun kombinasyon: araya girmek için yer."}};
+// ---- f5-4/szenen.js ----
 (function (window) {
-/* Szenen des Films 5.1 „Schleppkurven“ – EIN Code für den MP4-Film (index.html) und die App (gebaut mit ../bauen.mjs).
-   Jede Szene zeichnet sich als reine Funktion der Zeit: Fahrzeuge, Spuren, Flächen kommen aus dem Rechenmodell (kern/modell.js),
-   nichts ist von Hand animiert. Die GSAP-Zeitleiste steuert nur Einblenden und eine „Uhr“ je Kapitel (zeichne(t)).
-
+/* Szenen des Films 5.4 „Abstand“ – Seitenansicht (Kapitel 1 bis 3, 5) und Draufsicht (Kapitel 4).
+   Alle Bewegungen kommen aus dem Rechenmodell (kern/modell.js: folgefahrt, Bahn/simuliere für den Spurwechsel des Lastzugs).
    bauen({ tl, T, tx, scenes, logo }) -> { starts, gesamt, refit } */
 (function (window) {
   "use strict";
   function bauen(o) {
-    const tl = o.tl, T = o.T, tx = o.tx, M = window.LKW_MODELL, BK = window.LKW_BK, F = BK.FARBE;
-    const P = window.LKW_PANEL.neu({ tl: tl, T: T, tx: tx, logo: o.logo, fussName: "Schleppkurven" });
+    const tl = o.tl, T = o.T, tx = o.tx, M = window.LKW_MODELL, BK = window.LKW_BK, SE = window.LKW_SEITE, F = BK.FARBE, FZ = M.FAHRZEUGE;
+    const P = window.LKW_PANEL.neu({ tl: tl, T: T, tx: tx, logo: o.logo, fussName: "Abstand" });
     const starts = P.starts;
-    const FZ = M.FAHRZEUGE;
-
-    /* ---------- gemeinsame Bahn der Vorderachse: Rechtskurve 90°, Radius 10,75 m (alle drei Fahrzeuge gleich) ---------- */
-    const RT = 10.75, BOGEN = RT * Math.PI / 2, S_START = -14, S_ENDE = BOGEN + 30, DS = 0.02;   // 30 m nach der Kurve: auch der Anhänger ist wieder gerade
-    const bahn = M.bahn([{ bogen: RT, winkel: Math.PI / 2, rechts: true }, { gerade: 60 }]);
-    const sims = {};
-    const sim = (id) => sims[id] || (sims[id] = M.simuliere(FZ[id], bahn, S_START, S_ENDE, DS));
-    const idxVon = (s) => Math.max(0, Math.min(Math.round((S_ENDE - S_START) / DS), Math.round((s - S_START) / DS)));
     const klemme = (u) => Math.max(0, Math.min(1, u));
-    // Bewegungsprofil: anfahren (TA s), gleichmäßig fahren, bremsen (TB s) bis zum Stand. Bremslicht nur beim Bremsen und im Stand (Logikregel).
-    const TA = 1.5, TB = 2.5;
-    const profilU = (t, t0, t1) => {            // Anteil 0..1 des Weges zur Zeit t
-      const T = t1 - t0, v = 1 / (T - TA / 2 - TB / 2), x = klemme((t - t0) / T) * T;
-      if (x <= TA) return v * x * x / (2 * TA);
-      if (x <= T - TB) return v * TA / 2 + v * (x - TA);
-      const r = T - x; return 1 - v * r * r / (2 * TB);
-    };
-    const bremstZeit = (t, t1) => t >= t1 - TB - 0.001;
-    const OX = 340, OY = 110;                                                           // Bühnenpunkt des Kurvenanfangs (Meter 0/0)
+    const glatt = (u) => { u = klemme(u); return u * u * (3 - 2 * u); };
+    const V0 = 80 / 3.6;                       // Beispielgeschwindigkeit (kommt im Film nicht als Zahl vor)
+    const GRUEN = "#8FD6A6";
 
-    // Uhr je Kapitel: ruft zeichne(t) mit der Kapitelzeit auf (immer genau, auch beim Springen und Zurückspulen)
     function uhr(T0, dauer, zeichne) {
       const proxy = { t: 0 };
       tl.to(proxy, { t: dauer, duration: dauer, ease: "none", onUpdate: function () { zeichne(proxy.t); } }, T0);
       zeichne(0);
     }
-    const px = (W, p) => W.px(p.x, p.y);
+    // Pille, die der Zeichnung folgt (Mitte x, y), sichtbar zwischen t0 und t1
+    function folgPille(st, text, farbe, gross) {
+      const p = BK.pille(st, text, 0, 0, { punkt: farbe, klasse: gross ? "gross" : "" });
+      return { el: p, setze: function (x, y, an) { const w = p.offsetWidth || 300, xx = Math.max(w / 2 + 30, Math.min(1050 - w / 2, x)); p.style.left = BK.f(xx) + "px"; p.style.top = BK.f(y) + "px"; p.style.opacity = an; } };
+    }
+    const fenster = (t, a, b, d) => Math.min(klemme((t - a) / (d || 0.4)), klemme((b - t) / (d || 0.4)));
 
-    /* ---------- eine Fahrt: Fahrzeug + Spuren + Fläche + Band ---------- */
-    function fahrt(st, W, id, opt) {
-      const fz = FZ[id], s = sim(id), v = BK.fahrzeug(W.gFz, fz, W);
-      const fuss = BK.fussflaeche(W, s, { farbe: "#FAF6EC" });
-      const spurHinten = fz.anh ? (id === "sattelzug" ? F.auflieger : F.anhaenger) : F.hinten;
-      const sV = BK.spur(W, s, (z) => z.F, F.vorn);
-      const sA = BK.spur(W, s, (z) => z.A, F.hinten);
-      const sT = fz.anh ? BK.spur(W, s, (z) => z.T, spurHinten) : null;
-      const innen = fz.anh ? (z) => z.T : (z) => z.A;
-      const bd = BK.band(W, s, (z) => z.F, s, innen);
-      bd.zeige(0); sA.zeige(opt && opt.hintenAus ? 0 : 1);
+    /* ---------- Seitenansicht: Lkw (oder Bus) hinter Pkw ---------- */
+    function seitenBuehne(st) {
+      const V = SE.szene(st, { S: 14.5, px0: 150, boden: 700 });
+      const lkw = SE.lkw(V), bus = SE.bus(V), pkw = SE.pkw(V), kl = SE.klammer(V, 570);
+      bus.g.style.visibility = "hidden";
       return {
-        fz: fz, sim: s, v: v, spuren: { v: sV, a: sA, t: sT }, band: bd, fuss: fuss,
-        // sNow: Weg der Vorderachse (Meter), t: Zeit für das Blinken
-        zeichne: function (sNow, t, bremst) {
-          const i = idxVon(sNow), z = s.zustaende[i];
-          const blinkt = sNow > -9 && sNow < BOGEN + 2.5 && Math.floor(t * 3) % 2 === 0;
-          v.setze(z, blinkt ? 1 : 0, !!bremst);
-          sV.bis(i); sA.bis(i); if (sT) sT.bis(i); bd.bis(i); fuss.bis(i);
-          return z;
-        },
-        punkt: function (sw, wahl) { return px(W, wahl(s.zustaende[idxVon(sw)])); }
+        V: V, kl: kl,
+        // xH: Front des Lkw, xV: Heck des Pkw, bremstH/bremstV, zeigeBus, deckkraft
+        setze: function (xH, xV, bremstH, bremstV, opt) {
+          opt = opt || {};
+          V.kamera(xH);
+          const fahr = opt.bus ? bus : lkw;
+          lkw.g.style.visibility = opt.bus ? "hidden" : "visible"; bus.g.style.visibility = opt.bus ? "visible" : "hidden";
+          fahr.setze(xH, bremstH, xH); pkw.setze(xV, bremstV, xV);
+          V.gFz.style.opacity = opt.deckkraft != null ? opt.deckkraft : 1;
+        }
       };
     }
-    const fahrtS = (t, tA, tB) => S_START + (S_ENDE - S_START) * profilU(t, tA, tB);
-
-    // Pille mit Leitlinie zu einem Punkt. pos = [x, y, "l"|"r"]: "l" = linker Rand der Pille bei x, "r" = rechter Rand bei x (lange Texte wachsen nach innen, nie aus dem Bild)
-    const alle = [];   // alle Beschriftungen: Leitlinien beginnen am Rand der Pille (nach dem Laden der Schrift neu gemessen), damit sie nie hinter anderen Pillen laufen
-    function etikett(st, W, text, pos, ziel, farbe, T0, t) {
-      const links = pos[2] !== "r";
-      const p = BK.pille(st, text, pos[0], pos[1], { punkt: farbe, ax: links ? "0" : "-100%" });
-      const l = BK.leitlinie(W, pos[0], pos[1], ziel[0], ziel[1], farbe);
-      const e = { p: p, l: l, links: links, x: pos[0], y: pos[1], messen: function () { const w = p.offsetWidth || 150, ln = l.querySelector("line"); ln.setAttribute("x1", BK.f(links ? pos[0] + w : pos[0] - w)); } };
-      alle.push(e); e.messen();
-      P.zeige(p, T0 + t); P.zeige(l, T0 + t + 0.15);
-      return e;
-    }
-    // Zeit, zu der die Vorderachse so weit gefahren ist, dass die Spur „wahl“ den Kurvenwinkel WK erreicht (Beschriftung erst dann, nie ins Leere)
-    function erreicht(id, wahl, tA, tB) {
-      const zs = sim(id).zustaende; let sz = S_ENDE;
-      for (let i = 0; i < zs.length; i++) { const p = wahl(zs[i]), th = Math.atan2(p.x, -(p.y - RT)); if (p.x > 0 && th >= WK) { sz = zs[i].s; break; } }
-      let lo = tA, hi = tB; for (let k = 0; k < 40; k++) { const m = (lo + hi) / 2; if (fahrtS(m, tA, tB) < sz) lo = m; else hi = m; }
-      return hi;
-    }
-    // Beschriftung einer Achsspur: erscheint mit dem Satz (tSatz), frühestens wenn die Spur den Zielpunkt erreicht hat
-    function etk(st, W, T0, ID, fz, text, pos, wahl, farbe, tSatz, mitte) {
-      const tr = fz.tB > fz.tA ? Math.max(tSatz, erreicht(ID, wahl, fz.tA, fz.tB) + 0.3) : tSatz;
-      return etikett(st, W, text, pos, mitte ? zielMitte(W, ID, wahl) : ziel(W, ID, wahl), farbe, T0, tr);
-    }
-    // Punkt einer Spur bei Kurvenwinkel theta (0 = Kurvenanfang, 90° = Kurvenende), gemessen vom Kurvenmittelpunkt (0 / RT)
-    function beiWinkel(id, wahl, theta) {
-      const s = sim(id), zs = s.zustaende;
-      for (let i = 0; i < zs.length; i++) { const p = wahl(zs[i]), th = Math.atan2(p.x, -(p.y - RT)); if (p.x > 0 && th >= theta) return p; }
-      return wahl(zs[zs.length - 1]);
-    }
-    const BUEHNE = { S: 22, ox: OX, oy: OY, fussOpazitaet: 0.2 };
+    const frageZeichen = (V) => {
+      const g = BK.el("g", { opacity: 0 }, V.gUeber);
+      BK.el("circle", { r: 28, fill: F.creme, stroke: F.gold, "stroke-width": 5 }, g);
+      const t = BK.el("text", { "text-anchor": "middle", y: 15, "font-size": 42, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#2F4A34" }, g); t.textContent = "?";
+      return g;
+    };
 
     /* ---------- K1: Die Frage ---------- */
     function K1(sc, i, T0, ch) {
-      const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false);
-      const W = BK.welt(st, Object.assign({ id: "k1" }, BUEHNE)), a = fahrt(st, W, "solo", { hintenAus: true });
-      // „?“ an der Hinterachse (Satz 2), Spuren der Hinterachse erscheinen mit Satz 3
-      const fragez = BK.el("g", { opacity: 0 }, W.gUeber);
-      BK.el("circle", { r: 26, fill: F.creme, stroke: F.gold, "stroke-width": 5 }, fragez);
-      const tq = BK.el("text", { "text-anchor": "middle", y: 14, "font-size": 40, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#2F4A34" }, fragez); tq.textContent = "?";
-      const tA = 1.2, tB = 21.0, tFrage = ch.punkte[1].t, tReveal = ch.punkte[2].t;
+      const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), B = seitenBuehne(st), q = frageZeichen(B.V);
+      const GAP = 35, tq = ch.punkte[1].t;
       uhr(T0, ch.dauer, function (t) {
-        const z = a.zeichne(fahrtS(t, tA, tB), t, bremstZeit(t, tB));
-        const q = px(W, { x: z.A.x, y: z.A.y });
-        fragez.setAttribute("transform", "translate(" + BK.f(q[0]) + " " + BK.f(q[1]) + ")");
-        const an = t >= tFrage && t < tReveal - 0.2 ? 1 : 0, pulsiert = 1 + 0.08 * Math.sin(t * 6);
-        fragez.style.opacity = an ? Math.min(1, (t - tFrage) / 0.4) : 0; fragez.setAttribute("transform", "translate(" + BK.f(q[0]) + " " + BK.f(q[1]) + ") scale(" + pulsiert.toFixed(3) + ")");
-        a.spuren.a.zeige(t >= tReveal ? klemme((t - tReveal) / 0.8) : 0);
+        const xH = V0 * t;
+        B.setze(xH, xH + GAP, false, false);
+        const m = B.kl.setze(xH, xH + GAP); B.kl.g.style.opacity = klemme((t - tq) / 0.6);
+        q.setAttribute("transform", "translate(" + BK.f(m[0]) + " " + BK.f(m[1] - 90) + ") scale(" + (1 + 0.07 * Math.sin(t * 6)).toFixed(3) + ")"); q.style.opacity = klemme((t - tq) / 0.6);
       });
-      const fz1 = { tA: tA, tB: tB };
-      etk(st, W, T0, "solo", fz1, tx("l_vorn"), POS.rechts1, (z) => z.F, F.vorn, ch.punkte[0].t + 0.3);
-      etk(st, W, T0, "solo", fz1, tx("l_hinten"), POS.links1, (z) => z.A, F.hinten, tReveal + 0.5);
     }
 
-    /* ---------- K2/K3/K4: ein Fahrzeug fährt die Kurve ---------- */
-    function fahrKapitel(id, tA, tB, etiketten, bandT) {
-      const fz = { tA: tA, tB: tB };
-      return function (sc, i, T0, ch) {
-        const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false);
-        const W = BK.welt(st, Object.assign({ id: id + i }, BUEHNE)), a = fahrt(st, W, id);
-        const extra = [];
-        // Knickwinkel (Sattelzug): Bogen am Königszapfen zwischen den Längsachsen
-        let knick = null, knickPille = null;
-        if (id === "sattelzug") {
-          knick = BK.el("path", { fill: "rgba(237,174,79,.55)", stroke: F.gold, "stroke-width": 3, opacity: 0 }, W.gUeber);
-          knickPille = BK.pille(st, tx("l_knick"), 0, 0, { klasse: "klein", ax: "0" });
-        }
-        const tKnick = id === "sattelzug" ? ch.punkte[1].t : 0;
-        uhr(T0, ch.dauer, function (t) {
-          const z = a.zeichne(fahrtS(t, tA, tB), t, bremstZeit(t, tB));
-          a.band.zeige(t >= bandT ? klemme((t - bandT) / 1.2) : 0);
-          if (knick) {
-            const K = px(W, z.K), r = 3.6 * W.S, h1 = z.hz + Math.PI, h2 = z.ha + Math.PI;
-            const p1 = [K[0] + Math.cos(h1) * r, K[1] + Math.sin(h1) * r], p2 = [K[0] + Math.cos(h2) * r, K[1] + Math.sin(h2) * r];
-            let dd = h2 - h1; while (dd > Math.PI) dd -= 2 * Math.PI; while (dd < -Math.PI) dd += 2 * Math.PI;
-            const gross = Math.abs(dd) > 0.035;
-            knick.setAttribute("d", "M" + BK.f(K[0]) + " " + BK.f(K[1]) + " L" + BK.f(p1[0]) + " " + BK.f(p1[1]) + " A" + BK.f(r) + " " + BK.f(r) + " 0 0 " + (dd > 0 ? 1 : 0) + " " + BK.f(p2[0]) + " " + BK.f(p2[1]) + " Z");
-            const an = t >= tKnick && gross ? klemme((t - tKnick) / 0.5) : 0;
-            knick.style.opacity = an;
-            knickPille.style.left = BK.f(K[0] + 62) + "px"; knickPille.style.top = BK.f(K[1]) + "px";
-            knickPille.style.opacity = an;
-          }
-        });
-        etiketten(st, W, a, T0, ch, fz);
+    /* ---------- K2: Grundregel, zwei Durchläufe (genug / zu wenig Abstand) ---------- */
+    function K2(sc, i, T0, ch) {
+      const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), B = seitenBuehne(st);
+      const basis = { v0: V0, aVorn: 8, aHinten: 5, reaktion: 1.0, dauer: 14 };
+      const A = M.folgefahrt(Object.assign({ luecke: 50 }, basis)), Bn = M.folgefahrt(Object.assign({ luecke: 20 }, basis));
+      const tA = 17.8, tUm = 26.5, tB = 30.0, tFrei = tB + Bn.kollision - 0.25, tC = 37.5;   // Durchlauf B wird kurz vor der Berührung angehalten
+      const pg = folgPille(st, tx("l_genug"), GRUEN, true), pz = folgPille(st, tx("l_zuwenig"), F.gold, true);
+      const zust = (t) => {
+        if (t < tUm) { const tau = t - tA, z = tau < 0 ? { xV: V0 * tau, xH: -50 + V0 * tau, bremstV: false, bremstH: false } : A.bei(tau); return { z: z, gap: 50, run: "A" }; }
+        if (t < tC) { const tau = Math.min(t, tFrei) - tB, z = tau < 0 ? { xV: V0 * tau, xH: -20 + V0 * tau, bremstV: false, bremstH: false } : Bn.bei(tau); return { z: z, gap: 20, run: "B" }; }
+        const tau = t - tC; return { z: { xV: V0 * tau, xH: -50 + V0 * tau, bremstV: false, bremstH: false }, gap: 50, run: "C" };
       };
-    }
-    // Beschriftung: rechts außen die Vorderachse und der Gefahrenbereich, links innen die hinteren Achsen; alle Leitlinien enden bei Kurvenwinkel WK (gleiche Stelle der Kurve),
-    // damit sich keine Linien kreuzen (oben = außen, unten = innen)
-    const WK = 50 * Math.PI / 180, POS = { rechts1: [1040, 205, "r"], rechts2: [1040, 292, "r"], links1: [40, 540, "l"], links2: [40, 660, "l"] };
-    // Zielpunkte der Leitlinien: alle bei Kurvenwinkel WK (oben = außen, unten = innen, Linien kreuzen sich nicht)
-    const ziel = (W, id, wahl) => px(W, beiWinkel(id, wahl, WK));
-    const zielMitte = (W, id, wahl) => { const a = beiWinkel(id, (z) => z.F, WK), b = beiWinkel(id, wahl, WK); return px(W, { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }); };
-    // Marke am Kupplungspunkt bzw. Königszapfen: folgt dem Fahrzeug, Pille rechts daneben (von tVon bis tBis)
-    function markerFolgt(st, W, a, T0, fz, id, text, tVon, tBis, dauer) {
-      const g = BK.el("g", { opacity: 0 }, W.gUeber);
-      BK.el("circle", { r: 11, fill: F.gold, stroke: "#101410", "stroke-width": 3 }, g);
-      const pl = BK.pille(st, text, 0, 0, { klasse: "klein", ax: "0" }); pl.style.opacity = 0;
-      const proxy = { t: 0 };
-      tl.to(proxy, { t: dauer, duration: dauer, ease: "none", onUpdate: function () {
-        const t = proxy.t, an = t >= tVon && t < tBis ? klemme(Math.min((t - tVon) / 0.5, (tBis - t) / 0.4)) : 0;
-        g.style.opacity = an; pl.style.opacity = an;
-        if (!an) return;
-        const z = a.sim.zustaende[idxVon(fahrtS(t, fz.tA, fz.tB))], q = px(W, z.K);
-        g.setAttribute("transform", "translate(" + BK.f(q[0]) + " " + BK.f(q[1]) + ")");
-        pl.style.left = BK.f(q[0] - 20) + "px"; pl.style.top = BK.f(q[1] - 62) + "px";
-      } }, T0);
-    }
-    const K2 = fahrKapitel("solo", 1.5, 24.0, function (st, W, a, T0, ch, fz) {
-      const e = (...x) => etk(st, W, T0, "solo", fz, ...x);
-      e(tx("l_vorn"), POS.rechts1, (z) => z.F, F.vorn, ch.punkte[0].t + 0.3);
-      e(tx("l_hinten"), POS.links1, (z) => z.A, F.hinten, ch.punkte[1].t + 0.3);
-      e(tx("l_gefahr"), POS.rechts2, (z) => z.A, F.gold, ch.punkte[3].t + 0.3, true);
-    }, 19.0);
-    const K3 = fahrKapitel("lastzug", 1.5, 28.5, function (st, W, a, T0, ch, fz) {
-      const e = (...x) => etk(st, W, T0, "lastzug", fz, ...x);
-      e(tx("l_vorn"), POS.rechts1, (z) => z.F, F.vorn, ch.punkte[0].t + 0.3);
-      e(tx("l_hinten"), POS.links1, (z) => z.A, F.hinten, ch.punkte[0].t + 0.3);
-      e(tx("l_anhaenger"), POS.links2, (z) => z.T, F.anhaenger, ch.punkte[0].t + 0.6);
-      e(tx("l_gefahr"), POS.rechts2, (z) => z.T, F.gold, ch.punkte[2].t + 0.3, true);
-      markerFolgt(st, W, a, T0, fz, "lastzug", tx("l_kupplung"), ch.punkte[0].t, ch.punkte[1].t - 0.4, ch.dauer);
-    }, 21.0);
-    const K4 = fahrKapitel("sattelzug", 1.5, 30.0, function (st, W, a, T0, ch, fz) {
-      const e = (...x) => etk(st, W, T0, "sattelzug", fz, ...x);
-      e(tx("l_vorn"), POS.rechts1, (z) => z.F, F.vorn, ch.punkte[0].t + 0.3);
-      e(tx("l_hinten"), POS.links1, (z) => z.A, F.hinten, ch.punkte[0].t + 0.3);
-      e(tx("l_auflieger"), POS.links2, (z) => z.T, F.auflieger, ch.punkte[2].t + 0.3);
-      e(tx("l_gefahr"), POS.rechts2, (z) => z.T, F.gold, ch.punkte[2].t + 0.6, true);
-      markerFolgt(st, W, a, T0, fz, "sattelzug", tx("l_zapfen"), ch.punkte[0].t, ch.punkte[1].t - 0.4, ch.dauer);
-    }, 20.0);
-
-    /* ---------- K5 (und K7): Vergleich auf derselben Vorderachsbahn ---------- */
-    function vergleich(sc, i, T0, ch, statisch) {
-      const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, !!ch.merk);
-      const W = BK.welt(st, Object.assign({ id: "v" + i }, BUEHNE));
-      const daten = ["solo", "lastzug", "sattelzug"].map((id) => {
-        const fz = FZ[id], s = sim(id), farbe = id === "solo" ? F.hinten : id === "lastzug" ? F.anhaenger : F.auflieger;
-        const wahl = fz.anh ? (z) => z.T : (z) => z.A;
-        return { id: id, fz: fz, s: s, farbe: farbe, spur: BK.spur(W, s, wahl, farbe, { kopf: 9 }), wahl: wahl };
-      });
-      const sF = BK.spur(W, sim("solo"), (z) => z.F, F.vorn, { kopf: 9 });
-      const bd = BK.band(W, sim("sattelzug"), (z) => z.F, sim("sattelzug"), (z) => z.T); bd.zeige(0);
-      const fuss = BK.fussflaeche(W, sim("sattelzug"), { farbe: "#FAF6EC" });
-      const tA = 1.0, tB = statisch ? 1.0 : 14.0;
       uhr(T0, ch.dauer, function (t) {
-        const sNow = statisch ? S_ENDE : fahrtS(t, tA, tB), i2 = idxVon(sNow);
-        sF.bis(i2); daten.forEach((d) => d.spur.bis(i2));
-        if (statisch) { bd.zeige(1); bd.bis(i2); fuss.bis(i2); } else { bd.zeige(0); }
+        const s = zust(t), z = s.z;
+        const dunkel = Math.min(1, Math.abs(t - tUm) / 0.3, Math.abs(t - tC) / 0.3);
+        B.setze(z.xH, z.xV, z.bremstH, z.bremstV, { deckkraft: dunkel });
+        const zeigeKl = (s.run === "A" && t >= tA) || (s.run === "B" && t >= tB);
+        const m = B.kl.setze(z.xH, z.xV); B.kl.g.style.opacity = zeigeKl ? dunkel : 0;
+        B.kl.farbe(s.run === "A" ? GRUEN : F.gold);
+        pg.setze(m[0], 400, fenster(t, 23.5, tUm - 0.6)); pz.setze(m[0], 400, fenster(t, tFrei + 0.2, tC - 0.6));
       });
-      const namen = { solo: "l_lkw", lastzug: "l_lastzug", sattelzug: "l_sattel" }, ys = { solo: 540, lastzug: 628, sattelzug: 716 };
-      const vz = { tA: tA, tB: tB };
-      etk(st, W, T0, "solo", vz, tx("l_vorn"), POS.rechts1, (z) => z.F, F.vorn, statisch ? 0.5 : ch.punkte[0].t + 0.1);
-      daten.forEach((d, k) => {
-        const tr = statisch ? 0.6 + k * 0.2 : Math.max(ch.punkte[0].t + 0.3 + k * 0.4, erreicht(d.id, d.wahl, tA, tB) + 0.3);
-        etikett(st, W, tx(namen[d.id]), [40, ys[d.id], "l"], ziel(W, d.id, d.wahl), d.farbe, T0, tr);
-      });
-      if (statisch) etikett(st, W, tx("l_gefahr"), POS.rechts2, zielMitte(W, "sattelzug", (z) => z.T), F.gold, T0, 1.2);
     }
-    const K5 = (sc, i, T0, ch) => vergleich(sc, i, T0, ch, false);
-    const K7 = (sc, i, T0, ch) => vergleich(sc, i, T0, ch, true);
 
-    /* ---------- K6: Das Gesetz – Kreisring ---------- */
-    function K6(sc, i, T0, ch) {
+    /* ---------- K3: Autobahn, 50 m ---------- */
+    function K3(sc, i, T0, ch) {
+      const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), B = seitenBuehne(st);
+      const pm = folgPille(st, tx("l_mindest"), GRUEN, true), pk = folgPille(st, tx("l_zukurz"), F.gold, true);
+      const tBus = ch.punkte[2].t;
+      const abstand = (t) => t < 5 ? 56 : t < 11 ? 56 - 6 * glatt((t - 5) / 6) : t < 28 ? 50 : 50 - 14 * glatt((t - 28) / 5);
+      uhr(T0, ch.dauer, function (t) {
+        const xH = V0 * t, gap = abstand(t);
+        B.setze(xH, xH + gap, false, false, { bus: t >= tBus });
+        const ok = gap >= 49.99, m = B.kl.setze(xH, xH + gap);
+        B.kl.g.style.opacity = klemme((t - 3.0) / 0.6); B.kl.farbe(ok ? GRUEN : F.gold);
+        pm.setze(m[0], 400, fenster(t, 11.5, 27.5)); pk.setze(m[0], 400, fenster(t, 34, ch.dauer - 1));
+      });
+    }
+
+    /* ---------- K4: Außerorts, Zug länger als 7 m (Draufsicht) ---------- */
+    function K4(sc, i, T0, ch) {
       const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false);
-      const S = 25, CX = 540, CY = 560, RA = 12.5 * S, RI = 5.3 * S;
-      const W = BK.welt(st, { S: S, ox: CX - 40 * S, oy: CY - 12.5 * S, id: "k6", fussOpazitaet: 0.36 });
-      const fz = FZ.sattelzug;
-      // Kreis 570° (anderthalb Runden): der Auflieger läuft dem Zugfahrzeug um ca. 55° hinterher; so überstreichen auch die inneren Achsen den ganzen Ring im Dauerzustand
-      const WINKEL = 19 * Math.PI / 6, bahnEcke = M.bahn([{ gerade: 40 }, { bogen: 12.5, winkel: WINKEL, rechts: true }]);
-      const sS = 18, sE = 40 + 12.5 * WINKEL + 1;
-      const sm = M.simuliere(fz, bahnEcke, sS, sE, DS, "ecke");
-      const v = BK.fahrzeug(W.gFz, fz, W), fuss = BK.fussflaeche(W, sm, { farbe: "#FAF6EC" });
-      const g = W.gBand, el = BK.el;
-      // freie Innenfläche, erlaubter Ring (Umrisse), Gerade
-      const ring = el("circle", { cx: CX, cy: CY, r: RA, fill: "rgba(250,246,236,.045)", stroke: F.creme, "stroke-width": 3, "stroke-dasharray": "14 10", opacity: 0 }, g);
-      const innen = el("circle", { cx: CX, cy: CY, r: RI, fill: "rgba(143,214,166,.20)", stroke: F.hinten, "stroke-width": 3.5, opacity: 0 }, g);
-      const y0 = CY - RA;   // tangierende Gerade
-      const gerade = el("line", { x1: 0, y1: y0, x2: CX, y2: y0, stroke: F.creme, "stroke-width": 3, "stroke-dasharray": "14 10", opacity: 0 }, g);
-      const limit = el("rect", { x: 0, y: y0 - 0.8 * S, width: CX, height: 0.8 * S, fill: "rgba(250,246,236,.22)", stroke: "rgba(250,246,236,.7)", "stroke-width": 2, opacity: 0 }, g);
-      const mitte = el("circle", { cx: CX, cy: CY, r: 6, fill: F.creme, opacity: 0 }, W.gUeber);
-      // Maße (über den Fahrzeugen)
-      const polar = (r, grad) => [CX + r * Math.cos(grad * Math.PI / 180), CY + r * Math.sin(grad * Math.PI / 180)];
-      const mAussen = BK.mass(W, ...polar(0, 0), ...polar(RA, 200), F.creme);
-      const mRing = BK.mass(W, ...polar(RA, 38), ...polar(RI, 38), F.gold, 4);
-      const mInnen = BK.mass(W, ...polar(0, 0), ...polar(RI, 90), F.hinten, 3.5);
-      const mGerade = BK.mass(W, 250, y0, 250, y0 - 0.8 * S, F.gold, 3);
-      const pAussen = BK.pille(st, tx("l_r_aussen"), 40, Math.round(polar(RA, 200)[1]), { ax: "0" });
-      const pRing = BK.pille(st, tx("l_r_ring"), 1040, 800, { ax: "-100%" });
-      const pInnen = BK.pille(st, tx("l_r_innen"), CX, CY - 52, { punkt: F.hinten });
-      const pGerade = BK.pille(st, tx("l_r_gerade"), 60, y0 - 75, { punkt: F.gold, ax: "0" });
-      const lGerade = BK.leitlinie(W, 200, y0 - 75, 250, y0 - 0.4 * S, F.gold);
-      const t1 = ch.punkte[0].t, t2 = ch.punkte[1].t, t3 = ch.punkte[2].t, t4 = ch.punkte[3].t, tFahrt = t4 - 1.0, tEnde = ch.dauer - 1.5;
-      // Einblenden (Deckkraft über GSAP; Kreise zeichnen sich nicht, sie blenden ein)
-      [[ring, t1], [mAussen, t1 + 0.4], [pAussen, t1 + 0.6], [mitte, t1 + 0.2], [mRing, t2], [pRing, t2 + 0.3], [innen, t3], [mInnen, t3 + 0.4], [pInnen, t3 + 0.7], [gerade, t4], [limit, t4], [mGerade, t4 + 0.4], [pGerade, t4 + 0.7], [lGerade, t4 + 0.9]]
-        .forEach((e) => P.zeige(e[0], T0 + e[1], 0.7));
+      const S = 16, W = BK.welt(st, { S: S, ox: 0, oy: 700, id: "k4", raster: false, massstab: false });
+      st.style.background = "#35503F";
+      const gras = BK.el("g", null, W.gBand), baeume = [];
+      for (let k = 0; k < 60; k++) {          // Bäume (feste Verteilung, laufen mit der Straße)
+        const h = (k * 2654435761) % 1000, ob = k % 2 === 0, dy = 40 + (h % 260), r = 14 + (h % 17);
+        baeume.push([BK.el("circle", { r: r, cy: ob ? 616 - dy : 728 + dy, fill: ["#2B4A38", "#31543F", "#264233"][k % 3], opacity: 0.95 }, gras), k * 17 + (h % 13)]);
+      }
+      const strasse = BK.el("g", null, W.gBand);
+      BK.el("rect", { x: 0, y: 616, width: 1080, height: 112, fill: "#4A524C" }, strasse);
+      BK.el("rect", { x: 0, y: 616, width: 1080, height: 4, fill: "rgba(250,246,236,.8)" }, strasse); BK.el("rect", { x: 0, y: 724, width: 1080, height: 4, fill: "rgba(250,246,236,.8)" }, strasse);
+      const dash = [], pfeile = [];
+      for (let k = -2; k < 26; k++) dash.push([BK.el("rect", { y: 670, width: 48, height: 4, fill: "rgba(250,246,236,.75)" }, strasse), k * 9]);
+      const pfGroup = BK.el("g", { opacity: 0 }, W.gBand);
+      for (let k = -2; k < 16; k++) pfeile.push([BK.el("path", { d: "M0 -8 L38 -8 L38 -17 L58 0 L38 17 L38 8 L0 8 Z", fill: "rgba(250,246,236,.8)" }, pfGroup), k * 20]);
+      let cam = 0; const pos = (x) => x - cam + 26;
+      const rund = (v, p) => ((v % p) + p) % p;
+      const kam = (c) => {
+        cam = c;
+        dash.forEach((d) => d[0].setAttribute("x", BK.f(rund(d[1] - c, 252) * S - 60)));
+        pfeile.forEach((a) => a[0].setAttribute("transform", "translate(" + BK.f(rund(a[1] - c, 340) * S - 120) + " 644)"));
+        baeume.forEach((b) => b[0].setAttribute("cx", BK.f(rund(b[1] * 5 - c, 1020) * S / 5 * 1.0 - 60)));
+      };
+      const lz = BK.fahrzeug(W.gFz, FZ.lastzug, W), pkwV = BK.pkwOben(W.gFz, W, "#D9954C"), pkwO = BK.pkwOben(W.gFz, W, "#5E7C8F");
+      const fzL = FZ.lastzug;
+      const zGerade = (xF, y, h) => {
+        const A = { x: xF - fzL.L, y: y }, K = { x: A.x + fzL.e, y: y };
+        return { A: A, hz: 0, F: { x: xF, y: y, h: 0 }, K: K, T: { x: K.x - fzL.D, y: y }, ha: 0 };
+      };
+      // Teil B: der Lastzug schert aus und überholt den Pkw (Bahn aus zwei Spurwechseln, gerechnet)
+      const TB0 = 38, TENDE = ch.dauer, DT = 0.01;
+      const vB = (t) => { const u = t - TB0; return u < 3 ? 14 : u < 6.5 ? 14 + 2 * (u - 3) : t < 52.5 ? 21 : t < 56 ? 21 - 2 * (t - 52.5) : 14; };
+      const sB = [0]; for (let t = TB0; t < TENDE; t += DT) sB.push(sB[sB.length - 1] + vB(t) * DT);
+      const sBei = (t) => sB[Math.max(0, Math.min(sB.length - 1, Math.round((t - TB0) / DT)))];
+      const R = 70, a = Math.acos(1 - 3.5 / (2 * R)), lenArc = R * a;
+      const carRear = (t) => 25 + 14 * (t - TB0);
+      let tRet = TB0 + 3; for (let t = TB0 + 3; t < TENDE; t += DT) { if (sBei(t) - 17.6 - (carRear(t) + 4.4) >= 14) { tRet = t; break; } }
+      const sOut = sBei(TB0 + 3), sRet = sBei(tRet);
+      const bahnB = M.bahn([{ gerade: sOut }, { bogen: R, winkel: a, rechts: false }, { bogen: R, winkel: a, rechts: true }, { gerade: sRet - sOut - 2 * lenArc }, { bogen: R, winkel: a, rechts: true }, { bogen: R, winkel: a, rechts: false }, { gerade: 400 }]);
+      const simB = M.simuliere(fzL, bahnB, -25, sB[sB.length - 1] + 5, 0.05);
+      const pl = folgPille(st, tx("l_zug"), F.gold), pp = folgPille(st, tx("l_platz"), GRUEN);
+      const kl = BK.el("g", { opacity: 0 }, W.gUeber), klL = BK.el("line", { stroke: F.gold, "stroke-width": 5 }, kl), klA = BK.el("line", { stroke: F.gold, "stroke-width": 5 }, kl), klB = BK.el("line", { stroke: F.gold, "stroke-width": 5 }, kl);
+      const klGap = BK.el("g", { opacity: 0 }, W.gUeber), kgL = BK.el("line", { stroke: GRUEN, "stroke-width": 5 }, klGap), kgA = BK.el("line", { stroke: GRUEN, "stroke-width": 5 }, klGap), kgB = BK.el("line", { stroke: GRUEN, "stroke-width": 5 }, klGap);
+      const linie = (l, a1, b1, x1, x2, y) => { l.setAttribute("x1", BK.f(x1)); l.setAttribute("x2", BK.f(x2)); l.setAttribute("y1", y); l.setAttribute("y2", y); a1.setAttribute("x1", BK.f(x1)); a1.setAttribute("x2", BK.f(x1)); a1.setAttribute("y1", y - 14); a1.setAttribute("y2", y + 14); b1.setAttribute("x1", BK.f(x2)); b1.setAttribute("x2", BK.f(x2)); b1.setAttribute("y1", y - 14); b1.setAttribute("y2", y + 14); };
+      const tU = 2, tPfeil = ch.punkte[1].t, tm = tU + (8 + 45) / 4, tmD = 2.0;   // tm: Überholer beginnt einzuscheren (8 m vor dem Zug-Ende nach vorn), tmD: Dauer
       uhr(T0, ch.dauer, function (t) {
-        const s = sS + (sE - sS) * profilU(t, tFahrt, tEnde), i2 = Math.max(0, Math.min(sm.zustaende.length - 1, Math.round((s - sS) / DS)));
-        const z = sm.zustaende[i2];
-        v.setze(z, 0, bremstZeit(t, tEnde)); fuss.bis(i2);
-        v.zeige(t >= tFahrt - 0.01);
+        let vis;
+        if (t < TB0) {
+          // Teil A: Zug und Pkw fahren gleich schnell; ein Überholer schert zwischen beiden ein
+          const xF = 14 * t; kam(xF);
+          lz.setze(zGerade(pos(xF), 0, 0), 0);
+          pkwV.setze(pos(xF + 30 + 2.2), 0, 0, false, false);
+          const u = glatt((t - tm) / tmD), rel = t < tm + tmD ? -45 + 4 * (t - tU) : 16;
+          const y = -3.5 * (1 - u), tau = klemme((t - tm) / tmD), dydt = 3.5 * 6 * tau * (1 - tau) / tmD;
+          pkwO.setze(pos(xF + rel), y, Math.atan2(dydt, 18), t > tm - 1.2 && t < tm + tmD + 0.6, false);
+          pl.setze(pos(xF - 17.6 / 2) * S, 830, fenster(t, 4.5, 17.5)); linie(klL, klA, klB, pos(xF - 17.6) * S, pos(xF) * S, 770); kl.style.opacity = fenster(t, 4.5, 17.5);
+          pp.setze(pos(xF + 15) * S, 545, fenster(t, 9.5, 19.5)); linie(kgL, kgA, kgB, pos(xF) * S, pos(xF + 30) * S, 590); klGap.style.opacity = fenster(t, 9.5, 19.5);
+          pfGroup.style.opacity = t >= tPfeil ? klemme((t - tPfeil) / 0.8) : 0;
+          vis = Math.min(1, (TB0 - 0.2 - t) / 0.4);
+          pkwO.g.style.visibility = "visible";
+        } else {
+          // Teil B: der Lastzug schert aus und überholt den Pkw (Spurwechsel-Bahn gerechnet)
+          const s = sBei(t), idx = Math.max(0, Math.min(simB.zustaende.length - 1, Math.round((s + 25) / 0.05))), z = simB.zustaende[idx];
+          kam(z.F.x);
+          const sh = (p) => ({ x: pos(p.x), y: p.y });
+          const zz = { A: sh(z.A), hz: z.hz, F: { x: pos(z.F.x), y: z.F.y, h: z.F.h }, K: sh(z.K), T: sh(z.T), ha: z.ha };
+          const links = t > TB0 + 1.2 && s < sOut + 2 * lenArc, rechts = s > sRet - 12 && s < sRet + 2 * lenArc + 4;
+          const bl = Math.floor(t * 3) % 2 === 0; lz.setze(zz, rechts && bl ? 1 : 0, false, links && bl ? 1 : 0);
+          pkwV.setze(pos(carRear(t) + 2.2), 0, 0, false, false);
+          pkwO.g.style.visibility = "hidden";
+          pl.setze(0, 0, 0); pp.setze(0, 0, 0); kl.style.opacity = 0; klGap.style.opacity = 0; pfGroup.style.opacity = 0;
+          vis = Math.min(1, (t - TB0) / 0.4);
+        }
+        W.gFz.style.opacity = Math.max(0, vis);
       });
     }
 
-    const bauer = { k1: K1, k2: K2, k3: K3, k4: K4, k5: K5, k6: K6, k7: K7 };
-    T.kapitel.forEach((ch, i) => {
-      const sc = o.scenes[i], T0 = starts[i];
-      bauer[ch.id](sc, i, T0, ch);
-      if (ch.id === "k7") { /* Merksatz steht im Text-Feld */ }
-      P.sceneFade(sc, T0, ch.dauer);
-    });
-    return { starts: starts, gesamt: P.gesamt, refit: function () { alle.forEach((e) => e.messen()); } };
+    /* ---------- K5: Merke (Seitenansicht, ruhig) ---------- */
+    function K5(sc, i, T0, ch) {
+      const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, true), B = seitenBuehne(st), pm = folgPille(st, tx("l_mindest"), GRUEN, true);
+      uhr(T0, ch.dauer, function (t) {
+        const xH = V0 * t; B.setze(xH, xH + 50, false, false);
+        const m = B.kl.setze(xH, xH + 50); B.kl.g.style.opacity = 1; B.kl.farbe(GRUEN); pm.setze(m[0], 400, klemme((t - 1) / 0.6));
+      });
+    }
+
+    const bauer = { k1: K1, k2: K2, k3: K3, k4: K4, k5: K5 };
+    T.kapitel.forEach((ch, i) => { const sc = o.scenes[i], T0 = starts[i]; bauer[ch.id](sc, i, T0, ch); P.sceneFade(sc, T0, ch.dauer); });
+    return { starts: starts, gesamt: P.gesamt, refit: function () {} };
   }
   window.LKWSzenen = { bauen: bauen };
 })(window);

@@ -30,6 +30,7 @@ const CSS = ${JSON.stringify(css)};
 ${huelle("kern/modell.js", lies("kern", "modell.js"))}
 ${huelle("kern/baukasten.js", lies("kern", "baukasten.js"))}
 ${huelle("kern/panel.js", lies("kern", "panel.js"))}
+${huelle("kern/seite.js", lies("kern", "seite.js"))}
 ${huelle(film + "/text.js", lies(film, "text.js"))}
 W.FILM_SPRACHEN = ${JSON.stringify(sprachen)};
 ${huelle(film + "/szenen.js", lies(film, "szenen.js"))}

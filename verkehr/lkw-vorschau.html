@@ -24,13 +24,15 @@ select{min-height:44px;font:600 16px var(--ff-body);border-radius:12px;border:1p
 <body>
 <main>
   <h1>Vorschau: Lkw und Zug verstehen</h1>
-  <p class="hinweis">Nur zum Prüfen. Noch nicht in der App verlinkt. Film 5.1 „Schleppkurven“.</p>
+  <p class="hinweis">Nur zum Prüfen. Noch nicht in der App verlinkt. Mit <code>?film=f5-4</code> wechselt man den Film.</p>
   <label>Sprache <select id="spr"></select></label>
   <div id="platz"></div>
 </main>
 <script src="../vendor/gsap-3.14.2.min.js"></script>
 <script type="module">
-import { starte } from "./lkw-f5-1.js";
+const FILME = { "f5-1": "Film 5.1 Schleppkurven", "f5-4": "Film 5.4 Abstand" };
+const filmId = new URLSearchParams(location.search).get("film") || "f5-1";
+const { starte } = await import("./lkw-" + filmId + ".js");
 const SPR = { de: "Deutsch", en: "English", tr: "Türkçe", ar: "العربية", ru: "Русский", es: "Español", fa: "فارسی", ps: "پښتو", ckb: "کوردی", kmr: "Kurdî", sr: "Srpski", el: "Ελληνικά", hi: "हिन्दी", ur: "اردو", vi: "Tiếng Việt", am: "አማርኛ", ti: "ትግርኛ", rif: "Tarifit" };
 const sel = document.getElementById("spr"), platz = document.getElementById("platz");
 const wunsch = new URLSearchParams(location.search).get("sprache") || "de";

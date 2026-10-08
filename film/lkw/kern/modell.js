@@ -193,6 +193,64 @@
     return { zustaende: z, dt: dt, kollision: kollision, minAbstand: Math.min.apply(null, z.map((q) => q.abstand)), bei: function (t) { return z[Math.max(0, Math.min(n, Math.round(t / dt)))]; } };
   }
 
-  const api = { folgefahrt: folgefahrt, FAHRZEUGE: FAHRZEUGE, bahn: bahn, simuliere: simuliere, koerper: koerper, rechteck: rechteck, maxUeberschnitt: maxUeberschnitt, gesamtLaenge: gesamtLaenge, radien: radien, vorderachsRadius: vorderachsRadius, innenRadius: innenRadius, abstandLinks: abstandLinks, folge: folge };
+
+  /* ---------- Sozialvorschriften (Film 8.1): Lenk-, Pausen- und Ruhezeiten nach VO (EG) Nr. 561/2006 ----------
+     Regeln (Wortlaut Stand Konsolidierung 2020/21, gelesen am 08.10.2026): Art. 6 Abs. 1 (9 h, zweimal je Woche 10 h), Art. 7 (nach 4,5 h Lenkdauer 45 min Pause,
+     ersatzweise erst ≥ 15 min, danach ≥ 30 min), Art. 8 Abs. 2 (24-Stunden-Zeitraum; Teil der Ruhezeit im Zeitraum ≥ 11 h regelmäßig, 9 bis < 11 h reduziert), Art. 4 Buchst. g.
+     ev: Liste { art: "fahren" | "arbeit" | "pause" | "ruhe", min } in zeitlicher Reihenfolge ab dem Ende der vorigen Ruhezeit; die letzte Ruhe ist die Tagesruhe.
+     Gibt { fehler: [..], lenkMin, ruhe: "regelmaessig" | "reduziert" | "zuKurz" | null } zurück. */
+  function pruefeTag(ev, opt) {
+    opt = opt || {};
+    const fehler = []; let seit = 0, teil15 = false, lenk = 0, zeit = 0, ruheTeil = null;
+    for (let i = 0; i < ev.length; i++) {
+      const e = ev[i];
+      if (e.art === "fahren") {
+        seit += e.min; lenk += e.min; zeit += e.min;
+        if (seit > 270) fehler.push("Lenkdauer über 4:30 h ohne ausreichende Pause (nach " + zeit + " min)");
+      } else if (e.art === "arbeit") { zeit += e.min; }
+      else if (e.art === "pause") {
+        zeit += e.min;
+        if (e.min >= 45) { seit = 0; teil15 = false; }
+        else if (e.min >= 30 && teil15) { seit = 0; teil15 = false; }
+        else if (e.min >= 15 && !teil15) { teil15 = true; }
+      } else if (e.art === "ruhe") {
+        const imFenster = Math.min(e.min, 24 * 60 - zeit);
+        ruheTeil = imFenster >= 660 ? "regelmaessig" : imFenster >= 540 ? "reduziert" : "zuKurz";
+        if (ruheTeil === "zuKurz") fehler.push("Tagesruhe im 24-Stunden-Zeitraum kürzer als 9 h");
+      }
+    }
+    const grenze = opt.verlaengert ? 600 : 540;
+    if (lenk > grenze) fehler.push("Tageslenkzeit über " + (grenze / 60) + " h");
+    return { fehler: fehler, lenkMin: lenk, ruhe: ruheTeil, ok: fehler.length === 0 };
+  }
+
+  // Verlauf der „Lenkdauer seit der letzten anrechenbaren Pause“ (Art. 7) zu einer Minute m des Ablaufs ev (für das Messgerät im Film 8.1)
+  function lenkdauerBei(ev, m) {
+    let seit = 0, teil15 = false, t = 0, lenk = 0;
+    for (let i = 0; i < ev.length && t < m; i++) {
+      const e = ev[i], d = Math.min(e.min, m - t), voll = d >= e.min;
+      if (e.art === "fahren") { seit += d; lenk += d; }
+      else if (e.art === "pause" && voll) {
+        if (e.min >= 45) { seit = 0; teil15 = false; } else if (e.min >= 30 && teil15) { seit = 0; teil15 = false; } else if (e.min >= 15 && !teil15) teil15 = true;
+      }
+      t += d;
+    }
+    return { seit: seit, lenk: lenk, teil15: teil15 };
+  }
+  // Woche: Lenkstunden je Tag (Mo..So) -> Prüfung Art. 6 Abs. 1–3 (Tag 9 h, höchstens zweimal 10 h; Woche 56 h; zwei Wochen 90 h)
+  function pruefeWochen(wochen) {
+    const fehler = []; let vorher = null;
+    wochen.forEach((w, k) => {
+      const summe = w.reduce((a, b) => a + b, 0), lang = w.filter((h) => h > 9).length;
+      if (w.some((h) => h > 10)) fehler.push("Woche " + (k + 1) + ": ein Tag über 10 h");
+      if (lang > 2) fehler.push("Woche " + (k + 1) + ": mehr als zweimal über 9 h");
+      if (summe > 56) fehler.push("Woche " + (k + 1) + ": " + summe + " h über 56 h");
+      if (vorher != null && vorher + summe > 90) fehler.push("Woche " + k + " und " + (k + 1) + ": " + (vorher + summe) + " h über 90 h");
+      vorher = summe;
+    });
+    return { fehler: fehler, ok: fehler.length === 0 };
+  }
+
+  const api = { lenkdauerBei: lenkdauerBei, pruefeTag: pruefeTag, pruefeWochen: pruefeWochen, folgefahrt: folgefahrt, FAHRZEUGE: FAHRZEUGE, bahn: bahn, simuliere: simuliere, koerper: koerper, rechteck: rechteck, maxUeberschnitt: maxUeberschnitt, gesamtLaenge: gesamtLaenge, radien: radien, vorderachsRadius: vorderachsRadius, innenRadius: innenRadius, abstandLinks: abstandLinks, folge: folge };
   if (typeof module !== "undefined" && module.exports) module.exports = api; else root.LKW_MODELL = api;
 })(typeof window !== "undefined" ? window : globalThis);
