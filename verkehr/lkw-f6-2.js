@@ -1477,7 +1477,7 @@ window.FILM_TEXT = {
   },
   kapitel: [
     { id: "k1", titel: "k1_titel", kicker: "k1_kicker", dauer: 52, sub: { k: "k1_sub", t: 0.6 },
-      punkte: [{ k: "k1_p1", t: 3.0 }, { k: "k1_p2", t: 9.0 }, { k: "k1_p3", t: 15.0, ref: "WABCO; Theoriefrage 2.7.02-302" }, { k: "k1_p4", t: 22.0, ref: "Theoriefrage 2.7.02-302" }] },
+      punkte: [{ k: "k1_p1", t: 3.0 }, { k: "k1_p2", t: 9.0 }, { k: "k1_p3", t: 15.5, ref: "WABCO; Theoriefrage 2.7.02-302" }, { k: "k1_p4", t: 22.0, ref: "Theoriefrage 2.7.02-302" }] },
     { id: "k2", titel: "k2_titel", kicker: "k2_kicker", dauer: 66, sub: { k: "k2_sub", t: 0.6 },
       punkte: [{ k: "k2_p1", t: 3.5, ref: "WABCO" }, { k: "k2_p2", t: 11.0, ref: "WABCO; Theoriefrage 2.7.02-302" }, { k: "k2_p3", t: 26.0, ref: "Haldex; Theoriefrage 2.7.02-302" }, { k: "k2_p4", t: 38.0, ref: "WABCO Überströmventil; Theoriefrage 2.7.06-317" }, { k: "k2_p5", t: 52.0 }] },
     { id: "k3", titel: "k3_titel", kicker: "k3_kicker", dauer: 62, sub: { k: "k3_sub", t: 0.6 },
