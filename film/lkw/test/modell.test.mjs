@@ -115,3 +115,180 @@ test("Heck schwenkt beim Einlenken nach außen aus (Solo): messbar, aber klein (
   assert.ok(u > 0.02 && u < 0.8, "Ausschwenken " + u.toFixed(3) + " m");
   console.log("  Solo: Heck schwenkt " + u.toFixed(2) + " m nach außen");
 });
+
+test("Folgefahrt (Film 5.4): mit 50 m Lücke kommt der Lkw hinter dem Pkw zum Stehen, mit 20 m nicht; Gegenprobe ohne Reaktionszeit", () => {
+  const basis = { v0: 80 / 3.6, aVorn: 8, aHinten: 5, reaktion: 1.0, dauer: 14 };
+  const gut = M.folgefahrt({ ...basis, luecke: 50 }), knapp = M.folgefahrt({ ...basis, luecke: 20 });
+  assert.equal(gut.kollision, null, "50 m: keine Berührung");
+  assert.ok(gut.minAbstand > 5, "50 m: Rest-Abstand " + gut.minAbstand.toFixed(1));
+  assert.ok(gut.bei(14).vH === 0 && gut.bei(14).vV === 0, "beide stehen");
+  assert.ok(knapp.kollision != null, "20 m: der Lkw erreicht den Pkw");
+  // Gegenprobe: ohne Reaktionszeit und mit gleicher Verzögerung wird der Rest-Abstand nie kleiner als die Lücke
+  const ideal = M.folgefahrt({ ...basis, luecke: 20, reaktion: 0, aHinten: 8 });
+  assert.ok(ideal.minAbstand >= 19.99, "gleiche Verzögerung ohne Reaktionszeit: Abstand bleibt " + ideal.minAbstand.toFixed(2));
+  console.log("  Folgefahrt 50 m: Rest-Abstand " + gut.minAbstand.toFixed(1) + " m; 20 m: Berührung nach " + knapp.kollision.toFixed(2) + " s");
+});
+
+test("Sozialvorschriften (Film 8.1): gültige Tage bestehen, Gegenproben mit absichtlich falscher Eingabe schlagen an", () => {
+  const h = (x) => x * 60;
+  const gut = [{ art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(4.5) }, { art: "arbeit", min: h(1) }, { art: "ruhe", min: h(11) }];
+  const r = M.pruefeTag(gut); assert.ok(r.ok && r.lenkMin === 540 && r.ruhe === "regelmaessig", JSON.stringify(r));
+  // geteilte Pause 15 + 30 (richtige Reihenfolge) zählt, 30 + 15 nicht
+  const geteilt = (a, b) => [{ art: "fahren", min: h(2) }, { art: "pause", min: a }, { art: "fahren", min: h(2.5) }, { art: "pause", min: b }, { art: "fahren", min: h(2) }, { art: "ruhe", min: h(11) }];
+  assert.ok(M.pruefeTag(geteilt(15, 30)).ok, "15 + 30 ist erlaubt");
+  assert.ok(!M.pruefeTag(geteilt(30, 15)).ok, "30 + 15 reicht nicht");
+  assert.ok(!M.pruefeTag([{ art: "fahren", min: h(4.6) }, { art: "pause", min: 45 }, { art: "ruhe", min: h(11) }]).ok, "4,6 h ohne Pause");
+  assert.ok(!M.pruefeTag([{ art: "fahren", min: h(4.5) }, { art: "pause", min: 40 }, { art: "fahren", min: h(1) }, { art: "ruhe", min: h(11) }]).ok, "40 min Pause reicht nicht");
+  // Tageslenkzeit 9 h, 10 h nur mit Verlängerung
+  const zehn = [{ art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(1) }, { art: "ruhe", min: h(11) }];
+  assert.ok(!M.pruefeTag(zehn).ok && M.pruefeTag(zehn, { verlaengert: true }).ok, "10 h nur zweimal pro Woche erlaubt");
+  // Tagesruhe im 24-h-Fenster: 13 h Schicht + 11 h Ruhe regelmäßig, 15 h + 9 h reduziert, 16 h + 8 h Verstoß
+  const tag = (arbeit, ruhe) => [{ art: "arbeit", min: h(arbeit) }, { art: "ruhe", min: h(ruhe) }];
+  assert.equal(M.pruefeTag(tag(13, 11)).ruhe, "regelmaessig"); assert.equal(M.pruefeTag(tag(15, 9)).ruhe, "reduziert"); assert.equal(M.pruefeTag(tag(16, 9)).ruhe, "zuKurz");
+  assert.equal(M.pruefeTag(tag(13, 12)).ruhe, "regelmaessig");
+  // Woche: 56 h und 90 h über zwei Wochen
+  assert.ok(M.pruefeWochen([[9, 9, 10, 10, 9, 9, 0], [9, 9, 8, 8, 0, 0, 0]]).ok, "56 + 34 = 90 ist erlaubt");
+  assert.ok(!M.pruefeWochen([[9, 9, 10, 10, 9, 9, 0], [9, 9, 8, 8, 1, 0, 0]]).ok, "56 + 35 = 91 ist zu viel");
+  assert.ok(!M.pruefeWochen([[10, 10, 10, 9, 9, 0, 0]]).ok, "dreimal 10 h in einer Woche");
+  assert.ok(!M.pruefeWochen([[9, 9, 9, 9, 9, 9, 3]]).ok, "57 h in einer Woche");
+});
+
+test("Lenkdauer-Messer (Film 8.1) folgt der Prüfung: nach 45 min und nach 15 + 30 min zurück auf 0, nach 30 + 15 min nicht", () => {
+  const h = (x) => x * 60, ev = (a, b) => [{ art: "fahren", min: h(2) }, { art: "pause", min: a }, { art: "fahren", min: h(2.5) }, { art: "pause", min: b }, { art: "fahren", min: 30 }];
+  assert.equal(M.lenkdauerBei(ev(15, 30), h(2) + 15 + h(2.5) + 30).seit, 0, "15 + 30 setzt zurück");
+  assert.equal(M.lenkdauerBei(ev(30, 15), h(2) + 30 + h(2.5) + 15).seit, h(4.5), "30 + 15 setzt nicht zurück");
+  assert.equal(M.lenkdauerBei([{ art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }], h(4.5) + 45).seit, 0);
+  assert.ok(M.lenkdauerBei(ev(30, 15), h(2) + 30 + h(2.5) + 15 + 30).seit > h(4.5), "weiterfahren über 4:30");
+});
+
+test("Tagesruhe geteilt: erst mind. 3 h, dann mind. 9 h = regelmäßig (Gegenproben: 3+8, 2+9, falsche Reihenfolge)", () => {
+  const tag = (a, b) => [{ art: "arbeit", min: 480 }, { art: "ruhe", min: a * 60 }, { art: "arbeit", min: 24 * 60 - 480 - a * 60 - b * 60 }, { art: "ruhe", min: b * 60 }];
+  assert.equal(M.pruefeTag(tag(3, 9)).ruhe, "regelmaessigGeteilt");
+  assert.equal(M.pruefeTag(tag(3, 9)).ok, true);
+  assert.equal(M.pruefeTag(tag(3, 8)).ok, false);
+  assert.equal(M.pruefeTag(tag(2, 9)).ok, false);
+  assert.equal(M.pruefeTag(tag(9, 3)).ok, false);
+});
+
+test("Sichtfeld: verdeckter Bereich vor der Kabine (Handrechnung) und Gegenproben", () => {
+  const near = (a, b, e) => assert.ok(Math.abs(a - b) < e, a + " ≠ " + b);
+  near(M.verdecktVorn(0), 1.45 * (2.55 / 0.7 - 1), 1e-9);             // Boden: Strahl über die Unterkante der Scheibe (1,45 m Auge–Scheibe, 0,70 m Höhenunterschied)
+  near(M.verdecktVorn(1.2), 1.45 * ((2.55 - 1.2) / 0.7 - 1), 1e-9);   // Kind 1,2 m
+  assert.equal(M.verdecktVorn(1.85), 0);                              // Objekt höher als die Scheibenunterkante: sofort sichtbar
+  const sf = M.sichtfeld(M.FAHRZEUGE.solo), xv = 6.2;
+  assert.equal(sf.sichtbar(xv + 1.0, 0, 1.2), false);                 // Kind 1 m vor der Stoßstange: verdeckt
+  assert.equal(sf.sichtbar(xv + 1.5, 0, 1.2), true);                  // 1,5 m vor der Stoßstange: Kopf über der Sichtlinie
+  assert.equal(sf.sichtbar(xv + 3.0, 0, 0), false);                   // Boden 3 m vor der Stoßstange: noch verdeckt
+  assert.equal(sf.sichtbar(xv + 4.5, 0, 0), true);                    // Boden 4,5 m davor: sichtbar
+  assert.equal(sf.sichtbar(xv + 1.0, 0, 1.8), true);                  // Erwachsener ab fast sofort
+  // toter Winkel hinter dem Lkw (Aufbau verdeckt) und im Spiegel seitlich dahinter
+  assert.equal(sf.sichtbar(-8, 0, 0), false);
+  assert.equal(sf.sichtbar(-8, 3.5, 0), true);
+  // rechts neben dem Fahrerhaus: Boden verdeckt; hinter dem Spiegel (weiter hinten) im Spiegel sichtbar
+  assert.equal(sf.sichtbar(7.0, 2.4, 0), false);
+  assert.equal(sf.sichtbar(1.0, 2.4, 0), true);
+  // die Quelle „fahrzeug“ gilt nie als sichtbar
+  assert.equal(sf.sichtbar(2, 0, 0), false);
+});
+
+test("polyAbstand: Abstand, Berührung, Überlappung", () => {
+  const q = (x, y, w) => [{ x, y }, { x: x + w, y }, { x: x + w, y: y + w }, { x, y: y + w }];
+  assert.equal(M.polyAbstand(q(0, 0, 1), q(3, 0, 1)), 2);
+  assert.equal(M.polyAbstand(q(0, 0, 2), q(1, 1, 2)), 0);
+  assert.ok(Math.abs(M.polyAbstand(q(0, 0, 1), q(2, 2, 1)) - Math.SQRT2) < 1e-12);
+});
+
+test("Rechtsabbiegen mit Radfahrer: Art A endet kurz vor dem Zusammenstoß, Art B bleibt sicher (mit Gegenproben)", () => {
+  const A = M.radfahrerAbbiegen("A"), B = M.radfahrerAbbiegen("B");
+  // A: Anhalten bei Abstand < 0,2 m, vorher nie unter 0,35 m, nie Überlappung
+  assert.equal(A.kontakt, true);
+  const letzte = A.frames[A.frames.length - 1];
+  assert.ok(letzte.abstand < 0.2 && letzte.abstand > 0.1, "Endabstand " + letzte.abstand);
+  assert.ok(A.frames.slice(0, -1).every((q) => q.abstand >= 0.2));
+  // Der Radfahrer wird zuerst gesehen (Spiegel), liegt aber in den letzten gut 1 s vor dem Anhalten im toten Winkel
+  assert.ok(A.frames.some((q) => q.sicht === "spiegel"));
+  let k = A.frames.length - 1, verdeckt = 0; while (k >= 0 && A.frames[k].sicht === "verdeckt") { verdeckt += A.P.dt; k--; }
+  assert.ok(verdeckt >= 1.0, "verdeckt vor dem Anhalten: " + verdeckt);
+  // B: kein Kontakt, Mindestabstand = seitlicher Abstand zu Beginn (0,83 m); Lkw steht, solange der Radfahrer vorbeifährt
+  assert.equal(B.kontakt, false);
+  assert.ok(B.minAbstand > 0.8);
+  assert.ok(B.frames.some((q) => q.v === 0));
+  assert.ok(B.losBei != null && B.frames.every((q) => q.t < B.losBei || q.bx > 32 + 10.75));   // Abbiegen erst, wenn der Radfahrer weit genug vorbei ist
+  const vorStart = B.frames.filter((q) => q.t < B.losBei);
+  assert.ok(vorStart.every((q) => q.s < 32 - 1.0), "Lkw biegt vor dem Losfahren nicht ab");
+  // Gegenprobe 1: Lkw fährt von Anfang an im Schritttempo (A-Verlauf mit 1,8 m/s): Radfahrer ist längst vorbei, kein Kontakt
+  assert.equal(M.radfahrerAbbiegen("A", { v0: 1.8, v1: 1.8 }).kontakt, false);
+  // Gegenprobe 2: wäre der Radfahrer sichtbar (Sicht-Probe an einem Punkt hinter dem Spiegel), meldet das Modell „spiegel“
+  const sf = M.sichtfeld(M.FAHRZEUGE.solo);
+  assert.ok(sf.quelle(1.0, 2.4, 1.0) && /^(haupt|weit)/.test(sf.quelle(1.0, 2.4, 1.0)));
+});
+
+test("Druckluft-Bremse: Zweikreis, Zweileitung, Federspeicher, Anschlussreihenfolge (mit Gegenproben)", () => {
+  // Zweikreis: beide Kreise heil = volle Wirkung; ein Kreis defekt = der andere bremst weiter, aber schwächer; beide defekt = keine Bremswirkung
+  assert.equal(M.zweikreis({ pedal: 1, leck: [false, false] }).wirkung, 1);
+  const eins = M.zweikreis({ pedal: 1, leck: [false, true] });
+  assert.equal(eins.wirkung, 0.5); assert.equal(eins.vorrat[0], 1); assert.equal(eins.vorrat[1], 0);   // der heile Kreis bleibt gefüllt
+  assert.equal(M.zweikreis({ pedal: 1, leck: [true, true] }).wirkung, 0);
+  assert.equal(M.zweikreis({ pedal: 0, leck: [false, false] }).wirkung, 0);                            // ohne Pedal keine Bremsung
+  // Zweileitung: versorgt (rot voll) und gelb ohne Druck = gelöst; gelb Druck = Anhänger bremst proportional; rot weg = selbsttätige Vollbremsung
+  assert.equal(M.anhaengerBremse({ rot: 1, gelb: 0 }).gebremst, false);
+  assert.equal(M.anhaengerBremse({ rot: 1, gelb: 0.6 }).zyl, 0.6);
+  assert.equal(M.anhaengerBremse({ rot: 0, gelb: 0 }).gebremst, true);
+  assert.equal(M.anhaengerBremse({ rot: 0, gelb: 0 }).selbsttaetig, true);
+  assert.equal(M.anhaengerBremse({ rot: 0, gelb: 0, vorratAnh: 0 }).gebremst, false);                  // Gegenprobe: leerer Vorrat des Anhängers, keine Luft zum Bremsen
+  assert.equal(M.anhaengerBremse({ rot: 1, gelb: 1, vorratAnh: 0.3 }).zyl, 0.3);                       // Gegenprobe: Zylinderdruck nie größer als der Vorrat
+  // Federspeicher: Feder bremst, Druck löst; Druckverlust = Bremsung; Betriebsbremse addiert sich
+  assert.equal(M.federspeicher({ pFeder: 1, pMembran: 0 }).geloest, true);
+  assert.equal(M.federspeicher({ pFeder: 0, pMembran: 0 }).kraft, 1);
+  assert.equal(M.federspeicher({ pFeder: 0.3, pMembran: 0 }).gebremst, true);                          // zu wenig Druck zum Lösen
+  assert.equal(M.federspeicher({ pFeder: 1, pMembran: 0.5 }).kraft, 0.5);
+  assert.equal(M.federspeicher({ pFeder: 0, pMembran: 1 }).kraft, 1);                                  // Begrenzung auf volle Kraft
+  // Kuppeln: nur gelb → Anhänger bleibt gebremst (sicher); nur rot → Anhänger gelöst, aber nicht steuerbar (unsicher); beide → gelöst und steuerbar
+  assert.deepEqual([M.kuppelnZustand({ gelb: false, rot: false }).geloest, M.kuppelnZustand({ gelb: false, rot: false }).unsicher], [false, false]);
+  assert.equal(M.kuppelnZustand({ gelb: true, rot: false }).geloest, false);
+  assert.equal(M.kuppelnZustand({ gelb: true, rot: false }).unsicher, false);
+  assert.equal(M.kuppelnZustand({ gelb: false, rot: true }).unsicher, true);                           // „rot nie allein“
+  assert.equal(M.kuppelnZustand({ gelb: true, rot: true }).vomZugSteuerbar, true);
+});
+
+test("Kuppeln: Höhe, Fluchten, Wegrollen (mit Gegenproben)", () => {
+  // Höhe: abgesenkt passt unter, Normalhöhe gerade nicht (Zapfen ragt unter die Platte), Kontakt erst mit angehobener Zugmaschine
+  assert.equal(M.sattelUnterfahren(-0.12).passtUnter, true);
+  assert.equal(M.sattelUnterfahren(0).passtUnter, false);                  // Gegenprobe: ohne Absenken stößt die Platte an den Zapfen
+  assert.equal(M.sattelUnterfahren(-0.12).kontakt, false);
+  assert.equal(M.sattelUnterfahren(0.05).kontakt, true);
+  assert.equal(M.sattelUnterfahren(0.05).hebtAuf, false);
+  assert.equal(M.sattelUnterfahren(0.15).hebtAuf, true);                   // Gegenprobe: zu hoch, der Auflieger würde angehoben
+  // Fluchten: gerade trifft, schief nicht, seitlicher Versatz nicht
+  assert.equal(M.sattelTreffer({ winkel: 0, versatz: 0, abstand: 6 }).ok, true);
+  assert.equal(M.sattelTreffer({ winkel: 6, versatz: 0, abstand: 6 }).ok, false);
+  assert.equal(M.sattelTreffer({ winkel: 0, versatz: 0.4, abstand: 6 }).ok, false);
+  assert.equal(M.sattelTreffer({ winkel: 3, versatz: 0.4, abstand: 6 }).ok, false);
+  // Wegrollen: nur rot angeschlossen und nichts gesichert = rollt; Feststellbremse oder Keile = rollt nicht; ohne Gefälle rollt nichts
+  assert.equal(M.rollen({ rot: true, gefaelle: 0.01 }).rollt, true);
+  assert.equal(M.rollen({ rot: true, festZug: true, festAnh: true, keile: true, gefaelle: 0.01 }).rollt, false);
+  assert.equal(M.rollen({ rot: true, keile: true, gefaelle: 0.01 }).rollt, false);
+  assert.equal(M.rollen({ rot: false, gefaelle: 0.01 }).rollt, false);     // Betriebsbremse des Anhängers noch angelegt
+  assert.equal(M.rollen({ rot: true, gefaelle: 0 }).rollt, false);
+});
+
+test("Abreißen: rot weg = Anhänger bremst sofort; nur gelb weg = erst bei der nächsten Bremsung (mit Gegenproben)", () => {
+  assert.equal(M.abreissen({ rot: true }).anhaengerBremst, true);
+  assert.equal(M.abreissen({ rot: true }).sofort, true);
+  assert.equal(M.abreissen({ gelb: true, bremst: false }).anhaengerBremst, false);          // beim Fahren unbemerkt
+  assert.equal(M.abreissen({ gelb: true, bremst: false }).wartetAufBremsung, true);
+  assert.equal(M.abreissen({ gelb: true, bremst: true }).anhaengerBremst, true);            // beim Bremsen bremst der Anhänger notfallmäßig
+  assert.equal(M.abreissen({ gelb: true, bremst: true }).sofort, false);
+  assert.equal(M.abreissen({ bremst: true }).anhaengerBremst, false);                       // Gegenprobe: nichts gerissen, normale Bremsung ist keine Abrissbremsung
+  assert.equal(M.abreissen({ rot: true, gelb: true }).sofort, true);                        // beide weg: wie rot
+  assert.equal(M.abreissen({ rot: true }).zugBremstWeiter, true);
+  // Zeit-Weg: der Anhänger steht, bevor die langsamer bremsende Zugmaschine ganz steht; nichts rollt rückwärts, Weg wächst nur
+  const fa = M.abrissFahrt();
+  const e = fa.zustaende[fa.zustaende.length - 1];
+  assert.equal(e.vA, 0); assert.equal(e.vZ, 0);
+  assert.ok(fa.zustaende.every((q, k) => k === 0 || (q.xA >= fa.zustaende[k - 1].xA && q.xZ >= fa.zustaende[k - 1].xZ)));
+  const tStopA = fa.zustaende.find((q) => q.vA === 0).t, tStopZ = fa.zustaende.find((q) => q.vZ === 0).t;
+  assert.ok(tStopA < tStopZ);
+  // Gegenprobe: ohne Bremsung des Anhängers (a = 0) steht er nie
+  assert.ok(M.abrissFahrt({ a: 0 }).zustaende.every((q) => q.vA > 0));
+});

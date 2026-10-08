@@ -2,7 +2,7 @@
    Erklärfilm „f5-1“ für „Lkw und Zug verstehen“: Animation läuft live (GSAP) und wird aus dem Rechenmodell gezeichnet, nur der Text wechselt je Sprache. Keine Videodatei.
    starte(platz, { sprache }) -> { zerstoeren, zustand, zeitleiste, gesamt }. Braucht window.gsap (vendor/gsap-3.14.2.min.js). */
 const W = {};
-const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; left:0; top:0; width:1080px; height:1080px; overflow:hidden; background:#434B45; direction:ltr;}\n.lk .stage > *{position:absolute;}\n.lk .pill{padding:10px 28px; border-radius:42px; background:#FAF6EC; color:#2F4A34; border:3px solid var(--lk-gold,#D9954C); font:700 44px/1.15 var(--lk-text,'Barlow',sans-serif); text-align:center; max-width:560px; box-shadow:0 5px 12px rgba(0,0,0,.35);}\n.lk .pill.klein{font-size:38px; padding:6px 20px;}\n.lk .lkw-pill{max-width:520px; text-wrap:balance;}\n.lk-rtl .pill{direction:rtl;}\n.lk .panel .kicker{font-family:var(--lk-text,'Barlow',sans-serif); font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#8F5A14;}\n.lk .panel .ttl{font-family:var(--lk-titel,'Playfair Display',serif); font-weight:700; color:#2F4A34;}\n.lk .panel .sub{font-family:var(--lk-text,'Barlow',sans-serif); font-weight:500; color:#6F6857; opacity:0;}\n.lk .pts{display:grid;}\n.lk .pts > *{grid-area:1 / 1; align-self:start; opacity:0;}\n.lk .pt .tx{text-wrap:balance; font-family:var(--lk-text,'Barlow',sans-serif); font-weight:600; color:#2B2A22;}\n.lk .pt.gold .tx{color:#8F5A14;}\n.lk .pt .rf{font-family:var(--lk-text,'Barlow',sans-serif); font-weight:500; color:#6F6857;}\n.lk .merk{background:#2F4A34; color:#FAF6EC; border-left:12px solid #D9954C; border-radius:6px 18px 18px 6px; font-family:var(--lk-titel,'Playfair Display',serif); font-weight:600; box-shadow:0 10px 24px rgba(43,42,34,.25);}\n\n/* Erklärfilme „Lkw und Zug verstehen“ in der App: Bild oben, Text darunter, Steuerung darunter (keine Knöpfe auf dem Bild).\n   Handy zuerst (360–412 px). Ab ~660 px Breite (Querformat/Tablet) steht der Text neben dem Bild. */\n.lk { --lk-titel:var(--ff-titel,'Playfair Display',Georgia,serif); --lk-text:var(--ff-body,'Barlow',sans-serif); --lk-gold:var(--gold,#D9954C); margin:var(--sp-m,12px) 0 var(--sp-l,18px); }\n.lk-kopf { font-family:var(--lk-titel); font-weight:600; font-size:19px; margin:0 0 4px; }\n.lk-intro { color:var(--muted,#6F6857); font-size:14.5px; line-height:1.45; margin:0 0 10px; }\n.lk-kasten { background:var(--surface,#EEE6D3); border:1px solid var(--border,rgba(43,40,30,.16)); border-radius:var(--r-l,16px); padding:10px; overflow:hidden; }\n.lk-szenen { display:grid; position:relative; }\n.lk-szenen .scene { grid-area:1 / 1; display:flex; flex-direction:column; gap:12px; min-width:0; pointer-events:none; direction:ltr; }\n.lk-szenen .stagewrap { width:100%; aspect-ratio:1 / 1; border-radius:var(--r-m,12px); overflow:hidden; flex:none; background:#434B45; }\n.lk-szenen .stage { transform-origin:0 0; transform:scale(var(--lk-s,.3)); }\n.lk-szenen .panel { min-width:0; padding:2px 4px 4px; }\n.lk-szenen .dots, .lk-szenen .foot { display:none; }\n.lk-szenen .kicker { font-size:12.5px; line-height:1.3; letter-spacing:.12em; }\n.lk-szenen .ttl { font-size:24px; line-height:1.15; margin:4px 0 0; }\n.lk-szenen .sub { font-size:16px; line-height:1.4; margin-top:8px; }\n.lk-szenen .pts { margin-top:12px; }\n.lk-szenen .pt .tx { font-size:18px; line-height:1.42; }\n.lk-szenen .pt .rf { font-size:13px; line-height:1.35; margin-top:6px; }\n.lk-szenen .step .nr { font-size:36px; }\n.lk-szenen .step .nm { font-size:22px; line-height:1.2; margin-top:2px; }\n.lk-szenen .step .tx { font-size:17px; line-height:1.42; margin-top:8px; }\n.lk-szenen .step .px { font-size:15px; line-height:1.4; margin-top:8px; }\n.lk-szenen .step .rf { font-size:13px; line-height:1.35; margin-top:6px; }\n.lk-szenen .merk { padding:14px 16px; font-size:20px; line-height:1.3; border-left-width:8px; }\n.lk-breit .lk-szenen .scene { flex-direction:row; align-items:flex-start; gap:20px; }\n.lk-breit .lk-szenen .stagewrap { flex:0 0 46%; }\n.lk-breit .lk-szenen .panel { flex:1; }\n.lk-rtl .lk-szenen .panel, .lk-rtl .lk-text, .lk-rtl .lk-intro, .lk-rtl .lk-kopf { direction:rtl; text-align:right; }\n.lk-steuer { display:flex; flex-direction:column; gap:10px; margin-top:12px; }\n.lk-reihe { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }\n.lk-knopf { min-height:44px; padding:0 16px; border-radius:999px; border:1px solid var(--border,rgba(43,40,30,.16)); background:var(--bg,#FAF6EC); color:var(--text,#2B2A22); font:600 15px/1.2 var(--lk-text); display:inline-flex; align-items:center; gap:8px; cursor:pointer; }\n.lk-knopf svg { width:18px; height:18px; flex:none; fill:currentColor; }\n.lk-play { background:var(--lk-gold); color:var(--auf-gold,#2B2A22); border-color:transparent; }\n.lk-zeit { margin-inline-start:auto; font-size:13px; color:var(--muted,#6F6857); font-variant-numeric:tabular-nums; direction:ltr; }\n.lk-regler { width:100%; height:28px; margin:0; accent-color:var(--gold-text,#8F5A14); direction:ltr; }\n.lk-kapitel { display:grid; grid-template-columns:repeat(auto-fit,minmax(40px,1fr)); gap:4px; direction:ltr; }   /* 7 Kapitel müssen bei 360 px in eine Zeile passen, sonst wickeln sie um */\n.lk-kap { min-width:0; min-height:44px; border-radius:12px; border:1px solid var(--border,rgba(43,40,30,.16)); background:var(--bg,#FAF6EC); color:var(--text,#2B2A22); font:700 15px/1 var(--lk-text); cursor:pointer; }\n.lk-kap[aria-current=\"true\"] { background:var(--gruen,#2F4A34); color:var(--auf-tief,#fff); border-color:transparent; }\n.lk-knopf:focus-visible, .lk-kap:focus-visible, .lk-regler:focus-visible, .lk-text summary:focus-visible { outline:3px solid var(--gold-text,#8F5A14); outline-offset:2px; }\n.lk-text { margin-top:12px; font-size:15px; line-height:1.5; }\n.lk-text summary { min-height:44px; display:flex; align-items:center; cursor:pointer; font-weight:600; }\n.lk-text h3 { font-family:var(--lk-titel); font-size:16px; margin:14px 0 4px; }\n.lk-text p { margin:0 0 6px; }\n.lk-text .lk-ref { color:var(--muted,#6F6857); font-size:13px; }\n@media (prefers-reduced-motion: reduce) { .lk-szenen .stage { transition:none; } }\n/* Paragrafen-Verweise nie verdrehen (RTL-Sprachen), Regel 8 der Sprachen-Notiz */\n.lk-szenen .rf, .lk-szenen .step .rf, .lk-text .lk-ref { unicode-bidi:plaintext; }\n/* Schriften ohne Playfair-Zeichen (ar, ckb, ur, hi, fa, ps, el, am, ti): Überschriften in Barlow, mehr Zeilenhöhe */\n.lk-barlow { --lk-titel:var(--ff-body,'Barlow',sans-serif); }\n.lk-barlow .ttl, .lk-barlow .nm, .lk-barlow .merk, .lk-barlow .bigcard, .lk-barlow .lk-kopf, .lk-barlow .lk-text h3 { font-weight:700; }\n.lk[lang=\"ur\"] .lk-szenen :is(.pt .tx,.step .tx,.step .px,.sub,.merk,.ttl,.step .nm), .lk[lang=\"ur\"] .lk-text, .lk[lang=\"ur\"] .lk-intro { line-height:1.7; }\n.lk[lang=\"ps\"] .lk-szenen :is(.pt .tx,.step .tx,.step .px,.sub,.merk,.ttl,.step .nm), .lk[lang=\"ps\"] .lk-text, .lk[lang=\"ps\"] .lk-intro { line-height:1.55; }\n";
+const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; left:0; top:0; width:1080px; height:1080px; overflow:hidden; background:#434B45; direction:ltr;}\n.lk .stage > *{position:absolute;}\n.lk .pill{padding:10px 28px; border-radius:42px; background:#FAF6EC; color:#2F4A34; border:3px solid var(--lk-gold,#D9954C); font:700 44px/1.15 var(--lk-text,'Barlow',sans-serif); text-align:center; max-width:560px; box-shadow:0 5px 12px rgba(0,0,0,.35);}\n.lk .pill.gross{font-size:62px; padding:16px 44px; border-radius:60px; max-width:900px;}\n.lk .pill.klein{font-size:38px; padding:6px 20px;}\n.lk .lkw-pill{text-wrap:balance;}\n.lk-rtl .pill{direction:rtl;}\n.lk .panel .kicker{font-family:var(--lk-text,'Barlow',sans-serif); font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#8F5A14;}\n.lk .panel .ttl{font-family:var(--lk-titel,'Playfair Display',serif); font-weight:700; color:#2F4A34;}\n.lk .panel .sub{font-family:var(--lk-text,'Barlow',sans-serif); font-weight:500; color:#6F6857; opacity:0;}\n.lk .pts{display:grid;}\n.lk .pts > *{grid-area:1 / 1; align-self:start; opacity:0;}\n.lk .pt .tx{text-wrap:balance; font-family:var(--lk-text,'Barlow',sans-serif); font-weight:600; color:#2B2A22;}\n.lk .pt.gold .tx{color:#8F5A14;}\n.lk .pt .rf{font-family:var(--lk-text,'Barlow',sans-serif); font-weight:500; color:#6F6857;}\n.lk .merk{background:#2F4A34; color:#FAF6EC; border-left:12px solid #D9954C; border-radius:6px 18px 18px 6px; font-family:var(--lk-titel,'Playfair Display',serif); font-weight:600; box-shadow:0 10px 24px rgba(43,42,34,.25);}\n\n/* Erklärfilme „Lkw und Zug verstehen“ in der App: Bild oben, Text darunter, Steuerung darunter (keine Knöpfe auf dem Bild).\n   Handy zuerst (360–412 px). Ab ~660 px Breite (Querformat/Tablet) steht der Text neben dem Bild. */\n.lk { --lk-titel:var(--ff-titel,'Playfair Display',Georgia,serif); --lk-text:var(--ff-body,'Barlow',sans-serif); --lk-gold:var(--gold,#D9954C); margin:var(--sp-m,12px) 0 var(--sp-l,18px); }\n.lk-kopf { font-family:var(--lk-titel); font-weight:600; font-size:19px; margin:0 0 4px; }\n.lk-intro { color:var(--muted,#6F6857); font-size:14.5px; line-height:1.45; margin:0 0 10px; }\n.lk-kasten { background:var(--surface,#EEE6D3); border:1px solid var(--border,rgba(43,40,30,.16)); border-radius:var(--r-l,16px); padding:10px; overflow:hidden; }\n.lk-szenen { display:grid; position:relative; }\n.lk-szenen .scene { grid-area:1 / 1; display:flex; flex-direction:column; gap:12px; min-width:0; pointer-events:none; direction:ltr; }\n.lk-szenen .stagewrap { width:100%; aspect-ratio:1 / 1; border-radius:var(--r-m,12px); overflow:hidden; flex:none; background:#434B45; }\n.lk-szenen .stage { transform-origin:0 0; transform:scale(var(--lk-s,.3)); }\n.lk-szenen .panel { min-width:0; padding:2px 4px 4px; }\n.lk-szenen .dots, .lk-szenen .foot { display:none; }\n.lk-szenen .kicker { font-size:12.5px; line-height:1.3; letter-spacing:.12em; }\n.lk-szenen .ttl { font-size:24px; line-height:1.15; margin:4px 0 0; }\n.lk-szenen .sub { font-size:16px; line-height:1.4; margin-top:8px; }\n.lk-szenen .pts { margin-top:12px; }\n.lk-szenen .pt .tx { font-size:18px; line-height:1.42; }\n.lk-szenen .pt .rf { font-size:13px; line-height:1.35; margin-top:6px; }\n.lk-szenen .step .nr { font-size:36px; }\n.lk-szenen .step .nm { font-size:22px; line-height:1.2; margin-top:2px; }\n.lk-szenen .step .tx { font-size:17px; line-height:1.42; margin-top:8px; }\n.lk-szenen .step .px { font-size:15px; line-height:1.4; margin-top:8px; }\n.lk-szenen .step .rf { font-size:13px; line-height:1.35; margin-top:6px; }\n.lk-szenen .merk { padding:14px 16px; font-size:20px; line-height:1.3; border-left-width:8px; }\n.lk-breit .lk-szenen .scene { flex-direction:row; align-items:flex-start; gap:20px; }\n.lk-breit .lk-szenen .stagewrap { flex:0 0 46%; }\n.lk-breit .lk-szenen .panel { flex:1; }\n.lk-rtl .lk-szenen .panel, .lk-rtl .lk-text, .lk-rtl .lk-intro, .lk-rtl .lk-kopf { direction:rtl; text-align:right; }\n.lk-steuer { display:flex; flex-direction:column; gap:10px; margin-top:12px; }\n.lk-reihe { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }\n.lk-knopf { min-height:44px; padding:0 16px; border-radius:999px; border:1px solid var(--border,rgba(43,40,30,.16)); background:var(--bg,#FAF6EC); color:var(--text,#2B2A22); font:600 15px/1.2 var(--lk-text); display:inline-flex; align-items:center; gap:8px; cursor:pointer; }\n.lk-knopf svg { width:18px; height:18px; flex:none; fill:currentColor; }\n.lk-play { background:var(--lk-gold); color:var(--auf-gold,#2B2A22); border-color:transparent; }\n.lk-zeit { margin-inline-start:auto; font-size:13px; color:var(--muted,#6F6857); font-variant-numeric:tabular-nums; direction:ltr; }\n.lk-regler { width:100%; height:28px; margin:0; accent-color:var(--gold-text,#8F5A14); direction:ltr; }\n.lk-kapitel { display:grid; grid-template-columns:repeat(auto-fit,minmax(40px,1fr)); gap:4px; direction:ltr; }   /* 7 Kapitel müssen bei 360 px in eine Zeile passen, sonst wickeln sie um */\n.lk-kap { min-width:0; min-height:44px; border-radius:12px; border:1px solid var(--border,rgba(43,40,30,.16)); background:var(--bg,#FAF6EC); color:var(--text,#2B2A22); font:700 15px/1 var(--lk-text); cursor:pointer; }\n.lk-kap[aria-current=\"true\"] { background:var(--gruen,#2F4A34); color:var(--auf-tief,#fff); border-color:transparent; }\n.lk-knopf:focus-visible, .lk-kap:focus-visible, .lk-regler:focus-visible, .lk-text summary:focus-visible { outline:3px solid var(--gold-text,#8F5A14); outline-offset:2px; }\n.lk-text { margin-top:12px; font-size:15px; line-height:1.5; }\n.lk-text summary { min-height:44px; display:flex; align-items:center; cursor:pointer; font-weight:600; }\n.lk-text h3 { font-family:var(--lk-titel); font-size:16px; margin:14px 0 4px; }\n.lk-text p { margin:0 0 6px; }\n.lk-text .lk-ref { color:var(--muted,#6F6857); font-size:13px; }\n@media (prefers-reduced-motion: reduce) { .lk-szenen .stage { transition:none; } }\n/* Paragrafen-Verweise nie verdrehen (RTL-Sprachen), Regel 8 der Sprachen-Notiz */\n.lk-szenen .rf, .lk-szenen .step .rf, .lk-text .lk-ref { unicode-bidi:plaintext; }\n/* Schriften ohne Playfair-Zeichen (ar, ckb, ur, hi, fa, ps, el, am, ti): Überschriften in Barlow, mehr Zeilenhöhe */\n.lk-barlow { --lk-titel:var(--ff-body,'Barlow',sans-serif); }\n.lk-barlow .ttl, .lk-barlow .nm, .lk-barlow .merk, .lk-barlow .bigcard, .lk-barlow .lk-kopf, .lk-barlow .lk-text h3 { font-weight:700; }\n.lk[lang=\"ur\"] .lk-szenen :is(.pt .tx,.step .tx,.step .px,.sub,.merk,.ttl,.step .nm), .lk[lang=\"ur\"] .lk-text, .lk[lang=\"ur\"] .lk-intro { line-height:1.7; }\n.lk[lang=\"ps\"] .lk-szenen :is(.pt .tx,.step .tx,.step .px,.sub,.merk,.ttl,.step .nm), .lk[lang=\"ps\"] .lk-text, .lk[lang=\"ps\"] .lk-intro { line-height:1.55; }\n";
 // ---- kern/modell.js ----
 (function (window) {
 /* Rechenmodell „Lkw und Zug“ (Kinematik, Draufsicht). EINE Quelle für Film UND Test: Bewegungen werden gerechnet, nicht gezeichnet.
@@ -179,7 +179,28 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
   // Innerster Radius des Fahrzeugs (innere Ecke der letzten Achse) bei Kreisfahrt
   function innenRadius(fz, RF) { const r = radien(fz, RF); return (fz.anh ? r.T : r.A) - fz.breite / 2; }
 
-  const api = { FAHRZEUGE: FAHRZEUGE, bahn: bahn, simuliere: simuliere, koerper: koerper, rechteck: rechteck, maxUeberschnitt: maxUeberschnitt, gesamtLaenge: gesamtLaenge, radien: radien, vorderachsRadius: vorderachsRadius, innenRadius: innenRadius, abstandLinks: abstandLinks, folge: folge };
+
+  /* ---------- Folgefahrt (Abstand, Seitenansicht) ----------
+     Ein Pkw bremst plötzlich bis zum Stand, der Lkw dahinter reagiert nach „reaktion“ Sekunden und bremst mit „aHinten“.
+     Alle Werte sind BEISPIELWERTE (keine Aussage über Anhaltewege; Zahlen kommen im Film nicht vor):
+     v0 Anfangsgeschwindigkeit m/s, luecke Abstand Stoßstange–Heck bei Bremsbeginn (m), aVorn/aHinten Verzögerungen (m/s²).
+     Gibt Lage der Fahrzeugfronten über der Zeit zurück: x ist der Weg seit Bremsbeginn (m), Kollision = Abstand ≤ 0. */
+  function folgefahrt(o) {
+    const dt = 0.01, n = Math.round((o.dauer || 14) / dt), z = [];
+    let vV = o.v0, vH = o.v0, xV = 0, xH = -o.luecke;   // xV = Heck des Vordermanns, xH = Front des Lkw
+    let kollision = null;
+    for (let i = 0; i <= n; i++) {
+      const t = i * dt;
+      z.push({ t: t, xV: xV, xH: xH, vV: vV, vH: vH, bremstV: t >= 0 && vV > 0, bremstH: t >= o.reaktion && vH > 0, abstand: xV - xH });
+      if (xV - xH <= 0 && kollision == null) kollision = t;
+      vV = Math.max(0, vV - o.aVorn * dt); xV += vV * dt;
+      if (t >= o.reaktion) vH = Math.max(0, vH - o.aHinten * dt);
+      xH += vH * dt;
+    }
+    return { zustaende: z, dt: dt, kollision: kollision, minAbstand: Math.min.apply(null, z.map((q) => q.abstand)), bei: function (t) { return z[Math.max(0, Math.min(n, Math.round(t / dt)))]; } };
+  }
+
+  const api = { folgefahrt: folgefahrt, FAHRZEUGE: FAHRZEUGE, bahn: bahn, simuliere: simuliere, koerper: koerper, rechteck: rechteck, maxUeberschnitt: maxUeberschnitt, gesamtLaenge: gesamtLaenge, radien: radien, vorderachsRadius: vorderachsRadius, innenRadius: innenRadius, abstandLinks: abstandLinks, folge: folge };
   if (typeof module !== "undefined" && module.exports) module.exports = api; else root.LKW_MODELL = api;
 })(typeof window !== "undefined" ? window : globalThis);
 
@@ -296,16 +317,16 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
   function bremslicht(g, xh, b2, liste) {   // leuchtet nur beim Bremsen (Bremslicht = hell rot, das normale Rücklicht bleibt dunkel)
     [b2 - 0.55, -b2 + 0.23].forEach((y) => { liste.push(rect(g, xh - 0.04, y, 0.14, 0.32, "#FF3B2B", "none", 0.03)); liste[liste.length - 1].setAttribute("opacity", 0); });
   }
-  function ruecklichter(g, xh, b2, blinker, halos, hid) {
+  function ruecklichter(g, xh, b2, blinker, halos, hid, blinkerL, halosL) {
     rect(g, xh, b2 - 0.55, 0.1, 0.32, FARBE.ruecklicht, "none", 0.03); rect(g, xh, -b2 + 0.23, 0.1, 0.32, FARBE.ruecklicht, "none", 0.03);
     // Blinker rechts hinten (Fahrtrichtung rechts = +y), links stets aus
     blinker.push(rect(g, xh, b2 - 0.25, 0.12, 0.22, FARBE.blinkAus, "none", 0.03)); halo(g, xh - 0.1, b2 - 0.25, 0.12, 0.22, halos, hid);
-    rect(g, xh, -b2 + 0.03, 0.12, 0.22, FARBE.blinkAus, "none", 0.03);
+    blinkerL.push(rect(g, xh, -b2 + 0.03, 0.12, 0.22, FARBE.blinkAus, "none", 0.03)); halo(g, xh - 0.1, -b2 + 0.03, 0.12, 0.22, halosL, hid);
   }
 
   function fahrzeug(layer, fz, W, o) {
     o = o || {};
-    const S = W.S, b2 = fz.breite / 2, blinker = [], halos = [], bremsen = [], rv = {};
+    const S = W.S, b2 = fz.breite / 2, blinker = [], halos = [], bremsen = [], blinkerL = [], halosL = [], rv = {};
     const gAnh = fz.anh ? el("g", { class: "anhaenger" }, layer) : null;   // Anhänger zuerst (liegt unter dem Zugfahrzeug)
     const gZug = el("g", { class: "zug" }, layer);
     const schatten = "drop-shadow(0 " + (6 / S).toFixed(3) + "px " + (6 / S).toFixed(3) + "px rgba(0,0,0,.40))";   // Einheit = Meter (Gruppe ist skaliert)
@@ -334,8 +355,8 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
     rv.vr.setAttribute("class", "vr"); rv.vl.setAttribute("class", "vl");
     // Blinker rechts vorn; Rücklicht hinten (nur Zug ohne Anhänger / Sattelzugmaschine zeigt kein Heck)
     blinker.push(rect(gZug, xv - 0.2, b2 - 0.26, 0.2, 0.24, FARBE.blinkAus, "none", 0.04)); halo(gZug, xv, b2 - 0.26, 0.2, 0.24, halos, W.haloId);
-    rect(gZug, xv - 0.2, -b2 + 0.02, 0.2, 0.24, FARBE.blinkAus, "none", 0.04);
-    if (!fz.anh) { ruecklichter(gZug, -fz.hinten, b2, blinker, halos, W.haloId); bremslicht(gZug, -fz.hinten, b2, bremsen); }
+    blinkerL.push(rect(gZug, xv - 0.2, -b2 + 0.02, 0.2, 0.24, FARBE.blinkAus, "none", 0.04)); halo(gZug, xv, -b2 + 0.02, 0.2, 0.24, halosL, W.haloId);
+    if (!fz.anh) { ruecklichter(gZug, -fz.hinten, b2, blinker, halos, W.haloId, blinkerL, halosL); bremslicht(gZug, -fz.hinten, b2, bremsen); }
 
     // Anhänger / Auflieger
     if (gAnh) {
@@ -350,12 +371,12 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
         el("circle", { cx: f(fz.D), cy: 0, r: 0.18, fill: "#33373C" }, gAnh);                                      // Königszapfen
         radPaar(gAnh, -1.3, b2, true, true); radPaar(gAnh, 0, b2, true, true); radPaar(gAnh, 1.3, b2, true, true);
       } else { radPaar(gAnh, -0.65, b2, true, true); radPaar(gAnh, 0.65, b2, true, true); }
-      ruecklichter(gAnh, x0, b2, blinker, halos, W.haloId); bremslicht(gAnh, x0, b2, bremsen);
+      ruecklichter(gAnh, x0, b2, blinker, halos, W.haloId, blinkerL, halosL); bremslicht(gAnh, x0, b2, bremsen);
     }
 
     const obj = {
       /* z: Rechenzustand (modell.simuliere), blink: 0 oder 1 */
-      setze: function (z, blink, bremst) {
+      setze: function (z, blink, bremst, blinkL) {
         const A = W.px(z.A.x, z.A.y);
         gZug.setAttribute("transform", "translate(" + f(A[0]) + " " + f(A[1]) + ") rotate(" + f(z.hz * DEG) + ") scale(" + S + ")");
         // Vorderräder zeigen in Bewegungsrichtung der Vorderachse: Winkel gegen die Fahrzeuglängsachse
@@ -370,6 +391,8 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
         blinker.forEach((b) => b.setAttribute("fill", farbe));
         halos.forEach((h) => h.setAttribute("opacity", blink ? 0.9 : 0));
         bremsen.forEach((r) => r.setAttribute("opacity", bremst ? 1 : 0));
+        blinkerL.forEach((l) => l.setAttribute("fill", blinkL ? FARBE.blinkAn : FARBE.blinkAus));
+        halosL.forEach((h) => h.setAttribute("opacity", blinkL ? 0.9 : 0));
       },
       zeige: function (an) { const v = an ? "visible" : "hidden"; gZug.style.visibility = v; if (gAnh) gAnh.style.visibility = v; },
       groups: { zug: gZug, anh: gAnh }
@@ -448,7 +471,7 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
     // ax "0": linker Rand bei x · "-100%": rechter Rand bei x (per right:, damit die Breite nicht zusammengedrückt wird) · sonst mittig
     const h = o.ax === "-100%" ? "right:" + (1080 - x) + "px" : "left:" + x + "px";
     const tr = o.ax === "-100%" ? "translate(0," + (o.ay != null ? o.ay : "-50%") + ")" : "translate(" + (o.ax != null ? o.ax : "-50%") + "," + (o.ay != null ? o.ay : "-50%") + ")";
-    d.style.cssText = "position:absolute;width:max-content;max-width:520px;" + h + ";top:" + y + "px;transform:" + tr + ";opacity:0" + (o.farbe ? ";border-color:" + o.farbe : "");
+    d.style.cssText = "position:absolute;width:max-content;max-width:" + ((o.klasse || "").indexOf("gross") >= 0 ? 900 : 520) + "px;" + h + ";top:" + y + "px;transform:" + tr + ";opacity:0" + (o.farbe ? ";border-color:" + o.farbe : "");
     if (o.punkt) { const p = document.createElement("i"); p.style.cssText = "display:inline-block;width:22px;height:22px;border-radius:50%;margin-inline-end:12px;vertical-align:-1px;background:" + o.punkt; d.insertBefore(p, d.firstChild); }
     stage.appendChild(d);
     return d;
@@ -469,7 +492,25 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
     return g;
   }
 
-  window.LKW_BK = { FARBE: FARBE, el: el, welt: welt, fahrzeug: fahrzeug, fussflaeche: fussflaeche, spur: spur, band: band, pille: pille, leitlinie: leitlinie, mass: mass, f: f, DEG: DEG };
+
+  /* ---------- Pkw von oben (Ursprung Mitte, x vorn) ---------- */
+  function pkwOben(layer, W, farbe) {
+    const g = el("g", null, layer), S = W.S;
+    g.style.filter = "drop-shadow(0 " + (5 / S).toFixed(3) + "px " + (5 / S).toFixed(3) + "px rgba(0,0,0,.4))";
+    const c = farbe || "#D9954C", d = "#8F5A14";
+    [[-1.35, 0.95], [-1.35, -0.95], [1.4, 0.95], [1.4, -0.95]].forEach((p) => rect(g, p[0] - 0.33, p[1] - 0.12, 0.66, 0.26, FARBE.reifen, "none", 0.08));
+    rect(g, -2.2, -0.9, 4.4, 1.8, c, d, 0.45, 0.07);
+    rect(g, -0.6, -0.72, 1.7, 1.44, "#E8B77F", d, 0.3, 0.05);
+    rect(g, 0.55, -0.7, 0.45, 1.4, FARBE.glas, "none", 0.15); rect(g, -1.05, -0.66, 0.35, 1.32, FARBE.glas, "none", 0.12);
+    rect(g, 2.1, 0.45, 0.1, 0.3, FARBE.scheinwerfer, "none", 0.04); rect(g, 2.1, -0.75, 0.1, 0.3, FARBE.scheinwerfer, "none", 0.04);
+    rect(g, -2.2, 0.45, 0.1, 0.3, FARBE.ruecklicht, "none", 0.04); rect(g, -2.2, -0.75, 0.1, 0.3, FARBE.ruecklicht, "none", 0.04);
+    const bl = rect(g, 2.0, 0.78, 0.2, 0.14, FARBE.blinkAus, "none", 0.04), bll = rect(g, 2.0, -0.92, 0.2, 0.14, FARBE.blinkAus, "none", 0.04);
+    return { g: g, laenge: 4.4, setze: function (x, y, h, blinkR, blinkL) {
+      const p = W.px(x, y); g.setAttribute("transform", "translate(" + f(p[0]) + " " + f(p[1]) + ") rotate(" + f(h * DEG) + ") scale(" + S + ")");
+      bl.setAttribute("fill", blinkR ? FARBE.blinkAn : FARBE.blinkAus); bll.setAttribute("fill", blinkL ? FARBE.blinkAn : FARBE.blinkAus);
+    } };
+  }
+  window.LKW_BK = { pkwOben: pkwOben, FARBE: FARBE, el: el, welt: welt, fahrzeug: fahrzeug, fussflaeche: fussflaeche, spur: spur, band: band, pille: pille, leitlinie: leitlinie, mass: mass, f: f, DEG: DEG };
 })(window);
 
 })(W);
@@ -541,6 +582,129 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
     return { el: el, fade: fade, starts: starts, gesamt: acc, buehne: buehne, panel: panel, stapel: stapel, ptEl: ptEl, merkEl: merkEl, standardPanel: standardPanel, sceneFade: sceneFade, zeige: zeige };
   }
   window.LKW_PANEL = { neu: neu };
+})(window);
+
+})(W);
+
+// ---- kern/seite.js ----
+(function (window) {
+/* Seitenansicht (Filme mit Abstand, Bremsen): Straße, Lkw und Pkw von der Seite, Maßklammer, mitlaufende Kamera.
+   Fahrtrichtung nach RECHTS (Rechtsverkehr, wir sehen die Fahrerseite nicht: Seitenansicht von der Beifahrerseite des nach rechts fahrenden Fahrzeugs ist die rechte Seite; Details bleiben neutral).
+   Alle Zeichnungen in Metern, Gruppe skaliert mit S Pixel je Meter. Kamera: camX = Weltposition, die auf px0 steht. */
+(function (window) {
+  "use strict";
+  const BK = window.LKW_BK, F = BK.FARBE, el = BK.el, f = BK.f;
+
+  function szene(stage, o) {
+    o = o || {};
+    const S = o.S || 12, px0 = o.px0 || 200, boden = o.boden || 760;
+    const W = { S: S, boden: boden, px0: px0, cam: 0 };
+    W.px = (x) => px0 + (x - W.cam) * S;
+    stage.style.background = "linear-gradient(180deg,#2B3631 0%,#3A463F 55%,#434B45 100%)";
+    const svg = el("svg", { viewBox: "0 0 1080 1080", width: 1080, height: 1080 });
+    svg.style.cssText = "position:absolute;left:0;top:0;overflow:hidden";
+    stage.appendChild(svg);
+    // Hügel (Parallaxe) und Straße
+    const huegel = el("path", { fill: "#2F3B35" }, svg);
+    el("rect", { x: 0, y: boden, width: 1080, height: 1080 - boden, fill: "#4A524C" }, svg);
+    el("rect", { x: 0, y: boden, width: 1080, height: 8, fill: "#7A837C" }, svg);
+    el("rect", { x: 0, y: boden + 8, width: 1080, height: 60, fill: "#3F4742" }, svg);      // Fahrbahnrand (Seitenstreifen)
+    const marken = el("g", null, svg), ticks = el("g", null, svg);
+    W.gFz = el("g", null, svg); W.gUeber = el("g", null, svg);
+    // Streckenmarken alle 10 m (Maßstab): Striche auf dem Boden; alle 50 m kräftiger
+    const strich = [];
+    for (let i = -10; i < 120; i++) { const l = el("line", { y1: boden + 20, y2: boden + 46, stroke: "rgba(250,246,236,.32)", "stroke-width": 3 }, ticks); strich.push([l, i * 10]); }
+    const mittel = []; for (const dy of [130, 215]) for (let i = -10; i < 130; i++) { const r = el("rect", { y: boden + dy, width: 3 * S, height: 6, fill: "rgba(250,246,236,.55)" }, marken); mittel.push([r, i * 8]); }
+    W.kamera = function (x) {
+      W.cam = x;
+      strich.forEach((s) => { const p = W.px(s[1]); s[0].setAttribute("x1", f(p)); s[0].setAttribute("x2", f(p)); });
+      mittel.forEach((s) => s[0].setAttribute("x", f(W.px(s[1]))));
+      const sh = -((x * S * 0.12) % 360); let d = "M" + (sh - 360) + " " + boden;
+      for (let k = -1; k < 5; k++) { const b = sh + k * 360; d += " Q" + (b + 90) + " " + (boden - 130) + " " + (b + 180) + " " + (boden - 40) + " T" + (b + 360) + " " + boden; }
+      huegel.setAttribute("d", d + " L1500 " + boden + " L-400 " + boden + " Z");
+    };
+    W.kamera(0);
+    return W;
+  }
+
+  function rad(g, cx, r) {
+    const w = el("g", { transform: "translate(" + cx + " -" + r + ")" }, g);
+    el("circle", { r: r, fill: F.reifen, stroke: "#000", "stroke-width": 0.04 }, w);
+    const dreh = el("g", null, w);
+    el("circle", { r: r * 0.55, fill: "#8D949C" }, dreh);
+    el("line", { x1: -r * 0.5, y1: 0, x2: r * 0.5, y2: 0, stroke: "#4B5057", "stroke-width": 0.09 }, dreh);
+    el("line", { x1: 0, y1: -r * 0.5, x2: 0, y2: r * 0.5, stroke: "#4B5057", "stroke-width": 0.09 }, dreh);
+    return dreh;
+  }
+
+  // Lkw (Kastenwagen) von der Seite. Ursprung: Boden unter der Stoßstange vorn, Fahrzeug erstreckt sich nach links (−8,4 m).
+  function lkw(W, laenge) {
+    const L = laenge || 8.4, g = el("g", null, W.gFz), s = W.S;
+    g.style.filter = "drop-shadow(0 " + (5 / s).toFixed(3) + "px " + (5 / s).toFixed(3) + "px rgba(0,0,0,.4))";
+    const dreher = [];
+    el("rect", { x: -L, y: -1.0, width: L, height: 0.38, fill: "#3A3E43" }, g);
+    el("rect", { x: -L, y: -3.45, width: L - 2.4, height: 2.55, rx: 0.12, fill: F.kasten, stroke: F.kastenD, "stroke-width": 0.07 }, g);
+    for (let x = -L + 0.9; x < -2.6; x += 1.2) el("line", { x1: x, y1: -3.35, x2: x, y2: -1.0, stroke: "rgba(120,108,80,.28)", "stroke-width": 0.04 }, g);
+    el("path", { d: "M-2.3 -0.9 L-2.3 -3.1 L-1.0 -3.1 L0 -1.85 L0 -0.9 Z", fill: F.kabine, stroke: F.kabineD, "stroke-width": 0.07 }, g);
+    el("path", { d: "M-2.0 -1.9 L-2.0 -2.85 L-1.1 -2.85 L-0.45 -1.9 Z", fill: F.glas }, g);
+    el("rect", { x: -0.12, y: -1.5, width: 0.12, height: 0.3, fill: F.scheinwerfer }, g);
+    const brems = el("rect", { x: -L - 0.02, y: -1.55, width: 0.12, height: 0.45, fill: "#FF3B2B", opacity: 0 }, g);
+    el("rect", { x: -L - 0.02, y: -1.55, width: 0.12, height: 0.45, fill: F.ruecklicht, opacity: 0.9 }, g);
+    g.appendChild(brems);
+    [-0.9, -L + 1.2, -L + 2.5].forEach((cx) => dreher.push(rad(g, cx, 0.5)));
+    return { g: g, laenge: L, setze: function (xFront, bremst, weg) {
+      g.setAttribute("transform", "translate(" + f(W.px(xFront)) + " " + W.boden + ") scale(" + W.S + ")");
+      brems.setAttribute("opacity", bremst ? 1 : 0);
+      dreher.forEach((d) => d.setAttribute("transform", "rotate(" + f((weg / 0.5) * 57.2958 % 360) + ")"));
+    } };
+  }
+  // Pkw von der Seite. Ursprung: Boden unter dem Heck; Fahrzeug erstreckt sich nach rechts (4,4 m).
+  function pkw(W) {
+    const g = el("g", null, W.gFz), s = W.S, dreher = [];
+    g.style.filter = "drop-shadow(0 " + (5 / s).toFixed(3) + "px " + (5 / s).toFixed(3) + "px rgba(0,0,0,.4))";
+    el("path", { d: "M0 -0.55 L0 -1.0 Q0.05 -1.15 0.6 -1.2 L1.2 -1.25 L1.9 -1.85 Q2.2 -2.0 3.0 -2.0 L3.5 -1.4 L4.2 -1.25 Q4.4 -1.2 4.4 -0.95 L4.4 -0.55 Z", fill: "#D9954C", stroke: "#8F5A14", "stroke-width": 0.06 }, g);
+    el("path", { d: "M2.0 -1.25 L2.35 -1.8 L2.95 -1.8 L3.35 -1.25 Z", fill: F.glas }, g);
+    el("rect", { x: 4.3, y: -1.15, width: 0.1, height: 0.22, fill: F.scheinwerfer }, g);
+    el("rect", { x: -0.02, y: -1.05, width: 0.12, height: 0.25, fill: F.ruecklicht, opacity: 0.9 }, g);
+    const brems = el("rect", { x: -0.02, y: -1.05, width: 0.12, height: 0.25, fill: "#FF3B2B", opacity: 0 }, g);
+    [0.95, 3.45].forEach((cx) => dreher.push(rad(g, cx, 0.34)));
+    return { g: g, laenge: 4.4, setze: function (xHeck, bremst, weg) {
+      g.setAttribute("transform", "translate(" + f(W.px(xHeck)) + " " + W.boden + ") scale(" + W.S + ")");
+      brems.setAttribute("opacity", bremst ? 1 : 0);
+      dreher.forEach((d) => d.setAttribute("transform", "rotate(" + f((weg / 0.34) * 57.2958 % 360) + ")"));
+    } };
+  }
+
+  // Reisebus von der Seite (Ursprung Boden unter der Front, erstreckt sich nach links 12 m)
+  function bus(W) {
+    const L = 12, g = el("g", null, W.gFz), s = W.S, dreher = [];
+    g.style.filter = "drop-shadow(0 " + (5 / s).toFixed(3) + "px " + (5 / s).toFixed(3) + "px rgba(0,0,0,.4))";
+    el("rect", { x: -L, y: -3.4, width: L, height: 2.75, rx: 0.4, fill: "#E7E1D0", stroke: F.kastenD, "stroke-width": 0.07 }, g);
+    el("rect", { x: -L + 0.5, y: -3.0, width: L - 1.0, height: 1.0, rx: 0.15, fill: F.glas }, g);
+    for (let x = -L + 2.2; x < -0.7; x += 2.2) el("line", { x1: x, y1: -3.0, x2: x, y2: -2.0, stroke: "#B9AE93", "stroke-width": 0.09 }, g);
+    el("rect", { x: -L, y: -1.2, width: L, height: 0.2, fill: F.gold }, g);
+    el("rect", { x: -0.12, y: -1.45, width: 0.12, height: 0.3, fill: F.scheinwerfer }, g);
+    const brems = el("rect", { x: -L - 0.02, y: -1.6, width: 0.12, height: 0.4, fill: "#FF3B2B", opacity: 0 }, g);
+    [-1.6, -L + 1.6, -L + 3.0].forEach((cx) => dreher.push(rad(g, cx, 0.5)));
+    return { g: g, laenge: L, setze: function (xFront, bremst, weg) {
+      g.setAttribute("transform", "translate(" + f(W.px(xFront)) + " " + W.boden + ") scale(" + W.S + ")");
+      brems.setAttribute("opacity", bremst ? 1 : 0);
+      dreher.forEach((d) => d.setAttribute("transform", "rotate(" + f((weg / 0.5) * 57.2958 % 360) + ")"));
+    } };
+  }
+  // Maßklammer zwischen zwei Weltpunkten über der Straße (Pille mit Text kommt von außen)
+  function klammer(W, y, farbe) {
+    const g = el("g", { opacity: 0 }, W.gUeber), c = farbe || F.gold;
+    const l = el("line", { y1: y, y2: y, stroke: c, "stroke-width": 5 }, g), a = el("line", { y1: y - 16, y2: y + 16, stroke: c, "stroke-width": 5 }, g), b = el("line", { y1: y - 16, y2: y + 16, stroke: c, "stroke-width": 5 }, g);
+    const flaeche = el("rect", { y: y, height: W.boden - y, fill: c, opacity: 0.13 }, g);
+    return { g: g, farbe: function (c2) { [l, a, b].forEach((e) => e.setAttribute("stroke", c2)); flaeche.setAttribute("fill", c2); }, setze: function (x1, x2) {
+      const p1 = W.px(x1), p2 = W.px(x2);
+      l.setAttribute("x1", f(p1)); l.setAttribute("x2", f(p2)); a.setAttribute("x1", f(p1)); a.setAttribute("x2", f(p1)); b.setAttribute("x1", f(p2)); b.setAttribute("x2", f(p2));
+      flaeche.setAttribute("x", f(Math.min(p1, p2))); flaeche.setAttribute("width", f(Math.abs(p2 - p1)));
+      return [(p1 + p2) / 2, y];
+    } };
+  }
+  window.LKW_SEITE = { szene: szene, bus: bus, lkw: lkw, pkw: pkw, klammer: klammer };
 })(window);
 
 })(W);
@@ -661,7 +825,7 @@ window.FILM_TEXT = {
 
 })(W);
 
-W.FILM_SPRACHEN = {};
+W.FILM_SPRACHEN = {"en":{"titel":"Swept paths – where does the trailer go?","ui_ueber":"Overview: swept paths in 4 minutes","ui_intro":"A short film without sound: everything is shown as text on screen. You can pause at any time or pick a chapter.","ui_start":"Start film","ui_pause":"Pause","ui_weiter":"Resume","ui_neu":"Restart","ui_kapitel":"Chapters","ui_lesen":"Read the full text","k1_kicker":"The question","k1_titel":"Where does the rear end go?","k1_sub":"A truck turns right.","k1_p1":"The front wheels follow a curve.","k1_p2":"But where do the rear wheels go? And the trailer?","k1_p3":"The tracks of all axles in a turn are called swept paths.","k2_kicker":"The truck alone","k2_titel":"The rear axle runs tighter","k2_sub":"A truck without a trailer, drawn to scale.","k2_p1":"On the example truck, only the front axle steers. The rear axle follows.","k2_p2":"That is why the rear axle follows a tighter radius.","k2_p3":"The area between the tracks is swept by the vehicle.","k2_p4":"That is the danger zone.","l_vorn":"Front axle","l_hinten":"Rear axle","l_gefahr":"Danger zone","k3_kicker":"With a trailer","k3_titel":"The truck-trailer combination","k3_sub":"A truck with a trailer on a rigid drawbar.","k3_p1":"The trailer axle follows the coupling point, not the truck.","k3_p2":"In this example it runs even tighter than the rear axle.","k3_p3":"In the example, the danger zone gets wider.","l_anhaenger":"Trailer axle","l_kupplung":"Coupling point","k4_kicker":"With a semi-trailer","k4_titel":"The articulated truck","k4_sub":"Tractor unit and semi-trailer.","k4_p1":"The semi-trailer is coupled to the kingpin of the fifth wheel.","k4_p2":"In a turn, the semi-trailer gradually bends away from the tractor unit.","k4_p3":"In the example, its track runs furthest inside.","l_auflieger":"Semi-trailer axles","l_zapfen":"Kingpin","l_knick":"Articulation angle","k5_kicker":"Comparison","k5_titel":"Same turn, three vehicles","k5_sub":"The front axle drives the same turn every time.","k5_p1":"In the example, the rear track moves further and further inside: truck, truck-trailer combination, articulated truck.","l_lkw":"Truck","l_lastzug":"Truck + trailer","l_sattel":"Articulated truck","k6_kicker":"The law","k6_titel":"The turning ring","k6_sub":"How much space may a vehicle's design need?","k6_p1":"A full-circle drive has an outer radius of 12.50 m.","k6_p2":"The swept ring area may be at most 7.20 m wide.","k6_p3":"So the free inner circle has a radius of at least 5.30 m.","k6_p4":"When entering the circle, no part may cross the straight approach line by more than 0.80 m to the outside.","k6_p5":"The example articulated truck meets both limits.","l_r_aussen":"12.50 m","l_r_ring":"at most 7.20 m","l_r_innen":"5.30 m","l_r_gerade":"0.80 m","k7_kicker":"Remember","k7_titel":"Take-away","k7_merk":"The rear usually runs tighter. Between the tracks is a danger zone."},"sr":{"titel":"Putanje u krivini – kuda ide prikolica?","ui_ueber":"Pregled: putanje u krivini za 4 minuta","ui_intro":"Kratak film bez zvuka: sve piše na ekranu. Možeš da zaustaviš film ili da izabereš poglavlje kad god želiš.","ui_start":"Pokreni film","ui_pause":"Zaustavi","ui_weiter":"Nastavi","ui_neu":"Od početka","ui_kapitel":"Poglavlja","ui_lesen":"Pročitaj ceo tekst","k1_kicker":"Pitanje","k1_titel":"Kuda ide zadnji deo?","k1_sub":"Kamion skreće udesno.","k1_p1":"Prednji točkovi prave luk.","k1_p2":"Ali kuda idu zadnji točkovi? A prikolica?","k1_p3":"Tragovi svih osovina u krivini zovu se putanje (Schleppkurve).","k2_kicker":"Kamion sam","k2_titel":"Zadnja osovina ide užim lukom","k2_sub":"Kamion bez prikolice, nacrtan u razmeri.","k2_p1":"Na primeru kamiona samo prednja osovina skreće. Zadnja osovina je prati.","k2_p2":"Zato zadnja osovina ide po užem poluprečniku.","k2_p3":"Prostor između tragova vozilo prekriva.","k2_p4":"To je opasna zona.","l_vorn":"Prednja osovina","l_hinten":"Zadnja osovina","l_gefahr":"Opasna zona","k3_kicker":"Sa prikolicom","k3_titel":"Kamion sa prikolicom","k3_sub":"Kamion sa prikolicom na krutoj rudi.","k3_p1":"Osovina prikolice prati tačku spajanja, a ne kamion.","k3_p2":"U ovom primeru ide još uže od zadnje osovine.","k3_p3":"U primeru se opasna zona širi.","l_anhaenger":"Osovina prikolice","l_kupplung":"Tačka spajanja","k4_kicker":"Sa poluprikolicom","k4_titel":"Šleper","k4_sub":"Tegljač i poluprikolica.","k4_p1":"Poluprikolica je spojena sa kingpinom sedlaste spojnice.","k4_p2":"U krivini se poluprikolica postepeno lomi.","k4_p3":"U primeru njen trag ide najviše unutra.","l_auflieger":"Osovine poluprikolice","l_zapfen":"Kingpin","l_knick":"Ugao loma","k5_kicker":"Poređenje","k5_titel":"Ista krivina, tri vozila","k5_sub":"Prednja osovina svaki put vozi istu krivinu.","k5_p1":"U primeru zadnji trag sve više ide unutra: kamion, kamion sa prikolicom, šleper.","l_lkw":"Kamion","l_lastzug":"Kamion + prikolica","l_sattel":"Šleper","k6_kicker":"Zakon","k6_titel":"Kružni prsten","k6_sub":"Koliko prostora sme da zauzme konstrukcija vozila?","k6_p1":"Vožnja u krugu ima spoljašnji poluprečnik 12,50 m.","k6_p2":"Površina prstena koju vozilo prekrije sme biti široka najviše 7,20 m.","k6_p3":"Dakle, slobodan unutrašnji krug ima poluprečnik od najmanje 5,30 m.","k6_p4":"Pri ulasku u krug nijedan deo ne sme da pređe ravnu liniju prilaza više od 0,80 m ka spolja.","k6_p5":"Šleper iz primera ispunjava oba uslova.","l_r_aussen":"12,50 m","l_r_ring":"najviše 7,20 m","l_r_innen":"5,30 m","l_r_gerade":"0,80 m","k7_kicker":"Zapamti","k7_titel":"Najvažnije","k7_merk":"Pozadi najčešće ide uže. Između tragova je opasna zona."},"tr":{"titel":"Dönüş izleri – römork nereden gider?","ui_ueber":"Genel bakış: 4 dakikada dönüş izleri","ui_intro":"Sessiz kısa bir film: Her şey görüntüde yazıyla yer alır. İstediğin zaman durdurabilir veya bir bölüm seçebilirsin.","ui_start":"Filmi başlat","ui_pause":"Durdur","ui_weiter":"Devam","ui_neu":"Baştan","ui_kapitel":"Bölümler","ui_lesen":"Metnin tamamını oku","k1_kicker":"Soru","k1_titel":"Arka kısım nereye gider?","k1_sub":"Bir kamyon sağa dönüyor.","k1_p1":"Ön tekerlekler bir viraj alır.","k1_p2":"Peki arka tekerlekler nereden gider? Ya römork?","k1_p3":"Bir virajda tüm akslar tarafından bırakılan izlere dönüş izi (Schleppkurve) denir.","k2_kicker":"Tek başına kamyon","k2_titel":"Arka aks daha dar gider","k2_sub":"Römorksuz bir kamyon, ölçekli çizilmiştir.","k2_p1":"Örnekteki kamyonda yalnızca ön aks yönlendirir. Arka aks onu takip eder.","k2_p2":"Bu yüzden arka aks daha dar bir yarıçapta ilerler.","k2_p3":"İki iz arasındaki alan süpürülür.","k2_p4":"Burası tehlike bölgesidir.","l_vorn":"Ön aks","l_hinten":"Arka aks","l_gefahr":"Tehlike bölgesi","k3_kicker":"Römorklu","k3_titel":"Römorklu kamyon","k3_sub":"Sabit çeki koluna bağlı römorklu kamyon.","k3_p1":"Römork aksı kamyonu değil, bağlantı noktasını takip eder.","k3_p2":"Bu örnekte arka akstan bile daha dar gider.","k3_p3":"Örnekte tehlike bölgesi genişler.","l_anhaenger":"Römork aksı","l_kupplung":"Bağlantı noktası","k4_kicker":"Yarı römorklu","k4_titel":"Tır (çekici ve yarı römork)","k4_sub":"Çekici ve yarı römork.","k4_p1":"Yarı römork, beşinci tekerlek bağlantısının kingpin'ine takılıdır.","k4_p2":"Virajda yarı römork yavaş yavaş çekiciye göre açı yapar.","k4_p3":"Örnekte onun izi en içeriden gider.","l_auflieger":"Yarı römork aksları","l_zapfen":"Kingpin","l_knick":"Katlanma açısı","k5_kicker":"Karşılaştırma","k5_titel":"Aynı viraj, üç araç","k5_sub":"Ön aks her seferinde aynı virajı alır.","k5_p1":"Örnekte arka iz giderek daha içeri kayar: kamyon, römorklu kamyon, çekici ve yarı römork.","l_lkw":"Kamyon","l_lastzug":"Römorklu kamyon","l_sattel":"Çekici + yarı römork","k6_kicker":"Yasa","k6_titel":"Dairesel halka","k6_sub":"Bir aracın yapısı ne kadar yer kaplayabilir?","k6_p1":"Dairesel yolda sürüşte dış yarıçap 12,50 m'dir.","k6_p2":"Süpürülen halka alanı en fazla 7,20 m genişliğinde olabilir.","k6_p3":"Yani boş iç dairenin yarıçapı en az 5,30 m'dir.","k6_p4":"Daireye girerken hiçbir parça, düz yaklaşma çizgisini dışa doğru 0,80 m'den fazla aşamaz.","k6_p5":"Örnekteki çekici ve yarı römork her iki sınıra da uyar.","l_r_aussen":"12,50 m","l_r_ring":"en fazla 7,20 m","l_r_innen":"5,30 m","l_r_gerade":"0,80 m","k7_kicker":"Aklında tut","k7_titel":"Özet","k7_merk":"Çoğunlukla arka daha dar gider. İzlerin arasında tehlike bölgesi vardır."}};
 // ---- f5-1/szenen.js ----
 (function (window) {
 /* Szenen des Films 5.1 „Schleppkurven“ – EIN Code für den MP4-Film (index.html) und die App (gebaut mit ../bauen.mjs).

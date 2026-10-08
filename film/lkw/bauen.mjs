@@ -20,6 +20,11 @@ const sprachDir = path.join(hier, film, "sprachen");
 const sprachen = {};
 if (fs.existsSync(sprachDir)) for (const f of fs.readdirSync(sprachDir).sort()) if (f.endsWith(".json") && !f.startsWith("_")) sprachen[f.slice(0, -5)] = JSON.parse(fs.readFileSync(path.join(sprachDir, f), "utf8"));
 
+// Fotos: text.js nennt sie in "fotos: [...]"; sie werden als Data-URI eingebettet (W.LKW_FOTOS)
+const fotoNamen = ((lies(film, "text.js").match(/fotos:\s*\[([^\]]*)\]/) || [, ""])[1].match(/"([^"]+)"/g) || []).map((x) => x.slice(1, -1));
+const fotos = {};
+for (const n of fotoNamen) fotos[n] = "data:image/jpeg;base64," + fs.readFileSync(path.join(hier, "fotos", n + ".jpg")).toString("base64");
+
 const huelle = (name, code) => `// ---- ${name} ----\n(function (window) {\n${code}\n})(W);\n`;
 const out =
 `/* GENERIERT von film/lkw/bauen.mjs – nicht von Hand ändern (Quellen: film/lkw/kern/*, film/lkw/${film}/*).
@@ -30,6 +35,12 @@ const CSS = ${JSON.stringify(css)};
 ${huelle("kern/modell.js", lies("kern", "modell.js"))}
 ${huelle("kern/baukasten.js", lies("kern", "baukasten.js"))}
 ${huelle("kern/panel.js", lies("kern", "panel.js"))}
+${huelle("kern/seite.js", lies("kern", "seite.js"))}
+${huelle("kern/zeit.js", lies("kern", "zeit.js"))}
+${huelle("kern/pneu.js", lies("kern", "pneu.js"))}
+${huelle("kern/kuppeln.js", lies("kern", "kuppeln.js"))}
+W.LKW_FOTOS = ${JSON.stringify(fotos)};
+${huelle("kern/foto.js", lies("kern", "foto.js"))}
 ${huelle(film + "/text.js", lies(film, "text.js"))}
 W.FILM_SPRACHEN = ${JSON.stringify(sprachen)};
 ${huelle(film + "/szenen.js", lies(film, "szenen.js"))}

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1920, height=1080" />
+<title>Abkuppeln eines Sattelzugs</title>
+<link rel="stylesheet" href="../kern/buehne.css" />
+<script src="../../vorfahrt/assets/lib/gsap.min.js"></script>
+<style>
+@font-face{font-family:'Barlow';font-weight:400;font-style:normal;src:url('../../vorfahrt/assets/fonts/Barlow-400.ttf') format('truetype');}
+@font-face{font-family:'Barlow';font-weight:500;font-style:normal;src:url('../../vorfahrt/assets/fonts/Barlow-500.ttf') format('truetype');}
+@font-face{font-family:'Barlow';font-weight:600;font-style:normal;src:url('../../vorfahrt/assets/fonts/Barlow-600.ttf') format('truetype');}
+@font-face{font-family:'Barlow';font-weight:700;font-style:normal;src:url('../../vorfahrt/assets/fonts/Barlow-700.ttf') format('truetype');}
+@font-face{font-family:'Playfair Display';font-weight:600;font-style:normal;src:url('../../vorfahrt/assets/fonts/PlayfairDisplay-600.ttf') format('truetype');}
+@font-face{font-family:'Playfair Display';font-weight:700;font-style:normal;src:url('../../vorfahrt/assets/fonts/PlayfairDisplay-700.ttf') format('truetype');}
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --paper:#FAF6EC; --ink:#2F4A34; --green:#3F6B4B; --gold:#D9954C; --gold-text:#8F5A14; --text:#2B2A22; --muted:#6F6857; --hair:rgba(43,42,34,.16); --lk-titel:'Playfair Display',serif; --lk-text:'Barlow',sans-serif; }
+  html, body { width:1920px; height:1080px; overflow:hidden; background:var(--paper); font-family:'Barlow',sans-serif; color:var(--text); }
+  #root { position:relative; width:1920px; height:1080px; overflow:hidden; background:var(--paper); }
+  .scene { position:absolute; left:0; top:0; width:1920px; height:1080px; }
+  .stagewrap { position:absolute; left:0; top:0; width:1080px; height:1080px; }
+  .panel { position:absolute; left:1080px; top:0; width:840px; height:1080px; padding:78px 70px 0 70px; background:var(--paper); border-left:2px solid var(--hair); }
+  .dots { display:flex; gap:10px; margin-bottom:38px; }
+  .dots i { display:block; width:14px; height:14px; border-radius:7px; background:rgba(47,74,52,.22); }
+  .dots i.on { width:46px; background:var(--gold); }
+  .kicker { font-size:30px; line-height:1.2; }
+  .ttl { font-size:72px; line-height:1.06; margin-top:14px; }
+  .ttl.lang { font-size:60px; }
+  .sub { font-size:40px; line-height:1.3; margin-top:22px; }
+  .pts { margin-top:34px; }
+  .pt .tx { font-size:46px; line-height:1.26; }
+  .pt .rf { font-size:30px; line-height:1.3; margin-top:12px; }
+  .merk { padding:30px 38px; font-size:56px; line-height:1.22; }
+  .foot { position:absolute; left:70px; bottom:50px; display:flex; align-items:center; gap:20px; font:600 30px/1 'Barlow',sans-serif; color:var(--muted); }
+  .foot img { width:84px; height:84px; border-radius:20px; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-width="1920" data-height="1080"></div>
+<script src="text.js"></script>
+<script src="../kern/modell.js"></script>
+<script src="../kern/baukasten.js"></script>
+<script src="../kern/panel.js"></script>
+<script src="../kern/kuppeln.js"></script><script src="../kern/foto.js"></script>
+<script src="szenen.js"></script>
+<script>
+(function () {
+  const T = window.FILM_TEXT, root = document.getElementById("root");
+  const tl = gsap.timeline({ paused: true });
+  window.__timelines = window.__timelines || {};
+  window.__timelines["main"] = tl;
+  let acc = 0;
+  const scenes = T.kapitel.map(function (k, i) {
+    const s = document.createElement("section"); s.id = "s" + (i + 1); s.className = "scene clip";
+    s.setAttribute("data-start", acc); s.setAttribute("data-duration", k.dauer); s.setAttribute("data-track-index", 0);
+    acc += k.dauer; root.appendChild(s); return s;
+  });
+  root.setAttribute("data-duration", acc);
+  const r = window.LKWSzenen.bauen({ tl: tl, T: T, tx: function (k) { return T.de[k]; }, scenes: scenes, logo: "../../vorfahrt/assets/logo-264.png" });
+  window.__gesamt = r.gesamt; window.__starts = r.starts;
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(r.refit);
+  tl.seek(0);
+})();
+</script>
+</body>
+</html>
