@@ -152,8 +152,8 @@
     if (gAnh) {
       const a = fz.anh, x0 = -a.hinten, x1 = a.vorn;
       if (a.typ === "zentral") {
-        rect(gAnh, x1, -0.13, fz.D - x1, 0.26, "#3B3E42", "#1E2022", 0.06, 0.04);                                  // Deichsel
-        el("circle", { cx: f(fz.D), cy: 0, r: 0.2, fill: "none", stroke: "#1E2022", "stroke-width": 0.07 }, gAnh);   // Zugöse
+        rect(gAnh, x1, -0.2, fz.D - x1, 0.4, "#C4C9CF", "#1E2022", 0.08, 0.06);                                  // Deichsel
+        el("circle", { cx: f(fz.D), cy: 0, r: 0.32, fill: "none", stroke: "#C4C9CF", "stroke-width": 0.13 }, gAnh);   // Zugöse
       }
       rect(gAnh, x0, -b2, x1 - x0, fz.breite, FARBE.kasten, FARBE.kastenD, 0.14, 0.08);
       rippen(gAnh, x0, x1, b2);

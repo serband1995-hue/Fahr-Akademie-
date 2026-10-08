@@ -61,7 +61,7 @@ test("Gegenprobe mit absichtlich falscher Eingabe: größerer Radstand muss enge
 
 test("Beispiel-Fahrzeuge halten die Längengrenzen ein (§ 32 Abs. 3, 4 StVZO) und die Breite (§ 32 Abs. 1)", () => {
   assert.ok(M.gesamtLaenge(FZ.sattelzug) <= 15.5, "Sattelzug ≤ 15,50 m: " + M.gesamtLaenge(FZ.sattelzug));
-  assert.ok(M.gesamtLaenge(FZ.lastzug) <= 18.75, "Lastzug ≤ 18,75 m: " + M.gesamtLaenge(FZ.lastzug));
+  assert.ok(M.gesamtLaenge(FZ.lastzug) <= 18.0, "Lastzug ≤ 18,00 m (einfache Grenze, § 32 Abs. 4 Nr. 3a): " + M.gesamtLaenge(FZ.lastzug));
   assert.ok(M.gesamtLaenge(FZ.solo) <= 12.0 && M.gesamtLaenge(FZ.solo) >= 8.0, "Lkw 8 bis 12 m");
   assert.ok(FZ.lastzug.anh.vorn + FZ.lastzug.anh.hinten >= 7.5 - 1.6, "Anhänger-Aufbau lang genug");
   Object.values(FZ).forEach((f) => assert.ok(f.breite <= 2.55, "Breite ≤ 2,55 m"));

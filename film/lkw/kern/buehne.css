@@ -14,7 +14,7 @@
 .panel .sub { font-family:var(--lk-text,'Barlow',sans-serif); font-weight:500; color:#6F6857; opacity:0; }
 .pts { display:grid; }
 .pts > * { grid-area:1 / 1; align-self:start; opacity:0; }
-.pt .tx { font-family:var(--lk-text,'Barlow',sans-serif); font-weight:600; color:#2B2A22; }
+.pt .tx { text-wrap:balance; font-family:var(--lk-text,'Barlow',sans-serif); font-weight:600; color:#2B2A22; }
 .pt.gold .tx { color:#8F5A14; }
 .pt .rf { font-family:var(--lk-text,'Barlow',sans-serif); font-weight:500; color:#6F6857; }
 .merk { background:#2F4A34; color:#FAF6EC; border-left:12px solid #D9954C; border-radius:6px 18px 18px 6px; font-family:var(--lk-titel,'Playfair Display',serif); font-weight:600; box-shadow:0 10px 24px rgba(43,42,34,.25); }

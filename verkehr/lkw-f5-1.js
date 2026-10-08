@@ -2,7 +2,7 @@
    Erklärfilm „f5-1“ für „Lkw und Zug verstehen“: Animation läuft live (GSAP) und wird aus dem Rechenmodell gezeichnet, nur der Text wechselt je Sprache. Keine Videodatei.
    starte(platz, { sprache }) -> { zerstoeren, zustand, zeitleiste, gesamt }. Braucht window.gsap (vendor/gsap-3.14.2.min.js). */
 const W = {};
-const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; left:0; top:0; width:1080px; height:1080px; overflow:hidden; background:#434B45; direction:ltr;}\n.lk .stage > *{position:absolute;}\n.lk .pill{padding:10px 28px; border-radius:42px; background:#FAF6EC; color:#2F4A34; border:3px solid var(--lk-gold,#D9954C); font:700 44px/1.15 var(--lk-text,'Barlow',sans-serif); text-align:center; max-width:560px; box-shadow:0 5px 12px rgba(0,0,0,.35);}\n.lk .pill.klein{font-size:38px; padding:6px 20px;}\n.lk .lkw-pill{max-width:520px; text-wrap:balance;}\n.lk-rtl .pill{direction:rtl;}\n.lk .panel .kicker{font-family:var(--lk-text,'Barlow',sans-serif); font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#8F5A14;}\n.lk .panel .ttl{font-family:var(--lk-titel,'Playfair Display',serif); font-weight:700; color:#2F4A34;}\n.lk .panel .sub{font-family:var(--lk-text,'Barlow',sans-serif); font-weight:500; color:#6F6857; opacity:0;}\n.lk .pts{display:grid;}\n.lk .pts > *{grid-area:1 / 1; align-self:start; opacity:0;}\n.lk .pt .tx{font-family:var(--lk-text,'Barlow',sans-serif); font-weight:600; color:#2B2A22;}\n.lk .pt.gold .tx{color:#8F5A14;}\n.lk .pt .rf{font-family:var(--lk-text,'Barlow',sans-serif); font-weight:500; color:#6F6857;}\n.lk .merk{background:#2F4A34; color:#FAF6EC; border-left:12px solid #D9954C; border-radius:6px 18px 18px 6px; font-family:var(--lk-titel,'Playfair Display',serif); font-weight:600; box-shadow:0 10px 24px rgba(43,42,34,.25);}\n\n/* Erklärfilme „Lkw und Zug verstehen“ in der App: Bild oben, Text darunter, Steuerung darunter (keine Knöpfe auf dem Bild).\n   Handy zuerst (360–412 px). Ab ~660 px Breite (Querformat/Tablet) steht der Text neben dem Bild. */\n.lk { --lk-titel:var(--ff-titel,'Playfair Display',Georgia,serif); --lk-text:var(--ff-body,'Barlow',sans-serif); --lk-gold:var(--gold,#D9954C); margin:var(--sp-m,12px) 0 var(--sp-l,18px); }\n.lk-kopf { font-family:var(--lk-titel); font-weight:600; font-size:19px; margin:0 0 4px; }\n.lk-intro { color:var(--muted,#6F6857); font-size:14.5px; line-height:1.45; margin:0 0 10px; }\n.lk-kasten { background:var(--surface,#EEE6D3); border:1px solid var(--border,rgba(43,40,30,.16)); border-radius:var(--r-l,16px); padding:10px; overflow:hidden; }\n.lk-szenen { display:grid; position:relative; }\n.lk-szenen .scene { grid-area:1 / 1; display:flex; flex-direction:column; gap:12px; min-width:0; pointer-events:none; direction:ltr; }\n.lk-szenen .stagewrap { width:100%; aspect-ratio:1 / 1; border-radius:var(--r-m,12px); overflow:hidden; flex:none; background:#434B45; }\n.lk-szenen .stage { transform-origin:0 0; transform:scale(var(--lk-s,.3)); }\n.lk-szenen .panel { min-width:0; padding:2px 4px 4px; }\n.lk-szenen .dots, .lk-szenen .foot { display:none; }\n.lk-szenen .kicker { font-size:12.5px; line-height:1.3; letter-spacing:.12em; }\n.lk-szenen .ttl { font-size:24px; line-height:1.15; margin:4px 0 0; }\n.lk-szenen .sub { font-size:16px; line-height:1.4; margin-top:8px; }\n.lk-szenen .pts { margin-top:12px; }\n.lk-szenen .pt .tx { font-size:18px; line-height:1.42; }\n.lk-szenen .pt .rf { font-size:13px; line-height:1.35; margin-top:6px; }\n.lk-szenen .step .nr { font-size:36px; }\n.lk-szenen .step .nm { font-size:22px; line-height:1.2; margin-top:2px; }\n.lk-szenen .step .tx { font-size:17px; line-height:1.42; margin-top:8px; }\n.lk-szenen .step .px { font-size:15px; line-height:1.4; margin-top:8px; }\n.lk-szenen .step .rf { font-size:13px; line-height:1.35; margin-top:6px; }\n.lk-szenen .merk { padding:14px 16px; font-size:20px; line-height:1.3; border-left-width:8px; }\n.lk-breit .lk-szenen .scene { flex-direction:row; align-items:flex-start; gap:20px; }\n.lk-breit .lk-szenen .stagewrap { flex:0 0 46%; }\n.lk-breit .lk-szenen .panel { flex:1; }\n.lk-rtl .lk-szenen .panel, .lk-rtl .lk-text, .lk-rtl .lk-intro, .lk-rtl .lk-kopf { direction:rtl; text-align:right; }\n.lk-steuer { display:flex; flex-direction:column; gap:10px; margin-top:12px; }\n.lk-reihe { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }\n.lk-knopf { min-height:44px; padding:0 16px; border-radius:999px; border:1px solid var(--border,rgba(43,40,30,.16)); background:var(--bg,#FAF6EC); color:var(--text,#2B2A22); font:600 15px/1.2 var(--lk-text); display:inline-flex; align-items:center; gap:8px; cursor:pointer; }\n.lk-knopf svg { width:18px; height:18px; flex:none; fill:currentColor; }\n.lk-play { background:var(--lk-gold); color:var(--auf-gold,#2B2A22); border-color:transparent; }\n.lk-zeit { margin-inline-start:auto; font-size:13px; color:var(--muted,#6F6857); font-variant-numeric:tabular-nums; direction:ltr; }\n.lk-regler { width:100%; height:28px; margin:0; accent-color:var(--gold-text,#8F5A14); direction:ltr; }\n.lk-kapitel { display:grid; grid-template-columns:repeat(auto-fit,minmax(40px,1fr)); gap:4px; direction:ltr; }   /* 7 Kapitel müssen bei 360 px in eine Zeile passen, sonst wickeln sie um */\n.lk-kap { min-width:0; min-height:44px; border-radius:12px; border:1px solid var(--border,rgba(43,40,30,.16)); background:var(--bg,#FAF6EC); color:var(--text,#2B2A22); font:700 15px/1 var(--lk-text); cursor:pointer; }\n.lk-kap[aria-current=\"true\"] { background:var(--gruen,#2F4A34); color:var(--auf-tief,#fff); border-color:transparent; }\n.lk-knopf:focus-visible, .lk-kap:focus-visible, .lk-regler:focus-visible, .lk-text summary:focus-visible { outline:3px solid var(--gold-text,#8F5A14); outline-offset:2px; }\n.lk-text { margin-top:12px; font-size:15px; line-height:1.5; }\n.lk-text summary { min-height:44px; display:flex; align-items:center; cursor:pointer; font-weight:600; }\n.lk-text h3 { font-family:var(--lk-titel); font-size:16px; margin:14px 0 4px; }\n.lk-text p { margin:0 0 6px; }\n.lk-text .lk-ref { color:var(--muted,#6F6857); font-size:13px; }\n@media (prefers-reduced-motion: reduce) { .lk-szenen .stage { transition:none; } }\n/* Paragrafen-Verweise nie verdrehen (RTL-Sprachen), Regel 8 der Sprachen-Notiz */\n.lk-szenen .rf, .lk-szenen .step .rf, .lk-text .lk-ref { unicode-bidi:plaintext; }\n/* Schriften ohne Playfair-Zeichen (ar, ckb, ur, hi, fa, ps, el, am, ti): Überschriften in Barlow, mehr Zeilenhöhe */\n.lk-barlow { --lk-titel:var(--ff-body,'Barlow',sans-serif); }\n.lk-barlow .ttl, .lk-barlow .nm, .lk-barlow .merk, .lk-barlow .bigcard, .lk-barlow .lk-kopf, .lk-barlow .lk-text h3 { font-weight:700; }\n.lk[lang=\"ur\"] .lk-szenen :is(.pt .tx,.step .tx,.step .px,.sub,.merk,.ttl,.step .nm), .lk[lang=\"ur\"] .lk-text, .lk[lang=\"ur\"] .lk-intro { line-height:1.7; }\n.lk[lang=\"ps\"] .lk-szenen :is(.pt .tx,.step .tx,.step .px,.sub,.merk,.ttl,.step .nm), .lk[lang=\"ps\"] .lk-text, .lk[lang=\"ps\"] .lk-intro { line-height:1.55; }\n";
+const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; left:0; top:0; width:1080px; height:1080px; overflow:hidden; background:#434B45; direction:ltr;}\n.lk .stage > *{position:absolute;}\n.lk .pill{padding:10px 28px; border-radius:42px; background:#FAF6EC; color:#2F4A34; border:3px solid var(--lk-gold,#D9954C); font:700 44px/1.15 var(--lk-text,'Barlow',sans-serif); text-align:center; max-width:560px; box-shadow:0 5px 12px rgba(0,0,0,.35);}\n.lk .pill.klein{font-size:38px; padding:6px 20px;}\n.lk .lkw-pill{max-width:520px; text-wrap:balance;}\n.lk-rtl .pill{direction:rtl;}\n.lk .panel .kicker{font-family:var(--lk-text,'Barlow',sans-serif); font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#8F5A14;}\n.lk .panel .ttl{font-family:var(--lk-titel,'Playfair Display',serif); font-weight:700; color:#2F4A34;}\n.lk .panel .sub{font-family:var(--lk-text,'Barlow',sans-serif); font-weight:500; color:#6F6857; opacity:0;}\n.lk .pts{display:grid;}\n.lk .pts > *{grid-area:1 / 1; align-self:start; opacity:0;}\n.lk .pt .tx{text-wrap:balance; font-family:var(--lk-text,'Barlow',sans-serif); font-weight:600; color:#2B2A22;}\n.lk .pt.gold .tx{color:#8F5A14;}\n.lk .pt .rf{font-family:var(--lk-text,'Barlow',sans-serif); font-weight:500; color:#6F6857;}\n.lk .merk{background:#2F4A34; color:#FAF6EC; border-left:12px solid #D9954C; border-radius:6px 18px 18px 6px; font-family:var(--lk-titel,'Playfair Display',serif); font-weight:600; box-shadow:0 10px 24px rgba(43,42,34,.25);}\n\n/* Erklärfilme „Lkw und Zug verstehen“ in der App: Bild oben, Text darunter, Steuerung darunter (keine Knöpfe auf dem Bild).\n   Handy zuerst (360–412 px). Ab ~660 px Breite (Querformat/Tablet) steht der Text neben dem Bild. */\n.lk { --lk-titel:var(--ff-titel,'Playfair Display',Georgia,serif); --lk-text:var(--ff-body,'Barlow',sans-serif); --lk-gold:var(--gold,#D9954C); margin:var(--sp-m,12px) 0 var(--sp-l,18px); }\n.lk-kopf { font-family:var(--lk-titel); font-weight:600; font-size:19px; margin:0 0 4px; }\n.lk-intro { color:var(--muted,#6F6857); font-size:14.5px; line-height:1.45; margin:0 0 10px; }\n.lk-kasten { background:var(--surface,#EEE6D3); border:1px solid var(--border,rgba(43,40,30,.16)); border-radius:var(--r-l,16px); padding:10px; overflow:hidden; }\n.lk-szenen { display:grid; position:relative; }\n.lk-szenen .scene { grid-area:1 / 1; display:flex; flex-direction:column; gap:12px; min-width:0; pointer-events:none; direction:ltr; }\n.lk-szenen .stagewrap { width:100%; aspect-ratio:1 / 1; border-radius:var(--r-m,12px); overflow:hidden; flex:none; background:#434B45; }\n.lk-szenen .stage { transform-origin:0 0; transform:scale(var(--lk-s,.3)); }\n.lk-szenen .panel { min-width:0; padding:2px 4px 4px; }\n.lk-szenen .dots, .lk-szenen .foot { display:none; }\n.lk-szenen .kicker { font-size:12.5px; line-height:1.3; letter-spacing:.12em; }\n.lk-szenen .ttl { font-size:24px; line-height:1.15; margin:4px 0 0; }\n.lk-szenen .sub { font-size:16px; line-height:1.4; margin-top:8px; }\n.lk-szenen .pts { margin-top:12px; }\n.lk-szenen .pt .tx { font-size:18px; line-height:1.42; }\n.lk-szenen .pt .rf { font-size:13px; line-height:1.35; margin-top:6px; }\n.lk-szenen .step .nr { font-size:36px; }\n.lk-szenen .step .nm { font-size:22px; line-height:1.2; margin-top:2px; }\n.lk-szenen .step .tx { font-size:17px; line-height:1.42; margin-top:8px; }\n.lk-szenen .step .px { font-size:15px; line-height:1.4; margin-top:8px; }\n.lk-szenen .step .rf { font-size:13px; line-height:1.35; margin-top:6px; }\n.lk-szenen .merk { padding:14px 16px; font-size:20px; line-height:1.3; border-left-width:8px; }\n.lk-breit .lk-szenen .scene { flex-direction:row; align-items:flex-start; gap:20px; }\n.lk-breit .lk-szenen .stagewrap { flex:0 0 46%; }\n.lk-breit .lk-szenen .panel { flex:1; }\n.lk-rtl .lk-szenen .panel, .lk-rtl .lk-text, .lk-rtl .lk-intro, .lk-rtl .lk-kopf { direction:rtl; text-align:right; }\n.lk-steuer { display:flex; flex-direction:column; gap:10px; margin-top:12px; }\n.lk-reihe { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }\n.lk-knopf { min-height:44px; padding:0 16px; border-radius:999px; border:1px solid var(--border,rgba(43,40,30,.16)); background:var(--bg,#FAF6EC); color:var(--text,#2B2A22); font:600 15px/1.2 var(--lk-text); display:inline-flex; align-items:center; gap:8px; cursor:pointer; }\n.lk-knopf svg { width:18px; height:18px; flex:none; fill:currentColor; }\n.lk-play { background:var(--lk-gold); color:var(--auf-gold,#2B2A22); border-color:transparent; }\n.lk-zeit { margin-inline-start:auto; font-size:13px; color:var(--muted,#6F6857); font-variant-numeric:tabular-nums; direction:ltr; }\n.lk-regler { width:100%; height:28px; margin:0; accent-color:var(--gold-text,#8F5A14); direction:ltr; }\n.lk-kapitel { display:grid; grid-template-columns:repeat(auto-fit,minmax(40px,1fr)); gap:4px; direction:ltr; }   /* 7 Kapitel müssen bei 360 px in eine Zeile passen, sonst wickeln sie um */\n.lk-kap { min-width:0; min-height:44px; border-radius:12px; border:1px solid var(--border,rgba(43,40,30,.16)); background:var(--bg,#FAF6EC); color:var(--text,#2B2A22); font:700 15px/1 var(--lk-text); cursor:pointer; }\n.lk-kap[aria-current=\"true\"] { background:var(--gruen,#2F4A34); color:var(--auf-tief,#fff); border-color:transparent; }\n.lk-knopf:focus-visible, .lk-kap:focus-visible, .lk-regler:focus-visible, .lk-text summary:focus-visible { outline:3px solid var(--gold-text,#8F5A14); outline-offset:2px; }\n.lk-text { margin-top:12px; font-size:15px; line-height:1.5; }\n.lk-text summary { min-height:44px; display:flex; align-items:center; cursor:pointer; font-weight:600; }\n.lk-text h3 { font-family:var(--lk-titel); font-size:16px; margin:14px 0 4px; }\n.lk-text p { margin:0 0 6px; }\n.lk-text .lk-ref { color:var(--muted,#6F6857); font-size:13px; }\n@media (prefers-reduced-motion: reduce) { .lk-szenen .stage { transition:none; } }\n/* Paragrafen-Verweise nie verdrehen (RTL-Sprachen), Regel 8 der Sprachen-Notiz */\n.lk-szenen .rf, .lk-szenen .step .rf, .lk-text .lk-ref { unicode-bidi:plaintext; }\n/* Schriften ohne Playfair-Zeichen (ar, ckb, ur, hi, fa, ps, el, am, ti): Überschriften in Barlow, mehr Zeilenhöhe */\n.lk-barlow { --lk-titel:var(--ff-body,'Barlow',sans-serif); }\n.lk-barlow .ttl, .lk-barlow .nm, .lk-barlow .merk, .lk-barlow .bigcard, .lk-barlow .lk-kopf, .lk-barlow .lk-text h3 { font-weight:700; }\n.lk[lang=\"ur\"] .lk-szenen :is(.pt .tx,.step .tx,.step .px,.sub,.merk,.ttl,.step .nm), .lk[lang=\"ur\"] .lk-text, .lk[lang=\"ur\"] .lk-intro { line-height:1.7; }\n.lk[lang=\"ps\"] .lk-szenen :is(.pt .tx,.step .tx,.step .px,.sub,.merk,.ttl,.step .nm), .lk[lang=\"ps\"] .lk-text, .lk[lang=\"ps\"] .lk-intro { line-height:1.55; }\n";
 // ---- kern/modell.js ----
 (function (window) {
 /* Rechenmodell „Lkw und Zug“ (Kinematik, Draufsicht). EINE Quelle für Film UND Test: Bewegungen werden gerechnet, nicht gezeichnet.
@@ -32,7 +32,7 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
      e       Lage des Kupplungspunkts relativ zur Hinterachse (+ vor, − hinter)
      D       Abstand Kupplungspunkt – Mitte der Anhängerachsen
      anh     { vorn, hinten }: Aufbau des Anhängers vor bzw. hinter der Achsmitte (vorn gemessen von der Achsmitte nach vorn)
-     Gesamtlängen werden im Test gegen § 32 Abs. 4 StVZO geprüft (Sattelzug ≤ 15,50 m, Lastzug ≤ 18,75 m). */
+     Gesamtlängen werden im Test gegen § 32 Abs. 3, 4 StVZO geprüft (Sattelzug ≤ 15,50 m; Lastzug 17,60 m liegt unter der einfachen Grenze 18,00 m, die 18,75 m gelten nur mit Ladeflächen-Teillängen). */
   const FAHRZEUGE = {
     solo: { id: "solo", breite: 2.55, L: 4.8, vorn: 1.4, hinten: 2.2, anh: null },
     lastzug: {
@@ -341,8 +341,8 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
     if (gAnh) {
       const a = fz.anh, x0 = -a.hinten, x1 = a.vorn;
       if (a.typ === "zentral") {
-        rect(gAnh, x1, -0.13, fz.D - x1, 0.26, "#3B3E42", "#1E2022", 0.06, 0.04);                                  // Deichsel
-        el("circle", { cx: f(fz.D), cy: 0, r: 0.2, fill: "none", stroke: "#1E2022", "stroke-width": 0.07 }, gAnh);   // Zugöse
+        rect(gAnh, x1, -0.2, fz.D - x1, 0.4, "#C4C9CF", "#1E2022", 0.08, 0.06);                                  // Deichsel
+        el("circle", { cx: f(fz.D), cy: 0, r: 0.32, fill: "none", stroke: "#C4C9CF", "stroke-width": 0.13 }, gAnh);   // Zugöse
       }
       rect(gAnh, x0, -b2, x1 - x0, fz.breite, FARBE.kasten, FARBE.kastenD, 0.14, 0.08);
       rippen(gAnh, x0, x1, b2);
@@ -578,7 +578,7 @@ window.FILM_TEXT = {
     k2_kicker: "Der Lkw allein",
     k2_titel: "Die Hinterachse läuft enger",
     k2_sub: "Ein Lkw ohne Anhänger, maßstabsgetreu gezeichnet.",
-    k2_p1: "Nur die Vorderachse lenkt. Die Hinterachse läuft hinterher.",
+    k2_p1: "Beim Lkw im Beispiel lenkt nur die Vorderachse. Die Hinterachse läuft hinterher.",
     k2_p2: "Darum läuft die Hinterachse auf einem engeren Radius.",
     k2_p3: "Der Raum zwischen den Spuren wird überstrichen.",
     k2_p4: "Das ist der Gefahrenbereich.",
@@ -591,8 +591,9 @@ window.FILM_TEXT = {
     k3_sub: "Lkw mit Anhänger an einer starren Deichsel.",
     k3_p1: "Die Anhängerachse folgt dem Kupplungspunkt, nicht dem Lkw.",
     k3_p2: "In diesem Beispiel läuft sie noch enger als die Hinterachse.",
-    k3_p3: "Der Gefahrenbereich wird breiter.",
+    k3_p3: "Im Beispiel wird der Gefahrenbereich breiter.",
     l_anhaenger: "Anhängerachse",
+    l_kupplung: "Kupplungspunkt",
 
     k4_kicker: "Mit Auflieger",
     k4_titel: "Der Sattelzug",
@@ -600,24 +601,25 @@ window.FILM_TEXT = {
     k4_p1: "Der Auflieger hängt am Königszapfen der Sattelkupplung.",
     k4_p2: "In der Kurve knickt der Auflieger nach und nach ab.",
     k4_p3: "Im Beispiel läuft seine Spur am weitesten innen.",
-    l_auflieger: "Achsen des Aufliegers",
+    l_auflieger: "Aufliegerachsen",
+    l_zapfen: "Königszapfen",
     l_knick: "Knickwinkel",
 
     k5_kicker: "Im Vergleich",
     k5_titel: "Gleiche Kurve, drei Fahrzeuge",
     k5_sub: "Die Vorderachse fährt jedes Mal dieselbe Kurve.",
-    k5_p1: "Lkw, Lastzug, Sattelzug: Die hintere Spur rückt immer weiter nach innen.",
+    k5_p1: "Im Beispiel rückt die hintere Spur immer weiter nach innen: Lkw, Lastzug, Sattelzug.",
     l_lkw: "Lkw",
     l_lastzug: "Lastzug",
     l_sattel: "Sattelzug",
 
     k6_kicker: "Das Gesetz",
     k6_titel: "Der Kreisring",
-    k6_sub: "Wie viel Platz darf ein Fahrzeug brauchen?",
+    k6_sub: "Wie viel Platz darf die Bauart eines Fahrzeugs brauchen?",
     k6_p1: "Eine Kreisfahrt hat den äußeren Radius 12,50 m.",
     k6_p2: "Die überstrichene Ringfläche darf höchstens 7,20 m breit sein.",
     k6_p3: "Der freie Innenkreis hat also mindestens 5,30 m Radius.",
-    k6_p4: "Beim Einlenken aus der Geraden darf kein Teil mehr als 0,80 m nach außen ragen.",
+    k6_p4: "Beim Einfahren in den Kreis darf kein Teil die gerade Anfahrlinie um mehr als 0,80 m nach außen überschreiten.",
     k6_p5: "Der Beispiel-Sattelzug hält beides ein.",
     l_r_aussen: "12,50 m",
     l_r_ring: "höchstens 7,20 m",
@@ -626,7 +628,7 @@ window.FILM_TEXT = {
 
     k7_kicker: "Merke",
     k7_titel: "Zum Mitnehmen",
-    k7_merk: "Hinten läuft enger. Zwischen den Spuren ist Gefahrenbereich."
+    k7_merk: "Meist läuft hinten enger. Zwischen den Spuren ist Gefahrenbereich."
   },
   kapitel: [
     { id: "k1", titel: "k1_titel", kicker: "k1_kicker", dauer: 24,
@@ -634,7 +636,7 @@ window.FILM_TEXT = {
       punkte: [{ k: "k1_p1", t: 3.2 }, { k: "k1_p2", t: 8.8 }, { k: "k1_p3", t: 16.4 }] },
     { id: "k2", titel: "k2_titel", kicker: "k2_kicker", dauer: 36,
       sub: { k: "k2_sub", t: 0.6 },
-      punkte: [{ k: "k2_p1", t: 4.5 }, { k: "k2_p2", t: 12.0 }, { k: "k2_p3", t: 19.0 }, { k: "k2_p4", t: 25.5, stil: "gold" }] },
+      punkte: [{ k: "k2_p1", t: 4.5 }, { k: "k2_p2", t: 13.5 }, { k: "k2_p3", t: 20.0 }, { k: "k2_p4", t: 26.5, stil: "gold" }] },
     { id: "k3", titel: "k3_titel", kicker: "k3_kicker", dauer: 34,
       sub: { k: "k3_sub", t: 0.6 },
       punkte: [{ k: "k3_p1", t: 4.5 }, { k: "k3_p2", t: 12.5 }, { k: "k3_p3", t: 21.0, stil: "gold" }] },
@@ -644,14 +646,14 @@ window.FILM_TEXT = {
     { id: "k5", titel: "k5_titel", kicker: "k5_kicker", dauer: 20,
       sub: { k: "k5_sub", t: 0.6 },
       punkte: [{ k: "k5_p1", t: 5.0, stil: "gold" }] },
-    { id: "k6", titel: "k6_titel", kicker: "k6_kicker", dauer: 66,
+    { id: "k6", titel: "k6_titel", kicker: "k6_kicker", dauer: 76,
       sub: { k: "k6_sub", t: 0.6 },
       punkte: [
         { k: "k6_p1", t: 4.5, ref: "§ 32d Abs. 1 StVZO" },
         { k: "k6_p2", t: 11.5, ref: "§ 32d Abs. 1 StVZO" },
         { k: "k6_p3", t: 19.5, ref: "§ 32d Abs. 1 StVZO: 12,50 m − 7,20 m" },
         { k: "k6_p4", t: 28.0, ref: "§ 32d Abs. 2 StVZO" },
-        { k: "k6_p5", t: 49.0, stil: "gold" }] },
+        { k: "k6_p5", t: 69.0, stil: "gold" }] },
     { id: "k7", titel: "k7_titel", kicker: "k7_kicker", dauer: 14,
       merk: { k: "k7_merk", t: 1.2 } }
   ]
@@ -728,12 +730,27 @@ W.FILM_SPRACHEN = {};
     const fahrtS = (t, tA, tB) => S_START + (S_ENDE - S_START) * profilU(t, tA, tB);
 
     // Pille mit Leitlinie zu einem Punkt. pos = [x, y, "l"|"r"]: "l" = linker Rand der Pille bei x, "r" = rechter Rand bei x (lange Texte wachsen nach innen, nie aus dem Bild)
+    const alle = [];   // alle Beschriftungen: Leitlinien beginnen am Rand der Pille (nach dem Laden der Schrift neu gemessen), damit sie nie hinter anderen Pillen laufen
     function etikett(st, W, text, pos, ziel, farbe, T0, t) {
       const links = pos[2] !== "r";
       const p = BK.pille(st, text, pos[0], pos[1], { punkt: farbe, ax: links ? "0" : "-100%" });
-      const l = BK.leitlinie(W, links ? pos[0] + 150 : pos[0] - 150, pos[1], ziel[0], ziel[1], farbe);
+      const l = BK.leitlinie(W, pos[0], pos[1], ziel[0], ziel[1], farbe);
+      const e = { p: p, l: l, links: links, x: pos[0], y: pos[1], messen: function () { const w = p.offsetWidth || 150, ln = l.querySelector("line"); ln.setAttribute("x1", BK.f(links ? pos[0] + w : pos[0] - w)); } };
+      alle.push(e); e.messen();
       P.zeige(p, T0 + t); P.zeige(l, T0 + t + 0.15);
-      return { pille: p, linie: l };
+      return e;
+    }
+    // Zeit, zu der die Vorderachse so weit gefahren ist, dass die Spur „wahl“ den Kurvenwinkel WK erreicht (Beschriftung erst dann, nie ins Leere)
+    function erreicht(id, wahl, tA, tB) {
+      const zs = sim(id).zustaende; let sz = S_ENDE;
+      for (let i = 0; i < zs.length; i++) { const p = wahl(zs[i]), th = Math.atan2(p.x, -(p.y - RT)); if (p.x > 0 && th >= WK) { sz = zs[i].s; break; } }
+      let lo = tA, hi = tB; for (let k = 0; k < 40; k++) { const m = (lo + hi) / 2; if (fahrtS(m, tA, tB) < sz) lo = m; else hi = m; }
+      return hi;
+    }
+    // Beschriftung einer Achsspur: erscheint mit dem Satz (tSatz), frühestens wenn die Spur den Zielpunkt erreicht hat
+    function etk(st, W, T0, ID, fz, text, pos, wahl, farbe, tSatz, mitte) {
+      const tr = fz.tB > fz.tA ? Math.max(tSatz, erreicht(ID, wahl, fz.tA, fz.tB) + 0.3) : tSatz;
+      return etikett(st, W, text, pos, mitte ? zielMitte(W, ID, wahl) : ziel(W, ID, wahl), farbe, T0, tr);
     }
     // Punkt einer Spur bei Kurvenwinkel theta (0 = Kurvenanfang, 90° = Kurvenende), gemessen vom Kurvenmittelpunkt (0 / RT)
     function beiWinkel(id, wahl, theta) {
@@ -751,7 +768,7 @@ W.FILM_SPRACHEN = {};
       const fragez = BK.el("g", { opacity: 0 }, W.gUeber);
       BK.el("circle", { r: 26, fill: F.creme, stroke: F.gold, "stroke-width": 5 }, fragez);
       const tq = BK.el("text", { "text-anchor": "middle", y: 14, "font-size": 40, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#2F4A34" }, fragez); tq.textContent = "?";
-      const tA = 1.2, tB = 16.5, tFrage = ch.punkte[1].t, tReveal = ch.punkte[2].t;
+      const tA = 1.2, tB = 21.0, tFrage = ch.punkte[1].t, tReveal = ch.punkte[2].t;
       uhr(T0, ch.dauer, function (t) {
         const z = a.zeichne(fahrtS(t, tA, tB), t, bremstZeit(t, tB));
         const q = px(W, { x: z.A.x, y: z.A.y });
@@ -760,12 +777,14 @@ W.FILM_SPRACHEN = {};
         fragez.style.opacity = an ? Math.min(1, (t - tFrage) / 0.4) : 0; fragez.setAttribute("transform", "translate(" + BK.f(q[0]) + " " + BK.f(q[1]) + ") scale(" + pulsiert.toFixed(3) + ")");
         a.spuren.a.zeige(t >= tReveal ? klemme((t - tReveal) / 0.8) : 0);
       });
-      etikett(st, W, tx("l_vorn"), POS.rechts1, ziel(W, "solo", (z) => z.F), F.vorn, T0, ch.punkte[0].t + 0.3);
-      etikett(st, W, tx("l_hinten"), POS.links1, ziel(W, "solo", (z) => z.A), F.hinten, T0, tReveal + 0.5);
+      const fz1 = { tA: tA, tB: tB };
+      etk(st, W, T0, "solo", fz1, tx("l_vorn"), POS.rechts1, (z) => z.F, F.vorn, ch.punkte[0].t + 0.3);
+      etk(st, W, T0, "solo", fz1, tx("l_hinten"), POS.links1, (z) => z.A, F.hinten, tReveal + 0.5);
     }
 
     /* ---------- K2/K3/K4: ein Fahrzeug fährt die Kurve ---------- */
     function fahrKapitel(id, tA, tB, etiketten, bandT) {
+      const fz = { tA: tA, tB: tB };
       return function (sc, i, T0, ch) {
         const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false);
         const W = BK.welt(st, Object.assign({ id: id + i }, BUEHNE)), a = fahrt(st, W, id);
@@ -792,31 +811,51 @@ W.FILM_SPRACHEN = {};
             knickPille.style.opacity = an;
           }
         });
-        etiketten(st, W, a, T0, ch);
+        etiketten(st, W, a, T0, ch, fz);
       };
     }
     // Beschriftung: rechts außen die Vorderachse und der Gefahrenbereich, links innen die hinteren Achsen; alle Leitlinien enden bei Kurvenwinkel WK (gleiche Stelle der Kurve),
     // damit sich keine Linien kreuzen (oben = außen, unten = innen)
-    const WK = 50 * Math.PI / 180, POS = { rechts1: [1040, 205, "r"], rechts2: [1040, 292, "r"], links1: [40, 560, "l"], links2: [40, 648, "l"] };
+    const WK = 50 * Math.PI / 180, POS = { rechts1: [1040, 205, "r"], rechts2: [1040, 292, "r"], links1: [40, 540, "l"], links2: [40, 660, "l"] };
     // Zielpunkte der Leitlinien: alle bei Kurvenwinkel WK (oben = außen, unten = innen, Linien kreuzen sich nicht)
     const ziel = (W, id, wahl) => px(W, beiWinkel(id, wahl, WK));
     const zielMitte = (W, id, wahl) => { const a = beiWinkel(id, (z) => z.F, WK), b = beiWinkel(id, wahl, WK); return px(W, { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }); };
-    const K2 = fahrKapitel("solo", 1.5, 24.0, function (st, W, a, T0, ch) { const ID = "solo";
-      etikett(st, W, tx("l_vorn"), POS.rechts1, ziel(W, ID, (z) => z.F), F.vorn, T0, ch.punkte[0].t + 0.3);
-      etikett(st, W, tx("l_hinten"), POS.links1, ziel(W, ID, (z) => z.A), F.hinten, T0, ch.punkte[1].t + 0.3);
-      etikett(st, W, tx("l_gefahr"), POS.rechts2, zielMitte(W, ID, (z) => z.A), F.gold, T0, ch.punkte[3].t + 0.3);
+    // Marke am Kupplungspunkt bzw. Königszapfen: folgt dem Fahrzeug, Pille rechts daneben (von tVon bis tBis)
+    function markerFolgt(st, W, a, T0, fz, id, text, tVon, tBis, dauer) {
+      const g = BK.el("g", { opacity: 0 }, W.gUeber);
+      BK.el("circle", { r: 11, fill: F.gold, stroke: "#101410", "stroke-width": 3 }, g);
+      const pl = BK.pille(st, text, 0, 0, { klasse: "klein", ax: "0" }); pl.style.opacity = 0;
+      const proxy = { t: 0 };
+      tl.to(proxy, { t: dauer, duration: dauer, ease: "none", onUpdate: function () {
+        const t = proxy.t, an = t >= tVon && t < tBis ? klemme(Math.min((t - tVon) / 0.5, (tBis - t) / 0.4)) : 0;
+        g.style.opacity = an; pl.style.opacity = an;
+        if (!an) return;
+        const z = a.sim.zustaende[idxVon(fahrtS(t, fz.tA, fz.tB))], q = px(W, z.K);
+        g.setAttribute("transform", "translate(" + BK.f(q[0]) + " " + BK.f(q[1]) + ")");
+        pl.style.left = BK.f(q[0] - 20) + "px"; pl.style.top = BK.f(q[1] - 62) + "px";
+      } }, T0);
+    }
+    const K2 = fahrKapitel("solo", 1.5, 24.0, function (st, W, a, T0, ch, fz) {
+      const e = (...x) => etk(st, W, T0, "solo", fz, ...x);
+      e(tx("l_vorn"), POS.rechts1, (z) => z.F, F.vorn, ch.punkte[0].t + 0.3);
+      e(tx("l_hinten"), POS.links1, (z) => z.A, F.hinten, ch.punkte[1].t + 0.3);
+      e(tx("l_gefahr"), POS.rechts2, (z) => z.A, F.gold, ch.punkte[3].t + 0.3, true);
     }, 19.0);
-    const K3 = fahrKapitel("lastzug", 1.5, 28.5, function (st, W, a, T0, ch) { const ID = "lastzug";
-      etikett(st, W, tx("l_vorn"), POS.rechts1, ziel(W, ID, (z) => z.F), F.vorn, T0, ch.punkte[0].t + 0.3);
-      etikett(st, W, tx("l_hinten"), POS.links1, ziel(W, ID, (z) => z.A), F.hinten, T0, ch.punkte[0].t + 0.3);
-      etikett(st, W, tx("l_anhaenger"), POS.links2, ziel(W, ID, (z) => z.T), F.anhaenger, T0, ch.punkte[0].t + 0.6);
-      etikett(st, W, tx("l_gefahr"), POS.rechts2, zielMitte(W, ID, (z) => z.T), F.gold, T0, ch.punkte[2].t + 0.3);
+    const K3 = fahrKapitel("lastzug", 1.5, 28.5, function (st, W, a, T0, ch, fz) {
+      const e = (...x) => etk(st, W, T0, "lastzug", fz, ...x);
+      e(tx("l_vorn"), POS.rechts1, (z) => z.F, F.vorn, ch.punkte[0].t + 0.3);
+      e(tx("l_hinten"), POS.links1, (z) => z.A, F.hinten, ch.punkte[0].t + 0.3);
+      e(tx("l_anhaenger"), POS.links2, (z) => z.T, F.anhaenger, ch.punkte[0].t + 0.6);
+      e(tx("l_gefahr"), POS.rechts2, (z) => z.T, F.gold, ch.punkte[2].t + 0.3, true);
+      markerFolgt(st, W, a, T0, fz, "lastzug", tx("l_kupplung"), ch.punkte[0].t, ch.punkte[1].t - 0.4, ch.dauer);
     }, 21.0);
-    const K4 = fahrKapitel("sattelzug", 1.5, 30.0, function (st, W, a, T0, ch) { const ID = "sattelzug";
-      etikett(st, W, tx("l_vorn"), POS.rechts1, ziel(W, ID, (z) => z.F), F.vorn, T0, ch.punkte[0].t + 0.3);
-      etikett(st, W, tx("l_hinten"), POS.links1, ziel(W, ID, (z) => z.A), F.hinten, T0, ch.punkte[0].t + 0.3);
-      etikett(st, W, tx("l_auflieger"), POS.links2, ziel(W, ID, (z) => z.T), F.auflieger, T0, ch.punkte[2].t + 0.3);
-      etikett(st, W, tx("l_gefahr"), POS.rechts2, zielMitte(W, ID, (z) => z.T), F.gold, T0, ch.punkte[2].t + 0.6);
+    const K4 = fahrKapitel("sattelzug", 1.5, 30.0, function (st, W, a, T0, ch, fz) {
+      const e = (...x) => etk(st, W, T0, "sattelzug", fz, ...x);
+      e(tx("l_vorn"), POS.rechts1, (z) => z.F, F.vorn, ch.punkte[0].t + 0.3);
+      e(tx("l_hinten"), POS.links1, (z) => z.A, F.hinten, ch.punkte[0].t + 0.3);
+      e(tx("l_auflieger"), POS.links2, (z) => z.T, F.auflieger, ch.punkte[2].t + 0.3);
+      e(tx("l_gefahr"), POS.rechts2, (z) => z.T, F.gold, ch.punkte[2].t + 0.6, true);
+      markerFolgt(st, W, a, T0, fz, "sattelzug", tx("l_zapfen"), ch.punkte[0].t, ch.punkte[1].t - 0.4, ch.dauer);
     }, 20.0);
 
     /* ---------- K5 (und K7): Vergleich auf derselben Vorderachsbahn ---------- */
@@ -837,11 +876,14 @@ W.FILM_SPRACHEN = {};
         sF.bis(i2); daten.forEach((d) => d.spur.bis(i2));
         if (statisch) { bd.zeige(1); bd.bis(i2); fuss.bis(i2); } else { bd.zeige(0); }
       });
-      const namen = { solo: "l_lkw", lastzug: "l_lastzug", sattelzug: "l_sattel" }, ys = { solo: 560, lastzug: 648, sattelzug: 736 };
+      const namen = { solo: "l_lkw", lastzug: "l_lastzug", sattelzug: "l_sattel" }, ys = { solo: 540, lastzug: 628, sattelzug: 716 };
+      const vz = { tA: tA, tB: tB };
+      etk(st, W, T0, "solo", vz, tx("l_vorn"), POS.rechts1, (z) => z.F, F.vorn, statisch ? 0.5 : ch.punkte[0].t + 0.1);
       daten.forEach((d, k) => {
-        etikett(st, W, tx(namen[d.id]), [40, ys[d.id], "l"], ziel(W, d.id, d.wahl), d.farbe, T0, statisch ? 0.6 + k * 0.2 : (ch.punkte[0].t + 0.3 + k * 0.4));
+        const tr = statisch ? 0.6 + k * 0.2 : Math.max(ch.punkte[0].t + 0.3 + k * 0.4, erreicht(d.id, d.wahl, tA, tB) + 0.3);
+        etikett(st, W, tx(namen[d.id]), [40, ys[d.id], "l"], ziel(W, d.id, d.wahl), d.farbe, T0, tr);
       });
-      if (statisch) etikett(st, W, tx("l_gefahr"), POS.rechts1, zielMitte(W, "sattelzug", (z) => z.T), F.gold, T0, 1.2);
+      if (statisch) etikett(st, W, tx("l_gefahr"), POS.rechts2, zielMitte(W, "sattelzug", (z) => z.T), F.gold, T0, 1.2);
     }
     const K5 = (sc, i, T0, ch) => vergleich(sc, i, T0, ch, false);
     const K7 = (sc, i, T0, ch) => vergleich(sc, i, T0, ch, true);
@@ -863,21 +905,22 @@ W.FILM_SPRACHEN = {};
       const innen = el("circle", { cx: CX, cy: CY, r: RI, fill: "rgba(143,214,166,.20)", stroke: F.hinten, "stroke-width": 3.5, opacity: 0 }, g);
       const y0 = CY - RA;   // tangierende Gerade
       const gerade = el("line", { x1: 0, y1: y0, x2: CX, y2: y0, stroke: F.creme, "stroke-width": 3, "stroke-dasharray": "14 10", opacity: 0 }, g);
-      const limit = el("rect", { x: 0, y: y0 - 0.8 * S, width: CX, height: 0.8 * S, fill: "url(#" + W.schrafId + ")", stroke: "rgba(237,174,79,.9)", "stroke-width": 1.5, opacity: 0 }, g);
+      const limit = el("rect", { x: 0, y: y0 - 0.8 * S, width: CX, height: 0.8 * S, fill: "rgba(250,246,236,.22)", stroke: "rgba(250,246,236,.7)", "stroke-width": 2, opacity: 0 }, g);
       const mitte = el("circle", { cx: CX, cy: CY, r: 6, fill: F.creme, opacity: 0 }, W.gUeber);
       // Maße (über den Fahrzeugen)
       const polar = (r, grad) => [CX + r * Math.cos(grad * Math.PI / 180), CY + r * Math.sin(grad * Math.PI / 180)];
       const mAussen = BK.mass(W, ...polar(0, 0), ...polar(RA, 200), F.creme);
       const mRing = BK.mass(W, ...polar(RA, 38), ...polar(RI, 38), F.gold, 4);
-      const mInnen = BK.mass(W, ...polar(0, 0), ...polar(RI, 150), F.hinten, 3.5);
+      const mInnen = BK.mass(W, ...polar(0, 0), ...polar(RI, 90), F.hinten, 3.5);
       const mGerade = BK.mass(W, 250, y0, 250, y0 - 0.8 * S, F.gold, 3);
       const pAussen = BK.pille(st, tx("l_r_aussen"), 40, Math.round(polar(RA, 200)[1]), { ax: "0" });
       const pRing = BK.pille(st, tx("l_r_ring"), 1040, 800, { ax: "-100%" });
       const pInnen = BK.pille(st, tx("l_r_innen"), CX, CY - 52, { punkt: F.hinten });
-      const pGerade = BK.pille(st, tx("l_r_gerade"), 120, y0 - 70, { punkt: F.gold });
+      const pGerade = BK.pille(st, tx("l_r_gerade"), 60, y0 - 75, { punkt: F.gold, ax: "0" });
+      const lGerade = BK.leitlinie(W, 200, y0 - 75, 250, y0 - 0.4 * S, F.gold);
       const t1 = ch.punkte[0].t, t2 = ch.punkte[1].t, t3 = ch.punkte[2].t, t4 = ch.punkte[3].t, tFahrt = t4 - 1.0, tEnde = ch.dauer - 1.5;
       // Einblenden (Deckkraft über GSAP; Kreise zeichnen sich nicht, sie blenden ein)
-      [[ring, t1], [mAussen, t1 + 0.4], [pAussen, t1 + 0.6], [mitte, t1 + 0.2], [mRing, t2], [pRing, t2 + 0.3], [innen, t3], [mInnen, t3 + 0.4], [pInnen, t3 + 0.7], [gerade, t4], [limit, t4], [mGerade, t4 + 0.4], [pGerade, t4 + 0.7]]
+      [[ring, t1], [mAussen, t1 + 0.4], [pAussen, t1 + 0.6], [mitte, t1 + 0.2], [mRing, t2], [pRing, t2 + 0.3], [innen, t3], [mInnen, t3 + 0.4], [pInnen, t3 + 0.7], [gerade, t4], [limit, t4], [mGerade, t4 + 0.4], [pGerade, t4 + 0.7], [lGerade, t4 + 0.9]]
         .forEach((e) => P.zeige(e[0], T0 + e[1], 0.7));
       uhr(T0, ch.dauer, function (t) {
         const s = sS + (sE - sS) * profilU(t, tFahrt, tEnde), i2 = Math.max(0, Math.min(sm.zustaende.length - 1, Math.round((s - sS) / DS)));
@@ -894,7 +937,7 @@ W.FILM_SPRACHEN = {};
       if (ch.id === "k7") { /* Merksatz steht im Text-Feld */ }
       P.sceneFade(sc, T0, ch.dauer);
     });
-    return { starts: starts, gesamt: P.gesamt, refit: function () {} };
+    return { starts: starts, gesamt: P.gesamt, refit: function () { alle.forEach((e) => e.messen()); } };
   }
   window.LKWSzenen = { bauen: bauen };
 })(window);

@@ -25,7 +25,7 @@
      e       Lage des Kupplungspunkts relativ zur Hinterachse (+ vor, − hinter)
      D       Abstand Kupplungspunkt – Mitte der Anhängerachsen
      anh     { vorn, hinten }: Aufbau des Anhängers vor bzw. hinter der Achsmitte (vorn gemessen von der Achsmitte nach vorn)
-     Gesamtlängen werden im Test gegen § 32 Abs. 4 StVZO geprüft (Sattelzug ≤ 15,50 m, Lastzug ≤ 18,75 m). */
+     Gesamtlängen werden im Test gegen § 32 Abs. 3, 4 StVZO geprüft (Sattelzug ≤ 15,50 m; Lastzug 17,60 m liegt unter der einfachen Grenze 18,00 m, die 18,75 m gelten nur mit Ladeflächen-Teillängen). */
   const FAHRZEUGE = {
     solo: { id: "solo", breite: 2.55, L: 4.8, vorn: 1.4, hinten: 2.2, anh: null },
     lastzug: {

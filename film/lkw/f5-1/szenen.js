@@ -64,12 +64,27 @@
     const fahrtS = (t, tA, tB) => S_START + (S_ENDE - S_START) * profilU(t, tA, tB);
 
     // Pille mit Leitlinie zu einem Punkt. pos = [x, y, "l"|"r"]: "l" = linker Rand der Pille bei x, "r" = rechter Rand bei x (lange Texte wachsen nach innen, nie aus dem Bild)
+    const alle = [];   // alle Beschriftungen: Leitlinien beginnen am Rand der Pille (nach dem Laden der Schrift neu gemessen), damit sie nie hinter anderen Pillen laufen
     function etikett(st, W, text, pos, ziel, farbe, T0, t) {
       const links = pos[2] !== "r";
       const p = BK.pille(st, text, pos[0], pos[1], { punkt: farbe, ax: links ? "0" : "-100%" });
-      const l = BK.leitlinie(W, links ? pos[0] + 150 : pos[0] - 150, pos[1], ziel[0], ziel[1], farbe);
+      const l = BK.leitlinie(W, pos[0], pos[1], ziel[0], ziel[1], farbe);
+      const e = { p: p, l: l, links: links, x: pos[0], y: pos[1], messen: function () { const w = p.offsetWidth || 150, ln = l.querySelector("line"); ln.setAttribute("x1", BK.f(links ? pos[0] + w : pos[0] - w)); } };
+      alle.push(e); e.messen();
       P.zeige(p, T0 + t); P.zeige(l, T0 + t + 0.15);
-      return { pille: p, linie: l };
+      return e;
+    }
+    // Zeit, zu der die Vorderachse so weit gefahren ist, dass die Spur „wahl“ den Kurvenwinkel WK erreicht (Beschriftung erst dann, nie ins Leere)
+    function erreicht(id, wahl, tA, tB) {
+      const zs = sim(id).zustaende; let sz = S_ENDE;
+      for (let i = 0; i < zs.length; i++) { const p = wahl(zs[i]), th = Math.atan2(p.x, -(p.y - RT)); if (p.x > 0 && th >= WK) { sz = zs[i].s; break; } }
+      let lo = tA, hi = tB; for (let k = 0; k < 40; k++) { const m = (lo + hi) / 2; if (fahrtS(m, tA, tB) < sz) lo = m; else hi = m; }
+      return hi;
+    }
+    // Beschriftung einer Achsspur: erscheint mit dem Satz (tSatz), frühestens wenn die Spur den Zielpunkt erreicht hat
+    function etk(st, W, T0, ID, fz, text, pos, wahl, farbe, tSatz, mitte) {
+      const tr = fz.tB > fz.tA ? Math.max(tSatz, erreicht(ID, wahl, fz.tA, fz.tB) + 0.3) : tSatz;
+      return etikett(st, W, text, pos, mitte ? zielMitte(W, ID, wahl) : ziel(W, ID, wahl), farbe, T0, tr);
     }
     // Punkt einer Spur bei Kurvenwinkel theta (0 = Kurvenanfang, 90° = Kurvenende), gemessen vom Kurvenmittelpunkt (0 / RT)
     function beiWinkel(id, wahl, theta) {
@@ -87,7 +102,7 @@
       const fragez = BK.el("g", { opacity: 0 }, W.gUeber);
       BK.el("circle", { r: 26, fill: F.creme, stroke: F.gold, "stroke-width": 5 }, fragez);
       const tq = BK.el("text", { "text-anchor": "middle", y: 14, "font-size": 40, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#2F4A34" }, fragez); tq.textContent = "?";
-      const tA = 1.2, tB = 16.5, tFrage = ch.punkte[1].t, tReveal = ch.punkte[2].t;
+      const tA = 1.2, tB = 21.0, tFrage = ch.punkte[1].t, tReveal = ch.punkte[2].t;
       uhr(T0, ch.dauer, function (t) {
         const z = a.zeichne(fahrtS(t, tA, tB), t, bremstZeit(t, tB));
         const q = px(W, { x: z.A.x, y: z.A.y });
@@ -96,12 +111,14 @@
         fragez.style.opacity = an ? Math.min(1, (t - tFrage) / 0.4) : 0; fragez.setAttribute("transform", "translate(" + BK.f(q[0]) + " " + BK.f(q[1]) + ") scale(" + pulsiert.toFixed(3) + ")");
         a.spuren.a.zeige(t >= tReveal ? klemme((t - tReveal) / 0.8) : 0);
       });
-      etikett(st, W, tx("l_vorn"), POS.rechts1, ziel(W, "solo", (z) => z.F), F.vorn, T0, ch.punkte[0].t + 0.3);
-      etikett(st, W, tx("l_hinten"), POS.links1, ziel(W, "solo", (z) => z.A), F.hinten, T0, tReveal + 0.5);
+      const fz1 = { tA: tA, tB: tB };
+      etk(st, W, T0, "solo", fz1, tx("l_vorn"), POS.rechts1, (z) => z.F, F.vorn, ch.punkte[0].t + 0.3);
+      etk(st, W, T0, "solo", fz1, tx("l_hinten"), POS.links1, (z) => z.A, F.hinten, tReveal + 0.5);
     }
 
     /* ---------- K2/K3/K4: ein Fahrzeug fährt die Kurve ---------- */
     function fahrKapitel(id, tA, tB, etiketten, bandT) {
+      const fz = { tA: tA, tB: tB };
       return function (sc, i, T0, ch) {
         const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false);
         const W = BK.welt(st, Object.assign({ id: id + i }, BUEHNE)), a = fahrt(st, W, id);
@@ -128,31 +145,51 @@
             knickPille.style.opacity = an;
           }
         });
-        etiketten(st, W, a, T0, ch);
+        etiketten(st, W, a, T0, ch, fz);
       };
     }
     // Beschriftung: rechts außen die Vorderachse und der Gefahrenbereich, links innen die hinteren Achsen; alle Leitlinien enden bei Kurvenwinkel WK (gleiche Stelle der Kurve),
     // damit sich keine Linien kreuzen (oben = außen, unten = innen)
-    const WK = 50 * Math.PI / 180, POS = { rechts1: [1040, 205, "r"], rechts2: [1040, 292, "r"], links1: [40, 560, "l"], links2: [40, 648, "l"] };
+    const WK = 50 * Math.PI / 180, POS = { rechts1: [1040, 205, "r"], rechts2: [1040, 292, "r"], links1: [40, 540, "l"], links2: [40, 660, "l"] };
     // Zielpunkte der Leitlinien: alle bei Kurvenwinkel WK (oben = außen, unten = innen, Linien kreuzen sich nicht)
     const ziel = (W, id, wahl) => px(W, beiWinkel(id, wahl, WK));
     const zielMitte = (W, id, wahl) => { const a = beiWinkel(id, (z) => z.F, WK), b = beiWinkel(id, wahl, WK); return px(W, { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }); };
-    const K2 = fahrKapitel("solo", 1.5, 24.0, function (st, W, a, T0, ch) { const ID = "solo";
-      etikett(st, W, tx("l_vorn"), POS.rechts1, ziel(W, ID, (z) => z.F), F.vorn, T0, ch.punkte[0].t + 0.3);
-      etikett(st, W, tx("l_hinten"), POS.links1, ziel(W, ID, (z) => z.A), F.hinten, T0, ch.punkte[1].t + 0.3);
-      etikett(st, W, tx("l_gefahr"), POS.rechts2, zielMitte(W, ID, (z) => z.A), F.gold, T0, ch.punkte[3].t + 0.3);
+    // Marke am Kupplungspunkt bzw. Königszapfen: folgt dem Fahrzeug, Pille rechts daneben (von tVon bis tBis)
+    function markerFolgt(st, W, a, T0, fz, id, text, tVon, tBis, dauer) {
+      const g = BK.el("g", { opacity: 0 }, W.gUeber);
+      BK.el("circle", { r: 11, fill: F.gold, stroke: "#101410", "stroke-width": 3 }, g);
+      const pl = BK.pille(st, text, 0, 0, { klasse: "klein", ax: "0" }); pl.style.opacity = 0;
+      const proxy = { t: 0 };
+      tl.to(proxy, { t: dauer, duration: dauer, ease: "none", onUpdate: function () {
+        const t = proxy.t, an = t >= tVon && t < tBis ? klemme(Math.min((t - tVon) / 0.5, (tBis - t) / 0.4)) : 0;
+        g.style.opacity = an; pl.style.opacity = an;
+        if (!an) return;
+        const z = a.sim.zustaende[idxVon(fahrtS(t, fz.tA, fz.tB))], q = px(W, z.K);
+        g.setAttribute("transform", "translate(" + BK.f(q[0]) + " " + BK.f(q[1]) + ")");
+        pl.style.left = BK.f(q[0] - 20) + "px"; pl.style.top = BK.f(q[1] - 62) + "px";
+      } }, T0);
+    }
+    const K2 = fahrKapitel("solo", 1.5, 24.0, function (st, W, a, T0, ch, fz) {
+      const e = (...x) => etk(st, W, T0, "solo", fz, ...x);
+      e(tx("l_vorn"), POS.rechts1, (z) => z.F, F.vorn, ch.punkte[0].t + 0.3);
+      e(tx("l_hinten"), POS.links1, (z) => z.A, F.hinten, ch.punkte[1].t + 0.3);
+      e(tx("l_gefahr"), POS.rechts2, (z) => z.A, F.gold, ch.punkte[3].t + 0.3, true);
     }, 19.0);
-    const K3 = fahrKapitel("lastzug", 1.5, 28.5, function (st, W, a, T0, ch) { const ID = "lastzug";
-      etikett(st, W, tx("l_vorn"), POS.rechts1, ziel(W, ID, (z) => z.F), F.vorn, T0, ch.punkte[0].t + 0.3);
-      etikett(st, W, tx("l_hinten"), POS.links1, ziel(W, ID, (z) => z.A), F.hinten, T0, ch.punkte[0].t + 0.3);
-      etikett(st, W, tx("l_anhaenger"), POS.links2, ziel(W, ID, (z) => z.T), F.anhaenger, T0, ch.punkte[0].t + 0.6);
-      etikett(st, W, tx("l_gefahr"), POS.rechts2, zielMitte(W, ID, (z) => z.T), F.gold, T0, ch.punkte[2].t + 0.3);
+    const K3 = fahrKapitel("lastzug", 1.5, 28.5, function (st, W, a, T0, ch, fz) {
+      const e = (...x) => etk(st, W, T0, "lastzug", fz, ...x);
+      e(tx("l_vorn"), POS.rechts1, (z) => z.F, F.vorn, ch.punkte[0].t + 0.3);
+      e(tx("l_hinten"), POS.links1, (z) => z.A, F.hinten, ch.punkte[0].t + 0.3);
+      e(tx("l_anhaenger"), POS.links2, (z) => z.T, F.anhaenger, ch.punkte[0].t + 0.6);
+      e(tx("l_gefahr"), POS.rechts2, (z) => z.T, F.gold, ch.punkte[2].t + 0.3, true);
+      markerFolgt(st, W, a, T0, fz, "lastzug", tx("l_kupplung"), ch.punkte[0].t, ch.punkte[1].t - 0.4, ch.dauer);
     }, 21.0);
-    const K4 = fahrKapitel("sattelzug", 1.5, 30.0, function (st, W, a, T0, ch) { const ID = "sattelzug";
-      etikett(st, W, tx("l_vorn"), POS.rechts1, ziel(W, ID, (z) => z.F), F.vorn, T0, ch.punkte[0].t + 0.3);
-      etikett(st, W, tx("l_hinten"), POS.links1, ziel(W, ID, (z) => z.A), F.hinten, T0, ch.punkte[0].t + 0.3);
-      etikett(st, W, tx("l_auflieger"), POS.links2, ziel(W, ID, (z) => z.T), F.auflieger, T0, ch.punkte[2].t + 0.3);
-      etikett(st, W, tx("l_gefahr"), POS.rechts2, zielMitte(W, ID, (z) => z.T), F.gold, T0, ch.punkte[2].t + 0.6);
+    const K4 = fahrKapitel("sattelzug", 1.5, 30.0, function (st, W, a, T0, ch, fz) {
+      const e = (...x) => etk(st, W, T0, "sattelzug", fz, ...x);
+      e(tx("l_vorn"), POS.rechts1, (z) => z.F, F.vorn, ch.punkte[0].t + 0.3);
+      e(tx("l_hinten"), POS.links1, (z) => z.A, F.hinten, ch.punkte[0].t + 0.3);
+      e(tx("l_auflieger"), POS.links2, (z) => z.T, F.auflieger, ch.punkte[2].t + 0.3);
+      e(tx("l_gefahr"), POS.rechts2, (z) => z.T, F.gold, ch.punkte[2].t + 0.6, true);
+      markerFolgt(st, W, a, T0, fz, "sattelzug", tx("l_zapfen"), ch.punkte[0].t, ch.punkte[1].t - 0.4, ch.dauer);
     }, 20.0);
 
     /* ---------- K5 (und K7): Vergleich auf derselben Vorderachsbahn ---------- */
@@ -173,11 +210,14 @@
         sF.bis(i2); daten.forEach((d) => d.spur.bis(i2));
         if (statisch) { bd.zeige(1); bd.bis(i2); fuss.bis(i2); } else { bd.zeige(0); }
       });
-      const namen = { solo: "l_lkw", lastzug: "l_lastzug", sattelzug: "l_sattel" }, ys = { solo: 560, lastzug: 648, sattelzug: 736 };
+      const namen = { solo: "l_lkw", lastzug: "l_lastzug", sattelzug: "l_sattel" }, ys = { solo: 540, lastzug: 628, sattelzug: 716 };
+      const vz = { tA: tA, tB: tB };
+      etk(st, W, T0, "solo", vz, tx("l_vorn"), POS.rechts1, (z) => z.F, F.vorn, statisch ? 0.5 : ch.punkte[0].t + 0.1);
       daten.forEach((d, k) => {
-        etikett(st, W, tx(namen[d.id]), [40, ys[d.id], "l"], ziel(W, d.id, d.wahl), d.farbe, T0, statisch ? 0.6 + k * 0.2 : (ch.punkte[0].t + 0.3 + k * 0.4));
+        const tr = statisch ? 0.6 + k * 0.2 : Math.max(ch.punkte[0].t + 0.3 + k * 0.4, erreicht(d.id, d.wahl, tA, tB) + 0.3);
+        etikett(st, W, tx(namen[d.id]), [40, ys[d.id], "l"], ziel(W, d.id, d.wahl), d.farbe, T0, tr);
       });
-      if (statisch) etikett(st, W, tx("l_gefahr"), POS.rechts1, zielMitte(W, "sattelzug", (z) => z.T), F.gold, T0, 1.2);
+      if (statisch) etikett(st, W, tx("l_gefahr"), POS.rechts2, zielMitte(W, "sattelzug", (z) => z.T), F.gold, T0, 1.2);
     }
     const K5 = (sc, i, T0, ch) => vergleich(sc, i, T0, ch, false);
     const K7 = (sc, i, T0, ch) => vergleich(sc, i, T0, ch, true);
@@ -199,21 +239,22 @@
       const innen = el("circle", { cx: CX, cy: CY, r: RI, fill: "rgba(143,214,166,.20)", stroke: F.hinten, "stroke-width": 3.5, opacity: 0 }, g);
       const y0 = CY - RA;   // tangierende Gerade
       const gerade = el("line", { x1: 0, y1: y0, x2: CX, y2: y0, stroke: F.creme, "stroke-width": 3, "stroke-dasharray": "14 10", opacity: 0 }, g);
-      const limit = el("rect", { x: 0, y: y0 - 0.8 * S, width: CX, height: 0.8 * S, fill: "url(#" + W.schrafId + ")", stroke: "rgba(237,174,79,.9)", "stroke-width": 1.5, opacity: 0 }, g);
+      const limit = el("rect", { x: 0, y: y0 - 0.8 * S, width: CX, height: 0.8 * S, fill: "rgba(250,246,236,.22)", stroke: "rgba(250,246,236,.7)", "stroke-width": 2, opacity: 0 }, g);
       const mitte = el("circle", { cx: CX, cy: CY, r: 6, fill: F.creme, opacity: 0 }, W.gUeber);
       // Maße (über den Fahrzeugen)
       const polar = (r, grad) => [CX + r * Math.cos(grad * Math.PI / 180), CY + r * Math.sin(grad * Math.PI / 180)];
       const mAussen = BK.mass(W, ...polar(0, 0), ...polar(RA, 200), F.creme);
       const mRing = BK.mass(W, ...polar(RA, 38), ...polar(RI, 38), F.gold, 4);
-      const mInnen = BK.mass(W, ...polar(0, 0), ...polar(RI, 150), F.hinten, 3.5);
+      const mInnen = BK.mass(W, ...polar(0, 0), ...polar(RI, 90), F.hinten, 3.5);
       const mGerade = BK.mass(W, 250, y0, 250, y0 - 0.8 * S, F.gold, 3);
       const pAussen = BK.pille(st, tx("l_r_aussen"), 40, Math.round(polar(RA, 200)[1]), { ax: "0" });
       const pRing = BK.pille(st, tx("l_r_ring"), 1040, 800, { ax: "-100%" });
       const pInnen = BK.pille(st, tx("l_r_innen"), CX, CY - 52, { punkt: F.hinten });
-      const pGerade = BK.pille(st, tx("l_r_gerade"), 120, y0 - 70, { punkt: F.gold });
+      const pGerade = BK.pille(st, tx("l_r_gerade"), 60, y0 - 75, { punkt: F.gold, ax: "0" });
+      const lGerade = BK.leitlinie(W, 200, y0 - 75, 250, y0 - 0.4 * S, F.gold);
       const t1 = ch.punkte[0].t, t2 = ch.punkte[1].t, t3 = ch.punkte[2].t, t4 = ch.punkte[3].t, tFahrt = t4 - 1.0, tEnde = ch.dauer - 1.5;
       // Einblenden (Deckkraft über GSAP; Kreise zeichnen sich nicht, sie blenden ein)
-      [[ring, t1], [mAussen, t1 + 0.4], [pAussen, t1 + 0.6], [mitte, t1 + 0.2], [mRing, t2], [pRing, t2 + 0.3], [innen, t3], [mInnen, t3 + 0.4], [pInnen, t3 + 0.7], [gerade, t4], [limit, t4], [mGerade, t4 + 0.4], [pGerade, t4 + 0.7]]
+      [[ring, t1], [mAussen, t1 + 0.4], [pAussen, t1 + 0.6], [mitte, t1 + 0.2], [mRing, t2], [pRing, t2 + 0.3], [innen, t3], [mInnen, t3 + 0.4], [pInnen, t3 + 0.7], [gerade, t4], [limit, t4], [mGerade, t4 + 0.4], [pGerade, t4 + 0.7], [lGerade, t4 + 0.9]]
         .forEach((e) => P.zeige(e[0], T0 + e[1], 0.7));
       uhr(T0, ch.dauer, function (t) {
         const s = sS + (sE - sS) * profilU(t, tFahrt, tEnde), i2 = Math.max(0, Math.min(sm.zustaende.length - 1, Math.round((s - sS) / DS)));
@@ -230,7 +271,7 @@
       if (ch.id === "k7") { /* Merksatz steht im Text-Feld */ }
       P.sceneFade(sc, T0, ch.dauer);
     });
-    return { starts: starts, gesamt: P.gesamt, refit: function () {} };
+    return { starts: starts, gesamt: P.gesamt, refit: function () { alle.forEach((e) => e.messen()); } };
   }
   window.LKWSzenen = { bauen: bauen };
 })(window);
