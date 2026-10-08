@@ -115,3 +115,16 @@ test("Heck schwenkt beim Einlenken nach außen aus (Solo): messbar, aber klein (
   assert.ok(u > 0.02 && u < 0.8, "Ausschwenken " + u.toFixed(3) + " m");
   console.log("  Solo: Heck schwenkt " + u.toFixed(2) + " m nach außen");
 });
+
+test("Folgefahrt (Film 5.4): mit 50 m Lücke kommt der Lkw hinter dem Pkw zum Stehen, mit 20 m nicht; Gegenprobe ohne Reaktionszeit", () => {
+  const basis = { v0: 80 / 3.6, aVorn: 8, aHinten: 5, reaktion: 1.0, dauer: 14 };
+  const gut = M.folgefahrt({ ...basis, luecke: 50 }), knapp = M.folgefahrt({ ...basis, luecke: 20 });
+  assert.equal(gut.kollision, null, "50 m: keine Berührung");
+  assert.ok(gut.minAbstand > 5, "50 m: Rest-Abstand " + gut.minAbstand.toFixed(1));
+  assert.ok(gut.bei(14).vH === 0 && gut.bei(14).vV === 0, "beide stehen");
+  assert.ok(knapp.kollision != null, "20 m: der Lkw erreicht den Pkw");
+  // Gegenprobe: ohne Reaktionszeit und mit gleicher Verzögerung wird der Rest-Abstand nie kleiner als die Lücke
+  const ideal = M.folgefahrt({ ...basis, luecke: 20, reaktion: 0, aHinten: 8 });
+  assert.ok(ideal.minAbstand >= 19.99, "gleiche Verzögerung ohne Reaktionszeit: Abstand bleibt " + ideal.minAbstand.toFixed(2));
+  console.log("  Folgefahrt 50 m: Rest-Abstand " + gut.minAbstand.toFixed(1) + " m; 20 m: Berührung nach " + knapp.kollision.toFixed(2) + " s");
+});

@@ -172,6 +172,27 @@
   // Innerster Radius des Fahrzeugs (innere Ecke der letzten Achse) bei Kreisfahrt
   function innenRadius(fz, RF) { const r = radien(fz, RF); return (fz.anh ? r.T : r.A) - fz.breite / 2; }
 
-  const api = { FAHRZEUGE: FAHRZEUGE, bahn: bahn, simuliere: simuliere, koerper: koerper, rechteck: rechteck, maxUeberschnitt: maxUeberschnitt, gesamtLaenge: gesamtLaenge, radien: radien, vorderachsRadius: vorderachsRadius, innenRadius: innenRadius, abstandLinks: abstandLinks, folge: folge };
+
+  /* ---------- Folgefahrt (Abstand, Seitenansicht) ----------
+     Ein Pkw bremst plötzlich bis zum Stand, der Lkw dahinter reagiert nach „reaktion“ Sekunden und bremst mit „aHinten“.
+     Alle Werte sind BEISPIELWERTE (keine Aussage über Anhaltewege; Zahlen kommen im Film nicht vor):
+     v0 Anfangsgeschwindigkeit m/s, luecke Abstand Stoßstange–Heck bei Bremsbeginn (m), aVorn/aHinten Verzögerungen (m/s²).
+     Gibt Lage der Fahrzeugfronten über der Zeit zurück: x ist der Weg seit Bremsbeginn (m), Kollision = Abstand ≤ 0. */
+  function folgefahrt(o) {
+    const dt = 0.01, n = Math.round((o.dauer || 14) / dt), z = [];
+    let vV = o.v0, vH = o.v0, xV = 0, xH = -o.luecke;   // xV = Heck des Vordermanns, xH = Front des Lkw
+    let kollision = null;
+    for (let i = 0; i <= n; i++) {
+      const t = i * dt;
+      z.push({ t: t, xV: xV, xH: xH, vV: vV, vH: vH, bremstV: t >= 0 && vV > 0, bremstH: t >= o.reaktion && vH > 0, abstand: xV - xH });
+      if (xV - xH <= 0 && kollision == null) kollision = t;
+      vV = Math.max(0, vV - o.aVorn * dt); xV += vV * dt;
+      if (t >= o.reaktion) vH = Math.max(0, vH - o.aHinten * dt);
+      xH += vH * dt;
+    }
+    return { zustaende: z, dt: dt, kollision: kollision, minAbstand: Math.min.apply(null, z.map((q) => q.abstand)), bei: function (t) { return z[Math.max(0, Math.min(n, Math.round(t / dt)))]; } };
+  }
+
+  const api = { folgefahrt: folgefahrt, FAHRZEUGE: FAHRZEUGE, bahn: bahn, simuliere: simuliere, koerper: koerper, rechteck: rechteck, maxUeberschnitt: maxUeberschnitt, gesamtLaenge: gesamtLaenge, radien: radien, vorderachsRadius: vorderachsRadius, innenRadius: innenRadius, abstandLinks: abstandLinks, folge: folge };
   if (typeof module !== "undefined" && module.exports) module.exports = api; else root.LKW_MODELL = api;
 })(typeof window !== "undefined" ? window : globalThis);
