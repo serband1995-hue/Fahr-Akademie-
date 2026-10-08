@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>Vorschau – Lkw und Zug verstehen</title>
+<style>
+@font-face{font-family:'Barlow';font-weight:500;src:url('../film/vorfahrt/assets/fonts/Barlow-500.ttf') format('truetype');}
+@font-face{font-family:'Barlow';font-weight:600;src:url('../film/vorfahrt/assets/fonts/Barlow-600.ttf') format('truetype');}
+@font-face{font-family:'Barlow';font-weight:700;src:url('../film/vorfahrt/assets/fonts/Barlow-700.ttf') format('truetype');}
+@font-face{font-family:'Playfair Display';font-weight:600;src:url('../film/vorfahrt/assets/fonts/PlayfairDisplay-600.ttf') format('truetype');}
+@font-face{font-family:'Playfair Display';font-weight:700;src:url('../film/vorfahrt/assets/fonts/PlayfairDisplay-700.ttf') format('truetype');}
+:root{--bg:#FAF6EC;--surface:#EEE6D3;--text:#2B2A22;--muted:#6F6857;--border:rgba(43,40,30,.16);--gold:#D9954C;--gold-text:#8F5A14;--gruen:#2F4A34;--auf-tief:#fff;--auf-gold:#2B2A22;--ff-titel:'Playfair Display',Georgia,serif;--ff-body:'Barlow',sans-serif;}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--ff-body);}
+main{max-width:980px;margin:0 auto;padding:12px 14px 40px;}
+h1{font:700 22px/1.2 var(--ff-titel);margin:6px 0 4px;color:var(--gruen)}
+.hinweis{color:var(--muted);font-size:14px;line-height:1.45;margin:0 0 10px}
+label{font-size:14px;color:var(--muted);display:flex;gap:10px;align-items:center;margin:6px 0 4px}
+select{min-height:44px;font:600 16px var(--ff-body);border-radius:12px;border:1px solid var(--border);background:#fff;padding:0 12px;max-width:100%}
+</style>
+</head>
+<body>
+<main>
+  <h1>Vorschau: Lkw und Zug verstehen</h1>
+  <p class="hinweis">Nur zum Prüfen. Noch nicht in der App verlinkt. Film 5.1 „Schleppkurven“.</p>
+  <label>Sprache <select id="spr"></select></label>
+  <div id="platz"></div>
+</main>
+<script src="../vendor/gsap-3.14.2.min.js"></script>
+<script type="module">
+import { starte } from "./lkw-f5-1.js";
+const SPR = { de: "Deutsch", en: "English", tr: "Türkçe", ar: "العربية", ru: "Русский", es: "Español", fa: "فارسی", ps: "پښتو", ckb: "کوردی", kmr: "Kurdî", sr: "Srpski", el: "Ελληνικά", hi: "हिन्दी", ur: "اردو", vi: "Tiếng Việt", am: "አማርኛ", ti: "ትግርኛ", rif: "Tarifit" };
+const sel = document.getElementById("spr"), platz = document.getElementById("platz");
+const wunsch = new URLSearchParams(location.search).get("sprache") || "de";
+Object.keys(SPR).forEach((k) => { const o = document.createElement("option"); o.value = k; o.textContent = SPR[k]; if (k === wunsch) o.selected = true; sel.appendChild(o); });
+let film = null;
+function neu() { if (film) film.zerstoeren(); film = starte(platz, { sprache: sel.value }); window.__film = film; }
+sel.addEventListener("change", neu); neu();
+</script>
+</body>
+</html>

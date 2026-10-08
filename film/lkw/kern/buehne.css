@@ -1,0 +1,20 @@
+/* Bühne (Bild links bzw. oben) und Text-Feld – gemeinsam für den MP4-Film (index.html) und die App (verkehr/lkw-*.js).
+   Alle Maße in der Bühnen-Einheit 1080 x 1080; die App skaliert die ganze Bühne per transform. Look wie „Vorfahrt“ (Papier, Grün, Gold). */
+.stagewrap { position:relative; }
+.stage { position:absolute; left:0; top:0; width:1080px; height:1080px; overflow:hidden; background:#434B45; direction:ltr; }
+.stage > * { position:absolute; }
+.pill { padding:10px 28px; border-radius:42px; background:#FAF6EC; color:#2F4A34; border:3px solid var(--lk-gold,#D9954C); font:700 44px/1.15 var(--lk-text,'Barlow',sans-serif); text-align:center; max-width:560px; box-shadow:0 5px 12px rgba(0,0,0,.35); }
+.pill.klein { font-size:38px; padding:6px 20px; }
+.lkw-pill { max-width:520px; text-wrap:balance; }
+/* Rechts-nach-links-Sprachen: nur der Text im Bild dreht, nicht die Straße (Rechtsverkehr bleibt) */
+.lk-rtl .pill { direction:rtl; }
+
+.panel .kicker { font-family:var(--lk-text,'Barlow',sans-serif); font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#8F5A14; }
+.panel .ttl { font-family:var(--lk-titel,'Playfair Display',serif); font-weight:700; color:#2F4A34; }
+.panel .sub { font-family:var(--lk-text,'Barlow',sans-serif); font-weight:500; color:#6F6857; opacity:0; }
+.pts { display:grid; }
+.pts > * { grid-area:1 / 1; align-self:start; opacity:0; }
+.pt .tx { text-wrap:balance; font-family:var(--lk-text,'Barlow',sans-serif); font-weight:600; color:#2B2A22; }
+.pt.gold .tx { color:#8F5A14; }
+.pt .rf { font-family:var(--lk-text,'Barlow',sans-serif); font-weight:500; color:#6F6857; }
+.merk { background:#2F4A34; color:#FAF6EC; border-left:12px solid #D9954C; border-radius:6px 18px 18px 6px; font-family:var(--lk-titel,'Playfair Display',serif); font-weight:600; box-shadow:0 10px 24px rgba(43,42,34,.25); }
