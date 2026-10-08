@@ -222,3 +222,31 @@ test("Rechtsabbiegen mit Radfahrer: Art A endet kurz vor dem Zusammenstoß, Art 
   const sf = M.sichtfeld(M.FAHRZEUGE.solo);
   assert.ok(sf.quelle(1.0, 2.4, 1.0) && /^(haupt|weit)/.test(sf.quelle(1.0, 2.4, 1.0)));
 });
+
+test("Druckluft-Bremse: Zweikreis, Zweileitung, Federspeicher, Anschlussreihenfolge (mit Gegenproben)", () => {
+  // Zweikreis: beide Kreise heil = volle Wirkung; ein Kreis defekt = der andere bremst weiter, aber schwächer; beide defekt = keine Bremswirkung
+  assert.equal(M.zweikreis({ pedal: 1, leck: [false, false] }).wirkung, 1);
+  const eins = M.zweikreis({ pedal: 1, leck: [false, true] });
+  assert.equal(eins.wirkung, 0.5); assert.equal(eins.vorrat[0], 1); assert.equal(eins.vorrat[1], 0);   // der heile Kreis bleibt gefüllt
+  assert.equal(M.zweikreis({ pedal: 1, leck: [true, true] }).wirkung, 0);
+  assert.equal(M.zweikreis({ pedal: 0, leck: [false, false] }).wirkung, 0);                            // ohne Pedal keine Bremsung
+  // Zweileitung: versorgt (rot voll) und gelb ohne Druck = gelöst; gelb Druck = Anhänger bremst proportional; rot weg = selbsttätige Vollbremsung
+  assert.equal(M.anhaengerBremse({ rot: 1, gelb: 0 }).gebremst, false);
+  assert.equal(M.anhaengerBremse({ rot: 1, gelb: 0.6 }).zyl, 0.6);
+  assert.equal(M.anhaengerBremse({ rot: 0, gelb: 0 }).gebremst, true);
+  assert.equal(M.anhaengerBremse({ rot: 0, gelb: 0 }).selbsttaetig, true);
+  assert.equal(M.anhaengerBremse({ rot: 0, gelb: 0, vorratAnh: 0 }).gebremst, false);                  // Gegenprobe: leerer Vorrat des Anhängers, keine Luft zum Bremsen
+  assert.equal(M.anhaengerBremse({ rot: 1, gelb: 1, vorratAnh: 0.3 }).zyl, 0.3);                       // Gegenprobe: Zylinderdruck nie größer als der Vorrat
+  // Federspeicher: Feder bremst, Druck löst; Druckverlust = Bremsung; Betriebsbremse addiert sich
+  assert.equal(M.federspeicher({ pFeder: 1, pMembran: 0 }).geloest, true);
+  assert.equal(M.federspeicher({ pFeder: 0, pMembran: 0 }).kraft, 1);
+  assert.equal(M.federspeicher({ pFeder: 0.3, pMembran: 0 }).gebremst, true);                          // zu wenig Druck zum Lösen
+  assert.equal(M.federspeicher({ pFeder: 1, pMembran: 0.5 }).kraft, 0.5);
+  assert.equal(M.federspeicher({ pFeder: 0, pMembran: 1 }).kraft, 1);                                  // Begrenzung auf volle Kraft
+  // Kuppeln: nur gelb → Anhänger bleibt gebremst (sicher); nur rot → Anhänger gelöst, aber nicht steuerbar (unsicher); beide → gelöst und steuerbar
+  assert.deepEqual([M.kuppelnZustand({ gelb: false, rot: false }).geloest, M.kuppelnZustand({ gelb: false, rot: false }).unsicher], [false, false]);
+  assert.equal(M.kuppelnZustand({ gelb: true, rot: false }).geloest, false);
+  assert.equal(M.kuppelnZustand({ gelb: true, rot: false }).unsicher, false);
+  assert.equal(M.kuppelnZustand({ gelb: false, rot: true }).unsicher, true);                           // „rot nie allein“
+  assert.equal(M.kuppelnZustand({ gelb: true, rot: true }).vomZugSteuerbar, true);
+});
