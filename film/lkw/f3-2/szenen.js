@@ -16,8 +16,8 @@
     if (!M.sattelUnterfahren(LUFT_TIEF).passtUnter || M.sattelUnterfahren(LUFT_KONTAKT).hebtAuf) throw new Error("Höhenbeispiel passt nicht zum Modell");
     // Knopf der Feststellbremse (rot) am Auflieger und „P“-Zeichen der Zugmaschine
     function knoepfe(W) {
-      const kz = el("g", { opacity: 0 }, W.gVorn); el("circle", { cx: 3.6, cy: -2.2, r: 0.22, fill: ROT, stroke: "#23262A", "stroke-width": 0.05 }, kz);
-      const t = el("text", { x: 3.6, y: -2.11, "text-anchor": "middle", "font-size": 0.3, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#FAF6EC" }, kz); t.textContent = "P";
+      const kz = el("g", { opacity: 0 }, W.gVorn); el("circle", { cx: 4.1, cy: -1.55, r: 0.22, fill: ROT, stroke: "#23262A", "stroke-width": 0.05 }, kz);
+      const t = el("text", { x: 4.1, y: -1.46, "text-anchor": "middle", "font-size": 0.3, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#FAF6EC" }, kz); t.textContent = "P";
       const ka = el("g", { opacity: 0 }, W.gVorn); el("line", { x1: 0.9, y1: -1.0, x2: 0.9, y2: -1.3, stroke: "#8D949C", "stroke-width": 0.08 }, ka); el("circle", { cx: 0.9, cy: -0.95, r: 0.16, fill: ROT, stroke: "#23262A", "stroke-width": 0.04 }, ka);
       return { zug: kz, auf: ka };
     }
@@ -42,7 +42,7 @@
       uhr(T0, ch.dauer, function (t) {
         const a1 = fenster(t, 3, ch.dauer - 1, 0.6), a2 = fenster(t, 15, ch.dauer - 1, 0.6), a3 = fenster(t, 28, ch.dauer - 1, 0.6);
         kn.zug.style.opacity = a1; kn.auf.style.opacity = a2; V.au.setze(0, { stuetze: 0, keil: a3 > 0.5 ? 1 : 0 });
-        const k = W.px(3.6, -2.2), k2 = W.px(0.9, -1.0), kk = W.px(MA.auflieger.achsX - 2.05, -0.15);
+        const k = W.px(4.1, -1.55), k2 = W.px(0.9, -1.0), kk = W.px(MA.auflieger.achsX - 2.05, -0.15);
         platz(pz, 760, 190, a1); l1.setze(760, 224, k[0], k[1], a1);
         platz(pa, 380, 340, a2); l2.setze(380, 374, k2[0], k2[1], a2);
         platz(pk, 330, kk[1] + 150, a3); l3.setze(330, kk[1] + 118, kk[0], kk[1], a3);
@@ -74,8 +74,8 @@
       const Vn = seite(st, 190, 2.2, 2.35), Wn = Vn.W, Vw = seite(st, 51, -0.5, 2.0), Ww = Vw.W, knw = knoepfe(Ww);
       Vn.zm.setze(A_GEKUPPELT, LUFT_KONTAKT); Vn.zm.kupplung(1); Vn.au.setze(0, { stuetze: 1, keil: 1 });
       Vw.zm.setze(A_GEKUPPELT, LUFT_KONTAKT); Vw.zm.kupplung(1); Vw.au.setze(0, { stuetze: 1, keil: 1 }); knw.zug.style.opacity = 1; knw.auf.style.opacity = 1;
-      const farben = [ROT, GELB, "#B9BEC4"], sch = farben.map((c) => KU.schlauch(Wn, c, { laenge: 1.7 }));
-      const anker = (k) => ({ x: MA.anker.x, y: MA.anker.y[k] }), dose = (k) => ({ x: MA.steckdose.x, y: MA.steckdose.y[k - 0] }), ruhe = (k) => ({ x: MA.anker.x - 0.15, y: MA.anker.y[k] + 0.55 });
+      const farben = [ROT, GELB, "#B9BEC4"], sch = farben.map((c) => KU.schlauch(Wn, c, { laenge: 1.05 }));
+      const anker = (k) => KU.ankerWelt(0, k), dose = (k) => ({ x: MA.steckdose.x, y: MA.steckdose.y[k] }), ruhe = (k) => KU.ruheWelt(0, k);
       const idx = [1, 0, 2], wann = [[6, 13], [16, 22], [25, 31]];       // rot, gelb, Elektrik (Index in den Steckdosen: gelb 0, rot 1, Elektrik 2)
       const pr = pille(st, tx("l_rot_ab"), ROT), pg = pille(st, tx("l_gelb_ab"), GELB), pe = pille(st, tx("l_elektro_ab"), "#B9BEC4"), lr = leiter(Wn, ROT), lg = leiter(Wn, GELB), le = leiter(Wn, "#B9BEC4");
       const pb = pille(st, tx("l_reicht_nicht"), WARN, { klasse: "gross" }), pw = pille(st, "", GOLD);

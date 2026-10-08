@@ -24,7 +24,7 @@
       const g = el("g", { opacity: 0 }, W.svg), l = el("line", { stroke: farbe || F.creme, "stroke-width": 2.5, "stroke-dasharray": "2 7", "stroke-linecap": "round" }, g), c = el("circle", { r: 5, fill: farbe || F.creme }, g);
       return { g: g, setze: (x1, y1, x2, y2, a) => { l.setAttribute("x1", f(x1)); l.setAttribute("y1", f(y1)); l.setAttribute("x2", f(x2)); l.setAttribute("y2", f(y2)); c.setAttribute("cx", f(x2)); c.setAttribute("cy", f(y2)); g.style.opacity = a; } };
     }
-    const auf = (x) => (W) => W.px(x, 0);
+    const interp = (kf, t) => { if (t <= kf[0][0]) return kf[0][1]; for (let i = 1; i < kf.length; i++) if (t <= kf[i][0]) { const a = kf[i - 1], b = kf[i], u = (t - a[0]) / (b[0] - a[0]); return a[1] + (b[1] - a[1]) * glatt(u); } return kf[kf.length - 1][1]; };
 
     /* gemeinsame Seitenansicht (Zugmaschine + Auflieger), Weltmaßstab S, Kamera xc, Blick auf Höhe yc (m) */
     function seite(st, S, xc, yc, ox) {
@@ -36,22 +36,22 @@
 
     /* ---------- K1: Sichern ---------- */
     function K1(sc, i, T0, ch) {
-      const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), V = seite(st, 51, -0.5, 2.0), W = V.W;
+      const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), V = seite(st, 64, 1.5, 2.0), W = V.W;
       const xA = 4.6; V.zm.setze(xA, 0); V.zm.kupplung(0); V.au.setze(0, { stuetze: 1, keil: 0 });
-      // Feststellbremse (roter Knopf), Gefahrbereich zwischen den Fahrzeugen
       const defs = el("defs", null, W.svg), pat = el("pattern", { id: "gef31", width: 0.3, height: 0.3, patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" }, defs);
       el("rect", { width: 0.3, height: 0.3, fill: "rgba(237,174,79,.20)" }, pat); el("rect", { width: 0.12, height: 0.3, fill: "rgba(237,174,79,.8)" }, pat);
       const knopf = el("g", { opacity: 0 }, W.gVorn); el("line", { x1: 0.9, y1: -1.0, x2: 0.9, y2: -1.3, stroke: "#8D949C", "stroke-width": 0.08 }, knopf); el("circle", { cx: 0.9, cy: -0.95, r: 0.16, fill: ROT, stroke: "#23262A", "stroke-width": 0.04 }, knopf);
       const gef = el("rect", { x: MA.auflieger.vorderKante, y: -3.3, width: (xA + MA.zug.rahmenHinten) - MA.auflieger.vorderKante, height: 3.3, fill: "url(#gef31)", opacity: 0 }, W.gVorn);
       const pf = pille(st, tx("l_fest"), ROT), pk = pille(st, tx("l_keile"), GOLD), pn = pille(st, tx("l_niemand"), WARN), lf = leiter(W, ROT), lk = leiter(W, GOLD), ln = leiter(W, WARN);
-      const keilX = MA.auflieger.achsX - 1.3 - 0.75;
+      const keilX = MA.auflieger.achsX - 1.3 - 0.75, kam = [[0, 1.5], [10, 1.5], [14, -5.5], [22, -5.5], [26, 2.8], [ch.dauer, 2.8]];
       uhr(T0, ch.dauer, function (t) {
-        const a1 = fenster(t, 3.5, ch.dauer - 1, 0.6), a2 = fenster(t, 12.5, ch.dauer - 1, 0.6), a3 = fenster(t, 22.5, ch.dauer - 1, 0.6);
-        knopf.style.opacity = a1; V.au.setze(0, { stuetze: 1, keil: a2 > 0.5 ? 1 : 0 }); gef.style.opacity = a3 * 0.9;
+        W.kamera(interp(kam, t));
+        const a1 = fenster(t, 3.5, ch.dauer - 1, 0.6), a2 = fenster(t, 12.5, ch.dauer - 1, 0.6), a3 = fenster(t, 24.5, ch.dauer - 1, 0.6);
+        knopf.style.opacity = a1; V.au.setze(0, { stuetze: 1, keil: a2 }); gef.style.opacity = a3 * 0.9;
         const k = W.px(0.9, -1.0), kk = W.px(keilX, -0.15), g3 = W.px((MA.auflieger.vorderKante + xA + MA.zug.rahmenHinten) / 2, -1.7);
-        platz(pf, 440, 300, a1); lf.setze(440, 334, k[0], k[1], a1);
-        platz(pk, 320, kk[1] + 150, a2); lk.setze(320, kk[1] + 118, kk[0], kk[1], a2);
-        platz(pn, 740, 190, a3); ln.setze(740, 224, g3[0], g3[1], a3);
+        platz(pf, 540, 260, a1); lf.setze(540, 294, k[0], k[1], a1);
+        platz(pk, 540, kk[1] + 150, a2); lk.setze(540, kk[1] + 118, kk[0], kk[1], a2);
+        platz(pn, 540, 200, a3); ln.setze(540, 234, g3[0], g3[1], a3);
       });
     }
 
@@ -66,22 +66,21 @@
       const q0 = W.px(-4, 0), q1 = W.px(24, 0); mitte.setAttribute("x1", f(q0[0])); mitte.setAttribute("y1", f(q0[1])); mitte.setAttribute("x2", f(q1[0])); mitte.setAttribute("y2", f(q1[1]));
       const ring = el("circle", { r: 26, fill: "none", stroke: WARN, "stroke-width": 5, opacity: 0 }, W.gUeber);
       const ps = BK.pille(st, tx("l_schief"), 270, 300, { punkt: WARN }), pg = BK.pille(st, tx("l_gerade"), 270, 300, { punkt: GRUEN }), pz1 = BK.pille(st, tx("l_zapfen_nicht"), 700, 780, { punkt: WARN, klasse: "gross" }), pz2 = BK.pille(st, tx("l_zapfen_ja"), 700, 780, { punkt: GRUEN, klasse: "gross" });
-      const WINKEL = 7, D0 = 6.0;                 // Versuch 1: 7° schief, 6 m vor dem Zapfen
+      const WINKEL = 7, D0 = 6.0;                 // schiefer Versuch: 7° schief, 6 m vor dem Zapfen
       const tr1 = M.sattelTreffer({ winkel: WINKEL, versatz: 0, abstand: D0 }), tr2 = M.sattelTreffer({ winkel: 0, versatz: 0, abstand: D0 });
       if (tr1.ok || !tr2.ok) throw new Error("Anfahrbeispiel passt nicht zum Modell");
       uhr(T0, ch.dauer, function (t) {
-        const v1 = t < 22;
-        const u = v1 ? glatt((t - 5) / 14) : glatt((t - 25) / 14), h = v1 ? WINKEL * Math.PI / 180 : 0;
+        const gerade = t < 22;                    // erst gerade (trifft), dann schief (trifft nicht)
+        const u = gerade ? glatt((t - 4) / 14) : glatt((t - 26) / 14), h = gerade ? 0 : WINKEL * Math.PI / 180;
         // Punkt K (Sattelplatte) fährt rückwärts: Start in der Mittellinie, Fahrtrichtung h; Querfehler am Zapfen = Weg · tan(h), wie sattelTreffer rechnet
         const Kp = { x: Kx + D0 * (1 - u), y: -u * D0 * Math.tan(h) };
         const A = { x: Kp.x - SA.e * Math.cos(h), y: Kp.y - SA.e * Math.sin(h) };
         fz.setze(stand(A.x, A.y, h), 0, false, 0);
+        W.gFz.style.opacity = gerade ? 1 : (t < 22.6 ? 1 - (t - 22) / 0.6 : t < 24 ? 0 : klemme((t - 24) / 0.6));
         const rp = W.px(Kx, 0); ring.setAttribute("cx", f(rp[0])); ring.setAttribute("cy", f(rp[1]));
-        const aS = v1 ? fenster(t, 4, 20, 0.6) : 0, aG = !v1 ? fenster(t, 24, 40, 0.6) : 0;
-        ps.style.opacity = aS; pg.style.opacity = aG;
-        pz1.style.opacity = v1 ? fenster(t, 17, 22, 0.5) : 0; pz2.style.opacity = !v1 ? fenster(t, 36, ch.dauer - 1, 0.5) : 0;
-        ring.setAttribute("opacity", v1 ? fenster(t, 17, 22, 0.5) : 0);
-        ring.setAttribute("stroke", v1 ? WARN : GRUEN);
+        pg.style.opacity = gerade ? fenster(t, 3.5, 21.4, 0.6) : 0; ps.style.opacity = !gerade ? fenster(t, 25, ch.dauer - 1, 0.6) : 0;
+        pz2.style.opacity = gerade ? fenster(t, 17, 21.4, 0.5) : 0; pz1.style.opacity = !gerade ? fenster(t, 38, ch.dauer - 1, 0.5) : 0;
+        ring.setAttribute("opacity", gerade ? fenster(t, 17, 21.4, 0.5) : fenster(t, 38, ch.dauer - 1, 0.5)); ring.setAttribute("stroke", gerade ? GRUEN : WARN);
       });
     }
 
@@ -97,14 +96,14 @@
         const luft = t < 5 ? 0 : t < 9 ? lerp(0, LUFT_TIEF, glatt((t - 5) / 4)) : t < 46 ? LUFT_TIEF : t < 50 ? lerp(LUFT_TIEF, LUFT_KONTAKT, glatt((t - 46) / 4)) : LUFT_KONTAKT;
         const x = t < 26 ? A0 : t < 46 ? lerp(A0, A1, glatt((t - 26) / 20)) : A1;
         // Anfahrruck: kurze Vorwärtsbewegung, danach wieder Stand
-        const ruck = t > 54 && t < 60 ? 0.07 * Math.sin(Math.PI * klemme((t - 54) / 6)) : 0;
+        const ruck = t > 54 && t < 60 ? 0.2 * Math.sin(Math.PI * klemme((t - 54) / 6)) : 0;
         V.zm.setze(x + ruck, luft); V.zm.kupplung(t < 17 ? 0 : t < 50 ? 0 : glatt((t - 50) / 1.2));
         V.au.setze(0, { stuetze: 1, keil: 1 });
         kontakt.setAttribute("opacity", t > 50 ? 1 : 0);
-        const hz = W.px(0.55, -1.25 - Math.max(0, luft)), ho = W.px(-0.45, -1.34), ha = W.px(0.6, -1.3);
+        const hz = W.px(0.55, -1.25 - Math.max(0, luft)), ho = W.px(x - 0.15 - 0.45, -1.34 - luft), ha = W.px(0.6, -1.3);
         const a1 = fenster(t, 8, 22, 0.6), a2 = fenster(t, 16, 30, 0.6), a3 = fenster(t, 47, 62, 0.6), a4 = fenster(t, 54, ch.dauer - 1, 0.5);
         platz(ph, 540, 200, a1); l1.setze(540, 234, hz[0], hz[1] - 6, a1);
-        platz(po, ho[0] - 100, ho[1] + 260, a2); l2.setze(ho[0] - 100, ho[1] + 228, ho[0], ho[1], a2);
+        platz(po, 540, 840, a2); l2.setze(540, 808, ho[0], ho[1], a2);
         platz(pa, 540, 200, a3); l3.setze(540, 234, ha[0], ha[1] - 6, a3);
         platz(pr, 700, 840, a4);
         pfeil.setAttribute("opacity", ruck > 0.005 ? 1 : 0); pfeil.setAttribute("transform", "translate(" + f(x + 3.6) + " 0)");
@@ -114,19 +113,21 @@
     /* ---------- K4: Sichtkontrolle (Nahaufnahme der Kupplung) ---------- */
     function K4(sc, i, T0, ch) {
       const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), V = seite(st, 130, 0.35, 1.45), W = V.W;
-      V.zm.setze(-SA.e, SA.unterkante - SA.plattenOben); V.zm.kupplung(0.5); V.au.setze(0, { stuetze: 1, keil: 1 });
+      V.zm.setze(-SA.e, SA.unterkante - SA.plattenOben); V.zm.kupplung(1); V.au.setze(0, { stuetze: 1, keil: 1 });
       const kontakt = el("line", { x1: -0.2, y1: -SA.unterkante, x2: 1.3, y2: -SA.unterkante, stroke: GOLD, "stroke-width": 0.04, opacity: 0 }, W.gVorn);
       const pf = pille(st, tx("l_fest_zug"), ROT), ps = pille(st, tx("l_ohne_spalt"), GRUEN), pe = pille(st, tx("l_eingefallen"), GRUEN), lf = leiter(W, ROT), ls = leiter(W, GRUEN), le = leiter(W, GRUEN);
-      const kn = el("g", { opacity: 0 }, W.gVorn); el("circle", { cx: 3.6, cy: -2.2, r: 0.22, fill: ROT, stroke: "#23262A", "stroke-width": 0.05 }, kn); const kt = el("text", { x: 3.6, y: -2.11, "text-anchor": "middle", "font-size": 0.3, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#FAF6EC" }, kn); kt.textContent = "P";
-      const zu = (t) => (t < 26 ? 1 : 1);
+      const kn = el("g", { opacity: 0 }, W.gVorn); el("circle", { cx: 4.1, cy: -1.55, r: 0.22, fill: ROT, stroke: "#23262A", "stroke-width": 0.05 }, kn); const kt = el("text", { x: 4.1, y: -1.46, "text-anchor": "middle", "font-size": 0.3, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#FAF6EC" }, kn); kt.textContent = "P";
+      const karabiner = el("g", { opacity: 0 }, W.gVorn); el("rect", { x: -0.62, y: -1.5, width: 0.16, height: 0.26, rx: 0.07, fill: "none", stroke: "#D9B35C", "stroke-width": 0.05 }, karabiner); el("line", { x1: -0.54, y1: -1.34, x2: -0.54, y2: -1.24, stroke: "#D9B35C", "stroke-width": 0.04 }, karabiner);
       uhr(T0, ch.dauer, function (t) {
-        V.zm.kupplung(t < 24 ? 1 : 1);
-        kn.style.opacity = fenster(t, 3.5, ch.dauer - 1, 0.5); kontakt.setAttribute("opacity", fenster(t, 14, ch.dauer - 1, 0.5));
-        const k = W.px(3.6, -2.2), s = W.px(0.55, -SA.unterkante), e = W.px(-0.02, -1.36);
-        const a1 = fenster(t, 4, 40, 0.6), a2 = fenster(t, 15, 40, 0.6), a3 = fenster(t, 26, ch.dauer - 1, 0.6);
+        // Schritt 5: Kupplung wieder öffnen, Zugmaschine ein Stück vorziehen (Neuanfang)
+        const auf = glatt((t - 51) / 3), x = -SA.e + 0.8 * glatt((t - 55) / 6);
+        V.zm.setze(x, SA.unterkante - SA.plattenOben); V.zm.kupplung(1 - auf);
+        kn.style.opacity = fenster(t, 3.5, ch.dauer - 1, 0.5); kontakt.setAttribute("opacity", fenster(t, 14, 50, 0.5)); karabiner.style.opacity = fenster(t, 36, 50, 0.5);
+        const k = W.px(4.1, -1.55), s = W.px(0.55, -SA.unterkante), e = W.px(-SA.e - 0.02, -1.36);
+        const a1 = fenster(t, 4, 40, 0.6), a2 = fenster(t, 15, 40, 0.6), a3 = fenster(t, 26, 50, 0.6);
         platz(pf, 780, 100, a1); lf.setze(780, 134, k[0], k[1], a1);
-        platz(ps, 330, 100, a2); ls.setze(330, 134, s[0], s[1], a2);
-        platz(pe, 460, 860, a3); le.setze(460, 828, e[0], e[1], a3);
+        platz(ps, 700, 860, a2); ls.setze(700, 828, s[0], s[1], a2);
+        platz(pe, 330, 860, a3); le.setze(330, 828, e[0], e[1], a3);
       });
     }
 
@@ -134,15 +135,18 @@
     function K5(sc, i, T0, ch) {
       const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), V = seite(st, 190, 2.2, 2.35), W = V.W;
       V.zm.setze(-SA.e, SA.unterkante - SA.plattenOben); V.zm.kupplung(1); V.au.setze(0, { stuetze: 1, keil: 1 });
-      const farben = [GELB, ROT, "#B9BEC4"], sch = farben.map((c) => KU.schlauch(W, c, { laenge: 1.7 }));
-      const anker = (k) => ({ x: MA.anker.x, y: MA.anker.y[k] }), dose = (k) => ({ x: MA.steckdose.x, y: MA.steckdose.y[k] }), ruhe = (k) => ({ x: MA.anker.x - 0.15, y: MA.anker.y[k] + 0.55 });
+      const farben = [GELB, ROT, "#B9BEC4"], sch = farben.map((c) => KU.schlauch(W, c, { laenge: 1.05 }));
+      const dose = (k) => ({ x: MA.steckdose.x, y: MA.steckdose.y[k] });
+      const kn = el("g", { opacity: 0 }, W.gVorn); el("circle", { cx: 4.1, cy: -1.55, r: 0.2, fill: ROT, stroke: "#23262A", "stroke-width": 0.05 }, kn); const kt = el("text", { x: 4.1, y: -1.47, "text-anchor": "middle", "font-size": 0.28, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#FAF6EC" }, kn); kt.textContent = "P";
+      const ka = el("g", { opacity: 0 }, W.gVorn); el("line", { x1: 0.9, y1: -1.0, x2: 0.9, y2: -1.3, stroke: "#8D949C", "stroke-width": 0.08 }, ka); el("circle", { cx: 0.9, cy: -0.95, r: 0.16, fill: ROT, stroke: "#23262A", "stroke-width": 0.04 }, ka);
       const wann = [[12, 20], [22, 30], [32, 38]];
       const pv = pille(st, tx("l_vorher"), WARN), pg = pille(st, tx("l_gelb"), GELB), pr = pille(st, tx("l_rot"), ROT), pe = pille(st, tx("l_elektro"), "#B9BEC4"), lv = leiter(W, WARN), lg = leiter(W, GELB), lr = leiter(W, ROT), le = leiter(W, "#B9BEC4");
       uhr(T0, ch.dauer, function (t) {
-        sch.forEach((s, k) => { const u = glatt((t - wann[k][0]) / (wann[k][1] - wann[k][0])), r = ruhe(k), d = dose(k), a = anker(k); s.setze(a, { x: lerp(r.x, d.x, u), y: lerp(r.y, d.y, u) - Math.sin(Math.PI * u) * 0.35 }); });
-        const gS = W.px(0.4, -1.3), g = W.px(MA.steckdose.x, MA.steckdose.y[0]), r = W.px(MA.steckdose.x, MA.steckdose.y[1]), e = W.px(MA.steckdose.x, MA.steckdose.y[2]);
+        sch.forEach((s, k) => { const u = glatt((t - wann[k][0]) / (wann[k][1] - wann[k][0])), r = KU.ruheWelt(0, k), d = dose(k), a = KU.ankerWelt(0, k); s.setze(a, { x: lerp(r.x, d.x, u), y: lerp(r.y, d.y, u) - Math.sin(Math.PI * u) * 0.3 }); });
+        kn.style.opacity = fenster(t, 4, ch.dauer - 1, 0.6); ka.style.opacity = kn.style.opacity;
+        const kp = W.px(0.9, -1.0), g = W.px(MA.steckdose.x, MA.steckdose.y[0]), r = W.px(MA.steckdose.x, MA.steckdose.y[1]), e = W.px(MA.steckdose.x, MA.steckdose.y[2]);
         const a0 = fenster(t, 4, 14, 0.6), a1 = fenster(t, 14, ch.dauer - 1, 0.6), a2 = fenster(t, 24, ch.dauer - 1, 0.6), a3 = fenster(t, 34, ch.dauer - 1, 0.6);
-        platz(pv, 540, 150, a0); lv.setze(540, 178, gS[0], gS[1], 0);
+        platz(pv, 540, 160, a0 * 0 + fenster(t, 4, 16, 0.6)); lv.setze(540, 194, kp[0], kp[1], fenster(t, 4, 16, 0.6));
         platz(pg, g[0] - 330, g[1] - 160, a1); lg.setze(g[0] - 330, g[1] - 134, g[0], g[1], a1);
         platz(pr, r[0] - 330, r[1] + 120, a2); lr.setze(r[0] - 330, r[1] + 94, r[0], r[1], a2);
         platz(pe, e[0] - 250, e[1] + 250, a3); le.setze(e[0] - 250, e[1] + 224, e[0], e[1], a3);
@@ -151,21 +155,25 @@
 
     /* ---------- K6: Fertig machen ---------- */
     function K6(sc, i, T0, ch) {
-      const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), V = seite(st, 51, -0.5, 2.0), W = V.W;
+      const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), V = seite(st, 64, 1.0, 2.0), W = V.W;
       V.zm.setze(-SA.e, SA.unterkante - SA.plattenOben); V.zm.kupplung(1);
-      const kz = el("g", null, W.gVorn); const kzc = el("circle", { cx: 3.6, cy: -2.2, r: 0.22, fill: ROT, stroke: "#23262A", "stroke-width": 0.05 }, kz); const kzt = el("text", { x: 3.6, y: -2.11, "text-anchor": "middle", "font-size": 0.3, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#FAF6EC" }, kz); kzt.textContent = "P";
-      const knopf = el("g", null, W.gVorn); const stiel = el("line", { x1: 0.9, y1: -1.0, x2: 0.9, y2: -1.3, stroke: "#8D949C", "stroke-width": 0.08 }, knopf), kk = el("circle", { cx: 0.9, cy: -0.95, r: 0.16, fill: ROT, stroke: "#23262A", "stroke-width": 0.04 }, knopf);
-      const ps = pille(st, tx("l_stuetzen"), GOLD), pf = pille(st, tx("l_fest_los"), GRUEN), pk = pille(st, tx("l_keile_weg"), GRUEN), pl = pille(st, tx("l_licht"), GRUEN), l1 = leiter(W, GOLD), l2 = leiter(W, GRUEN), l3 = leiter(W, GRUEN);
+      const kz = el("g", null, W.gVorn); const kzc = el("circle", { cx: 4.1, cy: -1.55, r: 0.22, fill: ROT, stroke: "#23262A", "stroke-width": 0.05 }, kz); const kzt = el("text", { x: 4.1, y: -1.46, "text-anchor": "middle", "font-size": 0.3, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#FAF6EC" }, kz); kzt.textContent = "P";
+      const knopf = el("g", null, W.gVorn); el("line", { x1: 0.9, y1: -1.0, x2: 0.9, y2: -1.3, stroke: "#8D949C", "stroke-width": 0.08 }, knopf); const kk = el("circle", { cx: 0.9, cy: -0.95, r: 0.16, fill: ROT, stroke: "#23262A", "stroke-width": 0.04 }, knopf);
+      const schl = [GELB, ROT, "#B9BEC4"].map((c, k) => { const s = KU.schlauch(W, c, { laenge: 1.05 }); s.setze(KU.ankerWelt(0, k), { x: MA.steckdose.x, y: MA.steckdose.y[k] }); return s; });
+      const ps = pille(st, tx("l_stuetzen"), GOLD), pf = pille(st, tx("l_fest_los"), GRUEN), pk = pille(st, tx("l_keile_weg"), GRUEN), pl = pille(st, tx("l_licht"), GRUEN), l1 = leiter(W, GOLD), l2 = leiter(W, GRUEN), l3 = leiter(W, GRUEN), l4 = leiter(W, GRUEN);
+      const kam = [[0, -1.0], [20, -1.0], [26, -6.0], [36, -6.0], [40, -8.5], [50, -8.5], [56, 2.5], [ch.dauer, 2.5]];
       uhr(T0, ch.dauer, function (t) {
-        const e = 1 - glatt((t - 5) / 6), keil = t < 28 ? 1 : 0, gelost = t >= 16;
-        V.au.setze(0, { stuetze: e, keil: keil, bremst: t > 38 && t < 44 }); V.zm.setze(-SA.e, SA.unterkante - SA.plattenOben);
-        kzc.setAttribute("fill", t >= 60 ? "#8FD6A6" : ROT); kk.setAttribute("cy", gelost ? -1.15 : -0.95); stiel.setAttribute("y2", gelost ? -1.3 : -1.3); kk.setAttribute("fill", gelost ? "#8FD6A6" : ROT);
-        const sx = W.px(MA.auflieger.stuetzX, -0.6), fx = W.px(0.9, -1.0), kx = W.px(MA.auflieger.achsX - 2.05, -0.15), lx = W.px(MA.auflieger.hinterKante, -1.7);
-        const a1 = fenster(t, 4, ch.dauer - 1, 0.6), a2 = fenster(t, 16, ch.dauer - 1, 0.6), a3 = fenster(t, 28, ch.dauer - 1, 0.6), a4 = fenster(t, 38, ch.dauer - 1, 0.6);
-        platz(ps, 330, 200, a1); l1.setze(330, 234, sx[0], sx[1], a1);
-        platz(pf, 760, 200, a2); l2.setze(760, 238, fx[0], fx[1], a2);
-        platz(pk, 330, 790, a3); l3.setze(330, 758, kx[0], kx[1], a3);
-        platz(pl, 740, 790, a4);
+        W.kamera(interp(kam, t));
+        const e = 1 - glatt((t - 5) / 6), gelost = t >= 16, keil = 1 - glatt((t - 26) / 2);
+        const brems = t > 42 && t < 48, licht = t > 40;
+        V.au.setze(0, { stuetze: e, keil: keil, bremst: brems, licht: licht }); V.zm.setze(-SA.e, SA.unterkante - SA.plattenOben);
+        kk.setAttribute("cy", f(lerp(-0.95, -1.15, glatt((t - 16) / 1.5)))); kk.setAttribute("fill", gelost ? "#8FD6A6" : ROT); kzc.setAttribute("fill", t >= 60 ? "#8FD6A6" : ROT);
+        const sx = W.px(MA.auflieger.stuetzX, -0.6), fx = W.px(0.9, -1.0), kx = W.px(MA.auflieger.achsX - 2.05, -0.15), lx = W.px(MA.auflieger.hinterKante, -1.75);
+        const a1 = fenster(t, 4, 24, 0.6), a2 = fenster(t, 16, 28, 0.6), a3 = fenster(t, 24, 40, 0.6), a4 = fenster(t, 36, 52, 0.6), a5 = fenster(t, 58, ch.dauer - 1, 0.6);
+        platz(ps, 540, 180, a1); l1.setze(540, 214, sx[0], sx[1], a1);
+        platz(pf, 540, 290, a2); l2.setze(540, 324, fx[0], fx[1], a2);
+        platz(pk, 540, kx[1] + 140, a3); l3.setze(540, kx[1] + 108, kx[0], kx[1], a3);
+        platz(pl, 540, 840, a4); l4.setze(540, 808, lx[0], lx[1], a4);
       });
     }
 

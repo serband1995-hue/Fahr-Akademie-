@@ -20,7 +20,6 @@ window.FILM_TEXT = {
     k2_kicker: "Von oben", k2_titel: "Gerade heranfahren", k2_sub: "Die Zugmaschine fährt rückwärts an den Auflieger.",
     k2_p1: "Die Zugmaschine fährt gerade und fluchtend an den Auflieger heran.",
     k2_p2: "Steht sie schief, trifft der Zapfen die Sattelkupplung nicht richtig.",
-    k2_p3: "Gerade heranfahren: Der Zapfen trifft die Kupplung.",
     l_schief: "Schief", l_gerade: "Gerade", l_zapfen_nicht: "Zapfen trifft nicht", l_zapfen_ja: "Zapfen trifft",
 
     k3_kicker: "Von der Seite", k3_titel: "Unterfahren und kuppeln", k3_sub: "Höhe, Kupplung, Anfahrruck.",
@@ -44,7 +43,7 @@ window.FILM_TEXT = {
     k5_p2: "Zuerst kommt gelb: die Bremsleitung.",
     k5_p3: "Dann kommt rot: die Vorratsleitung.",
     k5_p4: "Dazu wird das Elektrokabel angeschlossen.",
-    k5_p5: "Die Leitungen hängen nicht durch und scheuern nirgends.",
+    k5_p5: "Die Leitungen sind lang genug, hängen aber nicht durch und scheuern nirgends.",
     l_gelb: "Gelb: Bremsleitung", l_rot: "Rot: Vorratsleitung", l_elektro: "Elektrik und ABS", l_vorher: "Erst sichern",
 
     k6_kicker: "Abfahrbereit", k6_titel: "Fertig machen", k6_sub: "Stützwinden, Bremsen, Prüfung.",
@@ -60,17 +59,17 @@ window.FILM_TEXT = {
     k7_merk: "Sichern, gerade heranfahren, Sichtkontrolle, erst gelb, dann rot. Danach Stützwinden hoch, Bremsen lösen, Keile weg, prüfen."
   },
   kapitel: [
-    { id: "k1", titel: "k1_titel", kicker: "k1_kicker", dauer: 40, sub: { k: "k1_sub", t: 0.6 },
+    { id: "k1", titel: "k1_titel", kicker: "k1_kicker", dauer: 32, sub: { k: "k1_sub", t: 0.6 },
       punkte: [{ k: "k1_p1", t: 3.0, ref: "DGUV Information 214-080" }, { k: "k1_p2", t: 12.0, ref: "DGUV Information 214-080" }, { k: "k1_p3", t: 24.0, ref: "DGUV Information 214-080" }] },
     { id: "k2", titel: "k2_titel", kicker: "k2_kicker", dauer: 44, sub: { k: "k2_sub", t: 0.6 },
-      punkte: [{ k: "k2_p1", t: 3.5, ref: "DGUV Information 214-080" }, { k: "k2_p2", t: 14.0 }, { k: "k2_p3", t: 28.0, stil: "gold" }] },
-    { id: "k3", titel: "k3_titel", kicker: "k3_kicker", dauer: 80, sub: { k: "k3_sub", t: 0.6 },
+      punkte: [{ k: "k2_p1", t: 3.5, ref: "DGUV Information 214-080" }, { k: "k2_p2", t: 24.0 }] },
+    { id: "k3", titel: "k3_titel", kicker: "k3_kicker", dauer: 72, sub: { k: "k3_sub", t: 0.6 },
       punkte: [{ k: "k3_p1", t: 3.5, ref: "DGUV Information 214-080" }, { k: "k3_p2", t: 15.0 }, { k: "k3_p3", t: 24.0 }, { k: "k3_p4", t: 52.0 }, { k: "k3_p5", t: 64.0 }] },
-    { id: "k4", titel: "k4_titel", kicker: "k4_kicker", dauer: 66, sub: { k: "k4_sub", t: 0.6 },
+    { id: "k4", titel: "k4_titel", kicker: "k4_kicker", dauer: 58, sub: { k: "k4_sub", t: 0.6 },
       punkte: [{ k: "k4_p1", t: 3.5 }, { k: "k4_p2", t: 14.0 }, { k: "k4_p3", t: 26.0 }, { k: "k4_p4", t: 35.0 }, { k: "k4_p5", t: 50.0 }] },
-    { id: "k5", titel: "k5_titel", kicker: "k5_kicker", dauer: 72, sub: { k: "k5_sub", t: 0.6 },
+    { id: "k5", titel: "k5_titel", kicker: "k5_kicker", dauer: 60, sub: { k: "k5_sub", t: 0.6 },
       punkte: [{ k: "k5_p1", t: 3.5, ref: "DGUV Information 214-080" }, { k: "k5_p2", t: 17.0, ref: "BG Verkehr" }, { k: "k5_p3", t: 27.0 }, { k: "k5_p4", t: 37.0 }, { k: "k5_p5", t: 47.0 }] },
-    { id: "k6", titel: "k6_titel", kicker: "k6_kicker", dauer: 76, sub: { k: "k6_sub", t: 0.6 },
+    { id: "k6", titel: "k6_titel", kicker: "k6_kicker", dauer: 66, sub: { k: "k6_sub", t: 0.6 },
       punkte: [{ k: "k6_p1", t: 3.5 }, { k: "k6_p2", t: 14.0 }, { k: "k6_p3", t: 24.0 }, { k: "k6_p4", t: 34.0 }, { k: "k6_p5", t: 46.0 }, { k: "k6_p6", t: 58.0 }] },
     { id: "k7", titel: "k7_titel", kicker: "k7_kicker", dauer: 22, merk: { k: "k7_merk", t: 1.2 } }
   ]
