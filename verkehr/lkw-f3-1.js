@@ -1183,26 +1183,35 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
      setze(pMembran, pFeder) rechnet mit modell.federspeicher; Stange fährt bei Bremskraft nach links zur Bremse aus. Gibt das Modell-Ergebnis zurück. */
   function kombi(B, o) {
     const g = el("g", null, B.g), x = o.x, y = o.y, w = o.w || 560, h = o.h || 200, M = window.LKW_MODELL;
-    const mem = w * 0.42, wand = x + mem, ende = x + w, ym = y + h / 2, hub = mem - 70, weg = ende - wand - 90;
+    const mem = w * 0.42, wand = x + mem, ende = x + w, ym = y + h / 2, hub = o.hub || 100, weg = hub;     // Platte und Kolben fahren gleich weit (starre Verbindung über die Druckstange)
+    const trommelX = x - 100 - hub - 24 - 86 + 20;
     el("rect", { x: x, y: y, width: w, height: h, rx: 22, fill: "#2B3631", stroke: C.stahl, "stroke-width": 7 }, g);
     const luftM = el("rect", { x: x + 8, y: y + 10, width: 0, height: h - 20, fill: C.luft, opacity: 0.85 }, g);
     const luftF = el("rect", { x: wand + 6, y: y + 10, width: 0, height: h - 20, fill: C.luft, opacity: 0.85 }, g);
+    // Luftanschlüsse oben: blau, wenn im Raum Druck steht
+    const portM = el("rect", { x: x + mem / 2 - 14, y: y - 34, width: 28, height: 34, fill: "#2B3631", stroke: C.stahl, "stroke-width": 5 }, g);
+    const portF = el("rect", { x: wand + (ende - wand) / 2 - 14, y: y - 34, width: 28, height: 34, fill: "#2B3631", stroke: C.stahl, "stroke-width": 5 }, g);
     el("rect", { x: wand - 6, y: y + 4, width: 12, height: h - 8, fill: C.stahl }, g);                                  // Trennwand
+    const druckstange = el("rect", { x: 0, y: ym - 7, width: 0, height: 14, fill: "#AEB4AB" }, g);                      // Federkolben schiebt durch die Trennwand auf die Membranplatte
     const platte = el("rect", { x: wand - 16, y: y + 12, width: 14, height: h - 24, rx: 4, fill: C.stahl }, g);       // Membranplatte
     const kolbenF = el("rect", { x: wand + 6, y: y + 12, width: 16, height: h - 24, rx: 4, fill: C.stahl }, g);        // Federkolben
     const feder = el("path", { d: "", fill: "none", stroke: C.feder, "stroke-width": 9, "stroke-linejoin": "round" }, g);
-    const stange = el("rect", { x: x - 70, y: ym - 10, width: 90, height: 20, fill: C.stahl }, g);
+    const stange = el("rect", { x: x - 70, y: ym - 10, width: 90, height: 20, fill: C.stahl }, g);                      // Schubstange: Platte -> Bremse
     const belag = el("rect", { x: x - 100, y: ym - 42, width: 28, height: 84, rx: 6, fill: C.belag }, g);
-    const trommel = el("circle", { cx: x - 100 - 24 - 80, cy: ym, r: 86, fill: "none", stroke: "rgba(250,246,236,.45)", "stroke-width": 12 }, g);
+    const tcx = trommelX + 0, trommel = el("circle", { cx: tcx, cy: ym, r: 86, fill: "none", stroke: "rgba(250,246,236,.45)", "stroke-width": 12 }, g);
     function federPfad(l, r) { const n = 9, a = h * 0.28; let d = "M" + f(l) + " " + f(ym); for (let k = 0; k < n; k++) d += " L" + f(l + (r - l) * (k + 0.5) / n) + " " + f(ym + (k % 2 ? a : -a)); return d + " L" + f(r) + " " + f(ym); }
-    return { g: g, x: x, y: y, w: w, h: h, wandX: wand, endeX: ende, setze: function (pM, pF) {
+    return { g: g, x: x, y: y, w: w, h: h, wandX: wand, endeX: ende, trommelX: tcx, belagX: x - 100, portMX: x + mem / 2, portFX: wand + (ende - wand) / 2, setze: function (pM, pF) {
       const r = M.federspeicher({ pFeder: pF, pMembran: pM }), pl = Math.min(1, pF / M.FEDER.haltedruck);
       const xk = wand + 12 + weg * pl;                                              // Federkolben: bei Druck nach rechts (Feder gespannt)
       kolbenF.setAttribute("x", f(xk)); luftF.setAttribute("width", f(Math.max(0, xk - wand - 6))); luftF.setAttribute("opacity", f(pF > 0.02 ? 0.85 : 0));
       feder.setAttribute("d", federPfad(xk + 16, ende - 14));
       const px = wand - 16 - hub * r.kraft;                                          // Membranplatte: je größer die Bremskraft, desto weiter links
       platte.setAttribute("x", f(px)); luftM.setAttribute("x", f(px + 14)); luftM.setAttribute("width", f(Math.max(0, wand - 16 - px) * (pM > 0.02 ? 1 : 0))); luftM.setAttribute("opacity", f(pM > 0.02 ? 0.85 : 0));
-      const aus = 40 * r.kraft; stange.setAttribute("x", f(x - 70 - aus)); belag.setAttribute("x", f(x - 100 - aus));
+      druckstange.setAttribute("x", f(xk - (hub + 14))); druckstange.setAttribute("width", f(hub + 14));        // Rohr vom Kolben bis zur Platte (Länge so, dass sie bei entspannter Feder die Platte berührt)
+      portM.setAttribute("fill", pM > 0.02 ? C.luft : "#2B3631"); portF.setAttribute("fill", pF > 0.02 ? C.luft : "#2B3631");
+      const aus = hub * r.kraft;                                                     // Schubstange (Platte -> Bremse) und Belag fahren mit der Platte
+      stange.setAttribute("x", f(x - 70 - aus)); stange.setAttribute("width", f(px - (x - 70 - aus)));
+      belag.setAttribute("x", f(x - 100 - aus));
       trommel.setAttribute("stroke", r.gebremst ? C.belag : "rgba(250,246,236,.45)"); return r;
     } };
   }
@@ -1227,8 +1236,8 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
     const rz = teil(rot.y, ROT), ra = teil(rot.y, ROT), gz = teil(gelb.y, GELB), ga = teil(gelb.y, GELB);
     const setzeTeil = (t, x1, x2, p) => { [t.l, t.f].forEach((e) => { e.setAttribute("x1", f(x1)); e.setAttribute("x2", f(x2)); }); t.f.setAttribute("opacity", f(klemme(p) * 0.95)); };
     const kr = kupplung(B, { x: 430, y: rot.y, farbe: ROT, r: 26, abstand: 150 }), kg = kupplung(B, { x: 430, y: gelb.y, farbe: GELB, r: 26, abstand: 150 });
-    const ventil1 = ventil(B, { x: 660, y: 380, w: 130, h: 100 }); text(g, tx("l_ventil"), 725, 360, { gr: 24 });
-    const vorratA = behaelter(B, { x: 840, y: 190, w: 170, h: 90 }); text(g, tx("l_behaelter"), 955, 322, { gr: 22 });
+    const ventil1 = ventil(B, { x: 660, y: 380, w: 130, h: 100 }); text(g, tx("l_ventil"), 752, 570, { gr: 26, anker: "start" });
+    const vorratA = behaelter(B, { x: 840, y: 190, w: 170, h: 90 }); text(g, tx("l_behaelter"), 925, 172, { gr: 26 });
     const zyl = zylinder(B, { x: 640, y: 650, w: 150, h: 80 });
     const l1 = leitung(B, [[580, rot.y], [725, rot.y], [725, 380]], { farbe: ROT }), l2 = leitung(B, [[790, 430], [865, 430], [865, 280]], { farbe: ROT });
     const l3 = leitung(B, [[580, gelb.y], [620, gelb.y], [620, 430], [660, 430]], { farbe: GELB }), l4 = leitung(B, [[725, 480], [725, 650]], { farbe: C.luft });

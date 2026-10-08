@@ -18,7 +18,7 @@ window.FILM_TEXT = {
     k1_p2: "Ohne Druckluft drückt die Feder die Bremse zu.",
     k1_p3: "Druckluft im Federteil spannt die Feder. Die Bremse löst.",
     k1_p4: "Also: Die Feder bremst, die Luft löst.",
-    l_feder: "Feder", l_luft: "Druckluft", l_zu: "Bremse zu", l_frei: "Bremse frei", l_trommel: "Bremstrommel",
+    l_feder: "Feder", l_belag: "Bremsbelag", l_luft: "Druckluft", l_zu: "Bremse zu", l_frei: "Bremse frei", l_trommel: "Bremstrommel",
 
     k2_kicker: "Der Kombizylinder", k2_titel: "Zwei Bremsen in einem Gehäuse", k2_sub: "Betriebsbremse und Feststellbremse.",
     k2_p1: "Der Kombizylinder hat zwei Teile: den Membranteil und den Federteil.",
@@ -39,11 +39,11 @@ window.FILM_TEXT = {
   },
   kapitel: [
     { id: "k1", titel: "k1_titel", kicker: "k1_kicker", dauer: 56, sub: { k: "k1_sub", t: 0.6 },
-      punkte: [{ k: "k1_p1", t: 3.5, ref: "kfz-tech; Wikipedia Federspeicherbremse" }, { k: "k1_p2", t: 13.0, ref: "kfz-tech" }, { k: "k1_p3", t: 24.0, ref: "kfz-tech: „Die Druckluft wird also zum Lösen der Bremse gebraucht“" }, { k: "k1_p4", t: 42.0 }] },
+      punkte: [{ k: "k1_p1", t: 3.5, ref: "kfz-tech; Wikipedia Federspeicherbremse" }, { k: "k1_p2", t: 11.0, ref: "kfz-tech; Wikipedia Membranzylinder" }, { k: "k1_p3", t: 24.0, ref: "kfz-tech: „Die Druckluft wird also zum Lösen der Bremse gebraucht“" }, { k: "k1_p4", t: 42.0 }] },
     { id: "k2", titel: "k2_titel", kicker: "k2_kicker", dauer: 66, sub: { k: "k2_sub", t: 0.6 },
       punkte: [{ k: "k2_p1", t: 3.5, ref: "Wikipedia Membranzylinder; Atzlinger" }, { k: "k2_p2", t: 12.0, ref: "Wikipedia Membranzylinder" }, { k: "k2_p3", t: 30.0, ref: "WABCO Handbremsventil; kfz-tech Handbremsventil2" }, { k: "k2_p4", t: 46.0, ref: "kfz-tech Handbremsventil2" }] },
     { id: "k3", titel: "k3_titel", kicker: "k3_kicker", dauer: 64, sub: { k: "k3_sub", t: 0.6 },
-      punkte: [{ k: "k3_p1", t: 3.5, ref: "Wikipedia Federspeicherbremse" }, { k: "k3_p2", t: 16.0, ref: "kfz-tech" }, { k: "k3_p3", t: 30.0, ref: "Wikipedia Federspeicherbremse; kfz-tech" }, { k: "k3_p4", t: 44.0, ref: "Folien CE (Prinzip: WABCO Überströmventil, Schlepper-Katalog)" }] },
+      punkte: [{ k: "k3_p1", t: 3.5, ref: "Wikipedia Federspeicherbremse" }, { k: "k3_p2", t: 15.0, ref: "kfz-tech" }, { k: "k3_p3", t: 24.0, ref: "Wikipedia Federspeicherbremse; kfz-tech" }, { k: "k3_p4", t: 44.0, ref: "Folien CE (Prinzip: WABCO Überströmventil, Schlepper-Katalog)" }] },
     { id: "k4", titel: "k4_titel", kicker: "k4_kicker", dauer: 22, merk: { k: "k4_merk", t: 1.2 } }
   ]
 };

@@ -29,19 +29,19 @@
     /* ---------- K2: Zweileitungsbremse ---------- */
     function K2(sc, i, T0, ch) {
       const st = P.buehne(sc);
-      const zu = (t) => ({ rotV: 1, gelbV: 1, pedal: klemme(puls(t, 26, 33, 1) + puls(t, 38, 46, 0.5) + puls(t, 56, 62, 0.8)), res0: 0 });
+      const zu = (t) => ({ rotV: 1, gelbV: 1, pedal: klemme(puls(t, 26, 33, 1) + puls(t, 38, 46, 0.5)), res0: 0 });
       const S = PN.zweileitung(st, tx, zu, ch.dauer), p = P.standardPanel(sc, ch, i, T0, false);
       const pr = pille(st, tx("l_rot"), ROT), pg = pille(st, tx("l_gelb"), GELB);
-      uhr(T0, ch.dauer, function (t) { S.zeichne(t); platz(pr, 540, 880, fenster(t, 12, ch.dauer - 1, 0.6)); platz(pg, 540, 950, fenster(t, 24, ch.dauer - 1, 0.6)); });
+      uhr(T0, ch.dauer, function (t) { S.zeichne(t); platz(pr, 540, 855, fenster(t, 12, ch.dauer - 1, 0.6)); platz(pg, 540, 965, fenster(t, 24, ch.dauer - 1, 0.6)); });
     }
 
     /* ---------- K3: Fällt rot ab, bremst der Anhänger selbsttätig ---------- */
     function K3(sc, i, T0, ch) {
       const st = P.buehne(sc);
-      const zu = (t) => ({ rotV: t < 12 ? 1 : t < 20 ? 1 - glatt((t - 12) / 8) : 0, gelbV: 1, pedal: 0, res0: 1 });
+      const zu = (t) => ({ rotV: t < 6 ? 1 : t < 14 ? 1 - glatt((t - 6) / 8) : 0, gelbV: 1, pedal: 0, res0: 1 });
       const S = PN.zweileitung(st, tx, zu, ch.dauer), p = P.standardPanel(sc, ch, i, T0, false);
       const pv = pille(st, tx("l_verbunden"), GRUEN), pt = pille(st, tx("l_getrennt"), WARN), ps = pille(st, tx("l_selbst"), WARN, { klasse: "gross" });
-      uhr(T0, ch.dauer, function (t) { S.zeichne(t); platz(pv, 540, 880, fenster(t, 2, 12, 0.5)); platz(pt, 540, 880, fenster(t, 20, ch.dauer - 1, 0.5)); platz(ps, 540, 950, fenster(t, 22, ch.dauer - 1, 0.5)); });
+      uhr(T0, ch.dauer, function (t) { S.zeichne(t); platz(pv, 540, 880, fenster(t, 2, 7, 0.5)); platz(pt, 540, 800, fenster(t, 7, ch.dauer - 1, 0.5)); platz(ps, 540, 985, fenster(t, 11, ch.dauer - 1, 0.5)); });
     }
 
     /* ---------- K4: Merke ---------- */

@@ -1183,26 +1183,35 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
      setze(pMembran, pFeder) rechnet mit modell.federspeicher; Stange fährt bei Bremskraft nach links zur Bremse aus. Gibt das Modell-Ergebnis zurück. */
   function kombi(B, o) {
     const g = el("g", null, B.g), x = o.x, y = o.y, w = o.w || 560, h = o.h || 200, M = window.LKW_MODELL;
-    const mem = w * 0.42, wand = x + mem, ende = x + w, ym = y + h / 2, hub = mem - 70, weg = ende - wand - 90;
+    const mem = w * 0.42, wand = x + mem, ende = x + w, ym = y + h / 2, hub = o.hub || 100, weg = hub;     // Platte und Kolben fahren gleich weit (starre Verbindung über die Druckstange)
+    const trommelX = x - 100 - hub - 24 - 86 + 20;
     el("rect", { x: x, y: y, width: w, height: h, rx: 22, fill: "#2B3631", stroke: C.stahl, "stroke-width": 7 }, g);
     const luftM = el("rect", { x: x + 8, y: y + 10, width: 0, height: h - 20, fill: C.luft, opacity: 0.85 }, g);
     const luftF = el("rect", { x: wand + 6, y: y + 10, width: 0, height: h - 20, fill: C.luft, opacity: 0.85 }, g);
+    // Luftanschlüsse oben: blau, wenn im Raum Druck steht
+    const portM = el("rect", { x: x + mem / 2 - 14, y: y - 34, width: 28, height: 34, fill: "#2B3631", stroke: C.stahl, "stroke-width": 5 }, g);
+    const portF = el("rect", { x: wand + (ende - wand) / 2 - 14, y: y - 34, width: 28, height: 34, fill: "#2B3631", stroke: C.stahl, "stroke-width": 5 }, g);
     el("rect", { x: wand - 6, y: y + 4, width: 12, height: h - 8, fill: C.stahl }, g);                                  // Trennwand
+    const druckstange = el("rect", { x: 0, y: ym - 7, width: 0, height: 14, fill: "#AEB4AB" }, g);                      // Federkolben schiebt durch die Trennwand auf die Membranplatte
     const platte = el("rect", { x: wand - 16, y: y + 12, width: 14, height: h - 24, rx: 4, fill: C.stahl }, g);       // Membranplatte
     const kolbenF = el("rect", { x: wand + 6, y: y + 12, width: 16, height: h - 24, rx: 4, fill: C.stahl }, g);        // Federkolben
     const feder = el("path", { d: "", fill: "none", stroke: C.feder, "stroke-width": 9, "stroke-linejoin": "round" }, g);
-    const stange = el("rect", { x: x - 70, y: ym - 10, width: 90, height: 20, fill: C.stahl }, g);
+    const stange = el("rect", { x: x - 70, y: ym - 10, width: 90, height: 20, fill: C.stahl }, g);                      // Schubstange: Platte -> Bremse
     const belag = el("rect", { x: x - 100, y: ym - 42, width: 28, height: 84, rx: 6, fill: C.belag }, g);
-    const trommel = el("circle", { cx: x - 100 - 24 - 80, cy: ym, r: 86, fill: "none", stroke: "rgba(250,246,236,.45)", "stroke-width": 12 }, g);
+    const tcx = trommelX + 0, trommel = el("circle", { cx: tcx, cy: ym, r: 86, fill: "none", stroke: "rgba(250,246,236,.45)", "stroke-width": 12 }, g);
     function federPfad(l, r) { const n = 9, a = h * 0.28; let d = "M" + f(l) + " " + f(ym); for (let k = 0; k < n; k++) d += " L" + f(l + (r - l) * (k + 0.5) / n) + " " + f(ym + (k % 2 ? a : -a)); return d + " L" + f(r) + " " + f(ym); }
-    return { g: g, x: x, y: y, w: w, h: h, wandX: wand, endeX: ende, setze: function (pM, pF) {
+    return { g: g, x: x, y: y, w: w, h: h, wandX: wand, endeX: ende, trommelX: tcx, belagX: x - 100, portMX: x + mem / 2, portFX: wand + (ende - wand) / 2, setze: function (pM, pF) {
       const r = M.federspeicher({ pFeder: pF, pMembran: pM }), pl = Math.min(1, pF / M.FEDER.haltedruck);
       const xk = wand + 12 + weg * pl;                                              // Federkolben: bei Druck nach rechts (Feder gespannt)
       kolbenF.setAttribute("x", f(xk)); luftF.setAttribute("width", f(Math.max(0, xk - wand - 6))); luftF.setAttribute("opacity", f(pF > 0.02 ? 0.85 : 0));
       feder.setAttribute("d", federPfad(xk + 16, ende - 14));
       const px = wand - 16 - hub * r.kraft;                                          // Membranplatte: je größer die Bremskraft, desto weiter links
       platte.setAttribute("x", f(px)); luftM.setAttribute("x", f(px + 14)); luftM.setAttribute("width", f(Math.max(0, wand - 16 - px) * (pM > 0.02 ? 1 : 0))); luftM.setAttribute("opacity", f(pM > 0.02 ? 0.85 : 0));
-      const aus = 40 * r.kraft; stange.setAttribute("x", f(x - 70 - aus)); belag.setAttribute("x", f(x - 100 - aus));
+      druckstange.setAttribute("x", f(xk - (hub + 14))); druckstange.setAttribute("width", f(hub + 14));        // Rohr vom Kolben bis zur Platte (Länge so, dass sie bei entspannter Feder die Platte berührt)
+      portM.setAttribute("fill", pM > 0.02 ? C.luft : "#2B3631"); portF.setAttribute("fill", pF > 0.02 ? C.luft : "#2B3631");
+      const aus = hub * r.kraft;                                                     // Schubstange (Platte -> Bremse) und Belag fahren mit der Platte
+      stange.setAttribute("x", f(x - 70 - aus)); stange.setAttribute("width", f(px - (x - 70 - aus)));
+      belag.setAttribute("x", f(x - 100 - aus));
       trommel.setAttribute("stroke", r.gebremst ? C.belag : "rgba(250,246,236,.45)"); return r;
     } };
   }
@@ -1227,8 +1236,8 @@ const CSS = ".lk .stagewrap{position:relative;}\n.lk .stage{position:absolute; l
     const rz = teil(rot.y, ROT), ra = teil(rot.y, ROT), gz = teil(gelb.y, GELB), ga = teil(gelb.y, GELB);
     const setzeTeil = (t, x1, x2, p) => { [t.l, t.f].forEach((e) => { e.setAttribute("x1", f(x1)); e.setAttribute("x2", f(x2)); }); t.f.setAttribute("opacity", f(klemme(p) * 0.95)); };
     const kr = kupplung(B, { x: 430, y: rot.y, farbe: ROT, r: 26, abstand: 150 }), kg = kupplung(B, { x: 430, y: gelb.y, farbe: GELB, r: 26, abstand: 150 });
-    const ventil1 = ventil(B, { x: 660, y: 380, w: 130, h: 100 }); text(g, tx("l_ventil"), 725, 360, { gr: 24 });
-    const vorratA = behaelter(B, { x: 840, y: 190, w: 170, h: 90 }); text(g, tx("l_behaelter"), 955, 322, { gr: 22 });
+    const ventil1 = ventil(B, { x: 660, y: 380, w: 130, h: 100 }); text(g, tx("l_ventil"), 752, 570, { gr: 26, anker: "start" });
+    const vorratA = behaelter(B, { x: 840, y: 190, w: 170, h: 90 }); text(g, tx("l_behaelter"), 925, 172, { gr: 26 });
     const zyl = zylinder(B, { x: 640, y: 650, w: 150, h: 80 });
     const l1 = leitung(B, [[580, rot.y], [725, rot.y], [725, 380]], { farbe: ROT }), l2 = leitung(B, [[790, 430], [865, 430], [865, 280]], { farbe: ROT });
     const l3 = leitung(B, [[580, gelb.y], [620, gelb.y], [620, 430], [660, 430]], { farbe: GELB }), l4 = leitung(B, [[725, 480], [725, 650]], { farbe: C.luft });
@@ -1448,7 +1457,7 @@ window.FILM_TEXT = {
     k1_p2: "Ohne Druckluft drückt die Feder die Bremse zu.",
     k1_p3: "Druckluft im Federteil spannt die Feder. Die Bremse löst.",
     k1_p4: "Also: Die Feder bremst, die Luft löst.",
-    l_feder: "Feder", l_luft: "Druckluft", l_zu: "Bremse zu", l_frei: "Bremse frei", l_trommel: "Bremstrommel",
+    l_feder: "Feder", l_belag: "Bremsbelag", l_luft: "Druckluft", l_zu: "Bremse zu", l_frei: "Bremse frei", l_trommel: "Bremstrommel",
 
     k2_kicker: "Der Kombizylinder", k2_titel: "Zwei Bremsen in einem Gehäuse", k2_sub: "Betriebsbremse und Feststellbremse.",
     k2_p1: "Der Kombizylinder hat zwei Teile: den Membranteil und den Federteil.",
@@ -1469,18 +1478,18 @@ window.FILM_TEXT = {
   },
   kapitel: [
     { id: "k1", titel: "k1_titel", kicker: "k1_kicker", dauer: 56, sub: { k: "k1_sub", t: 0.6 },
-      punkte: [{ k: "k1_p1", t: 3.5, ref: "kfz-tech; Wikipedia Federspeicherbremse" }, { k: "k1_p2", t: 13.0, ref: "kfz-tech" }, { k: "k1_p3", t: 24.0, ref: "kfz-tech: „Die Druckluft wird also zum Lösen der Bremse gebraucht“" }, { k: "k1_p4", t: 42.0 }] },
+      punkte: [{ k: "k1_p1", t: 3.5, ref: "kfz-tech; Wikipedia Federspeicherbremse" }, { k: "k1_p2", t: 11.0, ref: "kfz-tech; Wikipedia Membranzylinder" }, { k: "k1_p3", t: 24.0, ref: "kfz-tech: „Die Druckluft wird also zum Lösen der Bremse gebraucht“" }, { k: "k1_p4", t: 42.0 }] },
     { id: "k2", titel: "k2_titel", kicker: "k2_kicker", dauer: 66, sub: { k: "k2_sub", t: 0.6 },
       punkte: [{ k: "k2_p1", t: 3.5, ref: "Wikipedia Membranzylinder; Atzlinger" }, { k: "k2_p2", t: 12.0, ref: "Wikipedia Membranzylinder" }, { k: "k2_p3", t: 30.0, ref: "WABCO Handbremsventil; kfz-tech Handbremsventil2" }, { k: "k2_p4", t: 46.0, ref: "kfz-tech Handbremsventil2" }] },
     { id: "k3", titel: "k3_titel", kicker: "k3_kicker", dauer: 64, sub: { k: "k3_sub", t: 0.6 },
-      punkte: [{ k: "k3_p1", t: 3.5, ref: "Wikipedia Federspeicherbremse" }, { k: "k3_p2", t: 16.0, ref: "kfz-tech" }, { k: "k3_p3", t: 30.0, ref: "Wikipedia Federspeicherbremse; kfz-tech" }, { k: "k3_p4", t: 44.0, ref: "Folien CE (Prinzip: WABCO Überströmventil, Schlepper-Katalog)" }] },
+      punkte: [{ k: "k3_p1", t: 3.5, ref: "Wikipedia Federspeicherbremse" }, { k: "k3_p2", t: 15.0, ref: "kfz-tech" }, { k: "k3_p3", t: 24.0, ref: "Wikipedia Federspeicherbremse; kfz-tech" }, { k: "k3_p4", t: 44.0, ref: "Folien CE (Prinzip: WABCO Überströmventil, Schlepper-Katalog)" }] },
     { id: "k4", titel: "k4_titel", kicker: "k4_kicker", dauer: 22, merk: { k: "k4_merk", t: 1.2 } }
   ]
 };
 
 })(W);
 
-W.FILM_SPRACHEN = {"en":{"titel":"Spring brake","ui_ueber":"Overview: spring brakes, air releases","ui_intro":"A short film without sound: everything is shown as text in the picture. You can pause at any time or choose a chapter.","ui_start":"Start film","ui_pause":"Pause","ui_weiter":"Next","ui_neu":"From the start","ui_kapitel":"Chapters","ui_lesen":"Read the full text","k1_kicker":"The principle","k1_titel":"The spring brakes","k1_sub":"Section through the spring brake part (simplified).","k1_p1":"A strong spring sits in the spring brake chamber.","k1_p2":"Without compressed air, the spring presses the brake on.","k1_p3":"Compressed air in the spring part compresses the spring. The brake releases.","k1_p4":"So: the spring brakes, the air releases.","l_feder":"Spring","l_luft":"Compressed air","l_zu":"Brake on","l_frei":"Brake released","l_trommel":"Brake drum","k2_kicker":"The combination chamber","k2_titel":"Two brakes in one housing","k2_sub":"Service brake and parking brake.","k2_p1":"The combination chamber has two parts: the diaphragm part and the spring part.","k2_p2":"The service brake works via the diaphragm part: air pushes, the brake applies.","k2_p3":"The parking brake works via the spring part: the parking brake valve exhausts it.","k2_p4":"Then the spring brakes. To release, air goes back into the spring part.","l_membran":"Diaphragm part","l_federteil":"Spring part","l_betrieb":"Service brake","l_fest":"Parking brake","l_entlueftet":"Spring part exhausted","k3_kicker":"When pressure is missing","k3_titel":"Pressure loss: the spring brakes by itself","k3_sub":"Even if nobody brakes.","k3_p1":"If the spring part loses pressure, for example through a leak, the spring is no longer held.","k3_p2":"If it falls too low, the spring presses the brake on.","k3_p3":"So the vehicle brakes by itself, for example with a leak.","k3_p4":"That is why you only drive off once the pressure has built up.","l_druck":"Spring part pressure","l_zieht_zu":"Spring applies here","l_leck":"Pressure drops","l_aufbau":"Pressure builds up","l_gespannt":"Spring compressed","l_bremst_selbst":"Brakes by itself","k4_kicker":"Remember","k4_titel":"To take away","k4_merk":"Spring brakes, air releases. Without pressure the spring brakes by itself. Only drive off once the pressure has built up.","l_foto":"Example image, AI-generated","f_feder":"Combination chamber on the axle"},"sr":{"titel":"Opružna kočnica","ui_ueber":"Pregled: opruga koči, vazduh otpušta","ui_intro":"Kratak film bez zvuka: sve stoji kao tekst u slici. Možeš da zaustaviš film u bilo kom trenutku ili da izabereš poglavlje.","ui_start":"Pokreni film","ui_pause":"Zaustavi","ui_weiter":"Dalje","ui_neu":"Ispočetka","ui_kapitel":"Poglavlja","ui_lesen":"Pročitaj ceo tekst","k1_kicker":"Princip","k1_titel":"Opruga koči","k1_sub":"Presek opružnog dela (pojednostavljeno).","k1_p1":"U opružnom cilindru nalazi se jaka opruga.","k1_p2":"Bez komprimovanog vazduha opruga steže kočnicu.","k1_p3":"Komprimovani vazduh u opružnom delu steže oprugu. Kočnica se otpušta.","k1_p4":"Dakle: opruga koči, vazduh otpušta.","l_feder":"Opruga","l_luft":"Komprim. vazduh","l_zu":"Kočnica stegnuta","l_frei":"Kočnica otpuštena","l_trommel":"Kočioni bubanj","k2_kicker":"Kombinovani cilindar","k2_titel":"Dve kočnice u jednom kućištu","k2_sub":"Radna kočnica i parkirna kočnica.","k2_p1":"Kombinovani cilindar ima dva dela: membranski deo i opružni deo.","k2_p2":"Radna kočnica radi preko membranskog dela: vazduh pritiska, kočnica prianja.","k2_p3":"Parkirna kočnica radi preko opružnog dela: ventil ručne kočnice ispušta vazduh iz njega.","k2_p4":"Tada opruga koči. Za otpuštanje vazduh ponovo ulazi u opružni deo.","l_membran":"Membranski deo","l_federteil":"Opružni deo","l_betrieb":"Radna kočnica","l_fest":"Parkirna kočnica","l_entlueftet":"Opružni deo prazan","k3_kicker":"Kad nema pritiska","k3_titel":"Pad pritiska: opruga koči sama","k3_sub":"I kad niko ne koči.","k3_p1":"Ako opružni deo izgubi pritisak, na primer zbog curenja, opruga se više ne drži.","k3_p2":"Ako padne prenisko, opruga steže kočnicu.","k3_p3":"Tako vozilo koči samo, na primer kod curenja.","k3_p4":"Zato kreni tek kad se pritisak napuni.","l_druck":"Pritisak opružnog dela","l_zieht_zu":"Odavde opruga steže","l_leck":"Pritisak pada","l_aufbau":"Pritisak raste","l_gespannt":"Opruga stegnuta","l_bremst_selbst":"Koči sama","k4_kicker":"Zapamti","k4_titel":"Za poneti","k4_merk":"Opruga koči, vazduh otpušta. Bez pritiska opruga koči sama. Kreni tek kad se pritisak napuni.","l_foto":"Primer slike, napravljen veštačkom inteligencijom","f_feder":"Kombinovani cilindar na osovini"},"tr":{"titel":"Yaylı fren","ui_ueber":"Genel bakış: yay frenler, hava serbest bırakır","ui_intro":"Sessiz kısa bir film: her şey görüntüde yazı olarak durur. İstediğin zaman durdurabilir veya bir bölüm seçebilirsin.","ui_start":"Filmi başlat","ui_pause":"Durdur","ui_weiter":"İleri","ui_neu":"Baştan","ui_kapitel":"Bölümler","ui_lesen":"Metnin tamamını oku","k1_kicker":"İlke","k1_titel":"Yay frenler","k1_sub":"Yaylı kısmın kesiti (basitleştirilmiş).","k1_p1":"Yaylı silindirin içinde güçlü bir yay vardır.","k1_p2":"Basınçlı hava yoksa yay freni sıkar.","k1_p3":"Yaylı kısımdaki basınçlı hava yayı gerer. Fren serbest kalır.","k1_p4":"Yani: yay frenler, hava serbest bırakır.","l_feder":"Yay","l_luft":"Basınçlı hava","l_zu":"Fren sıkılı","l_frei":"Fren serbest","l_trommel":"Fren kampanası","k2_kicker":"Kombine silindir","k2_titel":"Tek gövdede iki fren","k2_sub":"Çalışma freni ve park freni.","k2_p1":"Kombine silindirin iki kısmı vardır: diyafram kısmı ve yaylı kısım.","k2_p2":"Çalışma freni diyafram kısmı üzerinden çalışır: hava iter, fren tutar.","k2_p3":"Park freni yaylı kısım üzerinden çalışır: el freni valfi onun havasını boşaltır.","k2_p4":"Sonra yay frenler. Serbest bırakmak için yaylı kısma yeniden hava girer.","l_membran":"Diyafram kısmı","l_federteil":"Yaylı kısım","l_betrieb":"Çalışma freni","l_fest":"Park freni","l_entlueftet":"Yaylı kısım boşaldı","k3_kicker":"Basınç yoksa","k3_titel":"Basınç kaybı: yay kendiliğinden frenler","k3_sub":"Kimse fren yapmasa da.","k3_p1":"Yaylı kısım basınç kaybederse, örneğin bir kaçak yüzünden, yay artık tutulmaz.","k3_p2":"Çok düşerse yay freni sıkar.","k3_p3":"Böylece araç kendiliğinden frenler, örneğin bir kaçakta.","k3_p4":"Bu yüzden basınç oluştuktan sonra yola çık.","l_druck":"Yaylı kısımdaki basınç","l_zieht_zu":"Buradan yay sıkar","l_leck":"Basınç düşer","l_aufbau":"Basınç oluşuyor","l_gespannt":"Yay gergin","l_bremst_selbst":"Kendiliğinden frenler","k4_kicker":"Not al","k4_titel":"Akılda kalsın","k4_merk":"Yay frenler, hava serbest bırakır. Basınç yoksa yay kendiliğinden frenler. Basınç oluştuktan sonra yola çık.","l_foto":"Örnek görsel, yapay zekâ ile üretildi","f_feder":"Aksta kombine silindir"}};
+W.FILM_SPRACHEN = {"en":{"titel":"Spring brake","ui_ueber":"Overview: spring brakes, air releases","ui_intro":"A short film without sound: everything is shown as text in the picture. You can pause at any time or choose a chapter.","ui_start":"Start film","ui_pause":"Pause","ui_weiter":"Next","ui_neu":"From the start","ui_kapitel":"Chapters","ui_lesen":"Read the full text","k1_kicker":"The principle","k1_titel":"The spring brakes","k1_sub":"Section through the spring brake part (simplified).","k1_p1":"A strong spring sits in the spring brake chamber.","k1_p2":"Without compressed air, the spring presses the brake on.","k1_p3":"Compressed air in the spring part compresses the spring. The brake releases.","k1_p4":"So: the spring brakes, the air releases.","l_feder":"Spring","l_luft":"Compressed air","l_zu":"Brake on","l_frei":"Brake released","l_trommel":"Brake drum","k2_kicker":"The combination chamber","k2_titel":"Two brakes in one housing","k2_sub":"Service brake and parking brake.","k2_p1":"The combination chamber has two parts: the diaphragm part and the spring part.","k2_p2":"The service brake works via the diaphragm part: air pushes, the brake applies.","k2_p3":"The parking brake works via the spring part: the parking brake valve exhausts it.","k2_p4":"Then the spring brakes. To release, air goes back into the spring part.","l_membran":"Diaphragm part","l_federteil":"Spring part","l_betrieb":"Service brake","l_fest":"Parking brake","l_entlueftet":"Spring part exhausted","k3_kicker":"When pressure is missing","k3_titel":"Pressure loss: the spring brakes by itself","k3_sub":"Even if nobody brakes.","k3_p1":"If the spring part loses pressure, for example through a leak, the spring is no longer held.","k3_p2":"If it falls too low, the spring presses the brake on.","k3_p3":"So the vehicle brakes by itself, for example with a leak.","k3_p4":"That is why you only drive off once the pressure has built up.","l_druck":"Spring part pressure","l_zieht_zu":"Spring applies here","l_leck":"Pressure drops","l_aufbau":"Pressure builds up","l_gespannt":"Spring compressed","l_bremst_selbst":"Brakes by itself","k4_kicker":"Remember","k4_titel":"To take away","k4_merk":"Spring brakes, air releases. Without pressure the spring brakes by itself. Only drive off once the pressure has built up.","l_foto":"Example image, AI-generated","f_feder":"Combination chamber on the axle","l_belag":"Brake lining"},"sr":{"titel":"Opružna kočnica","ui_ueber":"Pregled: opruga koči, vazduh otpušta","ui_intro":"Kratak film bez zvuka: sve stoji kao tekst u slici. Možeš da zaustaviš film u bilo kom trenutku ili da izabereš poglavlje.","ui_start":"Pokreni film","ui_pause":"Zaustavi","ui_weiter":"Dalje","ui_neu":"Ispočetka","ui_kapitel":"Poglavlja","ui_lesen":"Pročitaj ceo tekst","k1_kicker":"Princip","k1_titel":"Opruga koči","k1_sub":"Presek opružnog dela (pojednostavljeno).","k1_p1":"U opružnom cilindru nalazi se jaka opruga.","k1_p2":"Bez komprimovanog vazduha opruga steže kočnicu.","k1_p3":"Komprimovani vazduh u opružnom delu steže oprugu. Kočnica se otpušta.","k1_p4":"Dakle: opruga koči, vazduh otpušta.","l_feder":"Opruga","l_luft":"Komprim. vazduh","l_zu":"Kočnica stegnuta","l_frei":"Kočnica otpuštena","l_trommel":"Kočioni bubanj","k2_kicker":"Kombinovani cilindar","k2_titel":"Dve kočnice u jednom kućištu","k2_sub":"Radna kočnica i parkirna kočnica.","k2_p1":"Kombinovani cilindar ima dva dela: membranski deo i opružni deo.","k2_p2":"Radna kočnica radi preko membranskog dela: vazduh pritiska, kočnica prianja.","k2_p3":"Parkirna kočnica radi preko opružnog dela: ventil ručne kočnice ispušta vazduh iz njega.","k2_p4":"Tada opruga koči. Za otpuštanje vazduh ponovo ulazi u opružni deo.","l_membran":"Membranski deo","l_federteil":"Opružni deo","l_betrieb":"Radna kočnica","l_fest":"Parkirna kočnica","l_entlueftet":"Opružni deo prazan","k3_kicker":"Kad nema pritiska","k3_titel":"Pad pritiska: opruga koči sama","k3_sub":"I kad niko ne koči.","k3_p1":"Ako opružni deo izgubi pritisak, na primer zbog curenja, opruga se više ne drži.","k3_p2":"Ako padne prenisko, opruga steže kočnicu.","k3_p3":"Tako vozilo koči samo, na primer kod curenja.","k3_p4":"Zato kreni tek kad se pritisak napuni.","l_druck":"Pritisak opružnog dela","l_zieht_zu":"Odavde opruga steže","l_leck":"Pritisak pada","l_aufbau":"Pritisak raste","l_gespannt":"Opruga stegnuta","l_bremst_selbst":"Koči sama","k4_kicker":"Zapamti","k4_titel":"Za poneti","k4_merk":"Opruga koči, vazduh otpušta. Bez pritiska opruga koči sama. Kreni tek kad se pritisak napuni.","l_foto":"Primer slike, napravljen veštačkom inteligencijom","f_feder":"Kombinovani cilindar na osovini","l_belag":"Kočiona obloga"},"tr":{"titel":"Yaylı fren","ui_ueber":"Genel bakış: yay frenler, hava serbest bırakır","ui_intro":"Sessiz kısa bir film: her şey görüntüde yazı olarak durur. İstediğin zaman durdurabilir veya bir bölüm seçebilirsin.","ui_start":"Filmi başlat","ui_pause":"Durdur","ui_weiter":"İleri","ui_neu":"Baştan","ui_kapitel":"Bölümler","ui_lesen":"Metnin tamamını oku","k1_kicker":"İlke","k1_titel":"Yay frenler","k1_sub":"Yaylı kısmın kesiti (basitleştirilmiş).","k1_p1":"Yaylı silindirin içinde güçlü bir yay vardır.","k1_p2":"Basınçlı hava yoksa yay freni sıkar.","k1_p3":"Yaylı kısımdaki basınçlı hava yayı gerer. Fren serbest kalır.","k1_p4":"Yani: yay frenler, hava serbest bırakır.","l_feder":"Yay","l_luft":"Basınçlı hava","l_zu":"Fren sıkılı","l_frei":"Fren serbest","l_trommel":"Fren kampanası","k2_kicker":"Kombine silindir","k2_titel":"Tek gövdede iki fren","k2_sub":"Çalışma freni ve park freni.","k2_p1":"Kombine silindirin iki kısmı vardır: diyafram kısmı ve yaylı kısım.","k2_p2":"Çalışma freni diyafram kısmı üzerinden çalışır: hava iter, fren tutar.","k2_p3":"Park freni yaylı kısım üzerinden çalışır: el freni valfi onun havasını boşaltır.","k2_p4":"Sonra yay frenler. Serbest bırakmak için yaylı kısma yeniden hava girer.","l_membran":"Diyafram kısmı","l_federteil":"Yaylı kısım","l_betrieb":"Çalışma freni","l_fest":"Park freni","l_entlueftet":"Yaylı kısım boşaldı","k3_kicker":"Basınç yoksa","k3_titel":"Basınç kaybı: yay kendiliğinden frenler","k3_sub":"Kimse fren yapmasa da.","k3_p1":"Yaylı kısım basınç kaybederse, örneğin bir kaçak yüzünden, yay artık tutulmaz.","k3_p2":"Çok düşerse yay freni sıkar.","k3_p3":"Böylece araç kendiliğinden frenler, örneğin bir kaçakta.","k3_p4":"Bu yüzden basınç oluştuktan sonra yola çık.","l_druck":"Yaylı kısımdaki basınç","l_zieht_zu":"Buradan yay sıkar","l_leck":"Basınç düşer","l_aufbau":"Basınç oluşuyor","l_gespannt":"Yay gergin","l_bremst_selbst":"Kendiliğinden frenler","k4_kicker":"Not al","k4_titel":"Akılda kalsın","k4_merk":"Yay frenler, hava serbest bırakır. Basınç yoksa yay kendiliğinden frenler. Basınç oluştuktan sonra yola çık.","l_foto":"Örnek görsel, yapay zekâ ile üretildi","f_feder":"Aksta kombine silindir","l_belag":"Fren balatası"}};
 // ---- f6-3/szenen.js ----
 (function (window) {
 /* Szenen des Films 6.3 „Federspeicherbremse“ – EIN Code für den MP4-Film (index.html) und die App (gebaut mit ../bauen.mjs).
@@ -1498,20 +1507,20 @@ W.FILM_SPRACHEN = {"en":{"titel":"Spring brake","ui_ueber":"Overview: spring bra
     const pille = (st, text, farbe, o2) => BK.pille(st, text, 0, 0, Object.assign({ punkt: farbe }, o2 || {}));
     if (M.federspeicher({ pFeder: 0, pMembran: 0 }).geloest || !M.federspeicher({ pFeder: 1, pMembran: 0 }).geloest || !M.federspeicher({ pFeder: 0, pMembran: 0 }).gebremst) throw new Error("Federspeicher passt nicht zum Modell");
 
-    const ZX = 330, ZY = 400, ZW = 680, ZH = 240;
+    const ZX = 420, ZY = 400, ZW = 600, ZH = 240;
     function zyl(st) { const B = PN.buehne(st), k = PN.kombi(B, { x: ZX, y: ZY, w: ZW, h: ZH }); return { B: B, k: k, mx: ZX + ZW * 0.21, fx: k.wandX + (k.endeX - k.wandX) / 2 }; }
 
     /* ---------- K1: Feder bremst, Luft löst ---------- */
     function K1(sc, i, T0, ch) {
       const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), Z = zyl(st);
-      const pt = pille(st, tx("l_trommel"), GOLD), pf = pille(st, tx("l_feder"), WARN), pl = pille(st, tx("l_luft"), LUFT), pz = pille(st, tx("l_zu"), WARN, { klasse: "gross" }), pr = pille(st, tx("l_frei"), GRUEN, { klasse: "gross" });
+      const pt = pille(st, tx("l_trommel"), GOLD), pbl = pille(st, tx("l_belag"), GOLD), pf = pille(st, tx("l_feder"), WARN), pl = pille(st, tx("l_luft"), LUFT), pz = pille(st, tx("l_zu"), WARN, { klasse: "gross" }), pr = pille(st, tx("l_frei"), GRUEN, { klasse: "gross" });
       uhr(T0, ch.dauer, function (t) {
-        const pF = t < 22 ? 0 : t < 32 ? glatt((t - 22) / 10) : 1, r = Z.k.setze(0, pF);
-        platz(pt, 300, 300, fenster(t, 2, ch.dauer - 1, 0.5));
-        platz(pf, Z.fx, 330, fenster(t, 3.5, ch.dauer - 1, 0.5));
-        platz(pl, Z.fx, 720, fenster(t, 23, ch.dauer - 1, 0.5));
-        platz(pz, 540, 900, fenster(t, 8, 23, 0.5) * (r.gebremst ? 1 : 0));
-        platz(pr, 540, 900, fenster(t, 31, ch.dauer - 1, 0.5));
+        const pF = t < 10 ? 1 : t < 16 ? 1 - glatt((t - 10) / 6) : t < 24 ? 0 : t < 34 ? glatt((t - 24) / 10) : 1, r = Z.k.setze(0, pF);
+        platz(pt, 300, 360, fenster(t, 1.5, ch.dauer - 1, 0.5)); platz(pbl, 300, 690, fenster(t, 1.5, ch.dauer - 1, 0.5));
+        platz(pf, Z.fx, 300, fenster(t, 3.5, ch.dauer - 1, 0.5));
+        platz(pl, Z.fx, 720, fenster(t, 25, ch.dauer - 1, 0.5));
+        platz(pz, 540, 900, fenster(t, 12, 56, 0.5) * (r.gebremst ? 1 : 0));
+        platz(pr, 540, 900, fenster(t, 1, 56, 0.5) * (r.gebremst ? 0 : 1));
       });
     }
 
@@ -1525,9 +1534,9 @@ W.FILM_SPRACHEN = {"en":{"titel":"Spring brake","ui_ueber":"Overview: spring bra
         const pF = t < 30 ? 1 : t < 40 ? 1 - glatt((t - 30) / 10) : t < 52 ? 0 : t < 62 ? glatt((t - 52) / 10) : 1;
         const pM = t < 12 ? 0 : t < 18 ? glatt((t - 12) / 6) : t < 24 ? 1 : t < 28 ? 1 - glatt((t - 24) / 4) : 0;
         Z.k.setze(pM, pF);
-        platz(pm, Z.mx, 330, fenster(t, 3.5, ch.dauer - 1, 0.5)); platz(pfe, Z.fx, 330, fenster(t, 7, ch.dauer - 1, 0.5));
+        platz(pm, Z.mx, 300, fenster(t, 3.5, ch.dauer - 1, 0.5)); platz(pfe, Z.fx, 300, fenster(t, 7, ch.dauer - 1, 0.5));
         platz(pb, 540, 900, fenster(t, 13, 28, 0.5)); platz(pfs, 540, 900, fenster(t, 33, ch.dauer - 1, 0.5));
-        platz(pe, Z.fx, 720, fenster(t, 32, 50, 0.5));
+        platz(pe, Z.fx, 720, fenster(t, 35, 52, 0.5));
       });
     }
 
@@ -1535,18 +1544,18 @@ W.FILM_SPRACHEN = {"en":{"titel":"Spring brake","ui_ueber":"Overview: spring bra
     function K3(sc, i, T0, ch) {
       const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), Z = zyl(st), g = Z.B.ueber;
       const bx = 130, by = 170, bw = 820, bh = 44;
-      PN.text(g, tx("l_druck"), bx, by - 18, { anker: "start", gr: 28, fett: true });
+      PN.text(g, tx("l_druck"), bx, by - 18, { anker: "start", gr: 40, fett: true });
       el("rect", { x: bx, y: by, width: bw, height: bh, rx: 10, fill: "#2B3631", stroke: PN.C.stahl, "stroke-width": 5 }, g);
       const fuell = el("rect", { x: bx + 3, y: by + 3, width: 0, height: bh - 6, rx: 7, fill: LUFT, opacity: 0.9 }, g);
       const mk = M.FEDER.haltedruck, mx = bx + 3 + (bw - 6) * mk;
       el("line", { x1: mx, y1: by - 10, x2: mx, y2: by + bh + 10, stroke: WARN, "stroke-width": 5, "stroke-dasharray": "8 6" }, g);
       const pg = pille(st, tx("l_zieht_zu"), WARN), pk = pille(st, tx("l_leck"), WARN), pa = pille(st, tx("l_aufbau"), GRUEN), pz = pille(st, tx("l_bremst_selbst"), WARN, { klasse: "gross" }), ps = pille(st, tx("l_gespannt"), GRUEN, { klasse: "gross" });
-      const druck = (t) => t < 8 ? 1 : t < 40 ? Math.exp(-(t - 8) / 9) : t < 44 ? Math.exp(-32 / 9) * (1 - glatt((t - 40) / 4)) : t < 56 ? glatt((t - 44) / 12) : 1;
+      const druck = (t) => t < 6 ? 1 : t < 40 ? Math.exp(-(t - 6) / 18) : t < 44 ? Math.exp(-34 / 18) * (1 - glatt((t - 40) / 4)) : t < 56 ? glatt((t - 44) / 12) : 1;
       uhr(T0, ch.dauer, function (t) {
         const pF = druck(t), r = Z.k.setze(0, pF);
         fuell.setAttribute("width", f((bw - 6) * pF));
-        platz(pg, mx, 330, fenster(t, 17, 40, 0.5)); platz(pk, 540, 780, fenster(t, 9, 17, 0.5));
-        platz(pz, 540, 900, fenster(t, 24, 42, 0.5) * (r.gebremst ? 1 : 0)); platz(pa, 540, 780, fenster(t, 45, ch.dauer - 1, 0.5)); platz(ps, 540, 900, fenster(t, 57, ch.dauer - 1, 0.5));
+        platz(pg, mx, 330, fenster(t, 12, 40, 0.5)); platz(pk, 540, 780, fenster(t, 7, 15, 0.5));
+        platz(pz, 540, 900, fenster(t, 13, 52, 0.5) * (r.gebremst ? 1 : 0)); platz(pa, 540, 780, fenster(t, 45, 56, 0.5)); platz(ps, 540, 900, fenster(t, 50, ch.dauer - 1, 0.5) * (r.gebremst ? 0 : 1));
       });
     }
 

@@ -41,9 +41,9 @@ window.FILM_TEXT = {
     { id: "k1", titel: "k1_titel", kicker: "k1_kicker", dauer: 84, sub: { k: "k1_sub", t: 0.6 },
       punkte: [{ k: "k1_p1", t: 3.5, ref: "Theoriefrage 2.7.02-304" }, { k: "k1_p2", t: 14.0 }, { k: "k1_p3", t: 25.0 }, { k: "k1_p4", t: 38.0, ref: "Theoriefrage 2.7.02-304" }, { k: "k1_p5", t: 54.0 }, { k: "k1_p6", t: 70.0 }] },
     { id: "k2", titel: "k2_titel", kicker: "k2_kicker", dauer: 74, sub: { k: "k2_sub", t: 0.6 },
-      punkte: [{ k: "k2_p1", t: 3.5 }, { k: "k2_p2", t: 12.0, ref: "WABCO, Haldex" }, { k: "k2_p3", t: 24.0, ref: "WABCO" }, { k: "k2_p4", t: 36.0, ref: "WABCO" }, { k: "k2_p5", t: 52.0, ref: "WABCO" }] },
+      punkte: [{ k: "k2_p1", t: 3.5 }, { k: "k2_p2", t: 12.0, ref: "WABCO, Haldex" }, { k: "k2_p3", t: 24.0, ref: "WABCO" }, { k: "k2_p4", t: 36.0, ref: "WABCO" }, { k: "k2_p5", t: 49.0, ref: "WABCO" }] },
     { id: "k3", titel: "k3_titel", kicker: "k3_kicker", dauer: 56, sub: { k: "k3_sub", t: 0.6 },
-      punkte: [{ k: "k3_p1", t: 3.5, ref: "WABCO" }, { k: "k3_p2", t: 22.0 }, { k: "k3_p3", t: 34.0, ref: "WABCO; Theoriefrage 2.7.02-302" }] },
+      punkte: [{ k: "k3_p1", t: 3.5, ref: "WABCO" }, { k: "k3_p2", t: 12.0 }, { k: "k3_p3", t: 26.0, ref: "WABCO; Theoriefrage 2.7.02-302" }] },
     { id: "k4", titel: "k4_titel", kicker: "k4_kicker", dauer: 20, merk: { k: "k4_merk", t: 1.2 } }
   ]
 };

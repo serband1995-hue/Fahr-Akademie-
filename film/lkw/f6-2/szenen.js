@@ -27,27 +27,27 @@
         const pb0 = W.px(xT), a1 = fenster(t, TB, TB + 3, 0.2);
         funke.setAttribute("transform", "translate(" + f(pb0) + " " + (W.boden - 60) + ")"); funke.style.opacity = a1 * (t < TB + 3 ? 1 : 0);
         platz(pz, 190, 150, fenster(t, 0.5, ch.dauer - 0.5, 0.5));
-        platz(pr, 540, 200, fenster(t, TB, TB + 5, 0.4)); platz(pa, W.px(xT - 6), 280, fenster(t, 17, ch.dauer - 0.5, 0.5)); platz(pb, W.px(xF - 3), 280, fenster(t, 28, ch.dauer - 0.5, 0.5));
+        platz(pr, 540, 200, fenster(t, TB, TB + 5, 0.4)); platz(pa, W.px(xT - 6), 280, fenster(t, 17, ch.dauer - 0.5, 0.5)); platz(pb, W.px(xF - 3), 280, fenster(t, 20, ch.dauer - 0.5, 0.5));
       });
     }
 
     /* ---------- K2: Schema, beide Leitungen reißen ---------- */
     function K2(sc, i, T0, ch) {
       const st = P.buehne(sc);
-      const zu = (t) => { const u = t < 10 ? 1 : 1 - glatt((t - 10) / 1.5); return { rotV: u, gelbV: u, pedal: 0, res0: 1 }; };
+      const zu = (t) => { const u = t < 4.5 ? 1 : 1 - glatt((t - 4.5) / 1.5); return { rotV: u, gelbV: u, pedal: 0, res0: 1 }; };
       const S = PN.zweileitung(st, tx, zu, ch.dauer), p = P.standardPanel(sc, ch, i, T0, false);
       const ps = pille(st, tx("l_selbst"), WARN, { klasse: "gross" }), pv = pille(st, tx("l_voll"), GRUEN);
-      uhr(T0, ch.dauer, function (t) { S.zeichne(t); platz(ps, 540, 880, fenster(t, 12, ch.dauer - 1, 0.5)); platz(pv, 300, 950, fenster(t, 38, ch.dauer - 1, 0.5)); });
+      uhr(T0, ch.dauer, function (t) { S.zeichne(t); platz(ps, 540, 860, fenster(t, 8, ch.dauer - 1, 0.5)); platz(pv, 300, 990, fenster(t, 38, ch.dauer - 1, 0.5)); });
     }
 
     /* ---------- K3: nur gelb reißt ---------- */
     function K3(sc, i, T0, ch) {
       const st = P.buehne(sc);
-      const pedal = (t) => (t < 20 ? 0 : t < 23 ? glatt((t - 20) / 3) : t < 34 ? 1 : t < 37 ? 1 - glatt((t - 34) / 3) : 0);
-      const zu = (t) => { const defekt = t >= 8, pd = pedal(t); return { rotV: 1, gelbV: defekt ? 1 - glatt((t - 8) / 2) : 1, pedal: pd, res0: 1, gelbDefekt: defekt, rotDruck: defekt && pd > 0.05 ? 0 : 1 }; };
+      const pedal = (t) => (t < 14 ? 0 : t < 17 ? glatt((t - 14) / 3) : t < 27 ? 1 : t < 30 ? 1 - glatt((t - 27) / 3) : 0);
+      const zu = (t) => { const defekt = t >= 4.5, pd = pedal(t); return { rotV: 1, gelbV: defekt ? 1 - glatt((t - 4.5) / 2) : 1, pedal: pd, res0: 1, gelbDefekt: defekt, rotDruck: defekt && pd > 0.05 ? 0 : 1 }; };
       const S = PN.zweileitung(st, tx, zu, ch.dauer), p = P.standardPanel(sc, ch, i, T0, false);
       const pg = pille(st, tx("l_gelb_weg"), WARN), pn = pille(st, tx("l_nichts"), GOLD, { klasse: "gross" }), pb = pille(st, tx("l_erst_bremsen"), WARN, { klasse: "gross" });
-      uhr(T0, ch.dauer, function (t) { S.zeichne(t); platz(pg, 540, 880, fenster(t, 9, ch.dauer - 1, 0.5)); platz(pn, 540, 960, fenster(t, 12, 19.5, 0.5)); platz(pb, 540, 960, fenster(t, 22, 40, 0.5)); });
+      uhr(T0, ch.dauer, function (t) { S.zeichne(t); platz(pg, 540, 790, fenster(t, 6, ch.dauer - 1, 0.5)); platz(pn, 540, 975, fenster(t, 8, 13.5, 0.5)); platz(pb, 540, 975, fenster(t, 16, 31, 0.5)); });
     }
 
     /* ---------- K4: Merke ---------- */
