@@ -1574,7 +1574,7 @@ W.FILM_SPRACHEN = {"en":{"titel":"Coupling an articulated lorry","ui_ueber":"Ove
         const k = W.px(0.9, -1.0), kk = W.px(keilX, -0.15), g3 = W.px((MA.auflieger.vorderKante + xA + MA.zug.rahmenHinten) / 2, -1.7);
         platz(pf, 540, 260, a1); lf.setze(540, 294, k[0], k[1], a1);
         platz(pk, 540, kk[1] + 150, a2); lk.setze(540, kk[1] + 118, kk[0], kk[1], a2);
-        platz(pn, 540, 200, a3); ln.setze(540, 234, g3[0], g3[1], a3);
+        platz(pn, 540, 105, a3); ln.setze(540, 139, g3[0], g3[1], a3);
       });
     }
 
@@ -1651,8 +1651,8 @@ W.FILM_SPRACHEN = {"en":{"titel":"Coupling an articulated lorry","ui_ueber":"Ove
         const k = W.px(4.1, -1.55), s = W.px(0.55, -SA.unterkante), e = W.px(-SA.e - 0.02, -1.36);
         const a1 = fenster(t, 4, 40, 0.6), a2 = fenster(t, 15, 40, 0.6), a3 = fenster(t, 26, 50, 0.6);
         platz(pf, 780, 100, a1); lf.setze(780, 134, k[0], k[1], a1);
-        platz(ps, 700, 860, a2); ls.setze(700, 828, s[0], s[1], a2);
-        platz(pe, 330, 860, a3); le.setze(330, 828, e[0], e[1], a3);
+        platz(ps, 810, 860, a2); ls.setze(810, 828, s[0], s[1], a2);
+        platz(pe, 270, 860, a3); le.setze(270, 828, e[0], e[1], a3);
       });
     }
 

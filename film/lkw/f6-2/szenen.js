@@ -27,7 +27,7 @@
         const pb0 = W.px(xT), a1 = fenster(t, TB, TB + 3, 0.2);
         funke.setAttribute("transform", "translate(" + f(pb0) + " " + (W.boden - 60) + ")"); funke.style.opacity = a1 * (t < TB + 3 ? 1 : 0);
         platz(pz, 190, 150, fenster(t, 0.5, ch.dauer - 0.5, 0.5));
-        platz(pr, 540, 200, fenster(t, TB, TB + 5, 0.4)); platz(pa, W.px(xT - 6), 280, fenster(t, 17, ch.dauer - 0.5, 0.5)); platz(pb, W.px(xF - 3), 280, fenster(t, 20, ch.dauer - 0.5, 0.5));
+        platz(pr, 540, 200, fenster(t, TB, TB + 5, 0.4)); platz(pa, W.px(xT - 6), 280, fenster(t, 17, ch.dauer - 0.5, 0.5)); platz(pb, W.px(xF - 3), 280, fenster(t, 21.5, ch.dauer - 0.5, 0.5));
       });
     }
 
