@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>Fahr-Akademie Home und Karte</title>
+<title>Fahr-Akademie Weg und Zugang</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&display=swap">
@@ -19,7 +19,7 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .pager button{flex:none;min-height:42px;padding:0 16px;border-radius:999px;background:#fff;border:1px solid rgba(0,0,0,.08);font-weight:700;font-size:14.5px}
 .pager button[aria-current="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
 .beschr{max-width:420px;margin:2px auto 12px;padding:0 20px;text-align:center;color:var(--muted);font-size:14px;line-height:1.35;min-height:38px}
-.tel{position:relative;width:min(94vw,392px);height:min(800px,calc(100dvh - 170px));min-height:640px;margin:0 auto 30px;border-radius:40px;overflow:hidden;background:#F5F6F3;border:1px solid rgba(0,0,0,.08);box-shadow:0 24px 60px rgba(30,36,31,.18)}
+.tel{position:relative;width:min(94vw,392px);height:min(800px,calc(100dvh - 250px));min-height:640px;margin:0 auto 30px;border-radius:40px;overflow:hidden;background:#F5F6F3;border:1px solid rgba(0,0,0,.08);box-shadow:0 24px 60px rgba(30,36,31,.18)}
 .scroll{position:absolute;inset:0;overflow-y:auto;scrollbar-width:none;padding-bottom:116px;scroll-behavior:smooth}
 .scroll::-webkit-scrollbar{display:none}
 .status{display:flex;justify-content:space-between;padding:14px 26px 0;font-size:14px;font-weight:700;position:relative;z-index:3}
@@ -81,9 +81,37 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .video .bar{width:70%;height:8px;border-radius:9px;background:#DDE3DC;overflow:hidden}
 .video .bar i{display:block;height:100%;width:0;background:var(--g);transition:width 2s linear}
 @media (prefers-reduced-motion:reduce){ .kachel{animation:none} .scroll{scroll-behavior:auto} }
+
+/* Neu: Zugang und Prüfungstermin */
+.steuer{max-width:520px;margin:6px auto 0;padding:0 18px;display:grid;grid-template-columns:minmax(0,1fr);gap:6px}
+.steuer .zl{display:flex;align-items:center;gap:8px;min-width:0}
+.steuer .zl>span{flex:none;width:58px;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.steuer .gr{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;min-width:0;padding:2px}
+.steuer .gr::-webkit-scrollbar{display:none}
+.steuer button{flex:none;min-height:36px;padding:0 13px;border-radius:999px;background:#fff;border:1px solid rgba(0,0,0,.08);font-weight:700;font-size:13.5px}
+.steuer button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.schl{position:absolute;right:10px;top:10px;z-index:3;width:32px;height:32px;border-radius:50%;background:var(--gold);color:#fff;display:grid;place-items:center;box-shadow:0 4px 10px rgba(30,36,31,.2)}
+.schl svg{width:55%;height:55%}
+.kost{position:absolute;left:10px;top:10px;z-index:3;padding:3px 10px;border-radius:999px;background:#fff;color:#8A5A0B;font-size:11.5px;font-weight:800;box-shadow:0 4px 10px rgba(30,36,31,.14)}
+.kachel .art.zu{filter:saturate(.2) brightness(1.04)}
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:28px;padding:0 11px 0 8px;border-radius:999px;font-size:12.5px;font-weight:800;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.chip .ci{width:15px;height:15px;display:block}
+.chip.v{background:rgba(46,125,91,.94);color:#fff}
+.chip.s{background:rgba(255,255,255,.86);color:#8A5A0B;border:1px solid rgba(232,163,61,.6)}
+.sy{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;flex:none}
+.sy svg{width:21px;height:21px}
+.lab{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.blatt{position:absolute;inset:0;z-index:40;display:none;background:rgba(30,36,31,.38);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.blatt.an{display:block}
+.bl{position:absolute;left:0;right:0;bottom:0;padding:26px 22px 28px;border-radius:32px 32px 0 0;background:#fff;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;box-shadow:0 -14px 40px rgba(30,36,31,.2)}
+.bl h2{margin:6px 0 0;font-size:24px;font-weight:800;letter-spacing:-.01em}
+.bl p{margin:0 0 8px;color:var(--muted);font-size:15.5px;line-height:1.4}
+.bl .schl{position:static;width:52px;height:52px}
+.bl .schl svg{width:26px;height:26px}
 </style>
 
-<div class="kopf"><h1>Home und Karte</h1><p>Start ist die Übersicht. „Weg“ ist die Karte. Tippe die Vorschau, die Kacheln und die Stationen. Mit „Demo“ siehst du, wie die Figur fährt.</p></div>
+<div class="kopf"><h1>Home und Karte</h1><p>Neu: Prüfungs-Countdown und Vollzugang. Stelle hier ein, was die Fahrschule im Kompass eingetragen hat und welchen Zugang die Schülerin hat. Die Ansicht ändert sich sofort. Dieses Bedienfeld gehört nur zum Entwurf.</p></div>
+<div class="steuer"><div class="zl"><span>Zugang</span><div class="gr" role="group" aria-label="Zugang"><button data-z="voll" aria-pressed="true">Vollzugang</button><button data-z="start" aria-pressed="false">Startzugang</button></div></div><div class="zl"><span>Termin</span><div class="gr" role="group" aria-label="Prüfungstermin"><button data-t="12" aria-pressed="true">in 12 Tagen</button><button data-t="3" aria-pressed="false">in 3 Tagen</button><button data-t="1" aria-pressed="false">Morgen</button><button data-t="0" aria-pressed="false">Heute</button><button data-t="85" aria-pressed="false">in 85 Tagen</button><button data-t="" aria-pressed="false">Kein Termin</button></div></div></div>
 <div class="tel" id="tel"></div>
 
 <script>
@@ -105,7 +133,9 @@ var IC={
   sprache:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.6 3.6 5.5 3.6 8.5s-1 5.9-3.6 8.5c-2.6-2.6-3.6-5.5-3.6-8.5s1-5.9 3.6-8.5z"/></svg>',
   weg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 20c0-5 12-4 12-9S9 8.5 9 5"/><circle cx="6" cy="20" r="1.8"/><circle cx="9" cy="4.6" r="1.8"/></svg>',
   hilfe:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.6 2.3c-.8.5-1.2 1-1.2 1.9M12 16.6v.1"/></svg>',
-  liste:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M8 6.5h12M8 12h12M8 17.5h12"/><circle cx="4.2" cy="6.5" r=".8"/><circle cx="4.2" cy="12" r=".8"/><circle cx="4.2" cy="17.5" r=".8"/></svg>'
+  liste:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M8 6.5h12M8 12h12M8 17.5h12"/><circle cx="4.2" cy="6.5" r=".8"/><circle cx="4.2" cy="12" r=".8"/><circle cx="4.2" cy="17.5" r=".8"/></svg>',
+  schloss:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>',
+  kalender:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>'
 };
 var gid=0;
 function szene(o){ o=o||{}; var i=++gid, s1=o.s1||"#CFE6F7", s2=o.s2||"#F4F9FC", h1=o.h1||"#BFD9C4", h2=o.h2||"#A8CBB0", rd=o.rd||"#8E9A94";
@@ -129,17 +159,39 @@ var ST=[
 ];
 ST.forEach(function(s){ s.v.forEach(function(x){ x[2]=false; }); });
 ST[0].v.forEach(function(x){x[2]=true;}); for(var q=0;q<3;q++) ST[1].v[q][2]=true;
+ST[5].v[0][3]=true;   /* Kostprobe im Startzugang: ein Video der Prüfungsstrecken */
 function tot(s){ return s.v.reduce(function(a,x){return a+x[1];},0); }
-function don(s){ return s.v.reduce(function(a,x){return a+(x[2]?x[1]:0);},0); }
-function tpos(){ var t=0; ST.forEach(function(s){ t+=don(s)/tot(s); }); return t; }   // 0..6
-function aktStufe(){ for(var i=0;i<ST.length;i++) if(don(ST[i])<tot(ST[i])) return i; return ST.length-1; }
-function naechstesVideo(){ var s=ST[aktStufe()]; for(var i=0;i<s.v.length;i++) if(!s.v[i][2]) return [aktStufe(),i]; return null; }
+function frei(i,k){ return ZUGANG==="voll"||i===0||!!ST[i].v[k][3]; }
+function don(s){ var i=ST.indexOf(s); return s.v.reduce(function(a,x,k){return a+(x[2]&&frei(i,k)?x[1]:0);},0); }
+function anzFrei(s){ var i=ST.indexOf(s); return s.v.filter(function(x,k){return frei(i,k);}).length; }
+function stat(s){ var a=anzFrei(s); return a===s.v.length?"voll":(a?"teil":"zu"); }
+function fertigS(s){ return stat(s)==="voll"&&don(s)===tot(s); }
+function minFrei(){ var m=0,d=0; ST.forEach(function(s,i){ s.v.forEach(function(x,k){ if(frei(i,k)){ m+=x[1]; if(x[2]) d+=x[1]; } }); }); return [d,m]; }
+function restMin(){ var r=minFrei(); return r[1]-r[0]; }
+function tpos(){ var t=0; ST.forEach(function(s){ if(stat(s)==="voll") t+=don(s)/tot(s); }); return t; }   // 0..6, nur Stationen mit vollem Zugang zählen
+function aktStufe(){ for(var i=0;i<ST.length;i++) if(!fertigS(ST[i])) return i; return ST.length-1; }
+function naechstesVideo(){ for(var i=aktStufe();i<ST.length;i++) for(var k=0;k<ST[i].v.length;k++) if(frei(i,k)&&!ST[i].v[k][2]) return [i,k]; return null; }
 var KL="B"; var TAB="start"; var SUB=null;
+var ZUGANG="voll", TERMIN=12;   /* ZUGANG: "voll" oder "start". TERMIN: Tage bis zur Prüfung, null = Fahrschule hat nichts eingetragen */
+var LKWFREI=["Gelb zuerst, rot nie allein","Schleppkurven"];   /* Kostproben der Lkw-Filme (Entscheidung offen, siehe Vault) */
+function terminDatum(o){ var d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+TERMIN); return d.toLocaleDateString("de-DE",o); }
+function chipHtml(){ return ZUGANG==="voll"?'<span class="chip v"><span class="ci">'+IC.haken+'</span>Vollzugang</span>':'<button class="chip s" data-a="sheet"><span class="ci">'+IC.schloss+'</span>Startzugang</button>'; }
+function blattHtml(){ return '<div class="blatt" id="blatt" data-a="sheetzu"><div class="bl" data-a="nix" role="dialog" aria-modal="true" aria-labelledby="blt"><span class="schl">'+IC.schloss+'</span><h2 id="blt">Gehört zum Vollzugang</h2><p id="blp"></p><button class="pill" data-a="fragen" style="background:#1E241F;color:#fff;width:100%">Fahrschule fragen</button><button class="pill" data-a="sheetzu" style="width:100%;color:#6B7269;min-height:44px">Später</button></div></div>'; }
+function sheetAuf(n){ var b=document.getElementById("blatt"); if(!b) return; document.getElementById("blp").textContent=(n?"„"+n+"“ ist Teil des Vollzugangs. ":"")+"Der Vollzugang schaltet alle Stationen, Szenen und Filme frei. Deine Fahrschule richtet ihn für dich ein."; b.classList.add("an"); }
+function sheetZu(){ var b=document.getElementById("blatt"); if(b) b.classList.remove("an"); }
+function sperrPill(x){ return '<button class="pill" data-a="sheet" style="background:#1E241F;color:#fff'+(x||'')+'"><span style="width:18px;height:18px;display:block">'+IC.schloss+'</span>Mehr mit Vollzugang</button>'; }
+function terminKachel(){
+  if(TERMIN==null) return '<button class="karte" data-a="tab" data-p="pruefung" style="padding:14px 16px;background:#EEF0EC;display:block"><span class="sy" style="background:#fff;color:#6B7269;margin-bottom:8px">'+IC.kalender+'</span><b style="display:block;font-size:15px;line-height:1.15;overflow-wrap:anywhere">Prüfungstermin</b><span style="color:#6B7269;font-size:13px">Noch offen</span></button>';
+  var nah=TERMIN<=5, bg=nah?"#FFE3C7":"#FFF1DF", farbe=nah?"#C25E10":"#D9731F", kurz=terminDatum({weekday:"short",day:"2-digit",month:"2-digit"});
+  if(TERMIN<=1) return '<button class="karte" data-a="tab" data-p="pruefung" style="padding:16px;background:'+bg+';display:block"><span style="display:block;font-size:34px;font-weight:800;letter-spacing:-.03em;color:'+farbe+';line-height:1">'+(TERMIN===0?"Heute":"Morgen")+'</span><b style="display:block;font-size:16px;line-height:1.15;margin-top:6px">ist deine Prüfung</b><span style="color:#6B7269;font-size:13px">'+kurz+'</span></button>';
+  return '<button class="karte" data-a="tab" data-p="pruefung" style="padding:16px;background:'+bg+';display:flex;align-items:center;gap:10px"><span style="font-size:46px;font-weight:800;letter-spacing:-.04em;color:'+farbe+';line-height:1">'+TERMIN+'</span><span><b style="display:block;font-size:16px;line-height:1.15">Tage bis zur Prüfung</b><span style="color:#6B7269;font-size:13px">'+kurz+'</span></span></button>';
+}
 /* ---------- Gemeinsame Bausteine ---------- */
 function klasseS(){ return '<div class="klasse" role="group" aria-label="Führerscheinklasse"><button data-a="kl" data-k="B" aria-pressed="'+(KL==="B")+'">B</button><button data-a="kl" data-k="C" aria-pressed="'+(KL==="C")+'">C · CE</button></div>'; }
 function status(c){ return '<div class="status" style="color:'+(c||"#1E241F")+'"><span>9:41</span><span>●●● ▮</span></div>'; }
-function kachel(k,klein,titel,attr,i,extra){ return '<button class="kachel '+(extra||'')+'" '+attr+' style="animation-delay:-'+((i||0)*1.7)+'s"><span class="art" style="display:block">'+art(k)+'</span><span class="tx"><small>'+klein+'</small><b>'+titel+'</b></span></button>'; }
-function stufeKachel(i,attr,x){ var s=ST[i], p=Math.round(don(s)/tot(s)*100); return '<button class="kachel" '+attr+' style="animation-delay:-'+(i*1.3)+'s"><span class="art" style="display:block;height:'+(x||104)+'px">'+szene(PAL[s.pal]||PAL.lernen)+'</span><span class="tx"><small>'+(don(s)===tot(s)?'Fertig':don(s)+' von '+tot(s)+' Min.')+'</small><b>'+s.n+'</b><span style="display:block;height:5px;border-radius:9px;background:#E8ECE7;margin-top:9px;overflow:hidden"><i style="display:block;height:100%;width:'+p+'%;background:#2E7D5B"></i></span></span></button>'; }
+function kachel(k,klein,titel,attr,i,extra,sp){ var b=sp==="zu"?'<span class="schl">'+IC.schloss+'</span>':(sp==="kost"?'<span class="kost">Kostprobe</span>':''); return '<button class="kachel '+(extra||'')+'" '+attr+' style="animation-delay:-'+((i||0)*1.7)+'s">'+b+'<span class="art'+(sp==="zu"?' zu':'')+'" style="display:block">'+art(k)+'</span><span class="tx"><small>'+(sp==="zu"?'Gehört zum Vollzugang':klein)+'</small><b>'+titel+'</b></span></button>'; }
+function spAttr(n,sp){ return (sp==="zu"?'data-a="sheet"':'data-a="info"')+' data-n="'+n+'"'; }
+function stufeKachel(i,attr,x){ var s=ST[i], sp=stat(s), p=Math.round(don(s)/tot(s)*100), kl=sp==="zu"?'Gehört zum Vollzugang':(sp==="teil"?anzFrei(s)+' von '+s.v.length+' Videos frei':(fertigS(s)?'Fertig':don(s)+' von '+tot(s)+' Min.')), b=sp==="zu"?'<span class="schl">'+IC.schloss+'</span>':(sp==="teil"?'<span class="kost">Kostprobe</span>':''); return '<button class="kachel" '+attr+' style="animation-delay:-'+(i*1.3)+'s">'+b+'<span class="art'+(sp==="zu"?' zu':'')+'" style="display:block;height:'+(x||104)+'px">'+szene(PAL[s.pal]||PAL.lernen)+'</span><span class="tx"><small>'+kl+'</small><b>'+s.n+'</b><span style="display:block;height:5px;border-radius:9px;background:#E8ECE7;margin-top:9px;overflow:hidden"><i style="display:block;height:100%;width:'+p+'%;background:#2E7D5B"></i></span></span></button>'; }
 /* ---------- Weg (Strecke mit Figur) ---------- */
 var WEGE=[];
 function wegHtml(id,d,w,h,opt){ return '<div class="weg" id="'+id+'" style="width:'+w+'px;height:'+h+'px;margin:0 auto"><svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" style="position:absolute;left:0;top:0" aria-hidden="true"><path id="'+id+'p" d="'+d+'" fill="none" stroke="'+(opt.farbe||"#D5DDD4")+'" stroke-width="'+(opt.breite||8)+'" stroke-linecap="round" '+(opt.strich?'stroke-dasharray="'+opt.strich+'"':'')+'/></svg></div>'; }
@@ -153,7 +205,7 @@ function wegInit(id,opt){
   var m=document.createElement("div"); m.className="marker"; m.innerHTML=IC.auto; root.appendChild(m);
   var o={root:root,P:P,nodes:nodes,m:m,shown:opt.von!=null?opt.von:tpos(),opt:opt};
   o.zeige=function(t){ var u=t/n, p=P(u); m.style.left=p[0]+"px"; m.style.top=p[1]+"px"; o.shown=t; if(opt.onMove) opt.onMove(t,p); };
-  o.stationen=function(){ var akt=aktStufe(); nodes.forEach(function(nd,i){ var s=ST[i], fertig=don(s)===tot(s); nd.el.className="knoten"+(i===n-1?" ziel":"")+(fertig?" ok":(i===akt?" naechst":"")); nd.el.innerHTML=fertig?IC.haken:(i===n-1?IC.flagge:""); if(i===n-1&&!fertig) nd.el.innerHTML=IC.flagge; if(nd.lb) nd.lb.innerHTML='<b>'+s.n+'</b><span>'+(fertig?'Fertig':(i===akt?don(s)+' von '+tot(s)+' Min.':tot(s)+' Min.'))+'</span>'; }); };
+  o.stationen=function(){ var akt=aktStufe(); nodes.forEach(function(nd,i){ var s=ST[i], fertig=fertigS(s); nd.el.className="knoten"+(i===n-1?" ziel":"")+(fertig?" ok":(i===akt?" naechst":"")); nd.el.innerHTML=fertig?IC.haken:(i===n-1?IC.flagge:""); if(i===n-1&&!fertig) nd.el.innerHTML=IC.flagge; if(nd.lb) nd.lb.innerHTML='<b>'+s.n+'</b><span>'+(fertig?'Fertig':(i===akt?don(s)+' von '+tot(s)+' Min.':tot(s)+' Min.'))+'</span>'; }); };
   o.stationen(); return o;
 }
 function wegAnim(o,ziel,fertig){
@@ -177,65 +229,90 @@ function karteInit(id,mini,opt){
   o.nodes.forEach(function(nd){ nd.el.remove(); }); o.nodes=[]; o.kacheln=[];
   for(var i=0;i<n;i++){ var u=(i+1)/n, p=o.P(u), rechts=i%2===0, s=ST[i];
     var b=document.createElement(mini?"div":"button"); b.className="kachel"; if(!mini){ b.dataset.a="stufe"; b.dataset.i=i; } b.style.cssText="position:absolute;width:108px;top:"+(p[1]-52)+"px;"+(rechts?"left:"+(p[0]+50)+"px":"left:"+(p[0]-50-108)+"px")+";border-radius:20px;z-index:3;animation-delay:-"+(i*1.4)+"s";
-    b.innerHTML='<span class="art" style="display:block;height:54px">'+szene(PAL[s.pal]||PAL.lernen)+'</span><span class="tx" style="padding:7px 10px 9px"><small style="font-size:11px">Station '+(i+1)+'</small><b style="font-size:13.5px;line-height:1.1">'+s.n.split(',')[0]+'</b><span class="mini" style="display:block;height:4px;border-radius:9px;background:#E8ECE7;margin-top:6px;overflow:hidden"><i style="display:block;height:100%;background:#2E7D5B"></i></span></span><span class="ck" style="position:absolute;right:6px;top:6px;width:24px;height:24px;border-radius:50%;background:#2E7D5B;color:#fff;display:none;place-items:center"><span style="width:14px;height:14px;display:block">'+IC.haken+'</span></span>';
+    b.innerHTML='<span class="art" style="display:block;height:54px">'+szene(PAL[s.pal]||PAL.lernen)+'</span><span class="tx" style="padding:7px 10px 9px"><small style="font-size:11px">Station '+(i+1)+'</small><b style="font-size:13.5px;line-height:1.1">'+s.n.split(',')[0]+'</b><span class="mini" style="display:block;height:4px;border-radius:9px;background:#E8ECE7;margin-top:6px;overflow:hidden"><i style="display:block;height:100%;background:#2E7D5B"></i></span></span><span class="schl lk" style="display:none;right:6px;top:6px;width:24px;height:24px">'+IC.schloss+'</span><span class="kost ks" style="display:none;left:6px;top:6px;font-size:10px;padding:2px 7px">Kostprobe</span><span class="ck" style="position:absolute;right:6px;top:6px;width:24px;height:24px;border-radius:50%;background:#2E7D5B;color:#fff;display:none;place-items:center"><span style="width:14px;height:14px;display:block">'+IC.haken+'</span></span>';
     root.appendChild(b); o.kacheln.push(b); }
-  o.stationen=function(){ ST.forEach(function(s,i){ var b=o.kacheln[i], f=don(s)===tot(s); b.querySelector(".mini i").style.width=Math.round(don(s)/tot(s)*100)+"%"; b.querySelector(".ck").style.display=f?"grid":"none"; b.style.boxShadow=(i===aktStufe()&&!f)?"0 0 0 3px #E8A33D,0 14px 30px rgba(30,36,31,.16)":""; }); };
+  o.stationen=function(){ ST.forEach(function(s,i){ var b=o.kacheln[i], f=fertigS(s), sp=stat(s); b.querySelector(".mini i").style.width=Math.round(don(s)/tot(s)*100)+"%"; b.querySelector(".ck").style.display=f?"grid":"none"; b.querySelector(".lk").style.display=sp==="zu"?"grid":"none"; b.querySelector(".ks").style.display=sp==="teil"?"block":"none"; b.querySelector(".art").classList.toggle("zu",sp==="zu"); b.style.boxShadow=(i===aktStufe()&&!f)?"0 0 0 3px #E8A33D,0 14px 30px rgba(30,36,31,.16)":""; }); };
   o.stationen();
   var st=document.createElement("div"); st.style.cssText="position:absolute;left:"+(o.P(0)[0])+"px;top:"+(o.P(0)[1]+36)+"px;transform:translateX(-50%);font-weight:800;font-size:13px;color:#fff;background:#1E241F;border-radius:99px;padding:5px 12px;z-index:3"; st.textContent="Start"; root.appendChild(st);
   var zl=document.createElement("div"); zl.style.cssText="position:absolute;left:"+(o.P(1)[0])+"px;top:"+(o.P(1)[1]-62)+"px;transform:translateX(-50%);font-weight:800;font-size:13px;color:#fff;background:#D9731F;border-radius:99px;padding:5px 12px;z-index:3;white-space:nowrap"; zl.textContent="Prüfung"; root.appendChild(zl);
   return o;
 }
 /* ---------- Home (Übersicht) ---------- */
-function weiterDaten(){ var v=naechstesVideo(), st=ST[aktStufe()], vt=v?st.v[v[1]]:null; return {v:v,st:st,vt:vt}; }
+function weiterDaten(){ var v=naechstesVideo(), st=v?ST[v[0]]:ST[aktStufe()], vt=v?st.v[v[1]]:null; return {v:v,st:st,vt:vt}; }
 function homeSeite(){
-  var d=weiterDaten(), st=d.st, gesamt=0,ges=0; ST.forEach(function(s){gesamt+=tot(s);ges+=don(s);}); var proz=Math.round(ges/gesamt*100), n=ST.length;
-  var vids=0,vg=0; ST.forEach(function(s){ vids+=s.v.length; s.v.forEach(function(x){ if(x[2]) vg++; }); });
-  var zuletzt=[]; ST.forEach(function(s,i){ s.v.forEach(function(x,k){ if(x[2]) zuletzt.push([i,k]); }); }); zuletzt=zuletzt.slice(-3).reverse();
+  var d=weiterDaten(), st=d.st, as=ST[aktStufe()], m=minFrei(), proz=m[1]?Math.round(m[0]/m[1]*100):0, n=ST.length, start=ZUGANG==="start";
+  var vids=0,vg=0; ST.forEach(function(s,i){ s.v.forEach(function(x,k){ if(frei(i,k)){ vids++; if(x[2]) vg++; } }); });
+  var zuletzt=[]; ST.forEach(function(s,i){ s.v.forEach(function(x,k){ if(x[2]&&frei(i,k)) zuletzt.push([i,k]); }); }); zuletzt=zuletzt.slice(-3).reverse();
+  var kost=!!(d.v&&start&&ST[d.v[0]].v[d.v[1]][3]);
+  var label=d.v?(kost?'Kostprobe · ':'Weiter schauen · ')+st.n:(start?'Startzugang':'Weiter schauen · '+st.n);
+  var titel=d.vt?d.vt[0]:(start?'Du hast alles Freie gesehen':'Alles geschafft');
+  var knopf=d.v?'<button class="pill" data-a="video" data-s="'+d.v[0]+'" data-v="'+d.v[1]+'" style="background:#1E241F;color:#fff">'+IC.play+'Weiter · '+d.vt[1]+' Min.</button>':(start?sperrPill():'<button class="pill" data-a="tab" data-p="pruefung" style="background:#1E241F;color:#fff">Zur Prüfung</button>');
+  var sub=stat(as)==="zu"?'Gehört zum Vollzugang':(stat(as)==="teil"?'Kostprobe frei · Rest im Vollzugang':don(as)+' von '+tot(as)+' Min. · noch '+(tot(as)-don(as))+' bis zur Station');
+  var zugBanner=start?'<button class="karte" data-a="sheet" style="display:flex;align-items:center;gap:12px;width:calc(100% - 36px);margin:16px 18px 0;padding:12px 16px;background:#FFF6E3"><span class="sy" style="background:var(--gold);color:#fff">'+IC.schloss+'</span><span style="flex:1;min-width:0"><b style="display:block;font-size:16px;line-height:1.2">Startzugang</b><span style="color:#6B7269;font-size:13.5px">Station 1 und Kostproben sind frei. Mehr mit Vollzugang.</span></span><span style="font-size:22px;color:#B5BBB3">›</span></button>':'';
   var h='<div class="scroll" id="sc">'+
-  '<div style="position:relative;height:330px;border-radius:0 0 38px 38px;overflow:hidden">'+szene({s1:"#BFE0F7",s2:"#FFF4E0",h1:"#C9E3C5",h2:"#9FD0A8",rd:"#7F8C86",ohneAuto:true})+'<div style="position:absolute;inset:0;background:linear-gradient(transparent 46%,rgba(245,246,243,.97) 100%)"></div>'+
-  '<div style="position:absolute;left:0;right:0;top:0">'+status()+'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px 0"><span style="font-weight:800;font-size:16px">Fahr-Akademie</span>'+klasseS()+'</div></div>'+
-  '<div style="position:absolute;left:0;right:0;bottom:16px;padding:0 22px;text-align:center"><div style="font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#4B534B">Weiter schauen · '+st.n+'</div><div style="font-size:34px;font-weight:800;line-height:1.02;letter-spacing:-.02em;margin:5px 0 12px">'+(d.vt?d.vt[0]:"Alles geschafft")+'</div><button class="pill" data-a="video" data-s="'+(d.v?d.v[0]:0)+'" data-v="'+(d.v?d.v[1]:0)+'" style="background:#1E241F;color:#fff">'+IC.play+'Weiter · '+(d.vt?d.vt[1]:0)+' Min.</button></div></div>'+
+  '<div style="position:relative;height:346px;border-radius:0 0 38px 38px;overflow:hidden">'+szene({s1:"#BFE0F7",s2:"#FFF4E0",h1:"#C9E3C5",h2:"#9FD0A8",rd:"#7F8C86",ohneAuto:true})+'<div style="position:absolute;inset:0;background:linear-gradient(transparent 46%,rgba(245,246,243,.97) 100%)"></div>'+
+  '<div style="position:absolute;left:0;right:0;top:0">'+status()+'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px 0"><span style="font-weight:800;font-size:16px">Fahr-Akademie</span>'+klasseS()+'</div><div style="padding:10px 18px 0">'+chipHtml()+'</div></div>'+
+  '<div style="position:absolute;left:0;right:0;bottom:16px;padding:0 22px;text-align:center"><div style="font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#4B534B">'+label+'</div><div style="font-size:34px;font-weight:800;line-height:1.02;letter-spacing:-.02em;margin:5px 0 12px">'+titel+'</div>'+knopf+'</div></div>'+
+  zugBanner+
   '<div class="abschn" style="padding-top:22px"><h2>Dein Weg</h2><button data-a="tab" data-p="weg">Karte öffnen</button></div>'+
-  '<button class="karte" data-a="tab" data-p="weg" style="display:block;width:calc(100% - 36px);margin:0 18px;overflow:hidden;padding:0;position:relative"><div id="mini" style="position:relative;height:210px;overflow:hidden;pointer-events:none"><div id="minik" style="position:absolute;left:0;top:0;width:'+KW+'px;height:'+KH+'px;transform-origin:0 0">'+karteHtml("wm",true)+'</div></div><div style="padding:12px 16px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px"><div><div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6B7269">Station '+(aktStufe()+1)+' von '+n+'</div><div id="minitxt" style="font-weight:800;font-size:17px;line-height:1.2">'+st.n+'</div><div style="color:#6B7269;font-size:13.5px">'+don(st)+' von '+tot(st)+' Min. · noch '+(tot(st)-don(st))+' bis zur Station</div></div><span style="font-size:26px;color:#B5BBB3">›</span></div></button>'+
-  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px 18px 0">'+
+  '<button class="karte" data-a="tab" data-p="weg" style="display:block;width:calc(100% - 36px);margin:0 18px;overflow:hidden;padding:0;position:relative"><div id="mini" style="position:relative;height:210px;overflow:hidden;pointer-events:none"><div id="minik" style="position:absolute;left:0;top:0;width:'+KW+'px;height:'+KH+'px;transform-origin:0 0">'+karteHtml("wm",true)+'</div></div><div style="padding:12px 16px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px"><div><div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6B7269">Station '+(aktStufe()+1)+' von '+n+'</div><div id="minitxt" style="font-weight:800;font-size:17px;line-height:1.2">'+as.n+'</div><div style="color:#6B7269;font-size:13.5px">'+sub+'</div></div><span style="font-size:26px;color:#B5BBB3">›</span></div></button>'+
+  '<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;padding:16px 18px 0">'+
   '<button class="karte" data-a="tab" data-p="weg" style="padding:16px;display:flex;align-items:center;gap:12px">'+ringSvg(proz)+'<span><b style="display:block;font-size:17px;line-height:1.15;white-space:nowrap">'+vg+' von '+vids+'</b><span style="color:#6B7269;font-size:13.5px">Videos gesehen</span></span></button>'+
-  '<button class="karte" data-a="tab" data-p="pruefung" style="padding:16px;background:#FFF1DF;display:flex;align-items:center;gap:10px"><span style="font-size:46px;font-weight:800;letter-spacing:-.04em;color:#D9731F;line-height:1">12</span><span><b style="display:block;font-size:16px;line-height:1.15">Tage bis zur Prüfung</b></span></button></div>'+
-  '<div class="abschn"><h2>Entdecken</h2></div><div class="raster">'+kachel("verstehen","22 Szenen","3D-Szenen",'data-a="tab" data-p="verstehen"',0)+kachel("spiele","11 Spiele","Spiele",'data-a="tab" data-p="verstehen"',1)+kachel("pruefung","Strecken, Ablauf","Prüfungstag",'data-a="tab" data-p="pruefung"',2)+(KL==="C"?kachel("lkw","Klasse C/CE","Lkw und Zug",'data-a="lkwliste"',3):kachel("lernen","Kurz erklärt","Nützliches",'data-a="info" data-n="Nützliches"',3))+'</div>'+
+  terminKachel()+'</div>'+
+  '<div class="abschn"><h2>Entdecken</h2></div><div class="raster">'+kachel("verstehen",start?"1 Kostprobe":"22 Szenen","3D-Szenen",'data-a="tab" data-p="verstehen"',0)+kachel("spiele","11 Spiele","Spiele",'data-a="tab" data-p="verstehen"',1)+kachel("pruefung","Strecken, Ablauf","Prüfungstag",'data-a="tab" data-p="pruefung"',2)+(KL==="C"?kachel("lkw",start?"2 Kostproben":"Klasse C/CE","Lkw und Zug",'data-a="lkwliste"',3):kachel("lernen","Kurz erklärt","Nützliches",'data-a="info" data-n="Nützliches"',3))+'</div>'+
   '<div class="abschn"><h2>Zuletzt gesehen</h2><button data-a="tab" data-p="weg">Alle</button></div><div class="liste">'+(zuletzt.length?zuletzt.map(function(z){var x=ST[z[0]].v[z[1]]; return '<button class="zeile" data-a="stufe" data-i="'+z[0]+'"><span class="sym" style="background:#2E7D5B;color:#fff">'+IC.haken+'</span><span class="t"><b>'+x[0]+'</b><span>'+ST[z[0]].n+' · '+x[1]+' Min.</span></span><span class="p">›</span></button>';}).join(''):'<div style="padding:18px;color:#6B7269">Noch nichts gesehen.</div>')+'</div></div>';
   return h;
 }
 function ringSvg(p){ var r=30,u=2*Math.PI*r,d=u*p/100; return '<svg width="72" height="72" viewBox="0 0 72 72" aria-hidden="true" style="flex:none"><circle cx="36" cy="36" r="'+r+'" fill="none" stroke="#E3F2EA" stroke-width="9"/><circle cx="36" cy="36" r="'+r+'" fill="none" stroke="#2E7D5B" stroke-width="9" stroke-linecap="round" stroke-dasharray="'+d.toFixed(1)+' '+u.toFixed(1)+'" transform="rotate(-90 36 36)"/><text x="36" y="42" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="800" font-size="17" fill="#1E241F">'+p+'%</text></svg>'; }
 function wegSeite(){
-  var d=weiterDaten();
+  var d=weiterDaten(), start=ZUGANG==="start";
+  var knopf=d.v?'<button class="pill" data-a="video" data-s="'+d.v[0]+'" data-v="'+d.v[1]+'" style="background:#1E241F;color:#fff;box-shadow:0 8px 22px rgba(30,36,31,.35);pointer-events:auto">'+IC.play+'Weiter · '+d.vt[0]+'</button>':(start?sperrPill(';box-shadow:0 8px 22px rgba(30,36,31,.35);pointer-events:auto'):'<button class="pill" data-a="tab" data-p="pruefung" style="background:#1E241F;color:#fff;box-shadow:0 8px 22px rgba(30,36,31,.35);pointer-events:auto">Zur Prüfung</button>');
   return '<div class="scroll" id="sc" style="background:#B8D8B6">'+karteHtml("w3",false)+'</div>'+
   '<div style="position:absolute;left:0;right:0;top:0;z-index:5;background:linear-gradient(#CFE6F7 62%,rgba(207,230,247,0))">'+status()+'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 18px 22px"><div><div style="font-size:12.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#4B6A82">Station '+(aktStufe()+1)+' von '+ST.length+'</div><div style="font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.05">Dein Weg</div></div><button class="pill" data-a="demo" style="min-height:40px;padding:0 16px;font-size:14px;background:rgba(255,255,255,.8);color:#1E241F">Demo</button></div></div>'+
-  '<div style="position:absolute;left:0;right:0;bottom:92px;display:flex;justify-content:center;z-index:6;pointer-events:none"><button class="pill" data-a="video" data-s="'+(d.v?d.v[0]:0)+'" data-v="'+(d.v?d.v[1]:0)+'" style="background:#1E241F;color:#fff;box-shadow:0 8px 22px rgba(30,36,31,.35);pointer-events:auto">'+IC.play+'Weiter · '+(d.vt?d.vt[0]:"Fertig")+'</button></div>';
+  '<div style="position:absolute;left:0;right:0;bottom:92px;display:flex;justify-content:center;z-index:6;pointer-events:none">'+knopf+'</div>';
 }
 /* ---------- Gemeinsame Seiten ---------- */
 function verstehenSeite(){
+  var voll=ZUGANG==="voll";
   var h='<div class="scroll" id="sc">'+status()+'<div style="padding:16px 22px 0;display:flex;justify-content:space-between;align-items:flex-end"><h1 class="titel">Verstehen</h1>'+klasseS()+'</div>';
-  if(KL==="C") h+='<div class="abschn"><h2>Lkw und Zug verstehen</h2><button data-a="lkwliste">Alle ansehen</button></div><div class="reihe">'+[["Ankuppeln eines Sattelzugs","6 min"],["Abkuppeln","5 min"],["Gelb zuerst, rot nie allein","6 min"],["Toter Winkel","4 min"]].map(function(f,i){return kachel("lkw",f[1]+" · Text im Bild",f[0],'data-a="info" data-n="'+f[0]+'"',i);}).join('')+'</div>';
+  if(KL==="C") h+='<div class="abschn"><h2>Lkw und Zug verstehen</h2><button data-a="lkwliste">Alle ansehen</button></div><div class="reihe">'+[["Ankuppeln eines Sattelzugs","6 min"],["Schleppkurven","5 min"],["Gelb zuerst, rot nie allein","6 min"],["Toter Winkel","4 min"]].map(function(f,i){var sp=lkwSp(f[0]); return kachel("lkw",f[1]+" · Text im Bild",f[0],spAttr(f[0],sp),i,"",sp);}).join('')+'</div>';
   else h+='<div style="padding:18px 18px 0">'+kachel("lkw","Klasse C/CE","Lkw und Zug verstehen",'data-a="kl" data-k="C"',0)+'</div>';
-  h+='<div class="abschn"><h2>3D-Szenen</h2><button data-a="info" data-n="3D-Szenen">Alle ansehen</button></div><div class="reihe">'+[["Innerorts","7 Szenen","pruefung"],["Landstraße","6 Szenen","lernen"],["Autobahn","4 Szenen","verstehen"],["Grundfahraufgaben","5 Szenen","szene2"]].map(function(f,i){return kachel(f[2],f[1],f[0],'data-a="info" data-n="'+f[0]+'"',i);}).join('')+'</div>';
-  h+='<div class="abschn"><h2>Spiele</h2><button data-a="info" data-n="Spiele">Alle ansehen</button></div><div class="reihe">'+["Duell","Ampel","Memory","Schilder","Tempo","Vorfahrt"].map(function(f,i){return '<button class="kachel q" data-a="info" data-n="'+f+'" style="animation-delay:-'+(i*1.5)+'s;border-radius:26px;height:118px;background:'+["#FCE6E3","#E3F2EA","#E1ECF7","#FFF1C9","#E7E4F6","#FCEBD7"][i]+'"><span style="display:grid;place-items:center;height:78px;font-size:44px;font-weight:800;color:'+["#E86A5A","#2E7D5B","#3C7FB5","#C9961F","#6B63B8","#D9731F"][i]+'">'+f[0][0]+'</span><span style="display:block;text-align:center;font-weight:800;font-size:14px">'+f+'</span></button>';}).join('')+'</div></div>';
+  h+='<div class="abschn"><h2>3D-Szenen</h2><button data-a="info" data-n="3D-Szenen">Alle ansehen</button></div><div class="reihe">'+[["Innerorts","7 Szenen","pruefung"],["Landstraße","6 Szenen","lernen"],["Autobahn","4 Szenen","verstehen"],["Grundfahraufgaben","5 Szenen","szene2"]].map(function(f,i){var sp=voll?null:(f[0]==="Landstraße"?"kost":"zu"); return kachel(f[2],f[1],f[0],spAttr(f[0],sp),i,"",sp);}).join('')+'</div>';
+  h+='<div class="abschn"><h2>Spiele</h2><button data-a="info" data-n="Spiele">Alle ansehen</button></div><div class="reihe">'+["Duell","Ampel","Memory","Schilder","Tempo","Vorfahrt"].map(function(f,i){return '<button class="kachel q" data-a="info" data-n="'+f+'" style="animation-delay:-'+(i*1.5)+'s;border-radius:26px;height:118px;background:'+["#FCE6E3","#E3F2EA","#E1ECF7","#FFF1C9","#E7E4F6","#FCEBD7"][i]+'"><span style="display:grid;place-items:center;height:78px;font-size:44px;font-weight:800;color:'+["#E86A5A","#2E7D5B","#3C7FB5","#C9961F","#6B63B8","#D9731F"][i]+'">'+f[0]+'</span><span style="display:block;text-align:center;font-weight:800;font-size:14px">'+f+'</span></button>';}).join('')+'</div></div>';
   return h;
 }
+function lkwSp(f){ return ZUGANG==="voll"?null:(LKWFREI.indexOf(f)>-1?"kost":"zu"); }
 function pruefungSeite(){
-  var s=ST[5];
-  return '<div class="scroll" id="sc"><div style="position:relative;height:300px;border-radius:0 0 38px 38px;overflow:hidden">'+art("pruefung")+'<div style="position:absolute;inset:0;background:linear-gradient(transparent 40%,rgba(245,246,243,.95))"></div><div style="position:absolute;left:0;right:0;top:0">'+status()+'</div><div style="position:absolute;left:22px;right:22px;bottom:18px"><div style="font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#4B534B">Dein Termin</div><div style="font-size:50px;font-weight:800;letter-spacing:-.03em;color:#D9731F;line-height:1">12 Tage</div><div style="font-size:15px;color:#4B534B;margin-top:4px">Keine Angst. Hier ist alles für den Tag an einem Ort.</div></div></div>'+
+  var tg=TERMIN, datum=tg==null?"":terminDatum({weekday:"long",day:"numeric",month:"long"}), gross, unter, farbe="#D9731F";
+  if(tg==null){ gross="Noch offen"; unter="Deine Fahrschule trägt den Termin ein. Dann zählt die App hier bis zum Tag herunter."; farbe="#6B7269"; }
+  else if(tg===0){ gross="Heute"; unter=datum+". Atme durch. Du bist vorbereitet."; }
+  else if(tg===1){ gross="Morgen"; unter=datum+". Schau dir heute noch einmal die Strecke an."; }
+  else { gross=tg+" Tage"; unter=datum+". Keine Angst. Hier ist alles für den Tag an einem Ort."; }
+  if(tg!=null&&tg<=5) farbe="#C25E10";
+  var rest=restMin(), plan="";
+  if(tg!=null&&tg>1) plan='<div class="karte" style="margin:18px 18px 0;padding:16px 18px"><div class="lab">Bis dahin</div><div style="font-size:19px;font-weight:800;margin-top:3px">'+(rest>0?'Noch '+rest+' Min. Video':'Alle freien Videos gesehen')+'</div><div style="color:#6B7269;font-size:14.5px;margin-top:2px;line-height:1.35">'+(rest>0?'Das sind etwa '+Math.ceil(rest/tg)+' Min. pro Tag.':'Wiederhole die schwierigen Stationen.')+(ZUGANG==="start"?' Mehr Videos gibt es mit Vollzugang.':'')+'</div></div>';
+  return '<div class="scroll" id="sc"><div style="position:relative;height:310px;border-radius:0 0 38px 38px;overflow:hidden">'+art("pruefung")+'<div style="position:absolute;inset:0;background:linear-gradient(transparent 36%,rgba(245,246,243,.96))"></div><div style="position:absolute;left:0;right:0;top:0">'+status()+'</div><div style="position:absolute;left:22px;right:22px;bottom:18px"><div style="font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#4B534B">Dein Termin</div><div style="font-size:50px;font-weight:800;letter-spacing:-.03em;color:'+farbe+';line-height:1.02">'+gross+'</div><div style="font-size:15px;color:#4B534B;margin-top:4px;line-height:1.35">'+unter+'</div></div></div>'+plan+
   '<div class="abschn"><h2>Prüfungsstrecken</h2></div><div style="padding:0 18px">'+stufeKachel(5,'data-a="stufe" data-i="5"',120)+'</div>'+
   '<div class="abschn"><h2>Am Prüfungstag</h2></div><div class="liste">'+[["Unterlagen und Sehhilfe","Was du mitbringen musst"],["Ablauf der Prüfung","Von der Begrüßung bis zum Ergebnis"],["Typische Fehler","Und wie du sie vermeidest"]].map(function(x){return '<button class="zeile" data-a="info" data-n="'+x[0]+'"><span class="sym">'+IC.pruefung+'</span><span class="t"><b>'+x[0]+'</b><span>'+x[1]+'</span></span><span class="p">›</span></button>';}).join('')+'</div></div>';
 }
 function ichSeite(){
+  var start=ZUGANG==="start";
   var g=function(t,a){ return '<div class="abschn"><h2>'+t+'</h2></div><div class="liste">'+a.map(function(x){return '<button class="zeile" data-a="info" data-n="'+x[0]+'"><span class="sym">'+x[2]+'</span><span class="t"><b>'+x[0]+'</b><span>'+x[1]+'</span></span><span class="p">›</span></button>';}).join('')+'</div>'; };
-  return '<div class="scroll" id="sc">'+status()+'<div style="padding:16px 22px 0"><h1 class="titel">Ich</h1></div><div class="karte" style="margin:16px 18px 0;padding:16px;display:flex;align-items:center;gap:14px"><span style="width:56px;height:56px;border-radius:50%;background:#2E7D5B;color:#fff;display:grid;place-items:center;font-weight:800;font-size:22px">L</span><span><b style="font-size:19px;display:block">Lena</b><span style="color:#6B7269;font-size:14px">Klasse '+(KL==="C"?"B und C/CE":"B")+' · gültig bis 30.06.</span></span></div>'+g("Lernen",[["Verlauf","Was du schon gesehen hast",IC.liste],["Sprache","Deutsch",IC.sprache]])+g("Mehr",[["Hilfe und Kontakt","Fragen an die Fahrschule",IC.hilfe]])+'</div>';
+  var zg=start?'<div class="karte" style="margin:14px 18px 0;padding:16px;background:#FFF6E3"><div style="display:flex;align-items:center;gap:10px">'+chipHtml()+'</div><div style="font-size:18px;font-weight:800;margin-top:10px;line-height:1.2">Station 1 und Kostproben sind frei</div><div style="color:#6B7269;font-size:14.5px;margin-top:3px;line-height:1.35">Den Vollzugang richtet deine Fahrschule für dich ein. Danach ist alles frei: Stationen, Szenen und Filme.</div><button class="pill" data-a="sheet" style="margin-top:14px;background:#1E241F;color:#fff;width:100%">So kommst du zum Vollzugang</button></div>'
+    :'<div class="karte" style="margin:14px 18px 0;padding:16px;background:#E3F2EA"><div style="display:flex;align-items:center;gap:10px">'+chipHtml()+'</div><div style="font-size:18px;font-weight:800;margin-top:10px;line-height:1.2">Alles ist für dich frei</div><div style="color:#4B6A5A;font-size:14.5px;margin-top:3px;line-height:1.35">Stationen, Szenen, Filme und Prüfungsstrecken. Gültig bis 30.06.</div></div>';
+  return '<div class="scroll" id="sc">'+status()+'<div style="padding:16px 22px 0"><h1 class="titel">Ich</h1></div><div class="karte" style="margin:16px 18px 0;padding:16px;display:flex;align-items:center;gap:14px"><span style="width:56px;height:56px;border-radius:50%;background:#2E7D5B;color:#fff;display:grid;place-items:center;font-weight:800;font-size:22px;flex:none">L</span><span><b style="font-size:19px;display:block">Lena</b><span style="color:#6B7269;font-size:14px">Klasse '+(KL==="C"?"B und C/CE":"B")+(start?"":" · gültig bis 30.06.")+'</span></span></div>'+zg+g("Lernen",[["Verlauf","Was du schon gesehen hast",IC.liste],["Sprache","Deutsch",IC.sprache]])+g("Mehr",[["Hilfe und Kontakt","Fragen an die Fahrschule",IC.hilfe]])+'</div>';
 }
 function lkwSeite(){
-  return '<div class="scroll" id="sc">'+status()+'<button class="zurueck" data-a="zurueck">'+IC.zurueck+'Zurück</button><div style="padding:6px 22px 0"><h1 class="titel">Lkw und Zug verstehen</h1><div style="color:#6B7269;margin-top:4px;font-size:15px">10 Erklärfilme für Klasse C/CE. Nur Text im Bild.</div></div><div class="raster" style="padding-top:18px">'+["Ankuppeln eines Sattelzugs","Abkuppeln eines Sattelzugs","Gelb zuerst, rot nie allein","Schleppkurven","Toter Winkel","Abstand","Zweikreis- und Zweileitungsbremse","Abreißen der Kupplung","Federspeicherbremse","Lenk- und Ruhezeiten"].map(function(f,i){return kachel("lkw","Film",f,'data-a="info" data-n="'+f+'"',i);}).join('')+'</div></div>';
+  var start=ZUGANG==="start";
+  return '<div class="scroll" id="sc">'+status()+'<button class="zurueck" data-a="zurueck">'+IC.zurueck+'Zurück</button><div style="padding:6px 22px 0"><h1 class="titel">Lkw und Zug verstehen</h1><div style="color:#6B7269;margin-top:4px;font-size:15px">10 Erklärfilme für Klasse C/CE. Nur Text im Bild.'+(start?' 2 Filme sind als Kostprobe frei.':'')+'</div></div><div class="raster" style="padding-top:18px">'+["Ankuppeln eines Sattelzugs","Abkuppeln eines Sattelzugs","Gelb zuerst, rot nie allein","Schleppkurven","Toter Winkel","Abstand","Zweikreis- und Zweileitungsbremse","Abreißen der Kupplung","Federspeicherbremse","Lenk- und Ruhezeiten"].map(function(f,i){var sp=lkwSp(f); return kachel("lkw","Film",f,spAttr(f,sp),i,"",sp);}).join('')+'</div></div>';
 }
 function stufeSeite(i){
-  var s=ST[i], p=Math.round(don(s)/tot(s)*100);
-  return '<div class="scroll" id="sc">'+status()+'<button class="zurueck" data-a="zurueck">'+IC.zurueck+'Zurück</button><div style="padding:4px 22px 0"><h1 class="titel">'+s.n+'</h1><div style="color:#6B7269;margin-top:6px;font-size:15px">'+don(s)+' von '+tot(s)+' Minuten gesehen. Wenn du alle Minuten schaust, kommst du an der Station an.</div><div style="height:8px;border-radius:9px;background:#E3E8E1;margin-top:14px;overflow:hidden"><i style="display:block;height:100%;width:'+p+'%;background:#2E7D5B"></i></div></div><div class="liste" style="margin-top:20px">'+s.v.map(function(x,k){return '<button class="zeile" data-a="video" data-s="'+i+'" data-v="'+k+'"><span class="sym" style="'+(x[2]?'background:#2E7D5B;color:#fff':'')+'">'+(x[2]?IC.haken:IC.play)+'</span><span class="t"><b>'+x[0]+'</b><span>'+x[1]+' Min.'+(x[2]?' · gesehen':'')+'</span></span><span class="p">›</span></button>';}).join('')+'</div></div>';
+  var s=ST[i], sp=stat(s), p=Math.round(don(s)/tot(s)*100);
+  var text=sp==="zu"?s.v.length+' Videos, '+tot(s)+' Minuten. Diese Station gehört zum Vollzugang.':(sp==="teil"?'Eine Kostprobe ist frei. Der Rest gehört zum Vollzugang.':don(s)+' von '+tot(s)+' Minuten gesehen. Wenn du alle Minuten schaust, kommst du an der Station an.');
+  var hinweis=sp==="voll"?'':'<button class="karte" data-a="sheet" data-n="'+s.n+'" style="display:flex;align-items:center;gap:12px;width:calc(100% - 36px);margin:16px 18px 0;padding:12px 16px;background:#FFF6E3"><span class="sy" style="background:var(--gold);color:#fff">'+IC.schloss+'</span><span style="flex:1;min-width:0"><b style="display:block;font-size:16px;line-height:1.2">Mehr mit Vollzugang</b><span style="color:#6B7269;font-size:13.5px">Deine Fahrschule schaltet ihn frei.</span></span><span style="font-size:22px;color:#B5BBB3">›</span></button>';
+  return '<div class="scroll" id="sc">'+status()+'<button class="zurueck" data-a="zurueck">'+IC.zurueck+'Zurück</button><div style="padding:4px 22px 0"><h1 class="titel">'+s.n+'</h1><div style="color:#6B7269;margin-top:6px;font-size:15px">'+text+'</div><div style="height:8px;border-radius:9px;background:#E3E8E1;margin-top:14px;overflow:hidden"><i style="display:block;height:100%;width:'+p+'%;background:#2E7D5B"></i></div></div>'+hinweis+'<div class="liste" style="margin-top:20px">'+s.v.map(function(x,k){
+    if(!frei(i,k)) return '<button class="zeile" data-a="sheet" data-n="'+x[0]+'"><span class="sym" style="background:#F1E6CF;color:#8A5A0B">'+IC.schloss+'</span><span class="t"><b style="color:#6B7269">'+x[0]+'</b><span>'+x[1]+' Min. · Vollzugang</span></span><span class="p">›</span></button>';
+    return '<button class="zeile" data-a="video" data-s="'+i+'" data-v="'+k+'"><span class="sym" style="'+(x[2]?'background:#2E7D5B;color:#fff':'')+'">'+(x[2]?IC.haken:IC.play)+'</span><span class="t"><b>'+x[0]+'</b><span>'+x[1]+' Min.'+(x[2]?' · gesehen':'')+((ZUGANG==="start"&&x[3])?' · Kostprobe':'')+'</span></span><span class="p">›</span></button>';}).join('')+'</div></div>';
 }
 
 /* ---------- Ablauf ---------- */
@@ -246,7 +323,7 @@ function render(){
   if(sub&&sub.t==="stufe") html=stufeSeite(sub.i); else if(sub&&sub.t==="lkw") html=lkwSeite();
   else if(TAB==="start") html=homeSeite(); else if(TAB==="weg") html=wegSeite(); else if(TAB==="verstehen") html=verstehenSeite(); else if(TAB==="pruefung") html=pruefungSeite(); else html=ichSeite();
   var tabs=[["start","Start"],["weg","Weg"],["verstehen","Verstehen"],["pruefung","Prüfung"],["ich","Ich"]].map(function(t){return '<button data-a="tab" data-p="'+t[0]+'"'+(TAB===t[0]&&!sub?' aria-current="page"':'')+'>'+IC[t[0]]+'<span>'+t[1]+'</span></button>';}).join('');
-  tel.innerHTML=html+'<div class="tabbar">'+tabs+'</div><div class="toast" id="toast" role="status"></div><div class="video" id="video"><div style="font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#6B7269">Video läuft</div><div id="vt" style="font-size:26px;font-weight:800;line-height:1.1"></div><div class="bar"><i id="vb"></i></div><div style="color:#6B7269;font-size:14px">Im Entwurf dauert das zwei Sekunden.</div></div>';
+  tel.innerHTML=html+'<div class="tabbar">'+tabs+'</div><div class="toast" id="toast" role="status"></div>'+blattHtml()+'<div class="video" id="video"><div style="font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#6B7269">Video läuft</div><div id="vt" style="font-size:26px;font-weight:800;line-height:1.1"></div><div class="bar"><i id="vb"></i></div><div style="color:#6B7269;font-size:14px">Im Entwurf dauert das zwei Sekunden.</div></div>';
   cur=null; var vz=(window.__von!=null?window.__von:tpos());
   if(!sub&&(TAB==="start"||TAB==="weg")){
     var id=TAB==="start"?"wm":"w3", mini=TAB==="start";
@@ -257,9 +334,9 @@ function render(){
 }
 function toast(t){ var e=document.getElementById("toast"); if(!e) return; e.textContent=t; e.classList.add("an"); clearTimeout(toast.t); toast.t=setTimeout(function(){e.classList.remove("an");},2600); }
 function schaue(si,vi,rueck){
-  var v=ST[si].v[vi]; if(!v){ return; } if(v[2]){ toast("Schon gesehen."); return; }
+  var v=ST[si].v[vi]; if(!v){ return; } if(!frei(si,vi)){ sheetAuf(v[0]); return; } if(v[2]){ toast("Schon gesehen."); return; }
   var vor=tpos(); var ov=document.getElementById("video"); document.getElementById("vt").textContent=v[0]; ov.classList.add("an"); var b=document.getElementById("vb"); b.style.transition="none"; b.style.width="0"; void b.offsetWidth; b.style.transition="width 2s linear"; b.style.width="100%";
-  setTimeout(function(){ v[2]=true; ov.classList.remove("an"); window.__von=vor; var s=ST[si], fertig=don(s)===tot(s);
+  setTimeout(function(){ v[2]=true; ov.classList.remove("an"); window.__von=vor; var s=ST[si], fertig=fertigS(s);
     if(rueck){ SUB=null; TAB="weg"; }
     render();
     setTimeout(function(){ toast(fertig?("Station geschafft: "+s.n):("+"+v[1]+" Min. · noch "+(tot(s)-don(s))+" bis zur Station")); },400);
@@ -274,7 +351,16 @@ tel.addEventListener("click",function(e){
   else if(a==="zurueck"){ SUB=null; render(); }
   else if(a==="video"){ schaue(+b.dataset.s,+b.dataset.v,!!SUB&&SUB.t==="stufe"); }
   else if(a==="demo"){ var n=naechstesVideo(); if(!n){ toast("Alles geschafft. Zeit für die Prüfung."); return; } schaue(n[0],n[1],false); }
+  else if(a==="sheet"){ sheetAuf(b.dataset.n); }
+  else if(a==="sheetzu"){ sheetZu(); }
+  else if(a==="fragen"){ sheetZu(); toast("Im Entwurf ohne Funktion."); }
   else if(a==="info"){ toast("„"+(b.dataset.n||"Das")+"“ ist im Prototyp nicht ausgearbeitet."); }
+});
+document.querySelector(".steuer").addEventListener("click",function(e){
+  var b=e.target.closest("button"); if(!b) return;
+  Array.prototype.forEach.call(b.parentNode.children,function(x){ x.setAttribute("aria-pressed",x===b?"true":"false"); });
+  if(b.dataset.z) ZUGANG=b.dataset.z; else if("t" in b.dataset) TERMIN=b.dataset.t===""?null:+b.dataset.t;
+  window.__von=null; render();
 });
 render();
 })();
