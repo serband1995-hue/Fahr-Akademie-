@@ -361,6 +361,9 @@ Spiel 3 **Schilder-Memory** und Spiel 4 **Rechts vor Links** (gebaut 07.10.2026,
 - Service Worker: HTML/API-Aufrufe müssen Network First sein, nie Cache
   First — sonst sehen Schüler dauerhaft alte Stände.
 
+## Lkw und Zug verstehen (09.10.2026)
+Erklärfilme Klasse C/CE (Code-Animation, nur Text im Bild, **keine Stimme**; Stimmen kommen später). Quellen und Doku: `film/lkw/` (README, Faktenblätter im Vault). Je Film eine App-Datei `verkehr/lkw-<id>.js`, **gebaut** mit `node film/lkw/bauen.mjs <id>` (nie von Hand ändern). In der App: Abschnitt unter „Verkehr verstehen“ (`renderLkwListeHtml`, `LKW_FILME` in index.html; Szene-Id `lkw:<id>`). Film-Text nur in de/en/tr/sr (Entscheidung Serband); die App-Texte (`lkTitel`, `lkIntro`, `lkSprachen`) gibt es in allen 18 Sprachen (Muttersprachler-Prüfung offen: rif, ti, ckb, kmr, ps, am, el, tr/sr-Fachwörter). Alle 10 Filme sind für alle offen; die Dateien liegen öffentlich, eine App-Sperre wäre nur Schein. KI-erzeugte Bauteilfotos tragen den Hinweis „Beispielbild, KI-erzeugt“. Neuer Film = Ordner `film/lkw/<id>/` + Eintrag in `LKW_FILME` + `sw.js` CACHE_NAME erhöhen.
+
 ## Bei Unklarheit
 
 Nicht raten. Fragen. Eine falsche Annahme kostet mehr Zeit als eine
