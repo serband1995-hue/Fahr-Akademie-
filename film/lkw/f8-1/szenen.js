@@ -41,7 +41,7 @@
       const ev9 = [{ art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(4.5) }, { art: "arbeit", min: h(1) }, { art: "ruhe", min: h(11) }];
       const ev10 = [{ art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(4.5) }, { art: "pause", min: 45 }, { art: "fahren", min: h(1) }, { art: "arbeit", min: h(1) }, { art: "ruhe", min: h(11) }];
       if (!M.pruefeTag(ev9).ok || !M.pruefeTag(ev10, { verlaengert: true }).ok || M.pruefeTag(ev10).ok) throw new Error("Beispieltage passen nicht zum Modell");
-      const p9 = pille(st, tx("l_tag9"), 540, 200, A.fahren, true), p10 = pille(st, tx("l_tag10"), 540, 200, "#F2C16E", true), pa = pille(st, tx("l_arbeit"), L.px(12), 262, A.arbeit);
+      const p9 = pille(st, tx("l_tag9"), 540, 150, A.fahren, true), p10 = pille(st, tx("l_tag10"), 540, 150, "#F2C16E", true), pa = pille(st, tx("l_arbeit"), L.px(12), 262, A.arbeit);
       const lenkBei = (e, m) => { let s = 0, u = 0; for (const x of e) { const d = Math.max(0, Math.min(x.min, m - u)); if (x.art === "fahren") s += d; u += x.min; } return s; };
       const t9 = [3, 15], t10 = [18.5, 31.5];
       uhr(T0, ch.dauer, function (t) {
@@ -87,7 +87,7 @@
         { ev: [{ art: "arbeit", min: h(16) }, { art: "ruhe", min: h(8) }], t0: 58, t1: 68, name: tx("l_kurz"), farbe: WARN, soll: "zuKurz" }
       ];
       szen.forEach((s) => { const r = M.pruefeTag(s.ev).ruhe; if (r !== s.soll) throw new Error("Ruhezeit-Beispiel passt nicht zum Modell: " + r + " statt " + s.soll); });
-      const pn = szen.map((s) => pille(st, s.name, 540, 250, s.farbe, true)), f24 = pille(st, tx("l_fenster"), 540, 620, A.ruhe), pt = pille(st, tx("l_arbeitstag"), L.px(6), 325, A.arbeit);
+      const pn = szen.map((s) => pille(st, s.name, 540, 205, s.farbe, true)), f24 = pille(st, tx("l_fenster"), 540, 620, A.ruhe), pt = pille(st, tx("l_arbeitstag"), L.px(6), 325, A.arbeit);
       // Klammer 24 Stunden
       const kg = el("g", { opacity: 0.0 }, B.ueber), ky = 372; el("line", { x1: L.px(0), y1: ky, x2: L.px(24), y2: ky, stroke: F.creme, "stroke-width": 4 }, kg); [0, 24].forEach((hh) => el("line", { x1: L.px(hh), y1: ky - 12, x2: L.px(hh), y2: ky + 12, stroke: F.creme, "stroke-width": 4 }, kg));
       const wahl = (t) => t < 18 ? 0 : t < 34 ? 1 : t < 56 ? 2 : 3;

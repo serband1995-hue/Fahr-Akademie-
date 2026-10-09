@@ -40,7 +40,7 @@
         const pF = t < 30 ? 1 : t < 40 ? 1 - glatt((t - 30) / 10) : t < 52 ? 0 : t < 62 ? glatt((t - 52) / 10) : 1;
         const pM = t < 12 ? 0 : t < 18 ? glatt((t - 12) / 6) : t < 24 ? 1 : t < 28 ? 1 - glatt((t - 24) / 4) : 0;
         Z.k.setze(pM, pF);
-        platz(pm, Z.mx, 300, fenster(t, 3.5, ch.dauer - 1, 0.5)); platz(pfe, Z.fx, 300, fenster(t, 7, ch.dauer - 1, 0.5));
+        platz(pm, 440, 300, fenster(t, 3.5, ch.dauer - 1, 0.5)); platz(pfe, Z.fx, 300, fenster(t, 7, ch.dauer - 1, 0.5));
         platz(pb, 540, 900, fenster(t, 13, 28, 0.5)); platz(pfs, 540, 900, fenster(t, 33, ch.dauer - 1, 0.5));
         platz(pe, Z.fx, 720, fenster(t, 35, 52, 0.5));
       });
