@@ -1,0 +1,424 @@
+<meta charset="utf-8">
+<title>Fahr-Akademie Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&display=swap">
+<style>
+/* Drei klickbare Prototypen: Apple-TV-Bühne plus „Dein Weg“. Hell, flache Illustration, schwebende Kacheln (ruhig).
+   Layout: Pager oben, darunter ein Handy-Rahmen, der jeweils einen Prototyp zeigt. */
+:root{ --bg:#EEF0EC; --ink:#1E241F; --muted:#6B7269; --g:#2E7D5B; --gl:#E3F2EA; --gold:#E8A33D; --ff:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif; color-scheme:light; }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ff);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:start;-webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.kopf{padding:16px 18px 0;max-width:520px;margin:0 auto}
+.kopf h1{margin:0;font-size:24px;font-weight:800;letter-spacing:-.02em}
+.kopf p{margin:4px 0 0;color:var(--muted);font-size:14.5px;line-height:1.35}
+.pager{display:flex;gap:8px;padding:12px 18px 6px;overflow-x:auto;scrollbar-width:none;justify-content:center}
+.pager::-webkit-scrollbar{display:none}
+.pager button{flex:none;min-height:42px;padding:0 16px;border-radius:999px;background:#fff;border:1px solid rgba(0,0,0,.08);font-weight:700;font-size:14.5px}
+.pager button[aria-current="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.beschr{max-width:420px;margin:2px auto 12px;padding:0 20px;text-align:center;color:var(--muted);font-size:14px;line-height:1.35;min-height:38px}
+.tel{position:relative;width:min(94vw,392px);height:min(800px,calc(100dvh - 296px));min-height:640px;margin:0 auto 30px;border-radius:40px;overflow:hidden;background:#F5F6F3;border:1px solid rgba(0,0,0,.08);box-shadow:0 24px 60px rgba(30,36,31,.18)}
+.scroll{position:absolute;inset:0;overflow-y:auto;scrollbar-width:none;padding-top:100px;padding-bottom:116px;scroll-behavior:smooth}
+.scroll::-webkit-scrollbar{display:none}
+.status{display:flex;justify-content:space-between;padding:14px 26px 0;font-size:14px;font-weight:700;position:relative;z-index:3}
+.tabbar{position:absolute;left:12px;right:12px;bottom:12px;display:flex;border-radius:28px;padding:6px;z-index:8;background:rgba(255,255,255,.86);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 10px 30px rgba(30,36,31,.16);border:1px solid rgba(0,0,0,.05)}
+.tabbar button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:52px;border-radius:22px;font-size:11px;font-weight:600;color:#80877E}
+.tabbar button[aria-current="page"]{color:var(--g);background:var(--gl)}
+.tabbar svg{width:23px;height:23px}
+.klasse{display:inline-flex;padding:3px;border-radius:999px;background:rgba(255,255,255,.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);flex:none;border:1px solid rgba(0,0,0,.05)}
+.klasse button{padding:6px 12px;border-radius:999px;font-weight:700;font-size:13px;min-height:32px;color:#6B7269}
+.klasse button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.pill{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 24px;border-radius:999px;font-weight:800;font-size:16px}
+.pill svg{width:18px;height:18px;fill:currentColor}
+.titel{margin:0;font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1.05}
+.abschn{display:flex;justify-content:space-between;align-items:baseline;padding:26px 22px 10px}
+.abschn h2{margin:0;font-size:22px;font-weight:800;letter-spacing:-.01em}
+.abschn button{color:var(--g);font-weight:700;font-size:15px;min-height:32px}
+/* schwebende Kacheln */
+.kachel{position:relative;display:block;border-radius:26px;overflow:hidden;background:#fff;box-shadow:0 2px 4px rgba(30,36,31,.06),0 14px 30px rgba(30,36,31,.12);animation:schweb 7s ease-in-out infinite;transition:transform .2s ease,box-shadow .2s ease}
+.kachel:active{transform:scale(.97);animation-play-state:paused}
+@keyframes schweb{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.kachel .art{height:110px;position:relative;overflow:hidden}
+.kachel .art svg{position:absolute;inset:0;width:100%;height:100%}
+.kachel .tx{display:block;padding:11px 14px 14px}
+.kachel .tx b{overflow-wrap:anywhere}
+.kachel .tx small{display:block;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.02em}
+.kachel .tx b{display:block;font-size:18px;font-weight:800;line-height:1.15;letter-spacing:-.01em}
+.raster{display:grid;grid-template-columns:1fr 1fr;gap:16px 14px;padding:6px 18px 8px}
+.reihe{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 20px 22px;scrollbar-width:none;scroll-padding-inline:20px}
+.reihe::-webkit-scrollbar{display:none}
+.reihe .kachel{flex:0 0 66%;scroll-snap-align:start}
+.reihe .kachel.q{flex:0 0 118px}
+/* Weg */
+.weg{position:relative}
+.weg .knoten{position:absolute;display:grid;place-items:center;border-radius:50%;transform:translate(-50%,-50%);background:#fff;border:3px solid #D8DED7;color:#9AA39A;z-index:2;transition:background .4s,border-color .4s,color .4s}
+.weg .knoten svg{width:55%;height:55%}
+.weg .knoten.ok{background:var(--g);border-color:var(--g);color:#fff}
+.weg .knoten.naechst{background:#fff;border-color:var(--gold);color:var(--gold);box-shadow:0 0 0 8px rgba(232,163,61,.18)}
+.weg .knoten.ziel{border-radius:16px}
+.weg .marker{pointer-events:none;position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;z-index:4;box-shadow:0 8px 18px rgba(30,36,31,.3),0 0 0 4px #fff}
+.weg .marker svg{width:24px;height:24px}
+.weg .lbl{position:absolute;z-index:1;font-size:13.5px;line-height:1.2;overflow-wrap:anywhere}
+.weg .lbl b{display:block;font-size:15.5px;font-weight:800}
+.weg .lbl span{color:var(--muted)}
+.karte{background:#fff;border-radius:28px;box-shadow:0 2px 4px rgba(30,36,31,.05),0 12px 30px rgba(30,36,31,.09)}
+.liste{margin:0 18px;background:#fff;border-radius:26px;overflow:hidden;box-shadow:0 2px 4px rgba(30,36,31,.05),0 10px 26px rgba(30,36,31,.08)}
+.zeile{display:flex;align-items:center;gap:14px;width:100%;min-height:62px;padding:12px 16px;border-top:1px solid #EEF0EC}
+.zeile:first-child{border-top:0}
+.zeile .sym{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:var(--gl);color:var(--g);flex:none}
+.zeile .sym svg{width:22px;height:22px}
+.zeile .t{flex:1;min-width:0}
+.zeile .t b{display:block;font-size:16.5px;line-height:1.2}
+.zeile .t span{font-size:13.5px;color:var(--muted)}
+.zeile .p{color:#B5BBB3;font-size:22px}
+.zurueck{display:inline-flex;align-items:center;margin:10px 0 0 10px;padding:0 14px 0 4px;min-height:44px;color:var(--g);font-weight:700}
+.zurueck svg{width:22px;height:22px}
+.toast{position:absolute;left:50%;bottom:104px;transform:translate(-50%,16px);opacity:0;z-index:30;max-width:calc(100% - 40px);padding:12px 18px;border-radius:16px;background:var(--ink);color:#fff;font-weight:700;font-size:14.5px;transition:all .25s;pointer-events:none;text-align:center}
+.toast.an{opacity:1;transform:translate(-50%,0)}
+.video{position:absolute;inset:0;z-index:25;background:rgba(245,246,243,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:30px}
+.video.an{display:flex}
+.video .bar{width:70%;height:8px;border-radius:9px;background:#DDE3DC;overflow:hidden}
+.video .bar i{display:block;height:100%;width:0;background:var(--g);transition:width 2s linear}
+@media (prefers-reduced-motion:reduce){ .kachel{animation:none} .scroll{scroll-behavior:auto} }
+
+/* Neu: Zugang und Prüfungstermin */
+.steuer{max-width:520px;margin:6px auto 0;padding:0 18px;display:grid;grid-template-columns:minmax(0,1fr);gap:6px}
+.steuer .zl{display:flex;align-items:center;gap:8px;min-width:0}
+.steuer .zl>span{flex:none;width:58px;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.steuer .gr{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;min-width:0;padding:2px}
+.steuer .gr::-webkit-scrollbar{display:none}
+.steuer button{flex:none;min-height:36px;padding:0 13px;border-radius:999px;background:#fff;border:1px solid rgba(0,0,0,.08);font-weight:700;font-size:13.5px}
+.steuer button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.schl{position:absolute;right:10px;top:10px;z-index:3;width:36px;height:36px;border-radius:50%;background:var(--gold);color:#fff;display:grid;place-items:center;box-shadow:0 4px 10px rgba(30,36,31,.2)}
+.schl svg{width:70%;height:70%}
+.kost{position:absolute;left:10px;top:10px;z-index:3;padding:3px 10px;border-radius:999px;background:#fff;color:#8A5A0B;font-size:11.5px;font-weight:800;box-shadow:0 4px 10px rgba(30,36,31,.14)}
+.kachel .art.zu{filter:saturate(.2) brightness(1.04)}
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:28px;padding:0 11px 0 8px;border-radius:999px;font-size:12.5px;font-weight:800;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.chip .ci{width:15px;height:15px;display:block}
+.chip.v{background:rgba(46,125,91,.94);color:#fff}
+.chip.s{background:rgba(255,255,255,.86);color:#8A5A0B;border:1px solid rgba(232,163,61,.6)}
+.sy{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;flex:none}
+.sy svg{width:21px;height:21px}
+.lab{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.blatt{position:absolute;inset:0;z-index:40;display:none;background:rgba(30,36,31,.38);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.blatt.an{display:block}
+.bl{position:absolute;left:0;right:0;bottom:0;padding:26px 22px 28px;border-radius:32px 32px 0 0;background:#fff;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;box-shadow:0 -14px 40px rgba(30,36,31,.2)}
+.bl h2{margin:6px 0 0;font-size:24px;font-weight:800;letter-spacing:-.01em}
+.bl p{margin:0 0 8px;color:var(--muted);font-size:15.5px;line-height:1.4}
+.bl .schl{position:static;width:52px;height:52px}
+.bl .schl svg{width:26px;height:26px}
+
+/* Dashboard */
+.top{position:absolute;left:0;right:0;top:0;z-index:7;background:rgba(245,246,243,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:0 0 26px 26px;padding-bottom:12px;box-shadow:0 8px 22px rgba(30,36,31,.07)}
+.top .bar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px 0}
+.ib{width:46px;height:46px;border-radius:15px;background:#fff;display:grid;place-items:center;box-shadow:0 2px 6px rgba(30,36,31,.08);flex:none}
+.ib svg{width:24px;height:24px}
+.av{position:relative;width:46px;height:46px;border-radius:50%;background:var(--g);color:#fff;font-weight:800;font-size:18px;display:grid;place-items:center;flex:none}
+.av .kr{position:absolute;top:-11px;left:50%;width:26px;height:26px;transform:translateX(-50%) rotate(-8deg);filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))}
+.kr svg,.krb svg{display:block;width:100%;height:100%}
+.krb{position:absolute;right:10px;top:10px;z-index:3;width:30px;height:30px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 4px 10px rgba(30,36,31,.16)}
+.krb svg{width:62%;height:62%}
+.krb.st,.schl.st{position:static;flex:none}
+.cd{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 18px 0 13px;border-radius:999px;background:#FFF1DF;color:#B8560C;font-weight:800;font-size:15.5px;margin:12px 22px 0}
+.cd.nah{background:#FFE0BF;color:#A94E08}
+.cd.leer{background:#E9ECE7;color:#6B7269}
+.cd .ci{width:20px;height:20px;display:block}
+.weiter{display:flex;align-items:center;gap:14px;width:calc(100% - 36px);margin:16px 18px 0;padding:10px 14px 10px 10px;border-radius:26px;background:#fff;box-shadow:0 2px 4px rgba(30,36,31,.05),0 12px 28px rgba(30,36,31,.1)}
+.weiter .th{position:relative;width:84px;height:68px;border-radius:18px;overflow:hidden;flex:none;background:#E3F2EA}
+.weiter .th svg{position:absolute;inset:0;width:100%;height:100%}
+.weiter .wt{flex:1;min-width:0}
+.weiter small{display:block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.weiter b{display:block;font-size:18px;line-height:1.15;overflow-wrap:anywhere}
+.weiter em{font-style:normal;color:var(--muted);font-size:13px}
+.weiter .pl{width:44px;height:44px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;flex:none}
+.weiter .pl svg{width:20px;height:20px}
+.pb{display:block;height:5px;border-radius:9px;background:#E8ECE7;margin-top:9px;overflow:hidden}
+.pb i{display:block;height:100%;background:#2E7D5B}
+.mk{width:26px;height:26px;display:block;flex:none;color:#9A6414}
+.drawer{position:absolute;inset:0;z-index:35;pointer-events:none}
+.drawer.an{pointer-events:auto}
+.dr-bg{position:absolute;inset:0;background:rgba(30,36,31,.4);opacity:0;transition:opacity .25s}
+.drawer.an .dr-bg{opacity:1}
+.dr-panel{position:absolute;left:0;top:0;bottom:0;width:86%;background:#fff;transform:translateX(-104%);transition:transform .28s ease;display:flex;flex-direction:column;border-radius:0 30px 30px 0;box-shadow:0 0 40px rgba(30,36,31,.25)}
+.drawer.an .dr-panel{transform:none}
+.dr-head{display:flex;align-items:center;gap:14px;padding:46px 20px 14px}
+.dr-head .av{width:54px;height:54px;font-size:21px}
+.dr-head .av .kr{top:-13px;width:30px;height:30px}
+.dr-sc{overflow-y:auto;scrollbar-width:none;padding:0 10px 22px;flex:1}
+.dr-sc::-webkit-scrollbar{display:none}
+.dr-sc h3{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:16px 10px 4px}
+.dr-sc .zeile{border-top:0;min-height:52px;padding:8px 10px;border-radius:16px;gap:12px}
+.dr-sc .zeile .sym{width:36px;height:36px;border-radius:11px}
+.dr-sc .zeile .sym svg{width:20px;height:20px}
+.dr-sc .zeile .t b{font-size:16px}
+@media (prefers-reduced-motion:reduce){ .dr-panel,.dr-bg{transition:none} }
+</style>
+
+<div class="kopf"><h1>Dashboard</h1><p>Start mit Willkommen und Themen, Seitenleiste links oben, Schnell-Leiste unten. Krone = Vollzugang. Unten stellst du Zugang und Termin um (nur im Entwurf).</p></div>
+<div class="steuer"><div class="zl"><span>Zugang</span><div class="gr" role="group" aria-label="Zugang"><button data-z="voll" aria-pressed="true">Vollzugang</button><button data-z="start" aria-pressed="false">Startzugang</button></div></div><div class="zl"><span>Termin</span><div class="gr" role="group" aria-label="Prüfungstermin"><button data-t="12" aria-pressed="true">in 12 Tagen</button><button data-t="3" aria-pressed="false">in 3 Tagen</button><button data-t="1" aria-pressed="false">Morgen</button><button data-t="0" aria-pressed="false">Heute</button><button data-t="85" aria-pressed="false">in 85 Tagen</button><button data-t="" aria-pressed="false">Kein Termin</button></div></div><div class="zl"><span>Weg</span><div class="gr"><button data-demo="1">Figur fahren lassen</button></div></div></div>
+<div class="tel" id="tel"></div>
+
+<script>
+(function(){
+"use strict";
+/* ---------- Symbole und Illustration ---------- */
+var IC={
+  play:'<svg viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z"/></svg>',
+  haken:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  flagge:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V4M6 5h11l-2.5 3.5L17 12H6"/></svg>',
+  auto:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M5.2 11l1.4-4.1A2 2 0 0 1 8.5 5.5h7a2 2 0 0 1 1.9 1.4L18.8 11H20a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1h-1v1.2a.8.8 0 0 1-.8.8h-1.4a.8.8 0 0 1-.8-.8V18H8v1.2a.8.8 0 0 1-.8.8H5.8a.8.8 0 0 1-.8-.8V18H4a1 1 0 0 1-1-1v-5a1 1 0 0 1 1-1zm2.6 0h8.4l-1-3H8.8zM6.5 14.8a1.3 1.3 0 1 0 0-2.6 1.3 1.3 0 0 0 0 2.6zm11 0a1.3 1.3 0 1 0 0-2.6 1.3 1.3 0 0 0 0 2.6z"/></svg>',
+  start:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6.5L20 11v8.5a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></svg>',
+  lernen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="14" rx="3"/><path d="M10 9.2v5.6l4.6-2.8z" fill="currentColor"/></svg>',
+  verstehen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.2v9.6L12 21l-8-4.2V7.2z"/><path d="M12 12l8-4.8M12 12v9M12 12L4 7.2"/></svg>',
+  pruefung:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6l1 2h2.5a1 1 0 0 1 1 1v12.5a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1H8z"/><path d="M8.5 13.2l2.3 2.3 4.7-4.9"/></svg>',
+  ich:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.3" r="3.8"/><path d="M4.5 20c.9-3.6 3.9-5.6 7.5-5.6s6.6 2 7.5 5.6"/></svg>',
+  zurueck:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+  spiel:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7.5" width="18" height="10" rx="5"/><path d="M8 10.5v4M6 12.5h4"/><circle cx="15.5" cy="11.5" r=".9" fill="currentColor"/><circle cx="18" cy="13.5" r=".9" fill="currentColor"/></svg>',
+  sprache:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.6 3.6 5.5 3.6 8.5s-1 5.9-3.6 8.5c-2.6-2.6-3.6-5.5-3.6-8.5s1-5.9 3.6-8.5z"/></svg>',
+  weg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 20c0-5 12-4 12-9S9 8.5 9 5"/><circle cx="6" cy="20" r="1.8"/><circle cx="9" cy="4.6" r="1.8"/></svg>',
+  hilfe:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.6 2.3c-.8.5-1.2 1-1.2 1.9M12 16.6v.1"/></svg>',
+  liste:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M8 6.5h12M8 12h12M8 17.5h12"/><circle cx="4.2" cy="6.5" r=".8"/><circle cx="4.2" cy="12" r=".8"/><circle cx="4.2" cy="17.5" r=".8"/></svg>',
+  krone:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.2 8.2l4.6 4.1L12 5.2l4.2 7.1 4.6-4.1-1.9 11H5.1z" fill="#E8A33D" stroke="#B9791B" stroke-width="1.2" stroke-linejoin="round"/><circle cx="3.2" cy="7.6" r="1.7" fill="#E8A33D" stroke="#B9791B" stroke-width="1"/><circle cx="12" cy="4.6" r="1.7" fill="#E8A33D" stroke="#B9791B" stroke-width="1"/><circle cx="20.8" cy="7.6" r="1.7" fill="#E8A33D" stroke="#B9791B" stroke-width="1"/></svg>',
+  schlossKrone:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.4 11V8a4.6 4.6 0 0 1 9.2 0v3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><rect x="3.6" y="10.4" width="16.8" height="12" rx="3.3" fill="currentColor"/><path d="M7.4 19.6l-.8-4.4 2.7 2 2.7-3.9 2.7 3.9 2.7-2-.8 4.4z" fill="#E8A33D"/></svg>',
+  menue:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>',
+  regler:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.4"/><circle cx="8" cy="17" r="2.4"/></svg>',
+  recht:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3.5h7l4 4V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1zM14 3.5V8h4M9 13h6M9 17h6"/></svg>',
+  raus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h4M15 8l4 4-4 4M19 12H9"/></svg>',
+  schloss:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>',
+  kalender:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>'
+};
+IC.spiele=IC.spiel;
+var gid=0;
+function szene(o){ o=o||{}; var i=++gid, s1=o.s1||"#CFE6F7", s2=o.s2||"#F4F9FC", h1=o.h1||"#BFD9C4", h2=o.h2||"#A8CBB0", rd=o.rd||"#8E9A94";
+  return '<svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="g'+i+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+s1+'"/><stop offset="1" stop-color="'+s2+'"/></linearGradient></defs><rect width="400" height="260" fill="url(#g'+i+')"/><circle cx="318" cy="58" r="28" fill="#fff" opacity=".85"/><ellipse cx="90" cy="54" rx="42" ry="10" fill="#fff" opacity=".7"/><ellipse cx="120" cy="46" rx="26" ry="9" fill="#fff" opacity=".7"/><path d="M0 128Q70 84 150 122T300 108T420 126V260H0z" fill="'+h1+'"/><path d="M0 146Q90 112 180 140T420 138V260H0z" fill="'+h2+'"/><path d="M172 128H228L440 262H-40z" fill="'+rd+'"/><path d="M200 130V262" stroke="#fff" stroke-width="5" stroke-dasharray="14 12" fill="none"/>'+(o.ohneAuto?'':'<ellipse cx="200" cy="228" rx="64" ry="9" fill="rgba(0,0,0,.14)"/><rect x="150" y="172" width="100" height="40" rx="13" fill="#fff"/><path d="M165 172L176 146H224L235 172z" fill="#fff"/><path d="M174 170L182 151H218L226 170z" fill="#5C6B73" opacity=".85"/><rect x="154" y="182" width="17" height="9" rx="3.5" fill="#E5584B"/><rect x="229" y="182" width="17" height="9" rx="3.5" fill="#E5584B"/><rect x="185" y="192" width="30" height="10" rx="2.5" fill="#E4E8E5"/><rect x="157" y="208" width="17" height="11" rx="3" fill="#2B2F2D"/><rect x="226" y="208" width="17" height="11" rx="3" fill="#2B2F2D"/>')+'</svg>'; }
+function lkwBild(f){ return '<svg viewBox="0 0 200 110" aria-hidden="true"><g fill="'+(f||"#fff")+'"><rect x="22" y="30" width="96" height="46" rx="6"/><path d="M124 40h28l20 20v16h-48z"/></g><path d="M134 46h18l12 12h-30z" fill="#9FB4C2" opacity=".8"/><g fill="#2B2F2D"><circle cx="48" cy="82" r="11"/><circle cx="76" cy="82" r="11"/><circle cx="150" cy="82" r="11"/></g><path d="M8 94h184" stroke="rgba(0,0,0,.12)" stroke-width="3"/></svg>'; }
+var PAL={ lernen:{s1:"#CFE6F7",s2:"#F4F9FC",h1:"#BFD9C4",h2:"#A8CBB0"}, verstehen:{s1:"#E4E6F7",s2:"#F7F8FD",h1:"#CDD3EC",h2:"#B6BEDF"}, pruefung:{s1:"#FBE4C8",s2:"#FFF8EE",h1:"#EBCFA6",h2:"#DDB985"}, szene2:{s1:"#E4F1DA",s2:"#F8FCF4",h1:"#CDE5B8",h2:"#B7D79C"}, szene3:{s1:"#D4E8F7",s2:"#F5FAFD",h1:"#B5CBE0",h2:"#9FB9D1"} };
+function art(k){
+  if(k==="lkw") return '<div style="position:absolute;inset:0;background:#E3F2EA;display:grid;place-items:center">'+lkwBild("#fff")+'</div>';
+  if(k==="spiele") return '<div style="position:absolute;inset:0;background:#FCE6E3;display:grid;place-items:center"><div style="width:64px;height:64px;border-radius:20px;background:#E86A5A;color:#fff;display:grid;place-items:center"><span style="width:34px;height:34px;display:block">'+IC.spiel+'</span></div></div>';
+  if(k==="pruefung") return szene(PAL.pruefung).replace('</svg>','<g transform="translate(262 92)"><path d="M0 70V0" stroke="#1E241F" stroke-width="5" stroke-linecap="round"/><path d="M2 2h46l-9 14 9 14H2z" fill="#E8A33D"/></g></svg>');
+  return szene(PAL[k]||PAL.lernen);
+}
+/* ---------- Daten ---------- */
+var ST=[
+ {n:"Fahrzeug & Technik",k:"Technik",v:[["Das Cockpit",4],["Spiegel und Sitz",3],["Kontrollleuchten",5],["Flüssigkeiten prüfen",4],["Licht und Blinker",3],["Abfahrtkontrolle",3]],pal:"szene2"},
+ {n:"Stoppschild-Situationen",k:"Stopp",v:[["Stoppschild erkennen",4],["Haltelinie und Sicht",5],["Anfahren und Einordnen",5],["Mit Gegenverkehr",4],["Mit Radfahrern",4],["Typische Fehler",4]],pal:"lernen"},
+ {n:"Fahrmanöver-Grundlagen",k:"Manöver",v:[["Anfahren und Anhalten",5],["Rückwärts einparken",7],["Längs einparken",7],["Wenden",6],["Gefahrbremsung",6],["Typische Fehler",7]],pal:"pruefung"},
+ {n:"Abbiegen, Vorfahrt & Zeichen",k:"Vorfahrt",v:[["Rechts vor Links",6],["Abbiegen und Blinken",7],["Kreisverkehr",8],["Verkehrszeichen",7],["Ampeln",6],["Typische Fehler",7]],pal:"szene3"},
+ {n:"Autobahn",k:"Autobahn",v:[["Auffahren",5],["Spurwechsel",4],["Abstand",4],["Ausfahren",5]],pal:"verstehen"},
+ {n:"Prüfungsstrecken",k:"Strecken",v:[["Strecke 1 · Bieber",8],["Strecke 2 · Waldhof",9],["Strecke 3 · Innenstadt",8],["Prüfertipps",8]],pal:"pruefung"}
+];
+ST.forEach(function(s){ s.v.forEach(function(x){ x[2]=false; }); });
+ST[0].v.forEach(function(x){x[2]=true;}); for(var q=0;q<3;q++) ST[1].v[q][2]=true;
+ST[5].v[0][3]=true;   /* Kostprobe im Startzugang: ein Video der Prüfungsstrecken */
+function tot(s){ return s.v.reduce(function(a,x){return a+x[1];},0); }
+function frei(i,k){ return ZUGANG==="voll"||i===0||!!ST[i].v[k][3]; }
+function don(s){ var i=ST.indexOf(s); return s.v.reduce(function(a,x,k){return a+(x[2]&&frei(i,k)?x[1]:0);},0); }
+function anzFrei(s){ var i=ST.indexOf(s); return s.v.filter(function(x,k){return frei(i,k);}).length; }
+function stat(s){ var a=anzFrei(s); return a===s.v.length?"voll":(a?"teil":"zu"); }
+function fertigS(s){ return stat(s)==="voll"&&don(s)===tot(s); }
+function minFrei(){ var m=0,d=0; ST.forEach(function(s,i){ s.v.forEach(function(x,k){ if(frei(i,k)){ m+=x[1]; if(x[2]) d+=x[1]; } }); }); return [d,m]; }
+function restMin(){ var r=minFrei(); return r[1]-r[0]; }
+function tpos(){ var t=0; ST.forEach(function(s){ if(stat(s)==="voll") t+=don(s)/tot(s); }); return t; }   // 0..6, nur Stationen mit vollem Zugang zählen
+function aktStufe(){ for(var i=0;i<ST.length;i++) if(!fertigS(ST[i])) return i; return ST.length-1; }
+function naechstesVideo(){ for(var i=aktStufe();i<ST.length;i++) for(var k=0;k<ST[i].v.length;k++) if(frei(i,k)&&!ST[i].v[k][2]) return [i,k]; return null; }
+var KL="B"; var TAB="start"; var SUB=null;
+var ZUGANG="voll", TERMIN=12;   /* ZUGANG: "voll" oder "start". TERMIN: Tage bis zur Prüfung, null = Fahrschule hat nichts eingetragen */
+var LKWFREI=["Gelb zuerst, rot nie allein","Schleppkurven"];   /* Kostproben der Lkw-Filme (Entscheidung offen, siehe Vault) */
+function terminDatum(o){ var d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+TERMIN); return d.toLocaleDateString("de-DE",o); }
+function _alt(){}
+function chipHtml(){ return ZUGANG==="voll"?'<span class="chip v"><span class="ci">'+IC.haken+'</span>Vollzugang</span>':'<button class="chip s" data-a="sheet"><span class="ci">'+IC.schloss+'</span>Startzugang</button>'; }
+function blattHtml(){ return '<div class="blatt" id="blatt" data-a="sheetzu"><div class="bl" data-a="nix" role="dialog" aria-modal="true" aria-labelledby="blt"><span class="schl">'+IC.schlossKrone+'</span><h2 id="blt">Mit Vollzugang</h2><p id="blp">Deine Fahrschule schaltet ihn für dich frei.</p><button class="pill" data-a="fragen" style="background:#1E241F;color:#fff;width:100%">Fahrschule fragen</button><button class="pill" data-a="sheetzu" style="width:100%;color:#6B7269;min-height:44px">Später</button></div></div>'; }
+function sheetAuf(n){ var b=document.getElementById("blatt"); if(b) b.classList.add("an"); }
+function sheetZu(){ var b=document.getElementById("blatt"); if(b) b.classList.remove("an"); }
+var NAME="Lena";
+function marke(premium,sp){
+  if(ZUGANG==="voll") return premium?'<span class="krb">'+IC.krone+'</span>':'';
+  if(sp==="zu"||sp==="teil") return '<span class="schl">'+IC.schlossKrone+'</span>'+(sp==="teil"?'<span class="kost">Kostprobe</span>':'');
+  return '';
+}
+function endMarke(premium,sp){
+  if(ZUGANG==="voll") return premium?'<span class="mk" style="width:22px;height:22px">'+IC.krone+'</span>':'<span class="p">›</span>';
+  return (sp==="zu"||sp==="teil")?'<span class="mk">'+IC.schlossKrone+'</span>':'<span class="p">›</span>';
+}
+function tile(a,titel,attr,i,p,badge,zu,h){ return '<button class="kachel" '+attr+' style="animation-delay:-'+(i*1.3)+'s">'+badge+'<span class="art'+(zu?' zu':'')+'" style="display:block;height:'+(h||92)+'px">'+a+'</span><span class="tx"><b>'+titel+'</b>'+(p==null?'':'<span class="pb"><i style="width:'+p+'%"></i></span>')+'</span></button>'; }
+function themen(){
+  var T=[]; ST.forEach(function(s,i){ var sp=stat(s); T.push({t:s.n,attr:'data-a="stufe" data-i="'+i+'"',art:szene(PAL[s.pal]||PAL.lernen),p:Math.round(don(s)/tot(s)*100),prem:i>0,sp:sp,ic:IC.lernen}); });
+  T.push({t:"3D-Szenen",attr:'data-a="tab" data-p="verstehen"',art:art("verstehen"),p:null,prem:true,sp:ZUGANG==="voll"?"voll":"teil",ic:IC.verstehen});
+  T.push({t:"Spiele",attr:'data-a="tab" data-p="spiele"',art:art("spiele"),p:null,prem:false,sp:"voll",ic:IC.spiel});
+  if(KL==="C") T.push({t:"Lkw und Zug",attr:'data-a="lkwliste"',art:art("lkw"),p:null,prem:true,sp:ZUGANG==="voll"?"voll":"teil",ic:IC.auto});
+  return T;
+}
+function cdPill(){ var txt, cls=""; if(TERMIN==null){ txt="Prüfungstermin offen"; cls="leer"; } else if(TERMIN===0) txt="Heute ist deine Prüfung"; else if(TERMIN===1) txt="Morgen ist deine Prüfung"; else txt=TERMIN+" Tage bis zur Prüfung"; if(TERMIN!=null&&TERMIN<=5) cls="nah"; return '<button class="cd '+cls+'" data-a="tab" data-p="pruefung"><span class="ci">'+IC.kalender+'</span>'+txt+'</button>'; }
+function topbar(){ return '<div class="top">'+status()+'<div class="bar"><button class="ib" data-a="menue" aria-label="Menü">'+IC.menue+'</button>'+klasseS()+'<button class="av" data-a="menue" aria-label="Profil">'+NAME.charAt(0)+(ZUGANG==="voll"?'<span class="kr">'+IC.krone+'</span>':'')+'</button></div></div>'; }
+function drawerHtml(){
+  var T=themen();
+  function r(t,ic,attr,end){ return '<button class="zeile" '+attr+'><span class="sym">'+ic+'</span><span class="t"><b>'+t+'</b></span>'+(end||'<span class="p">›</span>')+'</button>'; }
+  var sec=function(h,a){ return '<h3>'+h+'</h3>'+a; };
+  return '<div class="drawer" id="drawer"><div class="dr-bg" data-a="menuezu"></div><div class="dr-panel" data-a="nix"><div class="dr-head"><span class="av">'+NAME.charAt(0)+(ZUGANG==="voll"?'<span class="kr">'+IC.krone+'</span>':'')+'</span><span><b style="display:block;font-size:20px">'+NAME+'</b><span style="color:#6B7269;font-size:14px">Klasse '+(KL==="C"?"B und C/CE":"B")+'</span></span></div><div class="dr-sc">'+
+   sec("Themen",T.map(function(x){ return r(x.t,x.ic,x.attr,endMarke(x.prem,x.sp)); }).join(''))+
+   sec("Mehr",r("Verlauf",IC.liste,'data-a="info" data-n="Verlauf"')+r("Nützliches",IC.hilfe,'data-a="info" data-n="Nützliches"')+r("Der Prüfungstag",IC.pruefung,'data-a="tab" data-p="pruefung"'))+
+   sec("Einstellungen",r("Einstellungen",IC.regler,'data-a="info" data-n="Einstellungen"')+r("Sprache",IC.sprache,'data-a="info" data-n="Sprache"','<span style="color:#6B7269;font-size:14px">Deutsch</span>')+r("Hilfe und Kontakt",IC.hilfe,'data-a="info" data-n="Hilfe und Kontakt"')+r("Rechtliches",IC.recht,'data-a="info" data-n="Rechtliches"')+r("Abmelden",IC.raus,'data-a="info" data-n="Abmelden"','<span></span>'))+
+  '</div></div></div>'; }
+function sperrPill(x){ return '<button class="pill" data-a="sheet" style="background:#1E241F;color:#fff'+(x||'')+'"><span style="width:22px;height:22px;display:block;color:#fff">'+IC.schlossKrone+'</span>Mehr freischalten</button>'; }
+function terminKachel(){
+  if(TERMIN==null) return '<button class="karte" data-a="tab" data-p="pruefung" style="padding:14px 16px;background:#EEF0EC;display:block"><span class="sy" style="background:#fff;color:#6B7269;margin-bottom:8px">'+IC.kalender+'</span><b style="display:block;font-size:15px;line-height:1.15;overflow-wrap:anywhere">Prüfungstermin</b><span style="color:#6B7269;font-size:13px">Noch offen</span></button>';
+  var nah=TERMIN<=5, bg=nah?"#FFE3C7":"#FFF1DF", farbe=nah?"#C25E10":"#D9731F", kurz=terminDatum({weekday:"short",day:"2-digit",month:"2-digit"});
+  if(TERMIN<=1) return '<button class="karte" data-a="tab" data-p="pruefung" style="padding:16px;background:'+bg+';display:block"><span style="display:block;font-size:34px;font-weight:800;letter-spacing:-.03em;color:'+farbe+';line-height:1">'+(TERMIN===0?"Heute":"Morgen")+'</span><b style="display:block;font-size:16px;line-height:1.15;margin-top:6px">ist deine Prüfung</b><span style="color:#6B7269;font-size:13px">'+kurz+'</span></button>';
+  return '<button class="karte" data-a="tab" data-p="pruefung" style="padding:16px;background:'+bg+';display:flex;align-items:center;gap:10px"><span style="font-size:46px;font-weight:800;letter-spacing:-.04em;color:'+farbe+';line-height:1">'+TERMIN+'</span><span><b style="display:block;font-size:16px;line-height:1.15">Tage bis zur Prüfung</b><span style="color:#6B7269;font-size:13px">'+kurz+'</span></span></button>';
+}
+/* ---------- Gemeinsame Bausteine ---------- */
+function klasseS(){ return '<div class="klasse" role="group" aria-label="Führerscheinklasse"><button data-a="kl" data-k="B" aria-pressed="'+(KL==="B")+'">B</button><button data-a="kl" data-k="C" aria-pressed="'+(KL==="C")+'">C · CE</button></div>'; }
+function status(c){ return '<div class="status" style="color:'+(c||"#1E241F")+'"><span>9:41</span><span>●●● ▮</span></div>'; }
+function kachel(k,klein,titel,attr,i,extra,sp){ var b=sp==="zu"?'<span class="schl">'+IC.schloss+'</span>':(sp==="kost"?'<span class="kost">Kostprobe</span>':''); return '<button class="kachel '+(extra||'')+'" '+attr+' style="animation-delay:-'+((i||0)*1.7)+'s">'+b+'<span class="art'+(sp==="zu"?' zu':'')+'" style="display:block">'+art(k)+'</span><span class="tx"><small>'+(sp==="zu"?'Gehört zum Vollzugang':klein)+'</small><b>'+titel+'</b></span></button>'; }
+function spAttr(n,sp){ return (sp==="zu"?'data-a="sheet"':'data-a="info"')+' data-n="'+n+'"'; }
+function stufeKachel(i,attr,x){ var s=ST[i], sp=stat(s), p=Math.round(don(s)/tot(s)*100), kl=sp==="zu"?'Gehört zum Vollzugang':(sp==="teil"?anzFrei(s)+' von '+s.v.length+' Videos frei':(fertigS(s)?'Fertig':don(s)+' von '+tot(s)+' Min.')), b=sp==="zu"?'<span class="schl">'+IC.schloss+'</span>':(sp==="teil"?'<span class="kost">Kostprobe</span>':''); return '<button class="kachel" '+attr+' style="animation-delay:-'+(i*1.3)+'s">'+b+'<span class="art'+(sp==="zu"?' zu':'')+'" style="display:block;height:'+(x||104)+'px">'+szene(PAL[s.pal]||PAL.lernen)+'</span><span class="tx"><small>'+kl+'</small><b>'+s.n+'</b><span style="display:block;height:5px;border-radius:9px;background:#E8ECE7;margin-top:9px;overflow:hidden"><i style="display:block;height:100%;width:'+p+'%;background:#2E7D5B"></i></span></span></button>'; }
+/* ---------- Weg (Strecke mit Figur) ---------- */
+var WEGE=[];
+function wegHtml(id,d,w,h,opt){ return '<div class="weg" id="'+id+'" style="width:'+w+'px;height:'+h+'px;margin:0 auto"><svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" style="position:absolute;left:0;top:0" aria-hidden="true"><path id="'+id+'p" d="'+d+'" fill="none" stroke="'+(opt.farbe||"#D5DDD4")+'" stroke-width="'+(opt.breite||8)+'" stroke-linecap="round" '+(opt.strich?'stroke-dasharray="'+opt.strich+'"':'')+'/></svg></div>'; }
+function wegInit(id,opt){
+  var root=document.getElementById(id); if(!root) return; var path=document.getElementById(id+"p"), L=path.getTotalLength();
+  function P(u){ var q=path.getPointAtLength(L*Math.max(0,Math.min(1,u))); return [q.x,q.y]; }
+  var nodes=[], n=ST.length;
+  for(var i=0;i<n;i++){ var u=(i+1)/n, p=P(u), el=document.createElement("button"); el.className="knoten"+(i===n-1?" ziel":""); el.dataset.a="stufe"; el.dataset.i=i; var sz=opt.knoten||34; el.style.cssText="left:"+p[0]+"px;top:"+p[1]+"px;width:"+sz+"px;height:"+sz+"px"; el.setAttribute("aria-label",ST[i].n); root.appendChild(el);
+    var lb=null; if(opt.labels){ lb=document.createElement("div"); lb.className="lbl"; var re=p[0]>=root.clientWidth/2-6; lb.style.cssText="top:"+(p[1]-18)+"px;"+(re?"right:"+(root.clientWidth-p[0]+sz/2+12)+"px;text-align:right":"left:"+(p[0]+sz/2+12)+"px")+";max-width:"+Math.max(110,(re?p[0]:root.clientWidth-p[0])-sz/2-24)+"px"; root.appendChild(lb); }
+    nodes.push({el:el,lb:lb,u:u,p:p}); }
+  var m=document.createElement("div"); m.className="marker"; m.innerHTML=IC.auto; root.appendChild(m);
+  var o={root:root,P:P,nodes:nodes,m:m,shown:opt.von!=null?opt.von:tpos(),opt:opt};
+  o.zeige=function(t){ var u=t/n, p=P(u); m.style.left=p[0]+"px"; m.style.top=p[1]+"px"; o.shown=t; if(opt.onMove) opt.onMove(t,p); };
+  o.stationen=function(){ var akt=aktStufe(); nodes.forEach(function(nd,i){ var s=ST[i], fertig=fertigS(s); nd.el.className="knoten"+(i===n-1?" ziel":"")+(fertig?" ok":(i===akt?" naechst":"")); nd.el.innerHTML=fertig?IC.haken:(i===n-1?IC.flagge:""); if(i===n-1&&!fertig) nd.el.innerHTML=IC.flagge; if(nd.lb) nd.lb.innerHTML='<b>'+s.n+'</b><span>'+(fertig?'Fertig':(i===akt?don(s)+' von '+tot(s)+' Min.':tot(s)+' Min.'))+'</span>'; }); };
+  o.stationen(); return o;
+}
+function wegAnim(o,ziel,fertig){
+  var red=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches, von=o.shown, t0=null, dur=1500;
+  if(red||Math.abs(ziel-von)<0.001){ o.zeige(ziel); if(fertig) fertig(); return; }
+  function f(ts){ if(!t0) t0=ts; var k=Math.min(1,(ts-t0)/dur), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2; o.zeige(von+(ziel-von)*e); if(k<1) requestAnimationFrame(f); else if(fertig) fertig(); }
+  requestAnimationFrame(f);
+}
+
+/* ---------- Karte (Weg) ---------- */
+var KW=390, KH=1180, KPFAD="M195 1090 C165 1040 165 970 195 920 S225 800 195 750 S165 630 195 580 S225 460 195 410 S165 290 195 240 S220 190 195 150";
+function karteHtml(id,mini){
+  return '<div style="position:relative;height:'+KH+'px;width:'+KW+'px;background:linear-gradient(180deg,#CFE6F7 0%,#F1F7EE 22%,#CDE5C6 60%,#B8D8B6 100%)">'+
+  '<svg width="'+KW+'" height="'+KH+'" viewBox="0 0 '+KW+' '+KH+'" style="position:absolute;left:0;top:0" aria-hidden="true"><ellipse cx="90" cy="150" rx="50" ry="11" fill="#fff" opacity=".7"/><ellipse cx="318" cy="210" rx="44" ry="10" fill="#fff" opacity=".7"/><path d="M0 330Q120 250 250 320T400 300V'+KH+'H0z" fill="#BFDDBB" opacity=".8"/><path d="M0 620Q150 560 270 620T400 600V'+KH+'H0z" fill="#AFD3AD" opacity=".7"/>'+
+  [[40,420],[350,520],[30,760],[352,880],[60,1040],[340,300]].map(function(t){ return '<g transform="translate('+t[0]+' '+t[1]+')"><rect x="-3" y="14" width="6" height="14" fill="#8E7A5E"/><circle cx="0" cy="6" r="16" fill="#8FC59A"/></g>'; }).join('')+'</svg>'+
+  '<div style="position:absolute;inset:0">'+wegHtml(id,KPFAD,KW,KH,{breite:46,farbe:"#8C9A94"}).replace('stroke-linecap="round"','stroke-linecap="butt"')+'</div></div>';
+}
+function karteInit(id,mini,opt){
+  opt=opt||{}; var o=wegInit(id,{knoten:0,von:opt.von,onMove:opt.onMove}); if(!o) return null;
+  var root=o.root, n=ST.length, pth=document.getElementById(id+"p"), mitte=pth.cloneNode(); mitte.removeAttribute("id"); mitte.setAttribute("stroke","#fff"); mitte.setAttribute("stroke-width","3"); mitte.setAttribute("stroke-dasharray","14 12"); pth.parentNode.appendChild(mitte);
+  o.nodes.forEach(function(nd){ nd.el.remove(); }); o.nodes=[]; o.kacheln=[];
+  for(var i=0;i<n;i++){ var u=(i+1)/n, p=o.P(u), rechts=i%2===0, s=ST[i];
+    var b=document.createElement(mini?"div":"button"); b.className="kachel"; if(!mini){ b.dataset.a="stufe"; b.dataset.i=i; } b.style.cssText="position:absolute;width:108px;top:"+(p[1]-52)+"px;"+(rechts?"left:"+(p[0]+50)+"px":"left:"+(p[0]-50-108)+"px")+";border-radius:20px;z-index:3;animation-delay:-"+(i*1.4)+"s";
+    b.innerHTML='<span class="art" style="display:block;height:54px">'+szene(PAL[s.pal]||PAL.lernen)+'</span><span class="tx" style="padding:7px 10px 9px"><small style="font-size:11px">Station '+(i+1)+'</small><b style="font-size:13.5px;line-height:1.1">'+s.n.split(',')[0]+'</b><span class="mini" style="display:block;height:4px;border-radius:9px;background:#E8ECE7;margin-top:6px;overflow:hidden"><i style="display:block;height:100%;background:#2E7D5B"></i></span></span><span class="schl lk" style="display:none;right:6px;top:6px;width:30px;height:30px">'+IC.schlossKrone+'</span><span class="krb km" style="display:none;right:6px;top:6px;width:26px;height:26px">'+IC.krone+'</span><span class="kost ks" style="display:none;left:6px;top:6px;font-size:10px;padding:2px 7px">Kostprobe</span><span class="ck" style="position:absolute;right:6px;top:6px;width:24px;height:24px;border-radius:50%;background:#2E7D5B;color:#fff;display:none;place-items:center"><span style="width:14px;height:14px;display:block">'+IC.haken+'</span></span>';
+    root.appendChild(b); o.kacheln.push(b); }
+  o.stationen=function(){ ST.forEach(function(s,i){ var b=o.kacheln[i], f=fertigS(s), sp=stat(s); b.querySelector(".mini i").style.width=Math.round(don(s)/tot(s)*100)+"%"; b.querySelector(".ck").style.display=f?"grid":"none"; b.querySelector(".lk").style.display=(ZUGANG==="start"&&sp!=="voll")?"grid":"none"; b.querySelector(".km").style.display=(ZUGANG==="voll"&&i>0&&!f)?"grid":"none"; b.querySelector(".ks").style.display=sp==="teil"?"block":"none"; b.querySelector(".art").classList.toggle("zu",sp==="zu"); b.style.boxShadow=(i===aktStufe()&&!f)?"0 0 0 3px #E8A33D,0 14px 30px rgba(30,36,31,.16)":""; }); };
+  o.stationen();
+  var st=document.createElement("div"); st.style.cssText="position:absolute;left:"+(o.P(0)[0])+"px;top:"+(o.P(0)[1]+36)+"px;transform:translateX(-50%);font-weight:800;font-size:13px;color:#fff;background:#1E241F;border-radius:99px;padding:5px 12px;z-index:3"; st.textContent="Start"; root.appendChild(st);
+  var zl=document.createElement("div"); zl.style.cssText="position:absolute;left:"+(o.P(1)[0])+"px;top:"+(o.P(1)[1]-62)+"px;transform:translateX(-50%);font-weight:800;font-size:13px;color:#fff;background:#D9731F;border-radius:99px;padding:5px 12px;z-index:3;white-space:nowrap"; zl.textContent="Prüfung"; root.appendChild(zl);
+  return o;
+}
+/* ---------- Home (Übersicht) ---------- */
+function weiterDaten(){ var v=naechstesVideo(), st=v?ST[v[0]]:ST[aktStufe()], vt=v?st.v[v[1]]:null; return {v:v,st:st,vt:vt}; }
+function homeSeite(){
+  var d=weiterDaten(), T=themen(), weiter;
+  if(d.v) weiter='<button class="weiter" data-a="video" data-s="'+d.v[0]+'" data-v="'+d.v[1]+'"><span class="th">'+szene(PAL[d.st.pal]||PAL.lernen)+'</span><span class="wt"><small>Weiter schauen</small><b>'+d.vt[0]+'</b><em>'+d.vt[1]+' Min.</em></span><span class="pl">'+IC.play+'</span></button>';
+  else if(ZUGANG==="start") weiter='<button class="weiter" data-a="sheet"><span class="th" style="display:grid;place-items:center;background:#FFF1DF"><span style="width:40px;height:40px;display:block;color:#9A6414">'+IC.schlossKrone+'</span></span><span class="wt"><b>Alles Freie gesehen</b></span><span class="pl" style="background:var(--gold)">'+IC.schlossKrone+'</span></button>';
+  else weiter='<button class="weiter" data-a="tab" data-p="pruefung"><span class="th">'+art("pruefung")+'</span><span class="wt"><b>Alles geschafft</b><em>Weiter zur Prüfung</em></span><span class="pl">'+IC.flagge+'</span></button>';
+  return '<div class="scroll" id="sc"><div style="padding:8px 22px 0"><h1 class="titel" style="font-size:32px">Willkommen, '+NAME+'</h1></div>'+cdPill()+weiter+
+  '<div class="abschn" style="padding-top:22px"><h2>Themen</h2></div><div class="raster">'+T.map(function(x,i){ return tile(x.art,x.t,x.attr,i,x.p,marke(x.prem,x.sp),ZUGANG==="start"&&x.sp==="zu"); }).join('')+'</div></div>';
+}
+function ringSvg(p){ var r=30,u=2*Math.PI*r,d=u*p/100; return '<svg width="72" height="72" viewBox="0 0 72 72" aria-hidden="true" style="flex:none"><circle cx="36" cy="36" r="'+r+'" fill="none" stroke="#E3F2EA" stroke-width="9"/><circle cx="36" cy="36" r="'+r+'" fill="none" stroke="#2E7D5B" stroke-width="9" stroke-linecap="round" stroke-dasharray="'+d.toFixed(1)+' '+u.toFixed(1)+'" transform="rotate(-90 36 36)"/><text x="36" y="42" text-anchor="middle" font-family="Barlow,sans-serif" font-weight="800" font-size="17" fill="#1E241F">'+p+'%</text></svg>'; }
+function wegSeite(){
+  var d=weiterDaten(), start=ZUGANG==="start", sh=';box-shadow:0 8px 22px rgba(30,36,31,.35);pointer-events:auto';
+  var knopf=d.v?'<button class="pill" data-a="video" data-s="'+d.v[0]+'" data-v="'+d.v[1]+'" style="background:#1E241F;color:#fff'+sh+'">'+IC.play+'Weiter · '+d.vt[0]+'</button>':(start?sperrPill(sh):'<button class="pill" data-a="tab" data-p="pruefung" style="background:#1E241F;color:#fff'+sh+'">Zur Prüfung</button>');
+  return '<div class="scroll" id="sc" style="background:#B8D8B6;padding-top:0">'+karteHtml("w3",false)+'</div>'+
+    '<div style="position:absolute;left:0;right:0;bottom:92px;display:flex;justify-content:center;z-index:6;pointer-events:none">'+knopf+'</div>';
+}
+/* ---------- Gemeinsame Seiten ---------- */
+function verstehenSeite(){
+  var voll=ZUGANG==="voll";
+  var sz=[["Innerorts","pruefung"],["Landstraße","lernen"],["Autobahn","verstehen"],["Grundfahr&shy;aufgaben","szene2"]];
+  var h='<div class="scroll" id="sc"><div style="padding:8px 22px 0"><h1 class="titel">3D-Szenen</h1></div><div class="raster" style="padding-top:16px">'+sz.map(function(f,i){ var sp=voll?"voll":(f[0]==="Landstraße"?"teil":"zu"); return tile(szene(PAL[f[1]]),f[0],(sp==="zu"?'data-a="sheet"':'data-a="info"')+' data-n="'+f[0]+'"',i,null,marke(true,sp),sp==="zu",100); }).join('')+'</div>';
+  if(KL==="C") h+='<div class="abschn"><h2>Lkw und Zug</h2><button data-a="lkwliste">Alle</button></div><div class="reihe">'+[["Ankuppeln eines Sattelzugs"],["Schleppkurven"],["Gelb zuerst, rot nie allein"],["Toter Winkel"]].map(function(f,i){ var sp=lkwSp(f[0])||"voll"; return tile(art("lkw"),f[0],(sp==="zu"?'data-a="sheet"':'data-a="info"')+' data-n="'+f[0]+'"',i,null,marke(true,sp),sp==="zu",100); }).join('')+'</div>';
+  return h+'</div>';
+}
+function spieleSeite(){
+  var G=[["Duell","#FCE6E3","#E86A5A"],["Ampel","#E3F2EA","#2E7D5B"],["Memory","#E1ECF7","#3C7FB5"],["Schilder","#FFF1C9","#C9961F"],["Tempo","#E7E4F6","#6B63B8"],["Vorfahrt","#FCEBD7","#D9731F"]];
+  return '<div class="scroll" id="sc"><div style="padding:8px 22px 0"><h1 class="titel">Spiele</h1></div><div class="raster" style="padding-top:16px">'+G.map(function(g,i){ return '<button class="kachel" data-a="info" data-n="'+g[0]+'" style="animation-delay:-'+(i*1.3)+'s;background:'+g[1]+'"><span style="display:grid;place-items:center;height:104px;font-size:56px;font-weight:800;color:'+g[2]+'">'+g[0].charAt(0)+'</span><span style="display:block;text-align:center;font-weight:800;font-size:16px;padding:0 8px 14px">'+g[0]+'</span></button>'; }).join('')+'</div></div>';
+}
+function lkwSp(f){ return ZUGANG==="voll"?null:(LKWFREI.indexOf(f)>-1?"kost":"zu"); }
+function pruefungSeite(){
+  var tg=TERMIN, gross, unter="", farbe="#D9731F";
+  if(tg==null){ gross="Noch offen"; unter="Deine Fahrschule trägt den Termin ein."; farbe="#6B7269"; }
+  else { var datum=terminDatum({weekday:"long",day:"numeric",month:"long"}); gross=tg===0?"Heute":(tg===1?"Morgen":tg+" Tage"); unter=datum; if(tg<=5) farbe="#C25E10"; }
+  return '<div class="scroll" id="sc"><div style="position:relative;margin:8px 18px 0;height:230px;border-radius:30px;overflow:hidden">'+art("pruefung")+'<div style="position:absolute;inset:0;background:linear-gradient(transparent 30%,rgba(255,248,238,.97))"></div><div style="position:absolute;left:20px;right:20px;bottom:16px"><div style="font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#4B534B">Dein Termin</div><div style="font-size:48px;font-weight:800;letter-spacing:-.03em;color:'+farbe+';line-height:1.02">'+gross+'</div><div style="font-size:15px;color:#4B534B;margin-top:2px">'+unter+'</div></div></div>'+
+  '<div style="display:grid;padding:18px 18px 0">'+tile(szene(PAL.pruefung),ST[5].n,'data-a="stufe" data-i="5"',5,Math.round(don(ST[5])/tot(ST[5])*100),marke(true,stat(ST[5])),ZUGANG==="start"&&stat(ST[5])==="zu",120)+'</div>'+
+  '<div class="abschn"><h2>Am Prüfungstag</h2></div><div class="liste">'+[["Unterlagen und Sehhilfe"],["Ablauf der Prüfung"],["Typische Fehler"]].map(function(x){return '<button class="zeile" data-a="info" data-n="'+x[0]+'"><span class="sym">'+IC.pruefung+'</span><span class="t"><b>'+x[0]+'</b></span><span class="p">›</span></button>';}).join('')+'</div></div>';
+}
+function lkwSeite(){
+  return '<div class="scroll" id="sc"><button class="zurueck" data-a="zurueck">'+IC.zurueck+'Zurück</button><div style="padding:6px 22px 0"><h1 class="titel">Lkw und Zug</h1></div><div class="raster" style="padding-top:16px">'+["Ankuppeln eines Sattelzugs","Abkuppeln eines Sattelzugs","Gelb zuerst, rot nie allein","Schleppkurven","Toter Winkel","Abstand","Zweikreis- und Zweileitungsbremse","Abreißen der Kupplung","Federspeicherbremse","Lenk- und Ruhezeiten"].map(function(f,i){var sp=lkwSp(f)||"voll"; return tile(art("lkw"),f,(sp==="zu"?'data-a="sheet"':'data-a="info"')+' data-n="'+f+'"',i,null,marke(true,sp),sp==="zu",92);}).join('')+'</div></div>';
+}
+function stufeSeite(i){
+  var s=ST[i], sp=stat(s), p=Math.round(don(s)/tot(s)*100);
+  var mk=(ZUGANG==="voll"&&i>0)?'<span class="krb st">'+IC.krone+'</span>':((ZUGANG==="start"&&sp!=="voll")?'<span class="schl st">'+IC.schlossKrone+'</span>':'');
+  return '<div class="scroll" id="sc"><button class="zurueck" data-a="zurueck">'+IC.zurueck+'Zurück</button><div style="padding:4px 22px 0"><div style="display:flex;align-items:center;gap:12px"><h1 class="titel" style="flex:1;min-width:0">'+s.n+'</h1>'+mk+'</div><span class="pb" style="height:8px;margin-top:14px"><i style="width:'+p+'%"></i></span></div><div class="liste" style="margin-top:20px">'+s.v.map(function(x,k){
+    if(!frei(i,k)) return '<button class="zeile" data-a="sheet"><span class="sym" style="background:#FBEFD6;color:#9A6414">'+IC.schlossKrone+'</span><span class="t"><b style="color:#6B7269">'+x[0]+'</b><span>'+x[1]+' Min.</span></span><span class="p">›</span></button>';
+    return '<button class="zeile" data-a="video" data-s="'+i+'" data-v="'+k+'"><span class="sym" style="'+(x[2]?'background:#2E7D5B;color:#fff':'')+'">'+(x[2]?IC.haken:IC.play)+'</span><span class="t"><b>'+x[0]+'</b><span>'+x[1]+' Min.'+(x[2]?' · gesehen':'')+'</span></span><span class="p">›</span></button>';}).join('')+'</div></div>';
+}
+
+/* ---------- Ablauf ---------- */
+var tel=document.getElementById("tel"), cur=null;
+function miniFenster(o,p){ var k=358/KW, kk=document.getElementById("minik"); if(!kk) return; kk.style.transform="scale("+k+") translateY("+(-(p[1]-105/k))+"px)"; kk.parentNode.style.height="210px"; }
+function render(){
+  var html="", sub=SUB;
+  if(sub&&sub.t==="stufe") html=stufeSeite(sub.i); else if(sub&&sub.t==="lkw") html=lkwSeite();
+  else if(TAB==="start") html=homeSeite(); else if(TAB==="weg") html=wegSeite(); else if(TAB==="verstehen") html=verstehenSeite(); else if(TAB==="spiele") html=spieleSeite(); else html=pruefungSeite();
+  var tabs=[["start","Start"],["weg","Weg"],["verstehen","3D"],["spiele","Spiele"],["pruefung","Prüfung"]].map(function(t){return '<button data-a="tab" data-p="'+t[0]+'"'+(TAB===t[0]&&!sub?' aria-current="page"':'')+'>'+IC[t[0]]+'<span>'+t[1]+'</span></button>';}).join('');
+  tel.innerHTML=html+topbar()+'<div class="tabbar">'+tabs+'</div><div class="toast" id="toast" role="status"></div>'+blattHtml()+drawerHtml()+'<div class="video" id="video"><div style="font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#6B7269">Video läuft</div><div id="vt" style="font-size:26px;font-weight:800;line-height:1.1"></div><div class="bar"><i id="vb"></i></div><div style="color:#6B7269;font-size:14px">Im Entwurf dauert das zwei Sekunden.</div></div>';
+  cur=null; var vz=(window.__von!=null?window.__von:tpos());
+  if(!sub&&TAB==="weg"){
+    var id="w3", mini=false;
+    cur=karteInit(id,mini,{von:vz,onMove:mini?miniFenster:null});
+    if(cur){ cur.zeige(vz); if(!mini){ var sc=document.getElementById("sc"), pt=cur.P(vz/ST.length); sc.style.scrollBehavior="auto"; sc.scrollTop=Math.max(0,pt[1]-420); sc.style.scrollBehavior=""; }
+      window.__von=null; if(Math.abs(vz-tpos())>0.001) setTimeout(function(){ if(cur) wegAnim(cur,tpos(),function(){ if(cur) cur.stationen(); }); },350); }
+  }
+}
+function toast(t){ var e=document.getElementById("toast"); if(!e) return; e.textContent=t; e.classList.add("an"); clearTimeout(toast.t); toast.t=setTimeout(function(){e.classList.remove("an");},2600); }
+function schaue(si,vi,rueck){
+  var v=ST[si].v[vi]; if(!v){ return; } if(!frei(si,vi)){ sheetAuf(v[0]); return; } if(v[2]){ toast("Schon gesehen."); return; }
+  var vor=tpos(); var ov=document.getElementById("video"); document.getElementById("vt").textContent=v[0]; ov.classList.add("an"); var b=document.getElementById("vb"); b.style.transition="none"; b.style.width="0"; void b.offsetWidth; b.style.transition="width 2s linear"; b.style.width="100%";
+  setTimeout(function(){ v[2]=true; ov.classList.remove("an"); window.__von=vor; var s=ST[si], fertig=fertigS(s);
+    if(rueck){ SUB=null; TAB="weg"; }
+    render();
+    setTimeout(function(){ toast(fertig?("Station geschafft: "+s.n):("+"+v[1]+" Min. · noch "+(tot(s)-don(s))+" bis zur Station")); },400);
+  },2100);
+}
+tel.addEventListener("click",function(e){
+  var b=e.target.closest("[data-a]"); if(!b) return; var a=b.dataset.a;
+  var dr=document.getElementById("drawer"); if(dr&&dr.classList.contains("an")&&a!=="nix"&&a!=="menue") dr.classList.remove("an");
+  if(a==="menue"){ if(dr) dr.classList.add("an"); return; } if(a==="menuezu"||a==="nix") return;
+  if(a==="tab"){ TAB=b.dataset.p; SUB=null; render(); }
+  else if(a==="kl"){ KL=b.dataset.k; var y=(document.getElementById("sc")||{}).scrollTop; render(); var s=document.getElementById("sc"); if(s&&y){ s.style.scrollBehavior="auto"; s.scrollTop=y; s.style.scrollBehavior=""; } }
+  else if(a==="stufe"){ SUB={t:"stufe",i:+b.dataset.i}; render(); }
+  else if(a==="lkwliste"){ SUB={t:"lkw"}; render(); }
+  else if(a==="zurueck"){ SUB=null; render(); }
+  else if(a==="video"){ schaue(+b.dataset.s,+b.dataset.v,!!SUB&&SUB.t==="stufe"); }
+  else if(a==="demo"){ var n=naechstesVideo(); if(!n){ toast("Alles geschafft. Zeit für die Prüfung."); return; } schaue(n[0],n[1],false); }
+  else if(a==="sheet"){ sheetAuf(b.dataset.n); }
+  else if(a==="sheetzu"){ sheetZu(); }
+  else if(a==="fragen"){ sheetZu(); toast("Im Entwurf ohne Funktion."); }
+  else if(a==="info"){ toast("„"+(b.dataset.n||"Das")+"“ ist im Prototyp nicht ausgearbeitet."); }
+});
+document.querySelector(".steuer").addEventListener("click",function(e){
+  var b=e.target.closest("button"); if(!b) return;
+  if(b.dataset.demo){ TAB="weg"; SUB=null; window.__von=null; render(); var n=naechstesVideo(); if(!n) toast("Alles geschafft. Zeit für die Prüfung."); else setTimeout(function(){ schaue(n[0],n[1],false); },400); return; }
+  Array.prototype.forEach.call(b.parentNode.children,function(x){ x.setAttribute("aria-pressed",x===b?"true":"false"); });
+  if(b.dataset.z) ZUGANG=b.dataset.z; else if("t" in b.dataset) TERMIN=b.dataset.t===""?null:+b.dataset.t;
+  window.__von=null; render();
+});
+render();
+})();
+</script>
