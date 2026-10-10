@@ -263,7 +263,7 @@ try {
     console.log("Karte nur auf Vorschau-Geräten");
     let v = await neueSeite({ b: 360, h: 740, ohneFlag: true });
     await zumHub(v);
-    pruefe("normales Schülergerät: keine Fahrlehrer-Karte (nurVorschau)", (await v.locator('.sp-karte[data-spiel="fahrlehrer"]').count()) === 0);
+    pruefe("normales Schülergerät: Fahrlehrer-Karte sichtbar (freigegeben)", (await v.locator('.sp-karte[data-spiel="fahrlehrer"]').count()) === 1);
     await v.context().close();
     v = await neueSeite({ b: 360, h: 740 });
     await zumHub(v);

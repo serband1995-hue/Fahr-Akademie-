@@ -202,7 +202,7 @@ console.log("Schilder-Wisch: Layout in Ruhe");
 for (const g of [{ b: 360, h: 740, n: "360" }, { b: 320, h: 640, n: "320" }, { b: 412, h: 915, n: "412 dunkel", dunkel: true }, { b: 740, h: 360, n: "quer 740x360" }]) {
   const s = await neueSeite({ b: g.b, h: g.h, dunkel: g.dunkel });
   await zumHub(s);
-  pruefe(g.n + ": Karte auf der Startseite mit Namen und Vorschau-Marke", (await s.textContent('.sp-karte[data-spiel="ninja"] .sp-karte-titel')).trim() === "Schilder-Wisch" && (await s.locator('.sp-karte[data-spiel="ninja"] .sp-karte-marke').count()) === 1);
+  pruefe(g.n + ": Karte auf der Startseite mit Namen, ohne Vorschau-Marke (freigegeben)", (await s.textContent('.sp-karte[data-spiel="ninja"] .sp-karte-titel')).trim() === "Schilder-Wisch" && (await s.locator('.sp-karte[data-spiel="ninja"] .sp-karte-marke').count()) === 0);
   pruefe(g.n + ": Symbol der Karte vorhanden (SVG)", (await s.locator('.sp-karte[data-spiel="ninja"] svg').count()) === 1);
   await druecke(s, '.sp-karte[data-spiel="ninja"]'); await s.waitForSelector(".ni-knopf"); await s.waitForTimeout(500);
   await layoutPruefen(s, "Schilder-Wisch bereit " + g.n);
