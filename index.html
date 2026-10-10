@@ -14,9 +14,8 @@
      oben am Bildschirm eine sichtbare Kante zwischen Statusleiste und Papier.
      Reihenfolge wichtig: der Eintrag OHNE media passt immer und muss deshalb
      zuletzt stehen, als Rueckfallebene fuer alte Browser. -->
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAF6EC">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#191D1A">
 <meta name="theme-color" content="#FAF6EC">
+<meta name="color-scheme" content="only light">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -31,6 +30,7 @@
      ausschließlich hierauf zu, damit spätere Änderungen an EINER Stelle passieren.
      Alle bisherigen Variablennamen bleiben gültig — nur Werte ändern sich. */
   :root{
+    color-scheme:light;                         /* 10.10.2026: App ist immer hell, auch bei dunklem Handy-Design */
     /* Spiele: einheitliche Zeichen (grüner Haken = richtig, rotes X = falsch), gezeichnet statt als Schriftzeichen; 09.10.2026 */
     --ico-haken:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4.5 12.8l5 5L19.5 6.5' fill='none' stroke='%232ea84f' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     --ico-x:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 6l12 12M18 6L6 18' fill='none' stroke='%23e0442a' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
@@ -120,7 +120,7 @@
   }
   /* Dark Mode (Punkt 10): folgt der Systemeinstellung des Geräts.
      Bewusst als eigenes Farbschema, nicht als reine Invertierung. */
-  @media (prefers-color-scheme: dark){
+  @media not all{
     :root{
       --bg:#191D1A; --bg-2:#191D1A;               /* war #1A1E1B */
       --surface:#212722;                          /* war #242A25 */
@@ -914,11 +914,11 @@
   .kt-cta{width:100%;margin:0 0 var(--sp-l);display:flex;align-items:center;justify-content:center;gap:8px;}
   .kt-cta .ic{width:20px;height:20px;}
   @media (prefers-reduced-motion: reduce){ .kachel-t{animation:none;} }
-  @media (prefers-color-scheme: dark){ .kt-bild svg{filter:brightness(.78) saturate(.9);} .kachel-t.zu .kt-bild svg{filter:brightness(.78) saturate(.2);} .kt-marke.krone{background:#2A2E28;} }
+  @media not all{ .kt-bild svg{filter:brightness(.78) saturate(.9);} .kachel-t.zu .kt-bild svg{filter:brightness(.78) saturate(.2);} .kt-marke.krone{background:#2A2E28;} }
   /* ---- Weg (Karte, 10.10.2026): Strasse mit Stationen als Kacheln, eine Figur faehrt je gesehener Zeit weiter ---- */
   :root{--weg-himmel:#CFE6F7;--weg-mitte:#F1F7EE;--weg-wiese:#CDE5C6;--weg-boden:#B8D8B6;--weg-strasse:#8C9A94;--weg-hell:#BFDDBB;--weg-hell2:#AFD3AD;--weg-baum:#8FC59A;}
-  @media (prefers-color-scheme: dark){ .wg-marke.krone{background:#2A2E28;} }
-  @media (prefers-color-scheme: dark){ :root{--weg-himmel:#1F2F3A;--weg-mitte:#1E2A24;--weg-wiese:#1C2B22;--weg-boden:#17231C;--weg-strasse:#4A5550;--weg-hell:#223326;--weg-hell2:#1C2D21;--weg-baum:#2F5A3C;} }
+  @media not all{ .wg-marke.krone{background:#2A2E28;} }
+  @media not all{ :root{--weg-himmel:#1F2F3A;--weg-mitte:#1E2A24;--weg-wiese:#1C2B22;--weg-boden:#17231C;--weg-strasse:#4A5550;--weg-hell:#223326;--weg-hell2:#1C2D21;--weg-baum:#2F5A3C;} }
   [lang="ar"] :is(.kt-name,.wg-name,.nav-text,.cd-pille,.drawer-item > span),[lang="ckb"] :is(.kt-name,.wg-name,.nav-text,.cd-pille,.drawer-item > span),
   [lang="fa"] :is(.kt-name,.wg-name,.nav-text,.cd-pille,.drawer-item > span),[lang="hi"] :is(.kt-name,.wg-name,.nav-text,.cd-pille,.drawer-item > span),
   [lang="am"] :is(.kt-name,.wg-name,.nav-text,.cd-pille,.drawer-item > span),[lang="ti"] :is(.kt-name,.wg-name,.nav-text,.cd-pille,.drawer-item > span){line-height:1.45;}
@@ -1675,7 +1675,7 @@
   /* ================= D12 "Behutsam" (26.09.2026, vom Inhaber gewaehlt) =================
      Gleiche Farben und Aufbau, nur ruhiger: Karten liegen hell AUF dem Papier (weicher
      Schatten) statt eingesenkt. Nur im hellen Modus -- der Dunkelmodus bleibt, wie er ist. */
-  @media (prefers-color-scheme: light){
+  @media all{
     :root{ --surface:#FFFDF8; --surface-strong:#F3EDE0; --border:rgba(43,40,30,.10);
       --schatten-2:0 1px 2px rgba(43,40,30,.05), 0 6px 18px rgba(43,40,30,.07); --r-l:20px; --fs-hero:30px; }
     .header{padding-top:6px;}
@@ -1692,7 +1692,7 @@
     #such-input{background:var(--surface);}
   }
   /* Schwebende untere Leiste nur auf dem Handy; ab 760px sitzt sie wie bisher im Papierbogen. */
-  @media (prefers-color-scheme: light) and (max-width: 759px){
+  @media (max-width: 759px){
     .bottom-nav{left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));border-radius:22px;border:1px solid var(--border);
       box-shadow:0 8px 28px rgba(43,40,30,.14);padding:6px;background:rgba(255,253,248,.94);
       -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}

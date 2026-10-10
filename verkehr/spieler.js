@@ -209,7 +209,7 @@ const CSS = `
   .vv .vv-kl-zeile .fz{color:var(--vv-gold-text);font-weight:800;}
   .vv .vv-reihe .vv-knopf{flex:1 1 auto;}
 }
-@media (prefers-color-scheme: dark){.vv .vv-buehne{background:#3a4650;}}
+@media not all{.vv .vv-buehne{background:#3a4650;}}
 /* Cockpit (Fahrersicht, 01.10.2026) */
 .vv .vv-cockpit{display:none;position:absolute;left:50%;bottom:0;transform:translateX(-50%);align-items:center;justify-content:center;gap:4%;width:46%;pointer-events:none;direction:ltr;}
 .vv .vv-buehne.cockpit .vv-cockpit{display:flex;}
