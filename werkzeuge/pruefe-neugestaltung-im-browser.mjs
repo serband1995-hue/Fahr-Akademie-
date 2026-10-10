@@ -38,7 +38,7 @@ const tageVon = (n) => { const d = new Date(); d.setDate(d.getDate() + n); retur
 
 /* opt: b, h, voll, termin (Tage oder null), sprache, dunkel, klasse */
 export async function neueSeite(opt) {
-  const ctx = await browser.newContext({ viewport: { width: opt.b, height: opt.h }, hasTouch: true, isMobile: true, deviceScaleFactor: 2, colorScheme: opt.dunkel ? "dark" : "light" });
+  const ctx = await browser.newContext({ viewport: { width: opt.b, height: opt.h }, hasTouch: true, isMobile: true, deviceScaleFactor: 2, colorScheme: opt.dunkel ? "dark" : "light", reducedMotion: opt.ruhig ? "reduce" : "no-preference" });
   const sess = { name: "Lena Beispiel", session_token: "tok", vollzugang: !!opt.voll, agb_akzeptiert_am: "2026-01-01T00:00:00Z", ablauf_am: inEinemJahr, klasse: opt.klasse || "B", telefon: "0100", pruefungstermin: opt.termin == null ? null : tageVon(opt.termin) };
   await ctx.addInitScript((d) => { try { localStorage.setItem("academy_session", JSON.stringify(d.s)); localStorage.setItem("academy_sprache", d.sprache); } catch (e) {} }, { s: sess, sprache: opt.sprache || "de" });
   const seite = await ctx.newPage(); seite.fehler = [];
@@ -84,7 +84,7 @@ export { layout };
 
 if (import.meta.url === "file://" + process.argv[1]) {
   const GROESSEN = [[360, 740, "360"], [412, 915, "412"], [812, 375, "quer"]];
-  const nur = process.env.NUR || "e1,e2,e3";
+  const nur = process.env.NUR || "e1,e2,e3,e4";
   /* ---------- Etappe 1: Krone und Schloss mit Krone ---------- */
   if (nur.includes("e1")) for (const dunkel of [false, true]) for (const [b, h, gn] of GROESSEN) for (const voll of [true, false]) {
     const tag = "E1 " + (voll ? "voll" : "start") + " " + gn + (dunkel ? " dunkel" : "");
@@ -93,7 +93,7 @@ if (import.meta.url === "file://" + process.argv[1]) {
     const kr = await s.locator(".konto-kreis .krone-zeichen").count();
     pruefe(tag + ": Krone auf den Initialen " + (voll ? "da" : "nicht da"), voll ? kr === 1 : kr === 0);
     await layout(s, tag + " Start");
-    await s.tap('[data-view="lernpfad"]'); await s.waitForTimeout(1200); await layout(s, tag + " Übersicht");
+    await s.evaluate(() => document.querySelector('[data-view="lernpfad"]').click()); await s.waitForTimeout(1200); await layout(s, tag + " Übersicht");
     if (!voll) {
       await s.locator('.page-content [data-gotostufe="Stoppschild-Situationen"]').first().evaluate((e) => e.scrollIntoView({ block: "center" })); await s.tap('.page-content [data-gotostufe="Stoppschild-Situationen"]'); await s.waitForTimeout(1200);
       const z = await s.locator(".video-zeile.versiegelt .vz-mal-siegel .ic").count();
@@ -169,12 +169,12 @@ if (import.meta.url === "file://" + process.argv[1]) {
     for (const [b, h, gn] of GROESSEN) for (const voll of [true, false]) for (const dunkel of [false, true]) {
       const tag = "E3 " + (voll ? "voll" : "start") + " " + gn + (dunkel ? " dunkel" : "");
       const s = await neueSeite({ b, h, voll, termin: 7, dunkel }); await s.waitForTimeout(1300);
-      pruefe(tag + ": 5 Tabs unten (Start, Übersicht, 3D, Spiele, Strecken)", (await s.locator(".bottom-nav-item").count()) === 5);
+      pruefe(tag + ": 5 Tabs unten (Start, Weg, 3D, Spiele, Strecken)", (await s.locator(".bottom-nav-item").count()) === 5);
       pruefe(tag + ": Gesehen ist nicht mehr unten", (await s.locator('.bottom-nav-item[data-view="verlauf"]').count()) === 0);
       const klein = await s.evaluate(() => [...document.querySelectorAll(".bottom-nav-item")].filter((e) => { const r = e.getBoundingClientRect(); return r.height < 43.5 || r.width < 43.5; }).length);
       pruefe(tag + ": Tabs >= 44 px", klein === 0);
       // jeder Tab: richtig markiert, Stapel leer
-      for (const [sel, name] of [['[data-view="lernpfad"]', "Übersicht"], ['[data-tab-drawer="verkehr"]', "3D"], ['[data-tab-drawer="spiele"]', "Spiele"], ['[data-view="pruefungsstrecken"]', "Strecken"], ['[data-view="start"]', "Start"]]) {
+      for (const [sel, name] of [['[data-view="weg"]', "Weg"], ['[data-tab-drawer="verkehr"]', "3D"], ['[data-tab-drawer="spiele"]', "Spiele"], ['[data-view="pruefungsstrecken"]', "Strecken"], ['[data-view="start"]', "Start"]]) {
         await s.tap(".bottom-nav " + sel); await s.waitForTimeout(900);
         pruefe(tag + ": Tab " + name + " ist markiert", (await s.locator(".bottom-nav-item.active" + sel).count()) === 1, await ansicht(s));
         pruefe(tag + ": Tab " + name + " leert den Zurück-Stapel", (await stapel(s)) === 0);
@@ -223,6 +223,99 @@ if (import.meta.url === "file://" + process.argv[1]) {
       await s.tap("#drawer-open-btn"); await s.waitForTimeout(500);
       const ab2 = await s.evaluate(() => [...document.querySelectorAll(".drawer-item")].filter((e) => { const r = e.getBoundingClientRect(); return r.right > innerWidth + 1 || r.left < -1; }).length);
       pruefe(tag + ": Menü nicht seitlich überstehend", ab2 === 0);
+      pruefe(tag + ": keine Fehler in der Konsole", s.fehler.length === 0, s.fehler.join(" | "));
+      await s.context().close();
+    }
+  }
+  /* ---------- Etappe 4: Weg (Karte mit Figur) ---------- */
+  if (nur.includes("e4")) {
+    const figY = (s) => s.evaluate(() => parseFloat(document.getElementById("weg-figur").style.top));
+    const knotenY = (s) => s.evaluate(() => [...document.querySelectorAll(".wg-knoten")].map((e) => parseFloat(e.style.top)));
+    const sehen = (s, anzahlBereiche) => s.evaluate((n) => { for (let si = 0; si < n; si++) for (let k = 0; k < 3; k++) for (let v = 0; v < 2; v++) seenVideoIds.add("v" + si + k + v); }, anzahlBereiche);
+    const zumWeg = async (s) => { await s.tap('.bottom-nav [data-view="weg"]'); await s.waitForSelector("#weg-figur", { timeout: 8000 }); };
+    for (const [b, h, gn] of GROESSEN) for (const voll of [true, false]) for (const dunkel of [false, true]) {
+      const tag = "E4 " + (voll ? "voll" : "start") + " " + gn + (dunkel ? " dunkel" : "");
+      const s = await neueSeite({ b, h, voll, termin: 9, dunkel, ruhig: true }); await s.waitForTimeout(1200);
+      await zumWeg(s); await s.waitForTimeout(500);
+      pruefe(tag + ": 7 Stationen, Figur, Ziel", (await s.locator(".wg-kachel").count()) === 7 && (await s.locator("#weg-figur").count()) === 1 && (await s.locator(".wg-ziel").count()) === 1);
+      pruefe(tag + ": Ziel nennt die Tage (9)", (await s.locator(".wg-ziel b").innerText()) === "9");
+      const kr = await s.locator(".wg-kachel .wg-marke.krone").count(), sk = await s.locator(".wg-kachel .wg-marke.zu").count();
+      pruefe(tag + ": " + (voll ? "Kronen auf 6 Stationen" : "Schloss mit Krone auf 6 Stationen") + " (" + kr + "/" + sk + ")", voll ? (kr === 6 && sk === 0) : (sk === 6 && kr === 0));
+      const pille = await s.evaluate(() => { const w = document.querySelector(".wg-weiter"), n = document.querySelector(".bottom-nav"); if (!w) return "keine"; const a = w.getBoundingClientRect(), c = n.getBoundingClientRect(); return a.bottom <= c.top + 1 && a.left >= 0 && a.right <= innerWidth ? "ok" : "ueberlappt"; });
+      pruefe(tag + ": Weiter-Pille liegt über der Leiste, nichts überlappt", pille === "ok", pille);
+      const ys = await knotenY(s), f0 = await figY(s);
+      pruefe(tag + ": ohne Fortschritt steht die Figur am Start (unter allen Stationen)", f0 > Math.max(...ys), f0 + " vs " + Math.max(...ys));
+      // Fortschritt: Bereich 1 komplett -> Figur auf Station 1; alle -> auf Station 7 (nur mit Vollzugang)
+      await sehen(s, 1); await s.evaluate(() => renderCatalog()); await s.waitForSelector("#weg-figur"); await s.waitForTimeout(400);
+      let f1 = await figY(s); const k1 = (await knotenY(s))[0];
+      pruefe(tag + ": Bereich 1 gesehen -> Figur auf Station 1", Math.abs(f1 - k1) < 1.2, f1 + " vs " + k1);
+      pruefe(tag + ": Station 1 zeigt Haken", (await s.locator(".wg-kachel .wg-marke.ok").count()) === 1);
+      // Kostprobe im gesperrten Bereich verschiebt die Figur nicht (ohne Vollzugang)
+      if (!voll) {
+        await s.evaluate(() => { seenVideoIds.add("v600"); renderCatalog(); }); await s.waitForTimeout(400);
+        pruefe(tag + ": Kostprobe im gesperrten Bereich bewegt die Figur nicht", Math.abs((await figY(s)) - f1) < 0.3);
+      } else {
+        await sehen(s, 7); await s.evaluate(() => renderCatalog()); await s.waitForSelector("#weg-figur"); await s.waitForTimeout(400);
+        const f7 = await figY(s), k7 = (await knotenY(s))[6];
+        pruefe(tag + ": alles gesehen -> Figur auf Station 7", Math.abs(f7 - k7) < 1.2, f7 + " vs " + k7);
+        pruefe(tag + ": alle 7 Stationen mit Haken", (await s.locator(".wg-kachel .wg-marke.ok").count()) === 7);
+      }
+      await layout(s, tag + " Weg");
+      const klein = await s.evaluate(() => [...document.querySelectorAll(".wg-kachel, .wg-ziel, .wg-weiter")].filter((e) => { const r = e.getBoundingClientRect(); return r.height < 43.5 || r.width < 43.5; }).length);
+      pruefe(tag + ": Tippflächen >= 44 px", klein === 0);
+      pruefe(tag + ": keine Fehler in der Konsole", s.fehler.length === 0, s.fehler.join(" | "));
+      if (dunkel || gn === "360") await s.screenshot({ path: join(bilder, "e4-" + (voll ? "voll" : "start") + "-" + gn + (dunkel ? "-dunkel" : "") + ".png") });
+      await s.context().close();
+    }
+    // Fahrt: die Figur faehrt von der letzten Position zur neuen, die Seite folgt, am Ende ist der Wert gemerkt
+    {
+      const s = await neueSeite({ b: 390, h: 844, voll: true, termin: 9 }); await s.waitForTimeout(1200);
+      await s.evaluate(() => { try { localStorage.setItem("academy_weg_t", "0"); } catch (e) {} for (let k = 0; k < 3; k++) for (let v = 0; v < 2; v++) seenVideoIds.add("v0" + k + v); });
+      await s.tap('.bottom-nav [data-view="weg"]'); await s.waitForSelector("#weg-figur"); await s.waitForTimeout(300);
+      const a = await figY(s); await s.waitForTimeout(900); const m = await figY(s); await s.waitForTimeout(1800); const e = await figY(s);
+      const k1 = (await knotenY(s))[0];
+      pruefe("E4 Fahrt: Figur startet unten, ist nach 0,9 s unterwegs und kommt bei Station 1 an", a > m && m > e && Math.abs(e - k1) < 1.2, [a, m, e, k1].join(" > "));
+      pruefe("E4 Fahrt: Wert wurde gemerkt", (await s.evaluate(() => localStorage.getItem("academy_weg_t"))) === "1", await s.evaluate(() => localStorage.getItem("academy_weg_t")));
+      const sichtbar = await s.evaluate(() => { const r = document.getElementById("weg-figur").getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight; });
+      pruefe("E4 Fahrt: Figur bleibt im Bild (die Seite folgt)", sichtbar);
+      // zweiter Besuch ohne Aenderung: keine Fahrt
+      await s.tap('.bottom-nav [data-view="start"]'); await s.waitForTimeout(500); await s.tap('.bottom-nav [data-view="weg"]'); await s.waitForSelector("#weg-figur");
+      const a2 = await figY(s); await s.waitForTimeout(700); pruefe("E4 Fahrt: zweiter Besuch ohne Änderung, Figur steht sofort", Math.abs((await figY(s)) - a2) < 0.05 && Math.abs(a2 - k1) < 1.2);
+      pruefe("E4 Fahrt: keine Fehler in der Konsole", s.fehler.length === 0, s.fehler.join(" | "));
+      await s.context().close();
+    }
+    // Antippen und Zurück
+    for (const voll of [true, false]) {
+      const tag = "E4 Tippen " + (voll ? "voll" : "start");
+      const s = await neueSeite({ b: 390, h: 844, voll, termin: 5, ruhig: true }); await s.waitForTimeout(1200);
+      await zumWeg(s); await s.waitForTimeout(500);
+      await tippeKachel(s, '.wg-kachel[data-gotostufe="Autobahn"]'); await s.waitForTimeout(900);
+      pruefe(tag + ": Station öffnet den Bereich", (await s.locator(".wg-kachel").count()) === 0 && (await s.locator(".video-zeile").count()) >= 4);
+      await s.tap("[data-nav-zurueck]"); await s.waitForTimeout(900);
+      pruefe(tag + ": Zurück führt auf den Weg", (await s.locator(".wg-kachel").count()) === 7 && (await s.locator('.bottom-nav-item.active[data-view="weg"]').count()) === 1);
+      await tippeKachel(s, ".wg-ziel"); await s.waitForTimeout(900);
+      pruefe(tag + ": Ziel öffnet die Strecken", (await s.locator('.bottom-nav-item.active[data-view="pruefungsstrecken"]').count()) === 1);
+      await s.tap("#drawer-open-btn"); await s.waitForTimeout(500);
+      pruefe(tag + ": Menü hat „Übersicht“ (Suche bleibt erreichbar)", (await s.locator('.drawer-item[data-view="lernpfad"]').count()) === 1);
+      await s.tap('.drawer-item[data-view="lernpfad"]'); await s.waitForTimeout(1000);
+      pruefe(tag + ": Übersicht aus dem Menü zeigt die Suche", (await s.locator("#such-input").count()) === 1 && (await s.locator(".drawer.open").count()) === 0);
+      pruefe(tag + ": keine Fehler in der Konsole", s.fehler.length === 0, s.fehler.join(" | "));
+      await s.context().close();
+    }
+    // alle 18 Sprachen: Beschriftung "Weg", nichts abgeschnitten
+    const probe = await neueSeite({ b: 360, h: 740, voll: false, termin: 3 });
+    const codes = await probe.evaluate(() => Object.keys(I18N)); await probe.context().close();
+    for (const code of codes) for (const voll of [true, false]) {
+      const tag = "E4 Sprache " + code + (voll ? " voll" : " start");
+      const s = await neueSeite({ b: 360, h: 740, voll, termin: 3, sprache: code, ruhig: true }); await s.waitForTimeout(1200);
+      const lbl = await s.evaluate(() => ({ weg: I18N[sprache].navWeg, de: I18N.de.navWeg }));
+      pruefe(tag + ": Beschriftung „Weg“ vorhanden (" + lbl.weg + ")", !!lbl.weg && (code === "de" || lbl.weg !== lbl.de));
+      await zumWeg(s); await s.waitForTimeout(400);
+      await layout(s, tag);
+      const abg = await s.evaluate(() => [...document.querySelectorAll(".bottom-nav-item .nav-text, .wg-name")].filter((e) => e.scrollWidth > e.clientWidth + 2 || e.scrollHeight > e.clientHeight + 2).map((e) => e.textContent.slice(0, 20)));
+      pruefe(tag + ": Texte nicht abgeschnitten", abg.length === 0, abg.join(","));
+      const ueber = await s.evaluate(() => [...document.querySelectorAll(".wg-kachel")].filter((e) => { const r = e.getBoundingClientRect(); return r.left < 0 || r.right > innerWidth + 1; }).length);
+      pruefe(tag + ": alle Stationen im Bild", ueber === 0);
       pruefe(tag + ": keine Fehler in der Konsole", s.fehler.length === 0, s.fehler.join(" | "));
       await s.context().close();
     }
