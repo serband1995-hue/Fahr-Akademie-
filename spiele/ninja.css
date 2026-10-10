@@ -24,7 +24,7 @@
 .ni-schild{position:absolute;left:0;top:0;padding:0;border:0;background:none;cursor:pointer;will-change:transform;
   -webkit-tap-highlight-color:transparent;border-radius:8px;}
 .ni-schild img{display:block;width:100%;height:100%;pointer-events:none;-webkit-user-drag:none;user-select:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35));}
-.ni-schild:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.ni-schild:focus-visible{outline:3px solid var(--gold-text);outline-offset:2px;}
 .ni-schild.treffer img{animation:ni-treffer .42s ease-out forwards;filter:drop-shadow(0 0 7px var(--gruen-hell)) drop-shadow(0 0 3px var(--gruen-hell));}
 .ni-schild.fehl img{animation:ni-fehl .42s ease-out forwards;filter:drop-shadow(0 0 7px var(--warn)) drop-shadow(0 0 3px var(--warn));}
 @keyframes ni-treffer{to{transform:scale(1.5);opacity:0;}}
@@ -36,7 +36,7 @@
 .ni-knopf[hidden]{display:none;}
 .ni-knopf.start,.ni-knopf.los{background:var(--gruen);color:var(--auf-tief);}
 .ni-knopf.warte{background:var(--surface-strong);color:var(--muted);cursor:default;}
-.ni-knopf:focus-visible,.ni-weiter:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.ni-knopf:focus-visible,.ni-weiter:focus-visible{outline:3px solid var(--gold-text);outline-offset:2px;}
 .ni-meldung{min-height:1.4em;text-align:center;font-size:13.5px;color:var(--muted);}
 .ni-meldung.ja::before,.ni-meldung.nein::before{content:"";display:inline-block;width:1.2em;height:1.2em;margin-inline-end:.35em;vertical-align:-.25em;background:center/contain no-repeat var(--ico-haken);}
 .ni-meldung.nein::before{background-image:var(--ico-x);}

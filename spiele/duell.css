@@ -13,7 +13,7 @@
   background:var(--gruen);color:var(--auf-tief);touch-action:manipulation;-webkit-tap-highlight-color:transparent;box-shadow:0 4px 14px rgba(43,40,30,.18);}
 .du-knopf.zweit{background:var(--bg);color:var(--text);border:1.5px solid var(--hairline);box-shadow:none;font-weight:700;}
 .du-knopf:disabled{opacity:.5;cursor:default;box-shadow:none;}
-.du-knopf:focus-visible,.du-klein:focus-visible,.du-antwort:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.du-knopf:focus-visible,.du-klein:focus-visible,.du-antwort:focus-visible{outline:3px solid var(--gold-text);outline-offset:2px;}
 .du-klein{flex:none;min-width:44px;min-height:44px;padding:8px 14px;border:0;border-radius:var(--r-m);cursor:pointer;font-family:inherit;font-size:15px;font-weight:800;
   background:var(--gruen);color:var(--auf-tief);touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 .du-klein:disabled{opacity:.5;cursor:default;}

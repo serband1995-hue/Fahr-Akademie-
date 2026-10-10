@@ -170,7 +170,6 @@ async function ablauf() {
   const A = neuerSchueler("Mira Kaya"), B = neuerSchueler("Jonas Weber");
   const a = await neueSeite(A), b = await neueSeite(B);
   await zumDuell(a);
-  pruefe("Karte „Duell gegen Mitschüler“ steht auf der Startseite der Spiele (mit Vorschau-Marke, ohne Bestwert)", true);
   await a.waitForTimeout(700);
   await layoutPruefen(a, "Übersicht (leer)", 360); await a.screenshot({ path: join(bilder, "duell-uebersicht-leer.png"), fullPage: true });
   pruefe("Übersicht: Titel, drei Bilanzzahlen 0, „Deine Duelle“ leer, „Offene Herausforderungen“ leer", (await a.textContent(".sp-spieltitel")).trim() === "Duell gegen Mitschüler" && (await a.locator(".du-bilanz b").allTextContents()).join() === "0,0,0" && /noch kein Duell/.test(await a.textContent("#spiele-platz")) && /wartet niemand/.test(await a.textContent("#spiele-platz")));

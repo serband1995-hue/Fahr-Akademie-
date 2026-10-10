@@ -25,7 +25,7 @@
 .sp-fl-knopf[hidden]{display:none;}
 .sp-fl-knopf.start{background:var(--gruen);color:var(--auf-tief);}
 .sp-fl-knopf.warte{background:var(--surface-strong);color:var(--muted);cursor:default;}
-.sp-fl-knopf:focus-visible,.sp-fl-weiter:focus-visible,.sp-fl-wahl:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.sp-fl-knopf:focus-visible,.sp-fl-weiter:focus-visible,.sp-fl-wahl:focus-visible{outline:3px solid var(--gold-text);outline-offset:2px;}
 
 .sp-fl-bild{margin:0;font-size:13.5px;line-height:1.4;overflow-wrap:anywhere;min-height:1.4em;}
 .sp-fl-bild:empty{display:none;}
@@ -57,7 +57,7 @@
 .sp-fl-aufloesung{display:grid;gap:8px;padding:10px;border-radius:var(--r-m);background:var(--surface-strong);min-width:0;}
 .sp-fl-zeile{display:flex;align-items:flex-start;gap:10px;min-width:0;}
 .sp-fl-marke{flex:none;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;line-height:1;margin-top:1px;}
-.sp-fl-zeile.ja .sp-fl-marke{background:#2ea84f;color:#fff;}
+.sp-fl-zeile.ja .sp-fl-marke{background:var(--gruen);color:#fff;}
 .sp-fl-marke::before{content:"";width:15px;height:15px;background:center/contain no-repeat var(--ico-haken-w);}
 .sp-fl-zeile.nein .sp-fl-marke{background:var(--warn);color:var(--auf-warn);}
 .sp-fl-zeile.nein .sp-fl-marke::before{background-image:var(--ico-x-w);}

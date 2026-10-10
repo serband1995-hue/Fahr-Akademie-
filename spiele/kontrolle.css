@@ -27,7 +27,7 @@
 .sp-k-knopf[hidden]{display:none;}
 .sp-k-knopf.start{background:var(--gruen);color:var(--auf-tief);}
 .sp-k-knopf.warte{background:var(--surface-strong);color:var(--muted);cursor:default;}
-.sp-k-knopf:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.sp-k-knopf:focus-visible{outline:3px solid var(--gold-text);outline-offset:2px;}
 .sp-k-anleitung{margin:0;line-height:1.5;}
 .sp-k-anleitung[hidden]{display:none;}
 
@@ -39,7 +39,7 @@
 .sp-k-station{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"icon text" "chip chip";align-items:center;align-content:center;gap:4px 8px;min-height:60px;padding:8px 10px;
   border:1.5px solid var(--hairline);border-radius:var(--r-m);background:var(--bg);color:var(--text);font-family:inherit;text-align:start;cursor:pointer;
   touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
-.sp-k-station:focus-visible,.sp-k-ent:focus-visible,.sp-k-weiter:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.sp-k-station:focus-visible,.sp-k-ent:focus-visible,.sp-k-weiter:focus-visible{outline:3px solid var(--gold-text);outline-offset:2px;}
 .sp-k-station:disabled{cursor:default;}
 .sp-k-station.ok{border-color:#2ea84f;}
 .sp-k-station.mangel{border-color:#d3382c;}
