@@ -298,7 +298,7 @@ async function durchgangTeil() {
   console.log("Voller Durchgang 1 (ehrlich und richtig), Handy 360x740");
   let s = await neueSeite({ b: 360, h: 740 });
   await zumHub(s);
-  pruefe("Startseite zeigt die Karte „Verkehrskontrolle“ mit Vorschau-Marke", (await s.locator('.sp-karte[data-spiel="kontrolle"] .sp-karte-titel').textContent()).trim() === de.koName && (await s.locator('.sp-karte[data-spiel="kontrolle"] .sp-karte-marke').count()) === 1);
+  pruefe("Startseite zeigt die Karte „Verkehrskontrolle“ ohne Vorschau-Marke (freigegeben)", (await s.locator('.sp-karte[data-spiel="kontrolle"] .sp-karte-titel').textContent()).trim() === de.koName && (await s.locator('.sp-karte[data-spiel="kontrolle"] .sp-karte-marke').count()) === 0);
   await s.tap('.sp-karte[data-spiel="kontrolle"]');
   await s.waitForSelector(".sp-k-knopf");
   await s.waitForTimeout(600);
@@ -375,11 +375,11 @@ async function durchgangTeil() {
   console.log("Normales Schülergerät (ohne Vorschau-Flag): das Spiel ist noch nicht freigegeben");
   { const n = await neueSeite({ b: 360, h: 740, ohneFlag: true });
     await zumHub(n);
-    pruefe("Karte „Verkehrskontrolle“ erscheint ohne Vorschau-Gerät NICHT", (await n.locator('.sp-karte[data-spiel="kontrolle"]').count()) === 0);
+    pruefe("Karte „Verkehrskontrolle“ erscheint auch ohne Vorschau-Gerät (freigegeben)", (await n.locator('.sp-karte[data-spiel="kontrolle"]').count()) === 1);
     await n.evaluate(() => go({ drawer: "spiele", spiel: "kontrolle" }));
     await n.waitForSelector(".sp-karte", { timeout: 8000 });
     await n.waitForTimeout(600);
-    pruefe("direkt aufgerufen öffnet das Spiel NICHT (Startseite statt Spiel)", (await n.locator(".sp-k-knopf, .sp-kontrolle").count()) === 0);
+    pruefe("direkt aufgerufen öffnet das Spiel (freigegeben)", (await n.locator(".sp-k-knopf, .sp-kontrolle").count()) > 0);
     await n.context().close(); }
 }
 
