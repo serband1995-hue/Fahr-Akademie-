@@ -6,8 +6,8 @@
   "start_url": "/Fahr-Akademie-/index.html",
   "scope": "/Fahr-Akademie-/",
   "display": "standalone",
-  "background_color": "#F5F0E3",
-  "theme_color": "#F5F0E3",
+  "background_color": "#F5F6F3",
+  "theme_color": "#F5F6F3",
   "lang": "de",
   "dir": "ltr",
   "icons": [
