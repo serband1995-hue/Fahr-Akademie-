@@ -3,7 +3,7 @@
 //     den Eintrag in SPIELE und die Texte aus spiele/texte-fahrlehrer.js beim AUSLIEFERN dazu (nur im Speicher; fehlt der Einbau nicht mehr, bleibt alles wie es ist).
 //   - Alle Server-Aufrufe der App werden abgefangen: academy-spiele beantwortet die ECHTE Function-Datei (mit Eintrag „fahrlehrer“, siehe
 //     werkzeuge/fahrlehrer-server.mjs) gegen eine Datenbank im Speicher; alles andere bekommt leere Standardantworten.
-//   - Geprüft: Karte nur auf Vorschau-Geräten, Start-Knopf in der Mitte, 360x740 / 320x640 / Querformat / Dunkelmodus (nichts abgeschnitten, nichts seitlich
+//   - Geprüft: Karte für alle sichtbar (freigegeben 10.10.2026), Start-Knopf in der Mitte, 360x740 / 320x640 / Querformat / Dunkelmodus (nichts abgeschnitten, nichts seitlich
 //     wischbar, Tippflächen >= 44 px, nichts unter der Menüleiste), ein voller Durchgang mit echten Fingertipps (richtig, falsch, Zeit abgelaufen),
 //     Punkte, Server-Wert, Bestenliste, Verlassen mitten im Spiel, alle 18 Sprachen, RTL, alle 14 Szenarien in den längsten Sprachen bei 320x640.
 // Aufruf:  node --experimental-strip-types werkzeuge/pruefe-fahrlehrer-im-browser.mjs
@@ -260,7 +260,7 @@ const dran = (name) => !nurListe.length || nurListe.includes(name);
 
 try {
   if (dran("layout")) {
-    console.log("Karte nur auf Vorschau-Geräten");
+    console.log("Karte auf normalen Geräten (freigegeben)");
     let v = await neueSeite({ b: 360, h: 740, ohneFlag: true });
     await zumHub(v);
     pruefe("normales Schülergerät: Fahrlehrer-Karte sichtbar (freigegeben)", (await v.locator('.sp-karte[data-spiel="fahrlehrer"]').count()) === 1);

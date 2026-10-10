@@ -26,7 +26,7 @@
 .fz-ring circle:first-child{stroke-width:3.5;fill:none;}
 .fz-ring.gefunden circle:first-child{stroke:#2ea84f;}
 .fz-ring.uebersehen circle:first-child{stroke:#f08a1c;stroke-dasharray:6 4;}
-.fz-ring.gefunden .fz-nr-bg{fill:#2ea84f;}
+.fz-ring.gefunden .fz-nr-bg{fill:var(--gruen);}
 .fz-ring.uebersehen .fz-nr-bg{fill:#c2620a;}
 .fz-nr{fill:#fff;font:700 11px sans-serif;}
 .fz-fehltipp path{stroke:#e0442a;stroke-width:3;stroke-linecap:round;animation:fz-weg .7s ease-out forwards;}
@@ -39,7 +39,7 @@
 .fz-knopf[hidden]{display:none;}
 .fz-knopf.start{background:var(--gruen);color:var(--auf-tief);}
 .fz-knopf.warte{background:var(--surface-strong);color:var(--muted);cursor:default;}
-.fz-knopf:focus-visible,.fz-fertig:focus-visible,.fz-weiter:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.fz-knopf:focus-visible,.fz-fertig:focus-visible,.fz-weiter:focus-visible{outline:3px solid var(--gold-text);outline-offset:2px;}
 .fz-fertig{justify-self:center;min-height:44px;padding:8px 18px;border:1.5px solid var(--hairline);border-radius:var(--r-l);background:var(--bg);color:var(--text);
   font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;touch-action:manipulation;max-width:100%;}
 .fz-fertig[hidden]{display:none;}
@@ -56,7 +56,7 @@
 .fz-listentitel{margin:4px 0 0;font-family:var(--ff-titel);font-size:16px;font-weight:600;}
 .fz-liste{list-style:none;margin:0;padding:0;display:grid;gap:10px;}
 .fz-eintrag{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;align-items:start;}
-.fz-nummer{display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-weight:800;font-size:13px;color:#fff;background:#2ea84f;}
+.fz-nummer{display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-weight:800;font-size:13px;color:#fff;background:var(--gruen);}
 .fz-eintrag.uebersehen .fz-nummer{background:#c2620a;}
 .fz-eintrag-kopf{font-size:15px;line-height:1.3;overflow-wrap:anywhere;}
 .fz-status{display:inline-block;margin-inline-start:.4em;padding:1px 8px;border-radius:var(--r-pill);font-size:12px;font-weight:700;background:var(--surface-tint);color:var(--gruen-text);}

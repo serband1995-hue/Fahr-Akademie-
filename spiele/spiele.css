@@ -49,7 +49,7 @@
   font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;touch-action:manipulation;}
 .sp-tempo-knopf[aria-checked="true"]{background:var(--gruen);border-color:var(--gruen);color:var(--auf-tief);}
 .sp-tempo-knopf:disabled{opacity:.55;cursor:default;}
-.sp-tempo-knopf:focus-visible,.sp-knopf:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.sp-tempo-knopf:focus-visible,.sp-knopf:focus-visible{outline:3px solid var(--gold-text);outline-offset:2px;}
 
 .sp-buehne{display:grid;gap:var(--sp-m);}
 .sp-gantry{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(6px,2.5vw,12px);padding:clamp(10px,3vw,16px);
@@ -152,7 +152,7 @@
 .sp-t-pad.tippen{background:var(--gruen-hell);color:var(--auf-warn);}   /* auf-warn = Weiß (hell) / Dunkel (dunkel): passt auch auf dem helleren Grün */
 .sp-t-pad.tippen.spurt{background:var(--gold);color:var(--auf-gold);}
 .sp-t-pad:active:not(.warte){transform:scale(.985);}
-.sp-t-pad:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.sp-t-pad:focus-visible{outline:3px solid var(--gold-text);outline-offset:2px;}
 .sp-t-anleitung{margin:0;line-height:1.5;}
 .sp-t-zahlen{list-style:none;margin:0;padding:0;display:grid;gap:6px;}
 .sp-t-zahlen li{display:flex;justify-content:space-between;gap:var(--sp-m);font-size:15px;}
@@ -187,9 +187,9 @@
 .sp-m-karte{position:relative;display:block;width:100%;aspect-ratio:1/1.02;min-height:84px;padding:0;overflow:hidden;
   border:1.5px solid var(--hairline);border-radius:var(--r-m);background:var(--gruen);cursor:pointer;font-family:inherit;color:#1d1d1b;
   touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;}
-.sp-m-karte:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
-.sp-m-back{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--gruen);color:var(--gold);}
-.sp-m-back i{font:italic 700 38px var(--ff-titel);}
+.sp-m-karte:focus-visible{outline:3px solid var(--gold-text);outline-offset:2px;}
+.sp-m-back{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--gruen);color:#fff;}
+.sp-m-back i{font:normal 700 38px var(--ff-titel);}
 .sp-m-front{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:7px;background:#fff;}
 .sp-m-karte.offen .sp-m-back{display:none;}
 .sp-m-karte.offen .sp-m-front{display:flex;animation:sp-m-auf .18s ease-out;}
@@ -207,14 +207,14 @@
 .sp-m-pop-text{margin:0;font-size:14.5px;line-height:1.45;max-width:34em;}
 .sp-m-weiter,.sp-v-weiter{margin-top:14px;width:100%;min-height:48px;border:0;border-radius:var(--r-l);background:var(--gruen);color:var(--auf-tief);
   font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;touch-action:manipulation;}
-.sp-m-weiter:focus-visible,.sp-v-weiter:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.sp-m-weiter:focus-visible,.sp-v-weiter:focus-visible{outline:3px solid var(--gold-text);outline-offset:2px;}
 .sp-m-knopf,.sp-v-knopf{width:100%;min-height:62px;border:0;border-radius:var(--r-l);cursor:pointer;font-family:inherit;font-size:22px;font-weight:800;
   letter-spacing:.06em;text-transform:uppercase;touch-action:manipulation;-webkit-tap-highlight-color:transparent;box-shadow:0 6px 18px rgba(43,40,30,.22);}
 .sp-m-knopf[hidden],.sp-v-knopf[hidden]{display:none;}
 .sp-m-brett .sp-m-knopf{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);width:min(82%,260px);}
 .sp-m-knopf.start,.sp-v-knopf.start{background:var(--gruen);color:var(--auf-tief);}
 .sp-m-knopf.warte,.sp-v-knopf.warte{background:var(--surface-strong);color:var(--muted);cursor:default;}
-.sp-m-knopf:focus-visible,.sp-v-knopf:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.sp-m-knopf:focus-visible,.sp-v-knopf:focus-visible{outline:3px solid var(--gold-text);outline-offset:2px;}
 .sp-m-anleitung,.sp-v-anleitung{margin:0;line-height:1.5;}
 
 /* ================= Spiel 4: Rechts vor Links ================= */

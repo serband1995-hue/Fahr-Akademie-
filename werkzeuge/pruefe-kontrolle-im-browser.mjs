@@ -372,7 +372,7 @@ async function durchgangTeil() {
   pruefe("Startseite: „Deine Bestpunktzahl: … Punkte“ an der Karte", (await s.textContent('[data-best="kontrolle"]')).trim() === de.koBestwert + ": " + bisher + " " + de.koPunkte, await s.textContent('[data-best="kontrolle"]'));
   await s.context().close();
 
-  console.log("Normales Schülergerät (ohne Vorschau-Flag): das Spiel ist noch nicht freigegeben");
+  console.log("Normales Schülergerät (ohne Vorschau-Flag): das Spiel ist freigegeben");
   { const n = await neueSeite({ b: 360, h: 740, ohneFlag: true });
     await zumHub(n);
     pruefe("Karte „Verkehrskontrolle“ erscheint auch ohne Vorschau-Gerät (freigegeben)", (await n.locator('.sp-karte[data-spiel="kontrolle"]').count()) === 1);

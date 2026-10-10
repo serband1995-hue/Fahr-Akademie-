@@ -5,7 +5,7 @@
 //   - Geprüft: Menü, Startseite, Spiel, Fehlstart, Ergebnis + Rechnung, Tempo-Wechsel, Bestenliste,
 //     Ausblenden, Verlassen mitten in der Runde, Handy hoch/quer, alle 18 Sprachen (nichts abgeschnitten,
 //     nichts seitlich wischbar, Tippflächen >= 44 px, RTL), keine Fehler in der Konsole.
-//   - Einzel-Freigabe je Spiel (nurVorschau): normales Schülergerät sieht Spiel 1, aber NICHT Spiel 2; ?spiele=1 zeigt beide.
+//   - Einzel-Freigabe je Spiel (nurVorschau): normales Schülergerät sieht alle Spiele ohne nurVorschau; ?spiele=1 zusätzlich die versteckten (seit 10.10.2026 keine).
 //   - Tempo-Sprint (Spiel 2, neu 08.10.2026: Auffahrt auf 60 km/h, dann 10 s Strecke, Schein-3D-Zeichenfläche): ganze Läufe in
 //     ECHTER Zeit (je ca. 20 s): ehrlicher Lauf, verpasste Auffahrt, Mehrfinger, Nachtippen nach dem Ende, Verlassen mitten im Lauf, alle 18 Sprachen.
 //   - Schilder-Memory (Spiel 3) und Rechts vor Links (Spiel 4): ganze Spiele mit echten Fingertipps, Uhr-Pause beim Lesen,

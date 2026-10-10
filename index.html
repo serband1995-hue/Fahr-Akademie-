@@ -16,9 +16,15 @@
      zuletzt stehen, als Rueckfallebene fuer alte Browser. -->
 <meta name="theme-color" content="#F5F6F3">
 <meta name="color-scheme" content="only light">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- 10.10.2026: Barlow selbst ausgeliefert (vorher Google Fonts): laedt sicher, auch offline ueber den Service Worker,
+     und keine IP-Adressen der Schueler an Google. 800 gibt es nicht als Datei, dafuer gilt 700. -->
+<style>
+  @font-face{font-family:'Barlow';font-style:normal;font-weight:400;font-display:swap;src:url('schrift/Barlow-400.ttf') format('truetype');}
+  @font-face{font-family:'Barlow';font-style:normal;font-weight:500;font-display:swap;src:url('schrift/Barlow-500.ttf') format('truetype');}
+  @font-face{font-family:'Barlow';font-style:normal;font-weight:600;font-display:swap;src:url('schrift/Barlow-600.ttf') format('truetype');}
+  @font-face{font-family:'Barlow';font-style:normal;font-weight:700 900;font-display:swap;src:url('schrift/Barlow-700.ttf') format('truetype');}
+</style>
+<link rel="preload" href="schrift/Barlow-600.ttf" as="font" type="font/ttf" crossorigin>
 <!-- 26.09.2026: supabase-js in fester Version selbst ausgeliefert (vorher "@2" vom CDN,
      ohne Pruefsumme). Der Service Worker speichert die Datei zwischen -> die App startet
      auch, wenn das CDN nicht erreichbar ist. Rueckfall aufs CDN, falls die Datei fehlt. -->
@@ -1123,7 +1129,7 @@
   .video-zeile.versiegelt .vz-titel,.video-zeile.gesperrt-klasse .vz-titel{color:var(--muted);}
   .vz-meta{display:block;font-size:var(--fs-meta);line-height:1.45;color:var(--muted);margin-top:4px;}
   .vz-siegelwort{color:var(--gold-text);font-weight:600;}
-  .video-zeile.highlight-target{outline:3px solid var(--gold);outline-offset:2px;
+  .video-zeile.highlight-target{outline:3px solid var(--gold-text);outline-offset:2px;
     animation:dlPulse 1.8s ease-in-out 2;}
 
   /* --- Eigene Bereichsseite (Netflix-artige Videoauswahl) --- */
@@ -1370,7 +1376,7 @@
 
   /* Tastaturbedienung sichtbar machen (Tablet mit Tastatur, Screenreader).
      focus-visible statt focus: bei Mausklick bleibt alles unveraendert. */
-  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px;}
+  :focus-visible{outline:2px solid var(--gold-text);outline-offset:2px;border-radius:6px;}
 
   /* Lange Namen, Mails und Links sprengen keine Karte mehr. */
   body{overflow-wrap:break-word;}
@@ -1496,6 +1502,7 @@
   .bottom-nav-item .nav-ic{width:22px;height:22px;flex-shrink:0;}
   .bottom-nav-item{padding-inline:1px;}
   .bottom-nav-item .nav-text{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;max-width:100%;overflow:hidden;overflow-wrap:anywhere;font-size:11.5px;white-space:normal;}
+  @media (max-width:370px){ .bottom-nav-item .nav-text{font-size:10.5px;} }
   .bottom-nav-item:active{transform:translateY(1px);}
   button.drawer-item{appearance:none;-webkit-appearance:none;border:none;background:none;margin:0;
     width:100%;text-align:start;font-family:inherit;min-height:48px;}
@@ -1510,7 +1517,7 @@
   .ios-hinweis{width:100%;max-width:340px;margin-top:16px;padding:12px 14px;border-radius:var(--r-m);
     background:var(--gold-schwach);border:1px solid var(--gold-rand);color:var(--text);font-size:14px;line-height:1.5;text-align:start;}
   .admin-link-btn{appearance:none;border:none;background:none;padding:10px 12px;min-height:44px;color:var(--faint);font:inherit;font-size:13px;cursor:pointer;text-decoration:underline;}
-  :focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+  :focus-visible{outline:3px solid var(--gold-text);outline-offset:2px;}
 
   /* ================= Admin-Struktur (26.09.2026) =================
      Verwaltung auf dem Tablet breiter, Schüler und Videos als kompakte Zeilen,
@@ -1699,7 +1706,7 @@
       -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
     .page-content{padding-bottom:110px;}
   }
-  [role="button"]:focus-visible,.bottom-nav-item:focus-visible,.drawer-item:focus-visible{outline:3px solid var(--gold);outline-offset:-3px;}
+  [role="button"]:focus-visible,.bottom-nav-item:focus-visible,.drawer-item:focus-visible{outline:3px solid var(--gold-text);outline-offset:-3px;}
 </style>
 </head>
 <body>
@@ -8319,12 +8326,14 @@ function ktMarke(art){
   if(!art) return "";
   return '<span class="kt-marke ' + (art === "krone" ? "krone" : "zu") + '">' + markeSymbol(art) + "</span>";
 }
+// 10.10.2026: lange deutsche Bereichsnamen bekommen weiche Trennstellen, sonst bricht bei 360 px nur der letzte Buchstabe um
+function trennbar(h){ return String(h).replace(/Prüfungsstrecken/g, "Prüfungs&shy;strecken").replace(/Verkehrszeichen/g, "Verkehrs&shy;zeichen").replace(/Fahrmanöver/g, "Fahr&shy;manöver"); }
 function ktKachel(o){
   const zu = !!o.zu;
   return '<button type="button" class="kachel-t' + (zu ? " zu" : "") + '" ' + o.attr + ' style="animation-delay:-' + ((o.i * 1.3) % 7).toFixed(1) + 's">' +
     ktMarke(o.art) +
     '<span class="kt-bild">' + ktBild(o.bild) + "</span>" +
-    '<span class="kt-text"><span class="kt-name">' + esc(o.name) + "</span>" +
+    '<span class="kt-text"><span class="kt-name">' + trennbar(esc(o.name)) + "</span>" +
     (o.bar != null ? '<span class="kt-bar"><i style="width:' + o.bar + '%;"></i></span>' + (o.zahl ? '<span class="kt-zahl"><bdi dir="ltr">' + esc(o.zahl) + "</bdi></span>" : "") : "") +
     "</span></button>";
 }
@@ -8406,7 +8415,7 @@ function renderWegHtml(){
     const knoten = '<span class="wg-knoten' + (fertig ? " fertig" : (i === aktiv ? " jetzt" : "")) + '" style="left:' + (p.x / WEG_B * 100).toFixed(2) + "%;top:" + (p.y / H * 100).toFixed(2) + '%;"></span>';
     return knoten + '<button type="button" class="wg-kachel' + (i === aktiv && !fertig ? " jetzt" : "") + (b.komplettGesperrt ? " zu" : "") + '" data-gotostufe="' + esc(g.stufe) + '" style="left:' + (links / WEG_B * 100).toFixed(2) + "%;top:" + (p.y / H * 100).toFixed(2) + "%;animation-delay:-" + ((i * 1.4) % 7).toFixed(1) + 's">' + marke +
       '<span class="wg-bild">' + ktBild(g.stufe) + "</span>" +
-      '<span class="wg-text"><span class="wg-name">' + esc(bereichName(g.stufe)) + '</span><span class="wg-bar"><i style="width:' + Math.round((b.teilGesperrt ? (b.offen ? b.gesehen / b.offen : 0) : frac) * 100) + '%;"></i></span></span></button>';
+      '<span class="wg-text"><span class="wg-name">' + trennbar(esc(bereichName(g.stufe))) + '</span><span class="wg-bar"><i style="width:' + Math.round((b.teilGesperrt ? (b.offen ? b.gesehen / b.offen : 0) : frac) * 100) + '%;"></i></span></span></button>';
   }).join("");
   // Ziel: Flagge, mit der Zahl der Tage bis zur Pruefung, wenn der Server einen Termin liefert
   let tage = null;
@@ -8452,7 +8461,7 @@ function wegEinhaengen(){
   // Die Seite folgt der Figur: erst auf ihre Startposition, waehrend der Fahrt laufend mit
   let folgt = true; const aus = function(){ folgt = false; };
   window.addEventListener("touchstart", aus, { once: true, passive: true }); window.addEventListener("wheel", aus, { once: true, passive: true });
-  const folgen = function(){ if(!folgt || !fig.isConnected) return; const r = fig.getBoundingClientRect(); window.scrollTo(0, Math.max(0, r.top + window.scrollY - window.innerHeight * 0.42)); };
+  const folgen = function(){ if(!folgt || !fig.isConnected) return; fig.scrollIntoView({ block: "center", inline: "nearest" }); };   // 10.10.2026: scrollIntoView statt window.scrollTo, damit es auch im Papierbogen ab 760 px (#app scrollt) und quer greift
   folgen();
   const merken = function(){ try{ localStorage.setItem(SPEICHER, String(ziel)); }catch(e){} };
   if(ruhig || Math.abs(ziel - von) < 0.001){ setze(ziel); merken(); return; }
