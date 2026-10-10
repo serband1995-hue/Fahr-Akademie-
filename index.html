@@ -862,8 +862,8 @@
   /* Freemium (28.08.2026): komplett gesperrte Bereiche wirken gedämpfter, aber
      bleiben klar antippbar -- man soll sehen, dass es dort was gibt. */
   .bereich-tile.bereich-gesperrt{opacity:.72;}
-  .bt-lock{display:inline-flex;vertical-align:-2px;color:var(--faint);}
-  .bt-lock .ic{width:13px;height:13px;}
+  .bt-lock{display:inline-flex;vertical-align:-3px;color:var(--faint);}
+  .bt-lock .ic{width:18px;height:18px;}
 
   /* ================= "PAPIER & STRECKE" — visuelle Sprache (13.09.2026) =================
      Neue Bausteine fuer den Start-Bildschirm (4.4 der Arbeitsliste). Die Kacheln oben
@@ -883,9 +883,15 @@
   .fa-logo-btn:active .logo-img{transform:scale(.94);}
   .konto-btn{background:none;border:none;cursor:pointer;padding:0;
     min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:flex-end;}
-  .konto-kreis{width:30px;height:30px;border-radius:50%;background:var(--surface-tint);
+  .konto-kreis{position:relative;width:30px;height:30px;border-radius:50%;background:var(--surface-tint);
     color:var(--gruen-text);display:flex;align-items:center;justify-content:center;
     font-size:13px;font-weight:700;flex-shrink:0;}
+  /* Krone = Vollzugang. Sitzt oben auf den Initialen und ueberlappt den Rand leicht. */
+  .krone-zeichen{display:block;width:18px;height:18px;flex:none;}
+  .konto-kreis .krone-zeichen{position:absolute;top:-10px;inset-inline-start:50%;margin-inline-start:-9px;
+    transform:rotate(-9deg);filter:drop-shadow(0 1px 1px rgba(43,40,30,.3));pointer-events:none;}
+  .dh-name .krone-zeichen{display:inline-block;width:18px;height:18px;vertical-align:-3px;margin-inline-start:6px;}
+  .schloss-krone .ic{width:inherit;height:inherit;}
 
   /* --- Ueberschrift + Quittung (ersetzt Prozentangabe: Zeit kann man nicht durchfallen) --- */
   .fa-hero{font-family:var(--ff-titel);font-weight:var(--fw-titel);
@@ -1022,8 +1028,8 @@
   [dir="rtl"] .vz-mal-offen::after{transform:scaleX(-1);}
   /* Zustand 2: versiegelt -- Goldpunkt mit Ring statt Schloss ("ein Siegel sagt
      'hier liegt etwas fuer dich', ein Schloss sagt 'geh weg'"). */
-  .vz-mal-siegel::after{content:"";width:10px;height:10px;border-radius:50%;
-    background:var(--gold);box-shadow:0 0 0 4px rgba(217,149,76,.32);}
+  .vz-mal-siegel .ic{width:24px;height:24px;color:rgba(250,246,236,.94);
+    filter:drop-shadow(0 1px 2px rgba(0,0,0,.45));}
   /* Zustand 3: gesehen -- Haken oben-Start, klein, kein flaechiger Kreis. */
   .vz-mal-gesehen{align-items:flex-start;justify-content:flex-start;padding:4px;}
   .vz-mal-gesehen .ic{width:15px;height:15px;color:var(--auf-tief);
@@ -1190,7 +1196,7 @@
   .vk-karte:focus-visible{outline:none;}
   .vk-karte:focus-visible .vk-bild{outline:3px solid var(--gold-text);outline-offset:2px;}
   .vk-fuss{display:flex;align-items:center;gap:6px;min-height:22px;padding-inline:2px;color:var(--muted);font-size:13px;font-weight:700;}
-  .vk-fuss .ic{width:15px;height:15px;flex:none;}
+  .vk-fuss .ic{width:19px;height:19px;flex:none;}
   .vk-info{display:grid;width:100%;min-height:44px;margin:0;padding:6px 0 0;border:0;background:none;font:inherit;color:inherit;text-align:start;cursor:pointer;-webkit-tap-highlight-color:transparent;}
   .vk-t{grid-area:1/1;display:flex;flex-direction:column;gap:5px;min-width:0;visibility:hidden;opacity:0;transition:opacity .28s ease,visibility 0s .28s;}
   .vk-t.an{visibility:visible;opacity:1;transition:opacity .3s ease .08s,visibility 0s;}
@@ -1203,7 +1209,7 @@
   @media (prefers-reduced-motion:reduce){ .vk-karte{transform:none;} .vk-bild img{filter:brightness(var(--hell,1));} .vk-t,.vk-t.an{transition:none;} }
   .vv-marke-frei{padding:2px 9px;border-radius:999px;background:var(--gold-schwach);border:1px solid var(--gold-rand);color:var(--gold-text);font-weight:700;}
   .vv-marke-zu{display:inline-flex;align-items:center;gap:4px;color:var(--muted);}
-  .vv-marke-zu .ic{width:14px;height:14px;}
+  .vv-marke-zu .ic{width:17px;height:17px;}
   .sz-liste{display:flex;flex-direction:column;gap:var(--sp-s);}
   .sz-zeile{display:flex;align-items:center;gap:var(--sp-m);flex-wrap:wrap;padding:var(--sp-m);}
   .sz-text{flex:1 1 220px;min-width:0;}
@@ -1671,6 +1677,8 @@ const ICONS = {
   strecke:'<circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H16a3 3 0 0 0 0-6H8a3 3 0 0 1 0-6h7.5"/>',
   kalender:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
   krone:'<path d="M3 18h18l-1.5-9-4.5 4-3-6-3 6-4.5-4z"/>',
+  /* 10.10.2026: Zeichen fuer den Vollzugang. Ohne Vollzugang: Schloss mit Krone in der Mitte. */
+  schlossKrone:'<path d="M8 11V7a4 4 0 118 0v4"/><rect x="4" y="11" width="16" height="10" rx="2.4"/><path d="M8.3 19l-.7-3.6 2.2 1.6L12 13.6l2.2 3.4 2.2-1.6-.7 3.6z" fill="var(--gold)" stroke="var(--gold-text)" stroke-width="1" stroke-linejoin="round"/>',
   uhr:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
   // 13.09.2026 -- PIN-/Passwort-Knopf. Bewusst KEIN Emoji: das ist ein
   // Funktionsknopf, und Emoji sehen auf Honor, Samsung und iPhone verschieden
@@ -1678,6 +1686,14 @@ const ICONS = {
   auge:'<path d="M2 12s3-8 10-8 10 8 10 8-3 8-10 8-10-8-10-8z"/><circle cx="12" cy="12" r="3"/>',
   augeZu:'<path d="M9.9 4.2A10.9 10.9 0 0112 4c7 0 10 8 10 8a18.5 18.5 0 01-2.2 3.2M6.6 6.6A18.2 18.2 0 002 12s3 8 10 8a10.7 10.7 0 005.4-1.4"/><path d="M9.9 9.9a3 3 0 004.2 4.2"/><path d="M3 3l18 18"/>'
 };
+/* Gefuellte Gold-Krone: sitzt auf den Initialen, wenn der Schueler Vollzugang hat (10.10.2026). */
+function kroneZeichen(extraClass){
+  return '<svg class="krone-zeichen ' + (extraClass||"") + '" viewBox="0 0 24 24" aria-hidden="true">' +
+    '<path d="M3.2 8.4l4.6 4.1L12 5.4l4.2 7.1 4.6-4.1L18.9 19H5.1z" fill="var(--gold)" stroke="var(--gold-text)" stroke-width="1.3" stroke-linejoin="round"/>' +
+    '<circle cx="3.2" cy="7.8" r="1.7" fill="var(--gold)" stroke="var(--gold-text)" stroke-width="1"/>' +
+    '<circle cx="12" cy="4.8" r="1.7" fill="var(--gold)" stroke="var(--gold-text)" stroke-width="1"/>' +
+    '<circle cx="20.8" cy="7.8" r="1.7" fill="var(--gold)" stroke="var(--gold-text)" stroke-width="1"/></svg>';
+}
 function icon(name, extraClass){
   return '<svg class="ic ' + (extraClass||"") + '" viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[name]||"") + "</svg>";
 }
@@ -8042,7 +8058,7 @@ function renderLernpfadHtml(){
       const komplettGesperrt = g.videos.length > 0 && g.videos.every(function(x){ return x.sperrgrund === "vollzugang"; });
       return '<button class="bereich-tile' + (pct>=100?" voll":"") + (komplettGesperrt?" bereich-gesperrt":"") + '" data-gotostufe="' + esc(g.stufe) + '">' +
         '<div class="bt-icon">' + bereichIcon(g.stufe) + "</div>" +
-        '<div class="bt-body"><div class="bt-titel">' + esc(bereichName(g.stufe)) + (komplettGesperrt ? ' <span class="bt-lock">' + icon("schloss","ic-s") + "</span>" : "") + "</div>" +
+        '<div class="bt-body"><div class="bt-titel">' + esc(bereichName(g.stufe)) + (komplettGesperrt ? ' <span class="bt-lock">' + icon("schlossKrone","ic-s") + "</span>" : "") + "</div>" +
           '<div class="bt-bar"><div class="bt-bar-fill" style="width:' + pct + '%;"></div></div>' +
           '<div class="bt-meta">' + esc(t("vonVideos", { g: gesehen, n: gesamt })) + " · " + pct + "%</div></div>" +
         '<span class="bt-arrow">' + icon("weiter") + "</span>" +
@@ -8114,7 +8130,7 @@ function renderPruefungsstreckenHtml(){
 
     const anfrageKarte = gesperrtAnzahl > 0
       ? '<div class="karte anfrage-karte">' +
-          '<div class="anfrage-text">' + icon("schloss") + " " + esc(t("vollzugangBanner",{anzahl:gesperrtAnzahl, bereich:bereichName("Prüfungsstrecken")})) + "</div>" +
+          '<div class="anfrage-text">' + icon("schlossKrone") + " " + esc(t("vollzugangBanner",{anzahl:gesperrtAnzahl, bereich:bereichName("Prüfungsstrecken")})) + "</div>" +
           '<button class="anfrage-btn" data-zugang-anfragen="Prüfungsstrecken">' +
             icon("krone") + "<span>" + esc(t("zugangAnfragen")) + "</span>" +
           "</button>" +
@@ -8130,7 +8146,7 @@ function renderPruefungsstreckenHtml(){
           '<span class="stufe-name">' + esc(g.pruefer.name) + "</span>" +
         "</div>" +
         '<span class="admin-badge badge-gesperrt">' + esc(g.videos.length === 1 ? t("videoAnzahl1") : t("videoAnzahl", { n: g.videos.length })) +
-          (alleGesperrt ? ' · <span class="vz-siegelwort">' + esc(t("versiegelt")) + "</span>" : "") +
+          (alleGesperrt ? ' <span class="bt-lock">' + icon("schlossKrone","ic-s") + "</span>" : "") +
         "</span>" +
       "</div>" +
       (isOpen ? '<div class="video-list">' + videoRows + anfrageKarte + "</div>" : "") +
@@ -8255,7 +8271,7 @@ function renderStartHtml(){
       const zeitTeil = gesehenSekGruppe > 0 ? " · " + dauerKurz(gesehenSekGruppe) : "";
       meta = t("duBistHier") + " · " + gesehen + " / " + gesamt + zeitTeil;
     } else if(komplettGesperrt){
-      meta = gesamt + " " + t("videos") + dauerTeil + ' · <span class="vz-siegelwort">' + esc(t("versiegelt")) + "</span>";
+      meta = gesamt + " " + t("videos") + dauerTeil + ' <span class="bt-lock">' + icon("schlossKrone","ic-s") + "</span>";
     } else if(komplettFrei){
       meta = gesamt + " " + t("videos") + dauerTeil + " · " + esc(t("offenFuerAlle"));
     } else {
@@ -8390,7 +8406,7 @@ function renderBereichDetailHtml(){
   const vollzugangGesperrteAnzahl = gruppe.videos.filter(function(x){ return x.sperrgrund === "vollzugang"; }).length;
   const vollzugangBanner = vollzugangGesperrteAnzahl > 0
     ? '<div class="karte anfrage-karte">' +
-        '<div class="anfrage-text">' + icon("schloss") + " " + esc(t("vollzugangBanner",{anzahl:vollzugangGesperrteAnzahl, bereich:bereichName(selectedBereich)})) + "</div>" +
+        '<div class="anfrage-text">' + icon("schlossKrone") + " " + esc(t("vollzugangBanner",{anzahl:vollzugangGesperrteAnzahl, bereich:bereichName(selectedBereich)})) + "</div>" +
         '<button class="anfrage-btn" data-zugang-anfragen="' + esc(selectedBereich) + '">' +
           icon("krone") + "<span>" + esc(t("zugangAnfragen")) + "</span>" +
         "</button>" +
@@ -8745,12 +8761,12 @@ function renderVerkehrHtml(){
     const probe = function(s){ return !voll && s.frei && s.kostprobe; };
     const marke = function(s){
       return probe(s) ? '<span class="vv-marke-frei">' + esc(t("vvKostprobe")) + "</span>"
-        : (!s.frei ? '<span class="vv-marke-zu">' + icon("schloss") + esc(t("vvNurAnfang")) + "</span>" : "");
+        : (!s.frei ? '<span class="vv-marke-zu">' + icon("schlossKrone") + esc(t("vvNurAnfang")) + "</span>" : "");
     };
     const karten = liste.map(function(s){
       return '<button type="button" class="vk-karte' + (s.frei ? "" : " vk-gesperrt") + (probe(s) ? " vk-probe" : "") + '" data-vv-szene="' + esc(s.id) + '" aria-label="' + esc(s.titel) + '">' +
         '<span class="vk-bild">' + icon("verkehr") + '<img src="verkehr/vorschau/' + esc(s.id) + '.webp?v=1" alt="" width="480" height="270" loading="lazy" decoding="async"></span>' +
-        '<span class="vk-fuss" aria-hidden="true">' + (!s.frei ? icon("schloss") : "") + "</span></button>";
+        '<span class="vk-fuss" aria-hidden="true">' + (!s.frei ? icon("schlossKrone") : "") + "</span></button>";
     }).join("");
     const infos = liste.map(function(s, i){
       return '<span class="vk-t' + (i ? "" : " an") + '" data-vk-id="' + esc(s.id) + '">' +
@@ -9283,7 +9299,7 @@ function renderCatalog(){
     '<div class="drawer-backdrop' + (drawerOpen ? " open" : "") + '" id="drawer-backdrop"></div>' +
     '<div class="drawer' + (drawerOpen ? " open" : "") + '">' +
       '<div class="drawer-head">' +
-        '<div class="dh-name">' + esc((session && session.name) || "Fahr-Akademie") + "</div>" +
+        '<div class="dh-name">' + esc((session && session.name) || "Fahr-Akademie") + (session && session.vollzugang ? kroneZeichen() : "") + "</div>" +
         (session && session.ablauf_am ? '<div class="dh-sub">' + esc(t("gueltigBis")) + " " + fmtDate(session.ablauf_am) + "</div>" : "") +
       "</div>" +
       '<div class="drawer-items">' +
@@ -9302,7 +9318,7 @@ function renderCatalog(){
       '<button class="fa-logo-btn" id="wortmarke-home-btn" aria-label="Fahr-Akademie – Zum Start">' +
         '<img class="logo-img" src="' + LOGO + '" alt="" width="40" height="40"></button>' +
       '<button class="konto-btn" data-view="konto" aria-label="Konto">' +
-        '<span class="konto-kreis">' + esc(initialen(session && session.name)) + "</span></button>" +
+        '<span class="konto-kreis">' + esc(initialen(session && session.name)) + (session && session.vollzugang ? kroneZeichen() : "") + "</span></button>" +
     "</div>" +
     (DEMO_MODE ? '<div class="demo-badge">Demo-Modus — Beispieldaten</div>' : "") +
     '<div class="page-content">' + content + "</div>" +
@@ -9658,9 +9674,9 @@ function renderVideoZeile(cfg){
       malKlasse = "vz-mal-klasse";
       metaTxt = [codeTeil, esc(hinweis)].filter(Boolean).join(" · ");
     } else {
-      malInhalt = "";
+      malInhalt = icon("schlossKrone", "ic-s");
       malKlasse = "vz-mal-siegel";
-      metaTxt = [codeTeil, '<span class="vz-siegelwort">' + esc(t("versiegelt")) + "</span>"].filter(Boolean).join(" · ");
+      metaTxt = codeTeil;   // 10.10.2026: kein Wort "versiegelt" mehr, das Schloss mit Krone sagt es
     }
   } else if(gesehen){
     zusatzKlasse = "gesehen";
