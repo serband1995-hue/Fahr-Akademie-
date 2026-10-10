@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fahr-Akademie</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192-v2.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fahr-Akademie">
@@ -22,9 +22,11 @@
   @font-face{font-family:'Barlow';font-style:normal;font-weight:400;font-display:swap;src:url('schrift/Barlow-400.ttf') format('truetype');}
   @font-face{font-family:'Barlow';font-style:normal;font-weight:500;font-display:swap;src:url('schrift/Barlow-500.ttf') format('truetype');}
   @font-face{font-family:'Barlow';font-style:normal;font-weight:600;font-display:swap;src:url('schrift/Barlow-600.ttf') format('truetype');}
+  @font-face{font-family:'Great Vibes';font-style:normal;font-weight:400;font-display:block;src:url('schrift/GreatVibes-latin.woff2') format('woff2');}   /* nur fuer den Schriftzug beim Start (OFL) */
   @font-face{font-family:'Barlow';font-style:normal;font-weight:700 900;font-display:swap;src:url('schrift/Barlow-700.ttf') format('truetype');}
 </style>
 <link rel="preload" href="schrift/Barlow-600.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="schrift/GreatVibes-latin.woff2" as="font" type="font/woff2" crossorigin>
 <!-- 26.09.2026: supabase-js in fester Version selbst ausgeliefert (vorher "@2" vom CDN,
      ohne Pruefsumme). Der Service Worker speichert die Datei zwischen -> die App startet
      auch, wenn das CDN nicht erreichbar ist. Rueckfall aufs CDN, falls die Datei fehlt. -->
@@ -290,11 +292,29 @@
     box-shadow:var(--schatten-2);
   }
 
-  .logo-img{width:64px;height:64px;display:block;filter:drop-shadow(0 6px 12px rgba(30,36,31,.22));}
+  /* 10.10.2026: Logo randlos (Datei ist ein volles Quadrat), Rundung macht CSS; kein Schatten-Hof mehr */
+  .logo-img{width:64px;height:64px;display:block;border-radius:23%;}
+
+
+  /* ---------- START-ANIMATION (10.10.2026): bei jedem Kaltstart Logo + „Die Fahr-Akademie“ wie mit der Feder geschrieben ---------- */
+  #intro{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;
+    padding:24px;transition:opacity .3s ease;cursor:pointer;}
+  #intro.weg img,#intro.weg .intro-schrift{opacity:0;animation:none;transition:opacity .15s ease;}
+  #intro.weg{opacity:0;pointer-events:none;}
+  #intro img{width:clamp(112px,34vw,150px);height:auto;aspect-ratio:1;border-radius:23%;
+    opacity:0;transform:scale(.86);animation:intro-logo .8s cubic-bezier(.2,.7,.1,1) .1s forwards;}
+  @keyframes intro-logo{to{opacity:1;transform:none;}}
+  #intro .intro-schrift{font-family:'Great Vibes',cursive;font-size:clamp(40px,12vw,58px);line-height:1.25;color:var(--gruen);white-space:nowrap;direction:ltr;
+    padding-inline:.2em;min-height:1.3em;}
+  #intro .intro-schrift span{display:inline-block;clip-path:inset(-150% 145% -90% -45%);}
+  #intro .intro-schrift span.da{animation:intro-feder .26s ease-out forwards;}
+  @keyframes intro-feder{to{clip-path:inset(-150% -45% -90% -45%);}}
+  #intro .intro-schrift.fertig span{clip-path:none;animation:none;}   /* am Ende nichts mehr beschneiden (Schnoerkel) */
+  @media (prefers-reduced-motion: reduce){ #intro img{animation:none;opacity:1;transform:none;} #intro .intro-schrift span{clip-path:none;} }
 
   /* ---------- LOGIN ---------- */
   .login-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;}
-  .login-screen .logo-img{width:88px;height:88px;margin:0 auto 18px;}
+  .login-screen .logo-img{width:116px;height:116px;margin:0 auto 18px;}
   .login-card{width:100%;max-width:340px;padding:28px 24px;display:flex;flex-direction:column;gap:14px;margin-top:22px;}
   .login-card input{
     background:var(--surface-strong);border:1px solid var(--border);color:var(--text);
@@ -885,7 +905,7 @@
   /* 06.10.2026: Logo statt Schriftzug, mittig oben, tippbar = zurück zum Dashboard */
   .fa-logo-btn{background:none;border:none;cursor:pointer;padding:4px;
     min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;}
-  .fa-logo-btn .logo-img{width:40px;height:40px;filter:drop-shadow(0 3px 6px rgba(30,36,31,.2));}
+  .fa-logo-btn .logo-img{width:40px;height:40px;}
   .fa-logo-btn:active .logo-img{transform:scale(.94);}
   .konto-btn{background:none;border:none;cursor:pointer;padding:0;
     min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:flex-end;}
@@ -1710,6 +1730,31 @@
 </style>
 </head>
 <body>
+<!-- Start-Animation (10.10.2026, Wunsch Serban): bei jedem Kaltstart Logo und „Die Fahr-Akademie“ Buchstabe fuer Buchstabe wie mit der Feder.
+     Antippen ueberspringt. Nicht in der Verwaltung (#admin) und nicht bei automatischen Pruefungen (navigator.webdriver). -->
+<div id="intro" aria-hidden="true"><img src="icon-512-v2.png" alt="" width="150" height="150"><div class="intro-schrift"></div></div>
+<script>
+(function(){
+  var el = document.getElementById("intro"); if(!el) return;
+  function weg(){ if(!el || el.classList.contains("weg")) return; el.classList.add("weg"); setTimeout(function(){ if(el && el.parentNode) el.parentNode.removeChild(el); el = null; }, 500); }
+  if(navigator.webdriver || /^#admin/.test(location.hash)){ el.parentNode.removeChild(el); return; }
+  el.addEventListener("click", weg);
+  var text = "Die Fahr-Akademie", box = el.querySelector(".intro-schrift");
+  box.innerHTML = text.split("").map(function(c){ return "<span>" + (c === " " ? "&nbsp;" : c) + "</span>"; }).join("");
+  var ruhig = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(ruhig){ setTimeout(weg, 1200); return; }
+  function schreiben(){
+    // Schrift noch nicht da (sehr langsames Netz): nicht in Ersatzschrift schreiben, nur das Logo zeigen
+    try{ if(document.fonts && !document.fonts.check("48px 'Great Vibes'")){ box.style.visibility = "hidden"; setTimeout(weg, 900); return; } }catch(e){}
+    var spans = box.querySelectorAll("span"), i = 0;
+    (function naechster(){ if(!el) return; if(i < spans.length){ spans[i].classList.add("da"); i++; setTimeout(naechster, spans[i - 1].textContent === "\u00a0" ? 60 : 105); } else { box.classList.add("fertig"); setTimeout(weg, 900); } })();
+  }
+  var los = false; function start(){ if(los) return; los = true; setTimeout(schreiben, 550); }
+  try{ document.fonts.load("48px 'Great Vibes'").then(start, start); }catch(e){ start(); }
+  setTimeout(start, 2500);         // Schrift laedt sehr langsam (erster Start): dann trotzdem anfangen, aber erst spaet, sonst springen Buchstaben
+  setTimeout(weg, 7500);           // Sicherheitsnetz: nie haengen bleiben
+})();
+</script>
 <div id="app"></div>
 <script>
 /* ============================================================
