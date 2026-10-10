@@ -8369,13 +8369,16 @@ const KT_FARBEN = {
   "verkehr":{s1:"#E4E6F7",s2:"#F7F8FD",h1:"#CDD3EC",h2:"#B6BEDF"}
 };
 const KT_MOTIV = {
-  "Stoppschild-Situationen":'<g transform="translate(92 84)"><rect x="-2.5" y="22" width="5" height="46" fill="#7B847F"/><path d="M-11 -2L-4.5 -11H4.5L11 -2V7L4.5 16H-4.5L-11 7z" fill="#E5584B"/><rect x="-6" y="1.6" width="12" height="3.2" rx="1.2" fill="#fff"/></g>',
-  "Fahrmanöver-Grundlagen":'<g fill="#F28C38"><path d="M70 150l8-24 8 24z"/><path d="M318 160l8-24 8 24z"/></g><g fill="#fff"><rect x="72" y="140" width="12" height="3"/><rect x="320" y="150" width="12" height="3"/></g>',
-  "Abbiegen, Vorfahrt & Verkehrszeichen":'<g transform="translate(96 84)"><rect x="-2.5" y="20" width="5" height="48" fill="#7B847F"/><path d="M0 -14L16 13H-16z" fill="#fff" stroke="#E5584B" stroke-width="5" stroke-linejoin="round"/></g>',
-  "Autobahn":'<g transform="translate(92 82)"><rect x="-2.5" y="22" width="5" height="46" fill="#7B847F"/><rect x="-17" y="-8" width="34" height="26" rx="4" fill="#3C7FB5"/><path d="M-9 10L-3-2H3L9 10" fill="none" stroke="#fff" stroke-width="2.4"/></g>',
+  "Fahrmanöver-Grundlagen":'<g fill="#F28C38"><path d="M70 150l8-24 8 24z"/><path d="M348 160l8-24 8 24z"/></g><g fill="#fff"><rect x="72" y="140" width="12" height="3"/><rect x="350" y="150" width="12" height="3"/></g>',
   "Prüfung":'<g transform="translate(86 86)"><path d="M0 62V0" stroke="#2B2A22" stroke-width="5" stroke-linecap="round"/><path d="M2 2h44l-9 13 9 13H2z" fill="#E8A33D"/></g>',
   "Prüfungsstrecken":'<g transform="translate(84 82)"><path d="M0 66V0" stroke="#2B2A22" stroke-width="5" stroke-linecap="round"/><path d="M2 2h44l-9 13 9 13H2z" fill="#E8A33D"/></g><path d="M60 214Q110 170 150 190T250 150" fill="none" stroke="#fff" stroke-width="5" stroke-dasharray="3 12" stroke-linecap="round" opacity=".9"/>'
 };
+// 10.10.2026: echte amtliche Verkehrszeichen (verkehr/vorfahrt-zeichen, Quellen in QUELLEN.md), nichts nachgezeichnet.
+// Schild rechts am Fahrbahnrand (Rechtsverkehr), links der Kronen-/Schloss-Marke oben rechts. Ohne passendes Zeichen: keins.
+const KT_ZEICHEN = { "Stoppschild-Situationen":"z206", "Abbiegen, Vorfahrt & Verkehrszeichen":"z205", "Prüfungsstrecken":"z2741", "verkehr":"z301" };
+function ktSchild(nr){
+  return nr ? '<rect x="245.5" y="100" width="5" height="37" fill="#7B847F"/><image href="verkehr/vorfahrt-zeichen/' + nr + '.svg" x="218" y="52" width="60" height="60" preserveAspectRatio="xMidYMid meet"/>' : "";
+}
 function ktBild(schluessel){
   const f = KT_FARBEN[schluessel] || KT_FARBEN["Fahrzeug & Technik"], id = "ktg" + (++ktBildZaehler);
   if(schluessel === "spiele"){
@@ -8387,8 +8390,9 @@ function ktBild(schluessel){
     '<rect width="400" height="260" fill="url(#' + id + ')"/><circle cx="318" cy="58" r="28" fill="#fff" opacity=".85"/><ellipse cx="90" cy="54" rx="42" ry="10" fill="#fff" opacity=".7"/>' +
     '<path d="M0 128Q70 84 150 122T300 108T420 126V260H0z" fill="' + f.h1 + '"/><path d="M0 146Q90 112 180 140T420 138V260H0z" fill="' + f.h2 + '"/>' +
     '<path d="M172 128H228L440 262H-40z" fill="#8E9A94"/><path d="M200 130V262" stroke="#fff" stroke-width="5" stroke-dasharray="14 12" fill="none"/>' +
-    (KT_MOTIV[schluessel] || "") +
-    '<ellipse cx="200" cy="228" rx="64" ry="9" fill="rgba(0,0,0,.14)"/><rect x="150" y="172" width="100" height="40" rx="13" fill="#fff"/><path d="M165 172L176 146H224L235 172z" fill="#fff"/><path d="M174 170L182 151H218L226 170z" fill="#5C6B73" opacity=".85"/><rect x="154" y="182" width="17" height="9" rx="3.5" fill="#E5584B"/><rect x="229" y="182" width="17" height="9" rx="3.5" fill="#E5584B"/><rect x="185" y="192" width="30" height="10" rx="2.5" fill="#E4E8E5"/><rect x="157" y="208" width="17" height="11" rx="3" fill="#2B2F2D"/><rect x="226" y="208" width="17" height="11" rx="3" fill="#2B2F2D"/></svg>';
+    (KT_MOTIV[schluessel] || "") + ktSchild(KT_ZEICHEN[schluessel]) +
+    // Auto auf der rechten Fahrspur (Rechtsverkehr): um 80 nach rechts, Raeder zwischen Mittellinie (200) und Fahrbahnrand (~370 auf Radhoehe)
+    '<g transform="translate(80 0)"><ellipse cx="200" cy="228" rx="64" ry="9" fill="rgba(0,0,0,.14)"/><rect x="150" y="172" width="100" height="40" rx="13" fill="#fff"/><path d="M165 172L176 146H224L235 172z" fill="#fff"/><path d="M174 170L182 151H218L226 170z" fill="#5C6B73" opacity=".85"/><rect x="154" y="182" width="17" height="9" rx="3.5" fill="#E5584B"/><rect x="229" y="182" width="17" height="9" rx="3.5" fill="#E5584B"/><rect x="185" y="192" width="30" height="10" rx="2.5" fill="#E4E8E5"/><rect x="157" y="208" width="17" height="11" rx="3" fill="#2B2F2D"/><rect x="226" y="208" width="17" height="11" rx="3" fill="#2B2F2D"/></g></svg>';
 }
 // Auswertung eines Bereichs fuer Kachel UND Seitenleiste: was ist offen, was ist Vollzugang-Inhalt, was ist gesperrt.
 function bereichStatus(g){
