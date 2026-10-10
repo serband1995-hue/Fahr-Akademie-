@@ -86,6 +86,9 @@ async function layout(s, name) {
   const hell = await s.evaluate(() => { const c = getComputedStyle(document.body).backgroundColor.match(/[\d.]+/g).map(Number); const L = 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; return { L: Math.round(L), cs: getComputedStyle(document.documentElement).colorScheme }; });
   const barlow = await s.evaluate(async () => { await document.fonts.ready; return document.fonts.check("600 15px Barlow") && [...document.fonts].some((f) => f.family.replace(/['"]/g, "") === "Barlow" && f.status === "loaded"); });
   pruefe(name + ": Schrift Barlow geladen (selbst ausgeliefert)", barlow);
+  /* 10.10.2026: Verkehrszeichen in Kacheln nie unter der Marke (Krone/Schloss) und nie abgeschnitten */
+  const schild = await s.evaluate(() => { const p = []; document.querySelectorAll(".kachel-t, .wg-kachel").forEach((k) => { const img = k.querySelector('image[href*="vorfahrt-zeichen"]'), m = k.querySelector(".kt-marke, .wg-marke"); if (!img) return; const a = img.getBoundingClientRect(), bild = img.closest(".kt-bild, .wg-bild").getBoundingClientRect(); if (a.top < bild.top - 0.5 || a.bottom > bild.bottom + 0.5) p.push("abgeschnitten"); if (m) { const r = m.getBoundingClientRect(); if (a.left < r.right + 1 && a.right > r.left - 1 && a.top < r.bottom + 1 && a.bottom > r.top - 1) p.push("unter Marke " + Math.round(r.bottom - a.top) + "px"); } }); return p; });
+  pruefe(name + ": Schilder frei (nicht unter der Marke, nicht abgeschnitten)", schild.length === 0, schild.slice(0, 3).join(" | "));
   pruefe(name + ": Hintergrund hell", hell.L > 200 && hell.cs === "light", "L=" + hell.L + " colorScheme=" + hell.cs);
 }
 export { layout };

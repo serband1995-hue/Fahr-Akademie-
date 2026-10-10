@@ -923,7 +923,7 @@
     animation:kt-schweb 7s ease-in-out infinite;}
   .kachel-t:active{animation:none;transform:scale(.97);}
   @keyframes kt-schweb{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-  .kt-bild{display:block;position:relative;height:auto;aspect-ratio:400/240;max-height:130px;overflow:hidden;}   /* 10.10.2026: mitwachsend statt fest 92 px, sonst schneidet quer Schild und Auto ab */
+  .kt-bild{display:block;position:relative;height:auto;aspect-ratio:400/240;max-height:150px;overflow:hidden;}   /* 10.10.2026: mitwachsend statt fest 92 px, sonst schneidet quer Schild und Auto ab */
   .kt-bild svg{position:absolute;inset:0;width:100%;height:100%;display:block;}
   .kt-text{display:flex;flex-direction:column;gap:6px;padding:11px 13px 13px;flex:1;min-width:0;}
   .kt-name{font-weight:600;font-size:15px;line-height:1.28;overflow-wrap:break-word;-webkit-hyphens:auto;hyphens:auto;}
@@ -1278,8 +1278,8 @@
     .drawer-gruppe-kopf .dg-pfeil,.drawer-gruppe-inhalt,.drawer-gruppe.offen > .drawer-gruppe-inhalt{transition:none;}
   }
   .drawer-foot{padding:var(--sp-m) var(--sp-l);border-top:1px solid var(--border);
-  @media (orientation:landscape) and (max-height:500px){ .drawer-foot{display:none;} }   /* quer: mehr Platz fuer die Liste */
     font-size:13px;color:var(--faint);}
+  @media (orientation:landscape) and (max-height:500px){ .drawer-foot{display:none;} }   /* quer: mehr Platz fuer die Liste */
 
   /* --- Dashboard: dichte Liste aller Bereiche --- */
   .dash-row{display:flex;align-items:center;gap:var(--sp-m);padding:11px 0;
@@ -8377,11 +8377,15 @@ const KT_MOTIV = {
 // 10.10.2026: echte amtliche Verkehrszeichen (verkehr/vorfahrt-zeichen, Quellen in QUELLEN.md), nichts nachgezeichnet.
 // Schild rechts am Fahrbahnrand (Rechtsverkehr), links der Kronen-/Schloss-Marke oben rechts. Ohne passendes Zeichen: keins.
 const KT_ZEICHEN = { "Stoppschild-Situationen":"z206", "Abbiegen, Vorfahrt & Verkehrszeichen":"z205", "Prüfungsstrecken":"z2741", "verkehr":"z301" };
-function ktSchild(nr){
-  // rechts neben der Fahrbahn, unterhalb der Marke oben rechts und im Bild, das quer sichtbar bleibt (y 73 bis 187)
-  return nr ? '<rect x="334.5" y="164" width="5" height="30" fill="#7B847F"/><image href="verkehr/vorfahrt-zeichen/' + nr + '.svg" x="315" y="122" width="44" height="44" preserveAspectRatio="xMidYMid meet"/>' : "";
+function ktSchild(nr, klein){
+  // rechts neben der Fahrbahn und tief genug, dass die Marke oben rechts (Krone/Schloss) es nie verdeckt:
+  // Start-Kachel ab 320 px Breite, Weg-Kachel (nur 54 px hoch) mit eigener, tieferer Lage. Pfahl steht ausserhalb der Fahrbahn.
+  if(!nr) return "";
+  const z = klein ? { x: 350, y: 150, g: 36 } : { x: 345, y: 144, g: 40 };
+  const px = z.x + z.g / 2 - 2.5, py = z.y + z.g - 2;
+  return '<rect x="' + px + '" y="' + py + '" width="5" height="30" fill="#7B847F"/><image href="verkehr/vorfahrt-zeichen/' + nr + '.svg" x="' + z.x + '" y="' + z.y + '" width="' + z.g + '" height="' + z.g + '" preserveAspectRatio="xMidYMid meet"/>';
 }
-function ktBild(schluessel){
+function ktBild(schluessel, klein){
   const f = KT_FARBEN[schluessel] || KT_FARBEN["Fahrzeug & Technik"], id = "ktg" + (++ktBildZaehler);
   if(schluessel === "spiele"){
     return '<svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="400" height="260" fill="#E3F0EA"/>' +
@@ -8392,7 +8396,7 @@ function ktBild(schluessel){
     '<rect width="400" height="260" fill="url(#' + id + ')"/><circle cx="318" cy="58" r="28" fill="#fff" opacity=".85"/><ellipse cx="90" cy="54" rx="42" ry="10" fill="#fff" opacity=".7"/>' +
     '<path d="M0 128Q70 84 150 122T300 108T420 126V260H0z" fill="' + f.h1 + '"/><path d="M0 146Q90 112 180 140T420 138V260H0z" fill="' + f.h2 + '"/>' +
     '<path d="M172 128H228L440 262H-40z" fill="#8E9A94"/><path d="M200 130V262" stroke="#fff" stroke-width="5" stroke-dasharray="14 12" fill="none"/>' +
-    (KT_MOTIV[schluessel] || "") + ktSchild(KT_ZEICHEN[schluessel]) +
+    (KT_MOTIV[schluessel] || "") + ktSchild(KT_ZEICHEN[schluessel], klein) +
     // Auto auf der rechten Fahrspur (Rechtsverkehr): um 60 nach rechts, Raeder zwischen Mittellinie (200) und Fahrbahnrand; rechts davon steht das Schild
     '<g transform="translate(60 0)"><ellipse cx="200" cy="228" rx="64" ry="9" fill="rgba(0,0,0,.14)"/><rect x="150" y="172" width="100" height="40" rx="13" fill="#fff"/><path d="M165 172L176 146H224L235 172z" fill="#fff"/><path d="M174 170L182 151H218L226 170z" fill="#5C6B73" opacity=".85"/><rect x="154" y="182" width="17" height="9" rx="3.5" fill="#E5584B"/><rect x="229" y="182" width="17" height="9" rx="3.5" fill="#E5584B"/><rect x="185" y="192" width="30" height="10" rx="2.5" fill="#E4E8E5"/><rect x="157" y="208" width="17" height="11" rx="3" fill="#2B2F2D"/><rect x="226" y="208" width="17" height="11" rx="3" fill="#2B2F2D"/></g></svg>';
 }
@@ -8512,7 +8516,7 @@ function renderWegHtml(){
     const marke = fertig ? '<span class="wg-marke ok">' + icon("check") + "</span>" : (b.art ? '<span class="wg-marke ' + (b.krone ? "krone" : "zu") + '">' + markeSymbol(b.art) + "</span>" : "");
     const knoten = '<span class="wg-knoten' + (fertig ? " fertig" : (i === aktiv ? " jetzt" : "")) + '" style="left:' + (p.x / WEG_B * 100).toFixed(2) + "%;top:" + (p.y / H * 100).toFixed(2) + '%;"></span>';
     return knoten + '<button type="button" class="wg-kachel' + (i === aktiv && !fertig ? " jetzt" : "") + (b.komplettGesperrt ? " zu" : "") + '" data-gotostufe="' + esc(g.stufe) + '" style="left:' + (links / WEG_B * 100).toFixed(2) + "%;top:" + (p.y / H * 100).toFixed(2) + "%;animation-delay:-" + ((i * 1.4) % 7).toFixed(1) + 's">' + marke +
-      '<span class="wg-bild">' + ktBild(g.stufe) + "</span>" +
+      '<span class="wg-bild">' + ktBild(g.stufe, true) + "</span>" +
       '<span class="wg-text"><span class="wg-name">' + trennbar(esc(bereichName(g.stufe))) + '</span><span class="wg-bar"><i style="width:' + Math.round((b.teilGesperrt ? (b.offen ? b.gesehen / b.offen : 0) : frac) * 100) + '%;"></i></span></span></button>';
   }).join("");
   // Ziel: Flagge, mit der Zahl der Tage bis zur Pruefung, wenn der Server einen Termin liefert
