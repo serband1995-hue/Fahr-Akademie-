@@ -3,17 +3,17 @@
    Spuren: Ost-fahrend y=595 · West-fahrend y=485 · Nord-fahrend x=595 · Süd-fahrend x=485.
    Drehung (rotation, Grad): Ost 0 · Süd 90 · West 180 · Nord -90 (bzw. 270). */
 (function () {
-  const P = { ground: "#E8E0CB", walk: "#F1EBDA", b1: "#D9CFB3", b2: "#CFC4A6", road: "#575E55", line: "#FAF6EC", ink: "#2F4A34", green: "#3F6B4B", gold: "#D9954C", text: "#2B2A22" };
+  const P = { ground: "#E3E9E2", walk: "#EEF2EC", b1: "#D3DBD2", b2: "#C7D0C5", road: "#575E55", line: "#F5F6F3", ink: "#1F5A41", green: "#2E7D5B", gold: "#E8A33D", text: "#1E241F" };
   const CARS = {
-    ivory: { b: "#F3EDE0", d: "#B9AE93" }, gold: { b: "#D9954C", d: "#A8692A" },
-    green: { b: "#4B7A56", d: "#2F4A34" }, slate: { b: "#5E7C8F", d: "#3E566A" }
+    ivory: { b: "#F2F4F0", d: "#B3BCB1" }, gold: { b: "#E8A33D", d: "#B87830" },
+    green: { b: "#3F9B75", d: "#1F5A41" }, slate: { b: "#5E7C8F", d: "#3E566A" }
   };
   const BOX = { x0: 430, x1: 650, y0: 430, y1: 650 };
 
   function carSVG(c) {
     return `<svg viewBox="0 0 104 54" width="104" height="54" xmlns="http://www.w3.org/2000/svg">
-<rect x="16" y="0" width="16" height="6" rx="2" fill="#2B2A22"/><rect x="70" y="0" width="16" height="6" rx="2" fill="#2B2A22"/>
-<rect x="16" y="48" width="16" height="6" rx="2" fill="#2B2A22"/><rect x="70" y="48" width="16" height="6" rx="2" fill="#2B2A22"/>
+<rect x="16" y="0" width="16" height="6" rx="2" fill="#1E241F"/><rect x="70" y="0" width="16" height="6" rx="2" fill="#1E241F"/>
+<rect x="16" y="48" width="16" height="6" rx="2" fill="#1E241F"/><rect x="70" y="48" width="16" height="6" rx="2" fill="#1E241F"/>
 <rect x="2" y="3" width="100" height="48" rx="15" fill="${c.b}" stroke="${c.d}" stroke-width="2.5"/>
 <path d="M64 9 Q80 10 83 27 Q80 44 64 45 Z" fill="#34464E"/>
 <path d="M34 9 Q22 12 20 27 Q22 42 34 45 Z" fill="#34464E"/>
@@ -50,7 +50,7 @@
     }
     // Bäume (feste Positionen)
     [[408, 70], [408, 340], [672, 70], [672, 340], [408, 740], [408, 1010], [672, 740], [672, 1010], [70, 408], [340, 408], [740, 408], [1010, 408], [70, 672], [340, 672], [740, 672], [1010, 672]].forEach(t => {
-      s += `<circle cx="${t[0] + 3}" cy="${t[1] + 5}" r="20" fill="#2B2A22" opacity=".12"/><circle cx="${t[0]}" cy="${t[1]}" r="19" fill="#8FA97C"/><circle cx="${t[0] - 5}" cy="${t[1] - 5}" r="9" fill="#A9C093" opacity=".8"/>`;
+      s += `<circle cx="${t[0] + 3}" cy="${t[1] + 5}" r="20" fill="#1E241F" opacity=".12"/><circle cx="${t[0]}" cy="${t[1]}" r="19" fill="#8FA97C"/><circle cx="${t[0] - 5}" cy="${t[1] - 5}" r="9" fill="#A9C093" opacity=".8"/>`;
     });
     s += `</svg>`;
     return s;
@@ -79,7 +79,7 @@
     len = len || 150;
     const d = document.createElement("div");
     d.className = "arrow"; d.style.cssText = `left:${x}px;top:${y}px;width:${len}px;height:70px;margin:-35px 0 0 ${-len / 2}px;transform:rotate(${rot}deg)`;
-    d.innerHTML = `<svg viewBox="0 0 ${len} 70" width="${len}" height="70"><path d="M6 24 H${len - 46} V6 L${len - 6} 35 L${len - 46} 64 V46 H6 Z" fill="${P.gold}" stroke="#8F5A14" stroke-width="3" stroke-linejoin="round"/></svg>`;
+    d.innerHTML = `<svg viewBox="0 0 ${len} 70" width="${len}" height="70"><path d="M6 24 H${len - 46} V6 L${len - 6} 35 L${len - 46} 64 V46 H6 Z" fill="${P.gold}" stroke="#845408" stroke-width="3" stroke-linejoin="round"/></svg>`;
     parent.appendChild(d); return d;
   }
 
@@ -100,7 +100,7 @@
   function ampelSVG(size) {
     return `<svg viewBox="0 0 80 170" width="${size * 80 / 170}" height="${size}" xmlns="http://www.w3.org/2000/svg">
 <rect x="35" y="130" width="10" height="40" fill="#3A3F3A"/>
-<rect x="8" y="4" width="64" height="130" rx="16" fill="#2B2A22"/>
+<rect x="8" y="4" width="64" height="130" rx="16" fill="#1E241F"/>
 <circle cx="40" cy="36" r="17" fill="#E0503B"/><circle cx="40" cy="69" r="17" fill="#6B5B2A"/><circle cx="40" cy="102" r="17" fill="#2F5A3C"/>
 <circle cx="35" cy="30" r="5" fill="#fff" opacity=".35"/>
 </svg>`;
@@ -109,8 +109,8 @@
     return `<svg viewBox="0 0 160 160" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
 <rect width="160" height="160" rx="16" fill="${P.ground}"/>
 <rect x="0" y="46" width="160" height="68" fill="${P.road}"/><rect x="46" y="0" width="68" height="160" fill="${P.road}"/>
-<g transform="translate(24 97)"><rect x="-24" y="-13" width="48" height="26" rx="9" fill="#F3EDE0" stroke="#B9AE93" stroke-width="2"/><rect x="2" y="-9" width="13" height="18" rx="4" fill="#34464E"/></g>
-<g transform="translate(97 128) rotate(-90)"><rect x="-24" y="-13" width="48" height="26" rx="9" fill="${P.gold}" stroke="#A8692A" stroke-width="2"/><rect x="2" y="-9" width="13" height="18" rx="4" fill="#34464E"/></g>
+<g transform="translate(24 97)"><rect x="-24" y="-13" width="48" height="26" rx="9" fill="#F2F4F0" stroke="#B3BCB1" stroke-width="2"/><rect x="2" y="-9" width="13" height="18" rx="4" fill="#34464E"/></g>
+<g transform="translate(97 128) rotate(-90)"><rect x="-24" y="-13" width="48" height="26" rx="9" fill="${P.gold}" stroke="#B87830" stroke-width="2"/><rect x="2" y="-9" width="13" height="18" rx="4" fill="#34464E"/></g>
 <path d="M150 150 L128 150 L128 138 L112 153 L128 168 L128 156 L150 156 Z" fill="none"/>
 </svg>`;
   }

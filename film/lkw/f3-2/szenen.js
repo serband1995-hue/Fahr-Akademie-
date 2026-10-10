@@ -17,7 +17,7 @@
     // Knopf der Feststellbremse (rot) am Auflieger und „P“-Zeichen der Zugmaschine
     function knoepfe(W) {
       const kz = el("g", { opacity: 0 }, W.gVorn); el("circle", { cx: 4.1, cy: -1.55, r: 0.38, fill: ROT, stroke: "#23262A", "stroke-width": 0.05 }, kz);
-      const t = el("text", { x: 4.1, y: -1.33, "text-anchor": "middle", "font-size": 0.5, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#FAF6EC" }, kz); t.textContent = "P";
+      const t = el("text", { x: 4.1, y: -1.33, "text-anchor": "middle", "font-size": 0.5, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#F5F6F3" }, kz); t.textContent = "P";
       const ka = el("g", { opacity: 0 }, W.gVorn); el("line", { x1: 0.9, y1: -1.0, x2: 0.9, y2: -1.3, stroke: "#8D949C", "stroke-width": 0.14 }, ka); el("circle", { cx: 0.9, cy: -0.95, r: 0.32, fill: ROT, stroke: "#23262A", "stroke-width": 0.04 }, ka);
       return { zug: kz, auf: ka };
     }

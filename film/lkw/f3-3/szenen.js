@@ -58,7 +58,7 @@
       const au = KU.auflieger(W), zm = KU.zugmaschine(W);
       const gk = el("g", null, W.gVorn);                                       // Knöpfe und Markierungen, wandern mit dem Zug
       const kz = el("g", { opacity: 0 }, gk); el("circle", { cx: 4.1, cy: -1.55, r: 0.22, fill: ROT, stroke: "#23262A", "stroke-width": 0.05 }, kz);
-      const kt = el("text", { x: 4.1, y: -1.46, "text-anchor": "middle", "font-size": 0.3, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#FAF6EC" }, kz); kt.textContent = "P";
+      const kt = el("text", { x: 4.1, y: -1.46, "text-anchor": "middle", "font-size": 0.3, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#F5F6F3" }, kz); kt.textContent = "P";
       const ka = el("g", { opacity: 0 }, gk); el("line", { x1: 0.9, y1: -1.0, x2: 0.9, y2: -1.3, stroke: "#8D949C", "stroke-width": 0.08 }, ka); el("circle", { cx: 0.9, cy: -0.95, r: 0.16, fill: ROT, stroke: "#23262A", "stroke-width": 0.04 }, ka);
       const fehl = el("g", { opacity: 0 }, gk);                                // fehlende Sicherung (gestrichelte Kreise)
       [[4.1, -1.55, 0.36], [0.9, -1.0, 0.3], [MA.auflieger.achsX - 2.05, -0.25, 0.4]].forEach((c) => el("circle", { cx: c[0], cy: c[1], r: c[2], fill: "none", stroke: WARN, "stroke-width": 0.07, "stroke-dasharray": "0.2 0.14" }, fehl));

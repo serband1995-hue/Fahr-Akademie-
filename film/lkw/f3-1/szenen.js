@@ -118,7 +118,7 @@
       V.zm.setze(-SA.e, SA.unterkante - SA.plattenOben); V.zm.kupplung(1); V.au.setze(0, { stuetze: 1, keil: 1 });
       const kontakt = el("line", { x1: -0.2, y1: -SA.unterkante, x2: 1.3, y2: -SA.unterkante, stroke: GOLD, "stroke-width": 0.04, opacity: 0 }, W.gVorn);
       const pf = pille(st, tx("l_fest_zug"), ROT), ps = pille(st, tx("l_ohne_spalt"), GRUEN), pe = pille(st, tx("l_eingefallen"), GRUEN), lf = leiter(W, ROT), ls = leiter(W, GRUEN), le = leiter(W, GRUEN);
-      const kn = el("g", { opacity: 0 }, W.gVorn); el("circle", { cx: 4.1, cy: -1.55, r: 0.22, fill: ROT, stroke: "#23262A", "stroke-width": 0.05 }, kn); const kt = el("text", { x: 4.1, y: -1.46, "text-anchor": "middle", "font-size": 0.3, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#FAF6EC" }, kn); kt.textContent = "P";
+      const kn = el("g", { opacity: 0 }, W.gVorn); el("circle", { cx: 4.1, cy: -1.55, r: 0.22, fill: ROT, stroke: "#23262A", "stroke-width": 0.05 }, kn); const kt = el("text", { x: 4.1, y: -1.46, "text-anchor": "middle", "font-size": 0.3, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#F5F6F3" }, kn); kt.textContent = "P";
       const karabiner = el("g", { opacity: 0 }, W.gVorn); el("rect", { x: -0.62, y: -1.5, width: 0.16, height: 0.26, rx: 0.07, fill: "none", stroke: "#D9B35C", "stroke-width": 0.05 }, karabiner); el("line", { x1: -0.54, y1: -1.34, x2: -0.54, y2: -1.24, stroke: "#D9B35C", "stroke-width": 0.04 }, karabiner);
       uhr(T0, ch.dauer, function (t) {
         // Schritt 5: Kupplung wieder öffnen, Zugmaschine ein Stück vorziehen (Neuanfang)
@@ -139,7 +139,7 @@
       V.zm.setze(-SA.e, SA.unterkante - SA.plattenOben); V.zm.kupplung(1); V.au.setze(0, { stuetze: 1, keil: 1 });
       const farben = [GELB, ROT, "#B9BEC4"], sch = farben.map((c) => KU.schlauch(W, c, { laenge: 1.05 }));
       const dose = (k) => ({ x: MA.steckdose.x, y: MA.steckdose.y[k] });
-      const kn = el("g", { opacity: 0 }, W.gVorn); el("circle", { cx: 4.1, cy: -1.55, r: 0.2, fill: ROT, stroke: "#23262A", "stroke-width": 0.05 }, kn); const kt = el("text", { x: 4.1, y: -1.47, "text-anchor": "middle", "font-size": 0.28, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#FAF6EC" }, kn); kt.textContent = "P";
+      const kn = el("g", { opacity: 0 }, W.gVorn); el("circle", { cx: 4.1, cy: -1.55, r: 0.2, fill: ROT, stroke: "#23262A", "stroke-width": 0.05 }, kn); const kt = el("text", { x: 4.1, y: -1.47, "text-anchor": "middle", "font-size": 0.28, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#F5F6F3" }, kn); kt.textContent = "P";
       const ka = el("g", { opacity: 0 }, W.gVorn); el("line", { x1: 0.9, y1: -1.0, x2: 0.9, y2: -1.3, stroke: "#8D949C", "stroke-width": 0.08 }, ka); el("circle", { cx: 0.9, cy: -0.95, r: 0.16, fill: ROT, stroke: "#23262A", "stroke-width": 0.04 }, ka);
       const wann = [[12, 20], [22, 30], [32, 38]];
       const pv = pille(st, tx("l_vorher"), WARN), pg = pille(st, tx("l_gelb"), GELB), pr = pille(st, tx("l_rot"), ROT), pe = pille(st, tx("l_elektro"), "#B9BEC4"), lv = leiter(W, WARN), lg = leiter(W, GELB), lr = leiter(W, ROT), le = leiter(W, "#B9BEC4");
@@ -161,7 +161,7 @@
     function K6(sc, i, T0, ch) {
       const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), V = seite(st, 64, 1.0, 2.0), W = V.W;
       V.zm.setze(-SA.e, SA.unterkante - SA.plattenOben); V.zm.kupplung(1);
-      const kz = el("g", null, W.gVorn); const kzc = el("circle", { cx: 4.1, cy: -1.55, r: 0.22, fill: ROT, stroke: "#23262A", "stroke-width": 0.05 }, kz); const kzt = el("text", { x: 4.1, y: -1.46, "text-anchor": "middle", "font-size": 0.3, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#FAF6EC" }, kz); kzt.textContent = "P";
+      const kz = el("g", null, W.gVorn); const kzc = el("circle", { cx: 4.1, cy: -1.55, r: 0.22, fill: ROT, stroke: "#23262A", "stroke-width": 0.05 }, kz); const kzt = el("text", { x: 4.1, y: -1.46, "text-anchor": "middle", "font-size": 0.3, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#F5F6F3" }, kz); kzt.textContent = "P";
       const knopf = el("g", null, W.gVorn); el("line", { x1: 0.9, y1: -1.0, x2: 0.9, y2: -1.3, stroke: "#8D949C", "stroke-width": 0.08 }, knopf); const kk = el("circle", { cx: 0.9, cy: -0.95, r: 0.16, fill: ROT, stroke: "#23262A", "stroke-width": 0.04 }, knopf);
       const schl = [GELB, ROT, "#B9BEC4"].map((c, k) => { const s = KU.schlauch(W, c, { laenge: 1.05 }); s.setze(KU.ankerWelt(0, k), { x: MA.steckdose.x, y: MA.steckdose.y[k] }); return s; });
       const ps = pille(st, tx("l_stuetzen"), GOLD), pf = pille(st, tx("l_fest_los"), GRUEN), pk = pille(st, tx("l_keile_weg"), GRUEN), pl = pille(st, tx("l_licht"), GRUEN), l1 = leiter(W, GOLD), l2 = leiter(W, GRUEN), l3 = leiter(W, GRUEN), l4 = leiter(W, GRUEN);

@@ -45,7 +45,7 @@
     const frageZeichen = (V) => {
       const g = BK.el("g", { opacity: 0 }, V.gUeber);
       BK.el("circle", { r: 28, fill: F.creme, stroke: F.gold, "stroke-width": 5 }, g);
-      const t = BK.el("text", { "text-anchor": "middle", y: 15, "font-size": 42, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#2F4A34" }, g); t.textContent = "?";
+      const t = BK.el("text", { "text-anchor": "middle", y: 15, "font-size": 42, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#1F5A41" }, g); t.textContent = "?";
       return g;
     };
 
@@ -124,7 +124,7 @@
         pfeile.forEach((a) => a[0].setAttribute("transform", "translate(" + BK.f(rund(a[1] - c, 340) * S - 120) + " 644)"));
         baeume.forEach((b) => b[0].setAttribute("cx", BK.f(rund(b[1] * 5 - c, 1020) * S / 5 * 1.0 - 60)));
       };
-      const lz = BK.fahrzeug(W.gFz, FZ.lastzug, W), pkwV = BK.pkwOben(W.gFz, W, "#D9954C"), pkwO = BK.pkwOben(W.gFz, W, "#5E7C8F");
+      const lz = BK.fahrzeug(W.gFz, FZ.lastzug, W), pkwV = BK.pkwOben(W.gFz, W, "#E8A33D"), pkwO = BK.pkwOben(W.gFz, W, "#5E7C8F");
       const fzL = FZ.lastzug;
       const zGerade = (xF, y, h) => {
         const A = { x: xF - fzL.L, y: y }, K = { x: A.x + fzL.e, y: y };

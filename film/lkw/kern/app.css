@@ -1,9 +1,9 @@
 /* Erklärfilme „Lkw und Zug verstehen“ in der App: Bild oben, Text darunter, Steuerung darunter (keine Knöpfe auf dem Bild).
    Handy zuerst (360–412 px). Ab ~660 px Breite (Querformat/Tablet) steht der Text neben dem Bild. */
-.lk { --lk-titel:var(--ff-titel,'Playfair Display',Georgia,serif); --lk-text:var(--ff-body,'Barlow',sans-serif); --lk-gold:var(--gold,#D9954C); margin:var(--sp-m,12px) 0 var(--sp-l,18px); }
+.lk { --lk-titel:var(--ff-titel,'Barlow',Georgia,serif); --lk-text:var(--ff-body,'Barlow',sans-serif); --lk-gold:var(--gold,#E8A33D); margin:var(--sp-m,12px) 0 var(--sp-l,18px); }
 .lk-kopf { font-family:var(--lk-titel); font-weight:600; font-size:19px; margin:0 0 4px; }
-.lk-intro { color:var(--muted,#6F6857); font-size:14.5px; line-height:1.45; margin:0 0 10px; }
-.lk-kasten { background:var(--surface,#EEE6D3); border:1px solid var(--border,rgba(43,40,30,.16)); border-radius:var(--r-l,16px); padding:10px; overflow:hidden; }
+.lk-intro { color:var(--muted,#58625B); font-size:14.5px; line-height:1.45; margin:0 0 10px; }
+.lk-kasten { background:var(--surface,#E8ECE7); border:1px solid var(--border,rgba(30,36,31,.16)); border-radius:var(--r-l,16px); padding:10px; overflow:hidden; }
 .lk-szenen { display:grid; position:relative; }
 .lk-szenen .scene { grid-area:1 / 1; display:flex; flex-direction:column; gap:12px; min-width:0; pointer-events:none; direction:ltr; }
 .lk-szenen .stagewrap { width:100%; aspect-ratio:1 / 1; border-radius:var(--r-m,12px); overflow:hidden; flex:none; background:#434B45; }
@@ -28,20 +28,20 @@
 .lk-rtl .lk-szenen .panel, .lk-rtl .lk-text, .lk-rtl .lk-intro, .lk-rtl .lk-kopf { direction:rtl; text-align:right; }
 .lk-steuer { display:flex; flex-direction:column; gap:10px; margin-top:12px; }
 .lk-reihe { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-.lk-knopf { min-height:44px; padding:0 16px; border-radius:999px; border:1px solid var(--border,rgba(43,40,30,.16)); background:var(--bg,#FAF6EC); color:var(--text,#2B2A22); font:600 15px/1.2 var(--lk-text); display:inline-flex; align-items:center; gap:8px; cursor:pointer; }
+.lk-knopf { min-height:44px; padding:0 16px; border-radius:999px; border:1px solid var(--border,rgba(30,36,31,.16)); background:var(--bg,#F5F6F3); color:var(--text,#1E241F); font:600 15px/1.2 var(--lk-text); display:inline-flex; align-items:center; gap:8px; cursor:pointer; }
 .lk-knopf svg { width:18px; height:18px; flex:none; fill:currentColor; }
-.lk-play { background:var(--lk-gold); color:var(--auf-gold,#2B2A22); border-color:transparent; }
-.lk-zeit { margin-inline-start:auto; font-size:13px; color:var(--muted,#6F6857); font-variant-numeric:tabular-nums; direction:ltr; }
-.lk-regler { width:100%; height:28px; margin:0; accent-color:var(--gold-text,#8F5A14); direction:ltr; }
+.lk-play { background:var(--lk-gold); color:var(--auf-gold,#1E241F); border-color:transparent; }
+.lk-zeit { margin-inline-start:auto; font-size:13px; color:var(--muted,#58625B); font-variant-numeric:tabular-nums; direction:ltr; }
+.lk-regler { width:100%; height:28px; margin:0; accent-color:var(--gold-text,#845408); direction:ltr; }
 .lk-kapitel { display:grid; grid-template-columns:repeat(auto-fit,minmax(40px,1fr)); gap:4px; direction:ltr; }   /* 7 Kapitel müssen bei 360 px in eine Zeile passen, sonst wickeln sie um */
-.lk-kap { min-width:0; min-height:44px; border-radius:12px; border:1px solid var(--border,rgba(43,40,30,.16)); background:var(--bg,#FAF6EC); color:var(--text,#2B2A22); font:700 15px/1 var(--lk-text); cursor:pointer; }
-.lk-kap[aria-current="true"] { background:var(--gruen,#2F4A34); color:var(--auf-tief,#fff); border-color:transparent; }
-.lk-knopf:focus-visible, .lk-kap:focus-visible, .lk-regler:focus-visible, .lk-text summary:focus-visible { outline:3px solid var(--gold-text,#8F5A14); outline-offset:2px; }
+.lk-kap { min-width:0; min-height:44px; border-radius:12px; border:1px solid var(--border,rgba(30,36,31,.16)); background:var(--bg,#F5F6F3); color:var(--text,#1E241F); font:700 15px/1 var(--lk-text); cursor:pointer; }
+.lk-kap[aria-current="true"] { background:var(--gruen,#1F5A41); color:var(--auf-tief,#fff); border-color:transparent; }
+.lk-knopf:focus-visible, .lk-kap:focus-visible, .lk-regler:focus-visible, .lk-text summary:focus-visible { outline:3px solid var(--gold-text,#845408); outline-offset:2px; }
 .lk-text { margin-top:12px; font-size:15px; line-height:1.5; }
 .lk-text summary { min-height:44px; display:flex; align-items:center; cursor:pointer; font-weight:600; }
 .lk-text h3 { font-family:var(--lk-titel); font-size:16px; margin:14px 0 4px; }
 .lk-text p { margin:0 0 6px; }
-.lk-text .lk-ref { color:var(--muted,#6F6857); font-size:13px; }
+.lk-text .lk-ref { color:var(--muted,#58625B); font-size:13px; }
 @media (prefers-reduced-motion: reduce) { .lk-szenen .stage { transition:none; } }
 /* Paragrafen-Verweise nie verdrehen (RTL-Sprachen), Regel 8 der Sprachen-Notiz */
 .lk-szenen .rf, .lk-szenen .step .rf, .lk-text .lk-ref { unicode-bidi:plaintext; }

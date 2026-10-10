@@ -1,36 +1,36 @@
 /* Bühne (Bild links bzw. oben) – gemeinsam für den MP4-Film (index.html) und die App (verkehr/vorfahrt-film.js).
    Alle Maße in der Bühnen-Einheit 1080 x 1080; die App skaliert die ganze Bühne per transform. */
 .stagewrap { position:relative; }
-.stage { position:absolute; left:0; top:0; width:1080px; height:1080px; overflow:hidden; background:#E8E0CB; direction:ltr; }
+.stage { position:absolute; left:0; top:0; width:1080px; height:1080px; overflow:hidden; background:#E3E9E2; direction:ltr; }
 .stage > * { position:absolute; }
 .road { left:0; top:0; }
 .car { left:0; top:0; width:125px; height:65px; margin:-32.5px 0 0 -62.5px; transform-origin:62.5px 32.5px; filter:drop-shadow(0 7px 7px rgba(43,42,34,.30)); }
 .sign { filter:drop-shadow(0 8px 8px rgba(43,42,34,.35)); }
-.badge { width:76px; height:76px; margin:-38px 0 0 -38px; border-radius:50%; background:var(--vf-gold,#D9954C); color:#2B2A22; font:700 50px/70px var(--vf-titel,'Playfair Display',serif); text-align:center; box-shadow:0 6px 14px rgba(43,42,34,.30); border:3px solid #FFF8E8; }
-.pill { padding:8px 26px; border-radius:42px; background:#FAF6EC; color:#2F4A34; border:3px solid var(--vf-gold,#D9954C); font:700 46px/1.15 var(--vf-text,'Barlow',sans-serif); text-align:center; max-width:420px; box-shadow:0 5px 12px rgba(43,42,34,.25); }
+.badge { width:76px; height:76px; margin:-38px 0 0 -38px; border-radius:50%; background:var(--vf-gold,#E8A33D); color:#1E241F; font:700 50px/70px var(--vf-titel,'Barlow',serif); text-align:center; box-shadow:0 6px 14px rgba(43,42,34,.30); border:3px solid #FAFBF7; }
+.pill { padding:8px 26px; border-radius:42px; background:#F5F6F3; color:#1F5A41; border:3px solid var(--vf-gold,#E8A33D); font:700 46px/1.15 var(--vf-text,'Barlow',sans-serif); text-align:center; max-width:420px; box-shadow:0 5px 12px rgba(43,42,34,.25); }
 .arrow { filter:drop-shadow(0 4px 5px rgba(43,42,34,.3)); }
 .tier { left:0; width:1080px; height:200px; }
 .tier .shape { left:0; top:0; width:1080px; height:200px; position:absolute; }
 .tier .ct { position:absolute; left:0; top:0; width:1080px; height:200px; display:flex; align-items:center; justify-content:center; gap:30px; }
-.tier .nm { font:700 58px/1.05 var(--vf-titel,'Playfair Display',serif); text-align:center; }
+.tier .nm { font:700 58px/1.05 var(--vf-titel,'Barlow',serif); text-align:center; }
 .tier .signs { display:flex; gap:16px; }
 .tier .signs img { width:104px; height:104px; filter:drop-shadow(0 5px 5px rgba(0,0,0,.30)); }
-.bigcard { left:60px; top:400px; width:960px; padding:44px 54px; background:#2F4A34; color:#FAF6EC; border-left:14px solid var(--vf-gold,#D9954C); border-radius:8px 22px 22px 8px; font:600 60px/1.2 var(--vf-titel,'Playfair Display',serif); box-shadow:0 14px 30px rgba(43,42,34,.3); }
-.zonepill { left:60px; bottom:60px; padding:10px 28px; border-radius:999px; background:#FAF6EC; border:6px solid #C0392B; font:700 56px/1.1 var(--vf-text,'Barlow',sans-serif); color:#2B2A22; box-shadow:0 6px 14px rgba(43,42,34,.3); }
+.bigcard { left:60px; top:400px; width:960px; padding:44px 54px; background:#1F5A41; color:#F5F6F3; border-left:14px solid var(--vf-gold,#E8A33D); border-radius:8px 22px 22px 8px; font:600 60px/1.2 var(--vf-titel,'Barlow',serif); box-shadow:0 14px 30px rgba(43,42,34,.3); }
+.zonepill { left:60px; bottom:60px; padding:10px 28px; border-radius:999px; background:#F5F6F3; border:6px solid #C0392B; font:700 56px/1.1 var(--vf-text,'Barlow',sans-serif); color:#1E241F; box-shadow:0 6px 14px rgba(43,42,34,.3); }
 /* Rechts-nach-links-Sprachen: nur der Text im Bild dreht, nicht die Straße (Rechtsverkehr bleibt) */
 .vf-rtl .pill, .vf-rtl .tier .nm, .vf-rtl .bigcard { direction:rtl; }
 
 /* Text-Feld (Panel): gleicher Aufbau in Film und App, nur das Layout (film.css bzw. app.css) unterscheidet sich */
-.panel .kicker { font-family:var(--vf-text,'Barlow',sans-serif); font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#8F5A14; }
-.panel .ttl { font-family:var(--vf-titel,'Playfair Display',serif); font-weight:700; color:#2F4A34; }
-.panel .sub { font-family:var(--vf-text,'Barlow',sans-serif); font-weight:500; color:#6F6857; opacity:0; }
+.panel .kicker { font-family:var(--vf-text,'Barlow',sans-serif); font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#845408; }
+.panel .ttl { font-family:var(--vf-titel,'Barlow',serif); font-weight:700; color:#1F5A41; }
+.panel .sub { font-family:var(--vf-text,'Barlow',sans-serif); font-weight:500; color:#58625B; opacity:0; }
 .pts { display:grid; }
 .pts > * { grid-area:1 / 1; align-self:start; opacity:0; }
-.pt .tx { font-family:var(--vf-text,'Barlow',sans-serif); font-weight:600; color:#2B2A22; }
-.pt.gold .tx { color:#8F5A14; }
-.pt .rf, .step .rf { font-family:var(--vf-text,'Barlow',sans-serif); font-weight:500; color:#6F6857; }
-.step .nr { font-family:var(--vf-titel,'Playfair Display',serif); font-weight:700; color:#D9954C; line-height:1; }
-.step .nm { font-family:var(--vf-titel,'Playfair Display',serif); font-weight:700; color:#2F4A34; }
-.step .tx { font-family:var(--vf-text,'Barlow',sans-serif); font-weight:600; color:#2B2A22; }
-.step .px { font-family:var(--vf-text,'Barlow',sans-serif); font-weight:500; color:#6F6857; }
-.merk { background:#2F4A34; color:#FAF6EC; border-left:12px solid #D9954C; border-radius:6px 18px 18px 6px; font-family:var(--vf-titel,'Playfair Display',serif); font-weight:600; box-shadow:0 10px 24px rgba(43,42,34,.25); }
+.pt .tx { font-family:var(--vf-text,'Barlow',sans-serif); font-weight:600; color:#1E241F; }
+.pt.gold .tx { color:#845408; }
+.pt .rf, .step .rf { font-family:var(--vf-text,'Barlow',sans-serif); font-weight:500; color:#58625B; }
+.step .nr { font-family:var(--vf-titel,'Barlow',serif); font-weight:700; color:#E8A33D; line-height:1; }
+.step .nm { font-family:var(--vf-titel,'Barlow',serif); font-weight:700; color:#1F5A41; }
+.step .tx { font-family:var(--vf-text,'Barlow',sans-serif); font-weight:600; color:#1E241F; }
+.step .px { font-family:var(--vf-text,'Barlow',sans-serif); font-weight:500; color:#58625B; }
+.merk { background:#1F5A41; color:#F5F6F3; border-left:12px solid #E8A33D; border-radius:6px 18px 18px 6px; font-family:var(--vf-titel,'Barlow',serif); font-weight:600; box-shadow:0 10px 24px rgba(43,42,34,.25); }
