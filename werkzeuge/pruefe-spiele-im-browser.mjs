@@ -586,6 +586,7 @@ async function memoryPruefungen() {
   await memPaar(m, ks, paare[0]);
   await m.waitForSelector(".sp-m-popup:not([hidden])");
   const sc0 = SCHILDER.find((x) => x.id === paare[0]);
+  await m.waitForFunction(() => { const i = document.querySelector(".sp-m-pop-schild img"); return i && i.complete && i.naturalWidth > 0; }, null, { timeout: 4000 }).catch(() => {});   // das SVG darf kurz nachladen
   pruefe("Erklärung: das Schild ist ein geladenes amtliches Bild und sichtbar groß (mind. 70 px)", await m.evaluate(() => { const i = document.querySelector(".sp-m-pop-schild img"); const r = i.getBoundingClientRect(); return i.complete && i.naturalWidth > 0 && r.width >= 70 && r.height >= 60; }));
   const pop = await m.evaluate(() => ({ kopf: document.querySelector(".sp-m-pop-kopf").textContent.trim(), nr: document.querySelector(".sp-m-pop-nr").textContent.trim(), name: document.querySelector(".sp-m-pop-name").textContent.trim(), text: document.querySelector(".sp-m-pop-text").textContent.trim(), bild: !!document.querySelector(".sp-m-pop-schild svg, .sp-m-pop-schild img"), weiter: document.querySelector(".sp-m-weiter").textContent.trim() }));
   pruefe("Erklärung nach dem Treffer: Treffer!, Zeichen-Nummer, Name, Erklärung nach StVO, Bild, Weiter", pop.kopf === "Treffer!" && pop.nr === "Zeichen " + sc0.nr && pop.name === TEXTE.de[paare[0] + "l"] && pop.text === TEXTE.de[paare[0] + "m"] && pop.bild && pop.weiter === "Weiter", JSON.stringify(pop));

@@ -8463,7 +8463,9 @@ function wegEinhaengen(){
   window.addEventListener("touchstart", aus, { once: true, passive: true }); window.addEventListener("wheel", aus, { once: true, passive: true });
   const folgen = function(){ if(!folgt || !fig.isConnected) return; fig.scrollIntoView({ block: "center", inline: "nearest" }); };   // 10.10.2026: scrollIntoView statt window.scrollTo, damit es auch im Papierbogen ab 760 px (#app scrollt) und quer greift
   folgen();
-  const merken = function(){ try{ localStorage.setItem(SPEICHER, String(ziel)); }catch(e){} };
+  // Quer (wenig Hoehe): am Ende die aktuelle Station mittig zeigen, damit etwas Antippbares im Bild ist (Weiter-Pille ist quer ausgeblendet)
+  const merken = function(){ try{ localStorage.setItem(SPEICHER, String(ziel)); }catch(e){}
+    if(folgt && window.innerHeight < 500){ const st = karte.querySelector(".wg-kachel.jetzt") || karte.querySelector(".wg-kachel"); if(st) st.scrollIntoView({ block: "center", inline: "nearest" }); } };
   if(ruhig || Math.abs(ziel - von) < 0.001){ setze(ziel); merken(); return; }
   // die Figur faehrt von ihrer letzten Position zur neuen (nur wenn sich seit dem letzten Besuch etwas getan hat)
   let t0 = null; const dauer = 1600;
