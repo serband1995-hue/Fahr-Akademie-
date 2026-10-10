@@ -1177,6 +1177,11 @@
   .drawer-item .ic{color:var(--gruen-hell);flex-shrink:0;}
   .drawer-item.aktiv{background:var(--surface-tint);color:var(--gruen-text);font-weight:600;}
   .drawer-item.aktiv .ic{color:var(--gruen-text);}
+  .drawer-trenner{height:1px;background:var(--border);margin:var(--sp-s) var(--sp-l);}
+  .drawer-marke{margin-inline-start:auto;display:flex;align-items:center;flex:none;}
+  .drawer-item .drawer-marke .ic{width:22px;height:22px;color:var(--gold-text);}
+  .drawer-item .drawer-marke .krone-zeichen{width:22px;height:22px;}
+  .drawer-item > span:not(.drawer-marke){min-width:0;overflow-wrap:anywhere;}
   .drawer-foot{padding:var(--sp-m) var(--sp-l);border-top:1px solid var(--border);
     font-size:13px;color:var(--faint);}
 
@@ -1442,7 +1447,7 @@
   .bottom-nav-item{appearance:none;-webkit-appearance:none;border:none;background:none;margin:0;
     flex-direction:column;gap:3px;padding:7px 2px 6px;min-height:52px;font-size:12.5px;line-height:1.15;}
   .bottom-nav-item .nav-ic{width:22px;height:22px;flex-shrink:0;}
-  .bottom-nav-item .nav-text{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;}
+  .bottom-nav-item .nav-text{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;max-width:100%;overflow:hidden;overflow-wrap:anywhere;font-size:12px;white-space:normal;}
   .bottom-nav-item:active{transform:translateY(1px);}
   button.drawer-item{appearance:none;-webkit-appearance:none;border:none;background:none;margin:0;
     width:100%;text-align:start;font-family:inherit;min-height:48px;}
@@ -1711,6 +1716,9 @@ const ICONS = {
   krone:'<path d="M3 18h18l-1.5-9-4.5 4-3-6-3 6-4.5-4z"/>',
   /* 10.10.2026: Zeichen fuer den Vollzugang. Ohne Vollzugang: Schloss mit Krone in der Mitte. */
   schlossKrone:'<path d="M8 11V7a4 4 0 118 0v4"/><rect x="4" y="11" width="16" height="10" rx="2.4"/><path d="M8.3 19l-.7-3.6 2.2 1.6L12 13.6l2.2 3.4 2.2-1.6-.7 3.6z" fill="var(--gold)" stroke="var(--gold-text)" stroke-width="1" stroke-linejoin="round"/>',
+  wuerfel:'<path d="M12 3l8 4.2v9.6L12 21l-8-4.2V7.2z"/><path d="M12 12l8-4.8M12 12v9M12 12L4 7.2"/>',
+  person:'<circle cx="12" cy="8.3" r="3.8"/><path d="M4.5 20c.9-3.6 3.9-5.6 7.5-5.6s6.6 2 7.5 5.6"/>',
+  weltkugel:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 3.6 5.6 3.6 9S14.6 18.4 12 21c-2.6-2.6-3.6-5.6-3.6-9S9.4 5.6 12 3z"/>',
   uhr:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
   // 13.09.2026 -- PIN-/Passwort-Knopf. Bewusst KEIN Emoji: das ist ein
   // Funktionsknopf, und Emoji sehen auf Honor, Samsung und iPhone verschieden
@@ -7311,7 +7319,10 @@ function navGleich(a, b){
 // Ist die Ansicht eine Wurzel? Eine Drawer-Seite ist NIE eine Wurzel -- sie wird
 // immer aus einer anderen Ansicht heraus geoeffnet, also muss man dorthin zurueck.
 function navIstWurzel(z){
-  return !z.drawer && !z.bereich && !z.hashtag && !z.recht && WURZELN.indexOf(z.view) !== -1;
+  // 10.10.2026: die Hauptseiten von "3D" (Verkehr verstehen) und "Spiele" sind Tabs der unteren Leiste, also Wurzeln.
+  // Eine geoeffnete Szene oder ein laufendes Spiel ist es nicht.
+  const tabSeite = z.drawer === "verkehr" ? !z.szene : (z.drawer === "spiele" ? !z.spiel : false);
+  return (!z.drawer || tabSeite) && !z.bereich && !z.hashtag && !z.recht && WURZELN.indexOf(z.view) !== -1;
 }
 
 /* Anzeigename einer Ansicht -- steht spaeter auf der Zurueck-Pille ("Zurueck zu X").
@@ -8226,6 +8237,16 @@ function ktBild(schluessel){
     (KT_MOTIV[schluessel] || "") +
     '<ellipse cx="200" cy="228" rx="64" ry="9" fill="rgba(0,0,0,.14)"/><rect x="150" y="172" width="100" height="40" rx="13" fill="#fff"/><path d="M165 172L176 146H224L235 172z" fill="#fff"/><path d="M174 170L182 151H218L226 170z" fill="#5C6B73" opacity=".85"/><rect x="154" y="182" width="17" height="9" rx="3.5" fill="#E5584B"/><rect x="229" y="182" width="17" height="9" rx="3.5" fill="#E5584B"/><rect x="185" y="192" width="30" height="10" rx="2.5" fill="#E4E8E5"/><rect x="157" y="208" width="17" height="11" rx="3" fill="#2B2F2D"/><rect x="226" y="208" width="17" height="11" rx="3" fill="#2B2F2D"/></svg>';
 }
+// Auswertung eines Bereichs fuer Kachel UND Seitenleiste: was ist offen, was ist Vollzugang-Inhalt, was ist gesperrt.
+function bereichStatus(g){
+  const voll = !!(session && session.vollzugang);
+  const offen = g.videos.filter(function(x){ return !x.gesperrt; });
+  const gesehen = offen.filter(function(x){ return seenVideoIds.has(x.video.id); }).length;
+  const teilGesperrt = g.videos.some(function(x){ return x.gesperrt; });
+  const premium = g.videos.some(function(x){ return !(x.tag && x.tag.gratis); });
+  return { offen: offen.length, gesehen: gesehen, komplettGesperrt: g.videos.length > 0 && offen.length === 0,
+           teilGesperrt: teilGesperrt, premium: premium, krone: voll && premium, schloss: !voll && teilGesperrt };
+}
 // Marke auf der Kachel: Vollzugang = Krone, ohne Vollzugang = Schloss mit Krone, sonst nichts.
 function ktMarke(premium, gesperrt){
   if(!premium) return "";
@@ -8326,18 +8347,13 @@ function renderStartHtml(){
   // Themen-Kacheln: ein Bereich je Kachel, dazu Verkehr verstehen und (wenn freigegeben) Spiele.
   let ersteGesperrteGruppe = null;
   const kacheln = pfad.map(function(g, i){
-    const offen = g.videos.filter(function(x){ return !x.gesperrt; });
-    const gesehen = offen.filter(function(x){ return seenVideoIds.has(x.video.id); }).length;
-    const komplettGesperrt = g.videos.length > 0 && offen.length === 0;
-    const teilGesperrt = g.videos.some(function(x){ return x.gesperrt; });
-    if(komplettGesperrt && ersteGesperrteGruppe === null) ersteGesperrteGruppe = g.stufe;
-    // Vollzugang-Inhalt = Bereich, in dem nicht alles ohnehin gratis ist
-    const premium = g.videos.some(function(x){ return !(x.tag && x.tag.gratis); });
+    const b = bereichStatus(g);
+    if(b.komplettGesperrt && ersteGesperrteGruppe === null) ersteGesperrteGruppe = g.stufe;
     return ktKachel({
       attr: 'data-gotostufe="' + esc(g.stufe) + '"', i: i, bild: g.stufe, name: bereichName(g.stufe),
-      premium: premium, zu: komplettGesperrt, teilGesperrt: teilGesperrt,
-      bar: offen.length ? Math.round(gesehen / offen.length * 100) : null,
-      zahl: offen.length ? gesehen + " / " + offen.length : ""
+      premium: b.premium, zu: b.komplettGesperrt, teilGesperrt: b.teilGesperrt,
+      bar: b.offen ? Math.round(b.gesehen / b.offen * 100) : null,
+      zahl: b.offen ? b.gesehen + " / " + b.offen : ""
     });
   });
   if(!DEMO_MODE) kacheln.push(ktKachel({ attr: "data-vv-oeffnen", i: kacheln.length, bild: "verkehr", name: t("mVerkehr"), premium: true, zu: false, teilGesperrt: true, bar: null }));
@@ -9261,18 +9277,19 @@ function renderCatalog(){
   else if(mainView === "verlauf") content = renderVerlaufHtml();
   else content = renderKontoHtml();
 
-  // Konto ist ab jetzt ueber den Konto-Knopf im Kopf erreichbar (Spec 3.1) --
-  // die untere Leiste zeigt nur noch die vier Kern-Wurzeln der Strecke.
-  // 26.09.2026 (D4): echte Knoepfe mit Symbol, "Strecken" statt "Pruefer".
+  // Untere Schnell-Leiste (10.10.2026): Start, Uebersicht, 3D (Verkehr verstehen), Spiele (wenn freigegeben), Strecken.
+  // "Gesehen" und Konto liegen im Seitenmenue. 3D und Spiele sind Seiten des Menues, hier aber Wurzeln (siehe navIstWurzel).
   const tabs = [
-    ["start",t("start"),"home"],["lernpfad",t("lernpfad"),"liste"],["pruefungsstrecken",t("navStrecken"),"strecke"],
-    ["verlauf",t("verlauf"),"check"]
-  ];
+    { text: t("start"), ic: "home", attr: 'data-view="start"', aktiv: !drawerView && mainView === "start" },
+    { text: t("lernpfad"), ic: "liste", attr: 'data-view="lernpfad"', aktiv: !drawerView && mainView === "lernpfad" },
+    { text: "3D", ic: "wuerfel", attr: 'data-tab-drawer="verkehr"', aktiv: drawerView === "verkehr" }
+  ].concat(spieleSichtbar() ? [{ text: t("mSpiele"), ic: "spiele", attr: 'data-tab-drawer="spiele"', aktiv: drawerView === "spiele" }] : []).concat([
+    { text: t("navStrecken"), ic: "strecke", attr: 'data-view="pruefungsstrecken"', aktiv: !drawerView && mainView === "pruefungsstrecken" }
+  ]);
   const bottomNav = '<nav class="bottom-nav" aria-label="' + esc(t("navLabel")) + '">' +
     tabs.map(function(tb){
-      const aktiv = !drawerView && mainView === tb[0];
-      return '<button type="button" class="bottom-nav-item' + (aktiv ? " active" : "") + '" data-view="' + tb[0] + '"' + (aktiv ? ' aria-current="page"' : "") + ">" +
-        icon(tb[2], "nav-ic") + '<span class="nav-text">' + esc(tb[1]) + "</span></button>";
+      return '<button type="button" class="bottom-nav-item' + (tb.aktiv ? " active" : "") + '" ' + tb.attr + (tb.aktiv ? ' aria-current="page"' : "") + ">" +
+        icon(tb.ic, "nav-ic") + '<span class="nav-text">' + esc(tb.text) + "</span></button>";
     }).join("") +
   "</nav>";
 
@@ -9297,10 +9314,21 @@ function renderCatalog(){
         (session && session.ablauf_am ? '<div class="dh-sub">' + esc(t("gueltigBis")) + " " + fmtDate(session.ablauf_am) + "</div>" : "") +
       "</div>" +
       '<div class="drawer-items">' +
+        // oben: die Themen (Bereiche) mit Krone bzw. Schloss mit Krone
+        buildLernpfad().map(function(g){
+          const bs = bereichStatus(g);
+          return '<button type="button" class="drawer-item" data-gotostufe="' + esc(g.stufe) + '">' + bereichIcon(g.stufe) + "<span>" + esc(bereichName(g.stufe)) + "</span>" +
+            (bs.krone ? '<span class="drawer-marke">' + kroneZeichen() + "</span>" : (bs.schloss ? '<span class="drawer-marke">' + icon("schlossKrone") + "</span>" : "")) + "</button>";
+        }).join("") +
+        '<div class="drawer-trenner"></div>' +
         drawerLinks.map(function(d){
           return '<button type="button" class="drawer-item' + (drawerView===d[0]?" aktiv":"") + '" data-drawer="' + d[0] + '"' + (drawerView===d[0] ? ' aria-current="page"' : "") + ">" +
             icon(d[1]) + "<span>" + esc(d[2]) + "</span></button>";
         }).join("") +
+        '<div class="drawer-trenner"></div>' +
+        '<button type="button" class="drawer-item' + (!drawerView && mainView === "verlauf" ? " aktiv" : "") + '" data-view="verlauf">' + icon("check") + "<span>" + esc(t("verlauf")) + "</span></button>" +
+        '<button type="button" class="drawer-item' + (!drawerView && mainView === "konto" ? " aktiv" : "") + '" data-view="konto">' + icon("person") + "<span>" + esc(t("konto")) + "</span></button>" +
+        '<button type="button" class="drawer-item" data-konto-sprache>' + icon("weltkugel") + "<span>" + esc(t("sprache")) + "</span></button>" +
       "</div>" +
       '<div class="drawer-foot">' + esc(t("drawerFuss")) + '</div>' +
     "</div>";
@@ -9347,7 +9375,18 @@ function renderCatalog(){
     });
   });
   document.querySelectorAll("[data-view]").forEach(function(t){
-    t.addEventListener("click", function(){ go({ view: t.dataset.view }); });
+    t.addEventListener("click", function(){ drawerOpen = false; go({ view: t.dataset.view }); });
+  });
+  // Tabs der unteren Leiste, die auf eine Menue-Seite fuehren (3D, Spiele): view "start" mitgeben, damit es eine Wurzel wird
+  document.querySelectorAll("[data-tab-drawer]").forEach(function(b){
+    b.addEventListener("click", function(){ drawerOpen = false; vvListeFehler = false; go({ view: "start", drawer: b.dataset.tabDrawer }); nachObenScrollen(); });
+  });
+  document.querySelectorAll("[data-konto-sprache]").forEach(function(b){
+    b.addEventListener("click", function(){
+      drawerOpen = false; go({ view: "konto" });
+      // Konto-Seite steht, dann gleich die Sprachwahl aufklappen (statt nur hinzuscrollen)
+      setTimeout(function(){ const el = document.querySelector("[data-sprachwahl].konto-sprache"); if(el){ el.scrollIntoView({ block: "center" }); el.click(); } }, 450);
+    });
   });
   document.querySelectorAll(".stufe-header[data-pruefer]").forEach(function(h){
     h.addEventListener("click", function(){
@@ -9438,6 +9477,7 @@ function renderCatalog(){
       // Jeder Bereich hat jetzt EINE eigene "Netflix-artige" Seite -- egal ob der
       // Klick vom Start-Tab, dem Lernpfad oder dem Dashboard kommt.
       pruefungFilter = "alle";
+      drawerOpen = false;
       go({ view: "bereichdetail", bereich: b.dataset.gotostufe });
       nachObenScrollen();
     });

@@ -66,14 +66,16 @@ export { pruefe, bilder, befunde, bestanden as zaehler };
 
 /* Fingertipp mitten auf die Kachel (die Kacheln schweben, Playwright hält sie sonst für "nicht stabil") */
 async function tippeKachel(s, sel) {
-  await s.locator(sel).evaluate((e) => e.scrollIntoView({ block: "center" })); await s.waitForTimeout(350);
-  const bb = await s.locator(sel).boundingBox(); await s.touchscreen.tap(bb.x + bb.width / 2, bb.y + bb.height / 2);
+  await s.locator(sel).first().evaluate((e) => e.scrollIntoView({ block: "center" })); await s.waitForTimeout(350);
+  const bb = await s.locator(sel).first().boundingBox(); await s.touchscreen.tap(bb.x + bb.width / 2, bb.y + bb.height / 2);
 }
 async function layout(s, name) {
   const r = await s.evaluate(() => {
     const p = []; const de = document.documentElement;
     if (de.scrollWidth > innerWidth + 1) p.push("Seite wischbar " + de.scrollWidth + ">" + innerWidth);
-    document.querySelectorAll(".page-content *, .header *, .bottom-nav *").forEach((el) => { const r = el.getBoundingClientRect(); if (!r.width || !r.height) return; if (r.right > innerWidth + 1 || r.left < -1) p.push("raus: " + el.className + " " + Math.round(r.left) + ".." + Math.round(r.right)); });
+    document.querySelectorAll(".page-content *, .header *, .bottom-nav *").forEach((el) => { if (el.closest("svg") || el.closest("canvas")) return; const r = el.getBoundingClientRect();
+      // Teile, die ein Elternteil mit overflow:hidden (z.B. die Bühne des Vorfahrt-Films) wegschneidet, zählen nicht
+      let p0 = el.parentElement, beschnitten = false; while (p0 && p0 !== document.body) { const cs = getComputedStyle(p0); if (cs.overflowX !== "visible") { const pr = p0.getBoundingClientRect(); if (pr.right <= innerWidth + 1 && pr.left >= -1) { beschnitten = true; break; } } p0 = p0.parentElement; } if (beschnitten) return; if (!r.width || !r.height) return; if (r.right > innerWidth + 1 || r.left < -1) p.push("raus: " + el.className + " " + Math.round(r.left) + ".." + Math.round(r.right)); });
     return p;
   });
   pruefe(name + ": Layout", r.length === 0, r.slice(0, 3).join(" | "));
@@ -82,7 +84,7 @@ export { layout };
 
 if (import.meta.url === "file://" + process.argv[1]) {
   const GROESSEN = [[360, 740, "360"], [412, 915, "412"], [812, 375, "quer"]];
-  const nur = process.env.NUR || "e1,e2";
+  const nur = process.env.NUR || "e1,e2,e3";
   /* ---------- Etappe 1: Krone und Schloss mit Krone ---------- */
   if (nur.includes("e1")) for (const dunkel of [false, true]) for (const [b, h, gn] of GROESSEN) for (const voll of [true, false]) {
     const tag = "E1 " + (voll ? "voll" : "start") + " " + gn + (dunkel ? " dunkel" : "");
@@ -93,7 +95,7 @@ if (import.meta.url === "file://" + process.argv[1]) {
     await layout(s, tag + " Start");
     await s.tap('[data-view="lernpfad"]'); await s.waitForTimeout(1200); await layout(s, tag + " Übersicht");
     if (!voll) {
-      await s.locator('[data-gotostufe="Stoppschild-Situationen"]').first().evaluate((e) => e.scrollIntoView({ block: "center" })); await s.tap('[data-gotostufe="Stoppschild-Situationen"]'); await s.waitForTimeout(1200);
+      await s.locator('.page-content [data-gotostufe="Stoppschild-Situationen"]').first().evaluate((e) => e.scrollIntoView({ block: "center" })); await s.tap('.page-content [data-gotostufe="Stoppschild-Situationen"]'); await s.waitForTimeout(1200);
       const z = await s.locator(".video-zeile.versiegelt .vz-mal-siegel .ic").count();
       pruefe(tag + ": gesperrte Videos zeigen Schloss mit Krone (" + z + ")", z >= 3);
       pruefe(tag + ": kein Wort „versiegelt“ mehr in den Zeilen", (await s.locator(".vz-siegelwort").count()) === 0);
@@ -156,6 +158,71 @@ if (import.meta.url === "file://" + process.argv[1]) {
       await layout(s, tag);
       const abg = await s.evaluate(() => [...document.querySelectorAll(".kt-name, .cd-pille span, .weiter-titel")].filter((e) => e.scrollWidth > e.clientWidth + 2 && getComputedStyle(e).overflow !== "visible").length);
       pruefe(tag + ": Texte nicht abgeschnitten", abg === 0);
+      pruefe(tag + ": keine Fehler in der Konsole", s.fehler.length === 0, s.fehler.join(" | "));
+      await s.context().close();
+    }
+  }
+  /* ---------- Etappe 3: untere Schnell-Leiste und Seitenleiste ---------- */
+  if (nur.includes("e3")) {
+    const stapel = (s) => s.evaluate(() => navStapel.length);
+    const ansicht = (s) => s.evaluate(() => JSON.stringify({ v: mainView, d: drawerView }));
+    for (const [b, h, gn] of GROESSEN) for (const voll of [true, false]) for (const dunkel of [false, true]) {
+      const tag = "E3 " + (voll ? "voll" : "start") + " " + gn + (dunkel ? " dunkel" : "");
+      const s = await neueSeite({ b, h, voll, termin: 7, dunkel }); await s.waitForTimeout(1300);
+      pruefe(tag + ": 5 Tabs unten (Start, Übersicht, 3D, Spiele, Strecken)", (await s.locator(".bottom-nav-item").count()) === 5);
+      pruefe(tag + ": Gesehen ist nicht mehr unten", (await s.locator('.bottom-nav-item[data-view="verlauf"]').count()) === 0);
+      const klein = await s.evaluate(() => [...document.querySelectorAll(".bottom-nav-item")].filter((e) => { const r = e.getBoundingClientRect(); return r.height < 43.5 || r.width < 43.5; }).length);
+      pruefe(tag + ": Tabs >= 44 px", klein === 0);
+      // jeder Tab: richtig markiert, Stapel leer
+      for (const [sel, name] of [['[data-view="lernpfad"]', "Übersicht"], ['[data-tab-drawer="verkehr"]', "3D"], ['[data-tab-drawer="spiele"]', "Spiele"], ['[data-view="pruefungsstrecken"]', "Strecken"], ['[data-view="start"]', "Start"]]) {
+        await s.tap(".bottom-nav " + sel); await s.waitForTimeout(900);
+        pruefe(tag + ": Tab " + name + " ist markiert", (await s.locator(".bottom-nav-item.active" + sel).count()) === 1, await ansicht(s));
+        pruefe(tag + ": Tab " + name + " leert den Zurück-Stapel", (await stapel(s)) === 0);
+      }
+      // aus einem Bereich heraus direkt in 3D: Stapel wird geleert
+      await tippeKachel(s, ".kachel-t[data-gotostufe]"); await s.waitForTimeout(800);
+      pruefe(tag + ": Bereich geöffnet, Stapel > 0", (await stapel(s)) > 0);
+      await s.tap('.bottom-nav [data-tab-drawer="verkehr"]'); await s.waitForTimeout(800);
+      pruefe(tag + ": 3D aus dem Bereich: Stapel 0", (await stapel(s)) === 0);
+      await layout(s, tag + " 3D");
+      // Seitenleiste
+      await s.tap("#drawer-open-btn"); await s.waitForTimeout(500);
+      pruefe(tag + ": Menü zeigt 7 Themen", (await s.locator(".drawer-item[data-gotostufe]").count()) === 7);
+      const kr = await s.locator(".drawer-item[data-gotostufe] .drawer-marke .krone-zeichen").count(), sk = await s.locator(".drawer-item[data-gotostufe] .drawer-marke .ic").count();
+      pruefe(tag + ": Menü " + (voll ? "Kronen (6)" : "Schloss mit Krone (6)") + ", da " + kr + "/" + sk, voll ? (kr === 6 && sk === 0) : (sk === 6 && kr === 0));
+      pruefe(tag + ": Menü hat Verlauf, Konto, Sprache", (await s.locator('.drawer-item[data-view="verlauf"], .drawer-item[data-view="konto"], .drawer-item[data-konto-sprache]').count()) === 3);
+      const ueber = await s.evaluate(() => [...document.querySelectorAll(".drawer-item")].filter((e) => { const r = e.getBoundingClientRect(); return r.right > innerWidth + 1; }).length);
+      pruefe(tag + ": Menüzeilen ragen nicht raus", ueber === 0);
+      await s.tap('.drawer-item[data-gotostufe="Autobahn"]'); await s.waitForTimeout(900);
+      pruefe(tag + ": Thema im Menü öffnet den Bereich und schließt das Menü", (await s.locator(".drawer.open").count()) === 0 && (await s.locator(".video-zeile").count()) >= 4);
+      await s.tap("#drawer-open-btn"); await s.waitForTimeout(500); await s.tap('.drawer-item[data-view="verlauf"]'); await s.waitForTimeout(900);
+      pruefe(tag + ": Verlauf aus dem Menü, Menü zu", (await ansicht(s)).includes('"v":"verlauf"') && (await s.locator(".drawer.open").count()) === 0);
+      await s.tap("#drawer-open-btn"); await s.waitForTimeout(500); await s.tap(".drawer-item[data-konto-sprache]"); await s.waitForTimeout(1100);
+      pruefe(tag + ": Sprache aus dem Menü öffnet die Sprachwahl auf der Konto-Seite", (await ansicht(s)).includes('"v":"konto"') && (await s.locator(".blatt-overlay.offen, .overlay.offen, [class*=blatt].offen").count()) >= 1);
+      pruefe(tag + ": keine Fehler in der Konsole", s.fehler.length === 0, s.fehler.join(" | "));
+      await s.context().close();
+    }
+    // Zurück-Knopf des Telefons: aus 3D (Wurzel) -> beendet nicht ins Leere, Szene -> zurück zu 3D
+    {
+      const s = await neueSeite({ b: 390, h: 844, voll: true, termin: 7 }); await s.waitForTimeout(1300);
+      const w = await s.evaluate(() => { navAnwenden({ view: "start", bereich: null, hashtag: null, recht: null, drawer: "verkehr", szene: null, spiel: null }); return navIstWurzel(navJetzt()); });
+      const w2 = await s.evaluate(() => navIstWurzel({ view: "start", bereich: null, hashtag: null, recht: null, drawer: "verkehr", szene: "x", spiel: null }));
+      const w3 = await s.evaluate(() => navIstWurzel({ view: "start", bereich: null, hashtag: null, recht: null, drawer: "nuetzliches", szene: null, spiel: null }));
+      pruefe("E3: 3D-Hauptseite ist Wurzel, geöffnete Szene und andere Menüseiten nicht", w === true && w2 === false && w3 === false);
+      await s.context().close();
+    }
+    // alle 18 Sprachen: Leiste und Menü
+    const probe = await neueSeite({ b: 360, h: 740, voll: false, termin: 3 });
+    const codes = await probe.evaluate(() => Object.keys(I18N)); await probe.context().close();
+    for (const code of codes) for (const voll of [true, false]) {
+      const tag = "E3 Sprache " + code + (voll ? " voll" : " start");
+      const s = await neueSeite({ b: 360, h: 740, voll, termin: 3, sprache: code }); await s.waitForTimeout(1300);
+      await layout(s, tag);
+      const abg = await s.evaluate(() => [...document.querySelectorAll(".bottom-nav-item .nav-text")].filter((e) => e.scrollHeight > e.clientHeight + 1 || e.scrollWidth > e.clientWidth + 1).map((e) => e.textContent));
+      pruefe(tag + ": Tab-Beschriftungen nicht abgeschnitten", abg.length === 0, abg.join(","));
+      await s.tap("#drawer-open-btn"); await s.waitForTimeout(500);
+      const ab2 = await s.evaluate(() => [...document.querySelectorAll(".drawer-item")].filter((e) => { const r = e.getBoundingClientRect(); return r.right > innerWidth + 1 || r.left < -1; }).length);
+      pruefe(tag + ": Menü nicht seitlich überstehend", ab2 === 0);
       pruefe(tag + ": keine Fehler in der Konsole", s.fehler.length === 0, s.fehler.join(" | "));
       await s.context().close();
     }
