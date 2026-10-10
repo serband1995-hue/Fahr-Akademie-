@@ -883,6 +883,38 @@
   .fa-logo-btn:active .logo-img{transform:scale(.94);}
   .konto-btn{background:none;border:none;cursor:pointer;padding:0;
     min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:flex-end;}
+  /* ---- Start als Dashboard (10.10.2026): Themen-Kacheln mit flacher Illustration, schweben leise ---- */
+  .cd-pille{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px 0 12px;margin:0 0 var(--sp-l);
+    border-radius:var(--r-pill);background:var(--gold-schwach);color:var(--gold-text);border:1px solid var(--gold-rand);
+    font:inherit;font-weight:600;font-size:15px;cursor:pointer;max-width:100%;text-align:start;}
+  .cd-pille .ic{width:20px;height:20px;flex:none;}
+  .cd-pille.nah{background:var(--gold);color:var(--auf-gold);border-color:var(--gold);}
+  .kt-raster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-l) var(--sp-m);margin:var(--sp-l) 0;}
+  .kt-raster > :last-child:nth-child(odd){grid-column:1 / -1;}
+  .kachel-t{position:relative;display:flex;flex-direction:column;min-width:0;padding:0;overflow:hidden;
+    background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:var(--r-l);
+    box-shadow:var(--schatten-2);cursor:pointer;font:inherit;text-align:start;
+    animation:kt-schweb 7s ease-in-out infinite;}
+  .kachel-t:active{animation:none;transform:scale(.97);}
+  @keyframes kt-schweb{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .kt-bild{display:block;position:relative;height:92px;overflow:hidden;}
+  .kt-bild svg{position:absolute;inset:0;width:100%;height:100%;display:block;}
+  .kt-text{display:flex;flex-direction:column;gap:6px;padding:11px 13px 13px;flex:1;min-width:0;}
+  .kt-name{font-weight:600;font-size:15px;line-height:1.28;overflow-wrap:break-word;-webkit-hyphens:auto;hyphens:auto;}
+  .kt-bar{display:block;height:5px;border-radius:9px;background:var(--surface-strong);overflow:hidden;margin-top:auto;}
+  .kt-bar i{display:block;height:100%;background:var(--gruen-hell);}
+  .kt-zahl{font-size:12.5px;color:var(--muted);}
+  .kt-marke{position:absolute;top:9px;inset-inline-end:9px;z-index:2;width:34px;height:34px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;box-shadow:0 3px 9px rgba(43,40,30,.22);}
+  .kt-marke.krone{background:#FFFDF7;}
+  .kt-marke.krone .krone-zeichen{width:20px;height:20px;}
+  .kt-marke.zu{background:var(--gold);color:var(--auf-gold);}
+  .kt-marke.zu .ic{width:22px;height:22px;}
+  .kachel-t.zu .kt-bild svg{filter:saturate(.2);}
+  .kt-cta{width:100%;margin:0 0 var(--sp-l);display:flex;align-items:center;justify-content:center;gap:8px;}
+  .kt-cta .ic{width:20px;height:20px;}
+  @media (prefers-reduced-motion: reduce){ .kachel-t{animation:none;} }
+  @media (prefers-color-scheme: dark){ .kt-bild svg{filter:brightness(.78) saturate(.9);} .kachel-t.zu .kt-bild svg{filter:brightness(.78) saturate(.2);} .kt-marke.krone{background:#2A2E28;} }
   .konto-kreis{position:relative;width:30px;height:30px;border-radius:50%;background:var(--surface-tint);
     color:var(--gruen-text);display:flex;align-items:center;justify-content:center;
     font-size:13px;font-weight:700;flex-shrink:0;}
@@ -8160,24 +8192,76 @@ function fmtDateTime(iso){
     d.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"});
 }
 
-function renderStartHtml(){
-  const pfad = buildLernpfad();
-  // Fortschritt ehrlich rechnen (10.09.2026): frueher zaehlte hier allVideos.length, also
-  // ALLE Videos -- auch die, die der Schueler mangels Vollzugang gar nicht oeffnen kann.
-  // Ein Gratis-Schueler sah dadurch dauerhaft "8 von 39", eine Zahl die er nie erreichen
-  // konnte. Jetzt zaehlen nur Videos, die ihm wirklich offenstehen.
-  const offeneVideos = [];
-  pfad.forEach(function(g){
-    g.videos.forEach(function(x){ if(!x.gesperrt) offeneVideos.push(x.video); });
-  });
-  const totalVideos = offeneVideos.length;
-  const seenCount = offeneVideos.filter(function(v){ return seenVideoIds.has(v.id); }).length;
-  const name = (session && session.name) ? session.name : "";
+/* ---- Illustration der Themen-Kacheln: flache Szene (Himmel, Huegel, Strasse) je Bereich, nur SVG, kein Foto ---- */
+let ktBildZaehler = 0;
+const KT_FARBEN = {
+  "Fahrzeug & Technik":{s1:"#CFE6F7",s2:"#F4F9FC",h1:"#BFD9C4",h2:"#A8CBB0"},
+  "Stoppschild-Situationen":{s1:"#D4E8F7",s2:"#F5FAFD",h1:"#B5CBE0",h2:"#9FB9D1"},
+  "Fahrmanöver-Grundlagen":{s1:"#FBE4C8",s2:"#FFF8EE",h1:"#EBCFA6",h2:"#DDB985"},
+  "Abbiegen, Vorfahrt & Verkehrszeichen":{s1:"#E4F1DA",s2:"#F8FCF4",h1:"#CDE5B8",h2:"#B7D79C"},
+  "Autobahn":{s1:"#E4E6F7",s2:"#F7F8FD",h1:"#CDD3EC",h2:"#B6BEDF"},
+  "Prüfung":{s1:"#FBE4C8",s2:"#FFF8EE",h1:"#EBCFA6",h2:"#DDB985"},
+  "Prüfungsstrecken":{s1:"#CFE6F7",s2:"#F4F9FC",h1:"#C9E3C5",h2:"#9FD0A8"},
+  "verkehr":{s1:"#E4E6F7",s2:"#F7F8FD",h1:"#CDD3EC",h2:"#B6BEDF"}
+};
+const KT_MOTIV = {
+  "Stoppschild-Situationen":'<g transform="translate(92 84)"><rect x="-2.5" y="22" width="5" height="46" fill="#7B847F"/><path d="M-11 -2L-4.5 -11H4.5L11 -2V7L4.5 16H-4.5L-11 7z" fill="#E5584B"/><rect x="-6" y="1.6" width="12" height="3.2" rx="1.2" fill="#fff"/></g>',
+  "Fahrmanöver-Grundlagen":'<g fill="#F28C38"><path d="M70 150l8-24 8 24z"/><path d="M318 160l8-24 8 24z"/></g><g fill="#fff"><rect x="72" y="140" width="12" height="3"/><rect x="320" y="150" width="12" height="3"/></g>',
+  "Abbiegen, Vorfahrt & Verkehrszeichen":'<g transform="translate(96 84)"><rect x="-2.5" y="20" width="5" height="48" fill="#7B847F"/><path d="M0 -14L16 13H-16z" fill="#fff" stroke="#E5584B" stroke-width="5" stroke-linejoin="round"/></g>',
+  "Autobahn":'<g transform="translate(92 82)"><rect x="-2.5" y="22" width="5" height="46" fill="#7B847F"/><rect x="-17" y="-8" width="34" height="26" rx="4" fill="#3C7FB5"/><path d="M-9 10L-3-2H3L9 10" fill="none" stroke="#fff" stroke-width="2.4"/></g>',
+  "Prüfung":'<g transform="translate(86 86)"><path d="M0 62V0" stroke="#2B2A22" stroke-width="5" stroke-linecap="round"/><path d="M2 2h44l-9 13 9 13H2z" fill="#E8A33D"/></g>',
+  "Prüfungsstrecken":'<g transform="translate(84 82)"><path d="M0 66V0" stroke="#2B2A22" stroke-width="5" stroke-linecap="round"/><path d="M2 2h44l-9 13 9 13H2z" fill="#E8A33D"/></g><path d="M60 214Q110 170 150 190T250 150" fill="none" stroke="#fff" stroke-width="5" stroke-dasharray="3 12" stroke-linecap="round" opacity=".9"/>'
+};
+function ktBild(schluessel){
+  const f = KT_FARBEN[schluessel] || KT_FARBEN["Fahrzeug & Technik"], id = "ktg" + (++ktBildZaehler);
+  if(schluessel === "spiele"){
+    return '<svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="400" height="260" fill="#FCE6E3"/>' +
+      '<rect x="110" y="84" width="180" height="96" rx="46" fill="#E86A5A"/><rect x="146" y="112" width="12" height="40" rx="3" fill="#fff"/><rect x="132" y="126" width="40" height="12" rx="3" fill="#fff"/>' +
+      '<circle cx="236" cy="124" r="9" fill="#fff"/><circle cx="262" cy="148" r="9" fill="#fff"/></svg>';
+  }
+  return '<svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + f.s1 + '"/><stop offset="1" stop-color="' + f.s2 + '"/></linearGradient></defs>' +
+    '<rect width="400" height="260" fill="url(#' + id + ')"/><circle cx="318" cy="58" r="28" fill="#fff" opacity=".85"/><ellipse cx="90" cy="54" rx="42" ry="10" fill="#fff" opacity=".7"/>' +
+    '<path d="M0 128Q70 84 150 122T300 108T420 126V260H0z" fill="' + f.h1 + '"/><path d="M0 146Q90 112 180 140T420 138V260H0z" fill="' + f.h2 + '"/>' +
+    '<path d="M172 128H228L440 262H-40z" fill="#8E9A94"/><path d="M200 130V262" stroke="#fff" stroke-width="5" stroke-dasharray="14 12" fill="none"/>' +
+    (KT_MOTIV[schluessel] || "") +
+    '<ellipse cx="200" cy="228" rx="64" ry="9" fill="rgba(0,0,0,.14)"/><rect x="150" y="172" width="100" height="40" rx="13" fill="#fff"/><path d="M165 172L176 146H224L235 172z" fill="#fff"/><path d="M174 170L182 151H218L226 170z" fill="#5C6B73" opacity=".85"/><rect x="154" y="182" width="17" height="9" rx="3.5" fill="#E5584B"/><rect x="229" y="182" width="17" height="9" rx="3.5" fill="#E5584B"/><rect x="185" y="192" width="30" height="10" rx="2.5" fill="#E4E8E5"/><rect x="157" y="208" width="17" height="11" rx="3" fill="#2B2F2D"/><rect x="226" y="208" width="17" height="11" rx="3" fill="#2B2F2D"/></svg>';
+}
+// Marke auf der Kachel: Vollzugang = Krone, ohne Vollzugang = Schloss mit Krone, sonst nichts.
+function ktMarke(premium, gesperrt){
+  if(!premium) return "";
+  if(session && session.vollzugang) return '<span class="kt-marke krone">' + kroneZeichen() + "</span>";
+  return gesperrt ? '<span class="kt-marke zu">' + icon("schlossKrone") + "</span>" : "";
+}
+function ktKachel(o){
+  const zu = !!o.zu;
+  return '<button type="button" class="kachel-t' + (zu ? " zu" : "") + '" ' + o.attr + ' style="animation-delay:-' + ((o.i * 1.3) % 7).toFixed(1) + 's">' +
+    ktMarke(o.premium, zu || o.teilGesperrt) +
+    '<span class="kt-bild">' + ktBild(o.bild) + "</span>" +
+    '<span class="kt-text"><span class="kt-name">' + esc(o.name) + "</span>" +
+    (o.bar != null ? '<span class="kt-bar"><i style="width:' + o.bar + '%;"></i></span>' + (o.zahl ? '<span class="kt-zahl">' + esc(o.zahl) + "</span>" : "") : "") +
+    "</span></button>";
+}
+// Pruefungstermin als kleine Pille unter dem Willkommen (10.10.2026). Kommt session.pruefungstermin vom Server;
+// ohne Termin erscheint nichts. Zaehlt ab heute herunter, Vergangenes wird nicht gezeigt.
+function terminPilleHtml(){
+  if(!(session && session.pruefungstermin)) return "";
+  const termin = new Date(session.pruefungstermin + "T00:00:00");
+  const heute = new Date(); heute.setHours(0,0,0,0);
+  const tage = Math.round((termin - heute) / 86400000);
+  if(isNaN(tage) || tage < 0) return "";
+  const wann = tage === 0 ? t("heute") : (tage === 1 ? t("morgen") : t("inTagen", { n: tage }));
+  return '<button type="button" class="cd-pille' + (tage <= 5 ? " nah" : "") + '" data-view="pruefungsstrecken">' +
+    icon("kalender") + "<span>" + esc(t("deinePruefung")) + ": " + esc(wann) + "</span></button>";
+}
 
-  // Bereich 1.2 / Papier & Strecke (13.09.2026): EINE prominente Fortsetzen-Zeile --
-  // zuletzt Angesehenes hat Vorrang, sonst das naechste offene Video. Beide Faelle liefern
-  // ein "x" aus buildLernpfad() (mit echtem code/tag/video), nicht nur ein rohes Video --
-  // sonst fehlen Bereich und Kuerzel fuer die Meta-Zeile.
+function renderStartHtml(){
+  if(!DEMO_MODE) verkehrListeLaden();
+  const pfad = buildLernpfad();
+  const name = (session && session.name) ? session.name : "";
+  const vorname = String(name).trim().split(/\s+/)[0] || "";
+  const voll = !!(session && session.vollzugang);
+
+  // "Weiter schauen": zuletzt Angesehenes hat Vorrang, sonst das naechste offene Video.
   const naechste = (function(){
     for(const gruppe of pfad){
       const offen = gruppe.videos.find(function(x){ return !seenVideoIds.has(x.video.id) && !x.gesperrt; });
@@ -8185,27 +8269,18 @@ function renderStartHtml(){
     }
     return null;
   })();
-
-  let fortsetzenX = null, fortsetzenGruppe = null, fortsetzenLabel = null;
+  let fortsetzenX = null, fortsetzenLabel = null;
   if(verlaufData.length > 0){
     const letztesId = verlaufData[0].video_id;
     for(const g of pfad){
       const x = g.videos.find(function(v){ return v.video.id === letztesId; });
-      // 26.09.2026: ein inzwischen versiegeltes Video nicht mehr als "Weiter schauen" anbieten
-      if(x && !x.gesperrt){ fortsetzenX = x; fortsetzenGruppe = g.stufe; break; }
+      // ein inzwischen versiegeltes Video nicht mehr als "Weiter schauen" anbieten
+      if(x && !x.gesperrt){ fortsetzenX = x; break; }
     }
     if(fortsetzenX) fortsetzenLabel = t("weiterSchauen");
   }
-  if(!fortsetzenX && naechste){
-    fortsetzenX = naechste.x; fortsetzenGruppe = naechste.gruppe; fortsetzenLabel = t("alsNaechstes");
-  }
-
-  // "Weiter"-Zeile ersetzt die fruehere gruene Karte: Gold-Kreis mit CSS-Dreieck
-  // (kein SVG), Titel in Playfair, Meta aus echtem Video-Code + Dauer -- beides steht
-  // bereits in buildLernpfad()/STUFE_PREFIX, nichts davon ist erfunden.
-  const weiterMeta = fortsetzenX
-    ? [fortsetzenX.code, dauerKurz(fortsetzenX.video.dauer_sekunden)].filter(Boolean).join(" · ")
-    : "";
+  if(!fortsetzenX && naechste){ fortsetzenX = naechste.x; fortsetzenLabel = t("alsNaechstes"); }
+  const weiterMeta = fortsetzenX ? [fortsetzenX.code, dauerKurz(fortsetzenX.video.dauer_sekunden)].filter(Boolean).join(" · ") : "";
   const weiterZeile = fortsetzenX
     ? '<div class="fa-label">' + esc(fortsetzenLabel) + "</div>" +
       '<button class="weiter-zeile druck-3" data-vid="' + esc(fortsetzenX.video.id) + '">' +
@@ -8220,93 +8295,7 @@ function renderStartHtml(){
         '<div class="admin-sub">' + esc(t("allesGesehenSub")) + "</div>" +
       "</div>";
 
-  // Quittung statt Prozent: Zeit kann man nicht durchfallen (Design-Prinzip 13.09.2026).
-  // Fallback auf Videoanzahl, falls fuer keines der offenen Videos eine Dauer hinterlegt ist --
-  // sonst wuerde "0 Min von 0 Min" erscheinen, was schlimmer waere als gar keine Zeitangabe.
-  const gesehenSek = offeneVideos.filter(function(v){ return seenVideoIds.has(v.id); })
-    .reduce(function(a,v){ const d=Number(v.dauer_sekunden); return a+(isFinite(d)&&d>0?d:0); },0);
-  const gesamtSek = offeneVideos.reduce(function(a,v){ const d=Number(v.dauer_sekunden); return a+(isFinite(d)&&d>0?d:0); },0);
-  const quittung = gesamtSek > 0
-    ? '<div class="fa-quittung">' + t("quittung", {
-        g: "<strong>" + esc(dauerKurz(gesehenSek) || "0 Min") + "</strong>",
-        a: esc(dauerKurz(gesamtSek))
-      }) + "</div>"
-    : '<div class="fa-quittung">' + t("quittung", {
-        g: "<strong>" + seenCount + "</strong>",
-        a: totalVideos + " " + t("videos")
-      }) + "</div>";
-
-  // Die Strecke ersetzt die gestapelten Kacheln: ein Grid aus Linie (Spalte 1) und
-  // Station (Spalte 2) je Bereich. "Jetzt" ist der erste Bereich mit offenem,
-  // nicht abgehaktem Video -- alles davor gilt als "hinter dir" (gruene Linie).
-  const jetztIndex = naechste ? pfad.findIndex(function(g){ return g.stufe === naechste.gruppe; }) : -1;
-  // Fuer die Siegel-Notiz unten wird der ERSTE gesperrte Bereich gebraucht, nicht
-  // "naechste.gruppe" (das waere bei einem Schueler mitten in einem freien Bereich
-  // faelschlich der freie Bereich selbst -- ein echter Fehler, den erst der Testlauf
-  // mit echten Beispieldaten sichtbar gemacht hat).
-  let ersteGesperrteGruppe = null;
-  const strecke = pfad.map(function(g, i){
-    const gesamt = g.videos.length;
-    const gesehen = g.videos.filter(function(x){ return seenVideoIds.has(x.video.id); }).length;
-    const pct = gesamt ? Math.round(gesehen/gesamt*100) : 0;
-    const komplettGesperrt = g.videos.length > 0 && g.videos.every(function(x){ return x.sperrgrund === "vollzugang"; });
-    const komplettFrei = !(session && session.vollzugang) &&
-      g.videos.length > 0 && g.videos.every(function(x){ return !x.gesperrt && x.tag && x.tag.gratis; });
-    const summeSek = g.videos.reduce(function(a,x){
-      const d = Number(x.video.dauer_sekunden); return a + (isFinite(d) && d > 0 ? d : 0);
-    }, 0);
-    const dauerTeil = summeSek > 0 ? " · " + dauerKurz(summeSek) : "";
-    const istJetzt = i === jetztIndex;
-    const gegangen = jetztIndex === -1 ? true : i <= jetztIndex;
-    if(komplettGesperrt && ersteGesperrteGruppe === null) ersteGesperrteGruppe = g.stufe;
-
-    const punktKlasse = "strecke-punkt" + (istJetzt ? " jetzt" : "") + (komplettGesperrt ? " siegel" : "");
-    const linie = '<div class="strecke-linie' + (gegangen ? " gegangen" : "") + '">' +
-      '<span class="' + punktKlasse + '"></span></div>';
-
-    let meta;
-    if(istJetzt){
-      const gesehenSekGruppe = g.videos.filter(function(x){ return seenVideoIds.has(x.video.id); })
-        .reduce(function(a,x){ const d=Number(x.video.dauer_sekunden); return a+(isFinite(d)&&d>0?d:0); },0);
-      const zeitTeil = gesehenSekGruppe > 0 ? " · " + dauerKurz(gesehenSekGruppe) : "";
-      meta = t("duBistHier") + " · " + gesehen + " / " + gesamt + zeitTeil;
-    } else if(komplettGesperrt){
-      meta = gesamt + " " + t("videos") + dauerTeil + ' <span class="bt-lock">' + icon("schlossKrone","ic-s") + "</span>";
-    } else if(komplettFrei){
-      meta = gesamt + " " + t("videos") + dauerTeil + " · " + esc(t("offenFuerAlle"));
-    } else {
-      meta = t("vonGesehen", { g: gesehen, n: gesamt }) + dauerTeil;
-    }
-
-    const kopfOderName = istJetzt
-      ? '<span class="station-name">' + esc(bereichName(g.stufe)) + "</span>"
-      : '<span class="station-kopf">' +
-          '<span class="station-kuerzel">' + esc(STUFE_PREFIX[g.stufe] || "") + "</span>" +
-          '<span class="station-name">' + esc(bereichName(g.stufe)) + "</span>" +
-        "</span>";
-
-    const station =
-      '<button class="station druck-3' + (istJetzt ? " jetzt" : "") + '" data-gotostufe="' + esc(g.stufe) + '">' +
-        kopfOderName +
-        '<span class="station-meta">' + meta + "</span>" +
-        (istJetzt ? '<span class="station-bar"><span style="width:' + pct + '%;"></span></span>' : "") +
-      "</button>";
-    return linie + station;
-  }).join("");
-
-  // Siegel-Notiz nur ohne Vollzugang -- wer bereits bezahlt hat, sieht sie nie.
-  const siegelNotiz = (!(session && session.vollzugang))
-    ? '<div class="siegel-notiz">' +
-        "<p>" + esc(t("siegelSatz")) + "</p>" +
-        '<button class="btn-gold druck-1" data-haptik data-zugang-anfragen="' + esc(ersteGesperrteGruppe || "Start") + '">' + esc(t("zugangAnfragen")) + "</button>" +
-        '<div class="siegel-klein">' + esc(t("keinKauf")) + "</div>" +
-      "</div>"
-    : "";
-
-  // --- Bereich 7.1/7.2: Empfehlung aus dem Fahrlehrer-Kompass -- unveraendert
-  // gegenueber der bisherigen Fassung, nur an dieser Stelle im neuen Layout platziert.
-  // Eigenes Redesign im Papier-Stil steht noch aus (kein Bildschirm dafuer in der
-  // Spec vorgesehen) -- bewusst mit alter Kartenoptik belassen statt etwas zu erfinden.
+  // Empfehlung aus dem Fahrlehrer-Kompass -- unveraendert
   let empfKarte = "";
   const empf = session && session.empfehlung;
   if(empf && (empf.tag_id || empf.stufe)){
@@ -8334,32 +8323,37 @@ function renderStartHtml(){
     }
   }
 
-  // --- Bereich 7.6: Pruefungstermin-Countdown -- unveraendert, siehe Hinweis oben.
-  let terminKarte = "";
-  if(session && session.pruefungstermin){
-    const termin = new Date(session.pruefungstermin + "T00:00:00");
-    const heute = new Date(); heute.setHours(0,0,0,0);
-    const tage = Math.round((termin - heute) / 86400000);
-    if(!isNaN(tage) && tage >= 0 && tage <= 60){
-      const wann = tage === 0 ? t("heute") : (tage === 1 ? t("morgen") : t("inTagen", { n: tage }));
-      terminKarte =
-        '<div class="karte" style="margin-top:var(--sp-l);">' +
-          '<div class="section-label" style="margin:0 0 6px;">' + esc(t("deinePruefung")) + "</div>" +
-          '<div style="font-size:var(--fs-karte);font-weight:var(--fw-karte);">' + esc(wann) + "</div>" +
-          '<div class="admin-sub">' + esc(termin.toLocaleDateString(sprache === "de" ? "de-DE" : sprache)) + "</div>" +
-        "</div>";
-    }
-  }
+  // Themen-Kacheln: ein Bereich je Kachel, dazu Verkehr verstehen und (wenn freigegeben) Spiele.
+  let ersteGesperrteGruppe = null;
+  const kacheln = pfad.map(function(g, i){
+    const offen = g.videos.filter(function(x){ return !x.gesperrt; });
+    const gesehen = offen.filter(function(x){ return seenVideoIds.has(x.video.id); }).length;
+    const komplettGesperrt = g.videos.length > 0 && offen.length === 0;
+    const teilGesperrt = g.videos.some(function(x){ return x.gesperrt; });
+    if(komplettGesperrt && ersteGesperrteGruppe === null) ersteGesperrteGruppe = g.stufe;
+    // Vollzugang-Inhalt = Bereich, in dem nicht alles ohnehin gratis ist
+    const premium = g.videos.some(function(x){ return !(x.tag && x.tag.gratis); });
+    return ktKachel({
+      attr: 'data-gotostufe="' + esc(g.stufe) + '"', i: i, bild: g.stufe, name: bereichName(g.stufe),
+      premium: premium, zu: komplettGesperrt, teilGesperrt: teilGesperrt,
+      bar: offen.length ? Math.round(gesehen / offen.length * 100) : null,
+      zahl: offen.length ? gesehen + " / " + offen.length : ""
+    });
+  });
+  if(!DEMO_MODE) kacheln.push(ktKachel({ attr: "data-vv-oeffnen", i: kacheln.length, bild: "verkehr", name: t("mVerkehr"), premium: true, zu: false, teilGesperrt: true, bar: null }));
+  if(spieleSichtbar()) kacheln.push(ktKachel({ attr: 'data-go-drawer="spiele"', i: kacheln.length, bild: "spiele", name: t("mSpiele"), premium: false, zu: false, bar: null }));
+
+  const anfrage = voll ? "" :
+    '<button class="btn-gold druck-1 kt-cta" data-haptik data-zugang-anfragen="' + esc(ersteGesperrteGruppe || "Start") + '">' +
+      icon("schlossKrone") + "<span>" + esc(t("zugangAnfragen")) + "</span></button>";
 
   return (
-    '<h1 class="fa-hero" style="margin-bottom:var(--sp-m);">' + esc(t("willkommen")) + (name ? ", " + esc(name) : "") + "</h1>" +
+    '<h1 class="fa-hero" style="margin-bottom:var(--sp-m);">' + esc(t("willkommen")) + (vorname ? ", " + esc(vorname) : "") + "</h1>" +
+    terminPilleHtml() +
     empfKarte +
     weiterZeile +
-    quittung +
-    '<div class="strecke">' + strecke + "</div>" +
-    siegelNotiz +
-    verkehrKachelHtml() +
-    terminKarte
+    '<div class="kt-raster">' + kacheln.join("") + "</div>" +
+    anfrage
   );
 }
 
@@ -9389,6 +9383,9 @@ function renderCatalog(){
   // Verkehr verstehen (26.09.2026): Szene öffnen, Start-Kachel, Spieler einhängen
   document.querySelectorAll("[data-vv-szene]").forEach(function(b){
     b.addEventListener("click", function(){ go({ drawer: "verkehr", szene: b.dataset.vvSzene }); nachObenScrollen(); });
+  });
+  document.querySelectorAll("[data-go-drawer]").forEach(function(b){
+    b.addEventListener("click", function(){ go({ drawer: b.dataset.goDrawer }); nachObenScrollen(); });
   });
   document.querySelectorAll("[data-vv-oeffnen]").forEach(function(b){
     b.addEventListener("click", function(){ vvListeFehler = false; go({ drawer: "verkehr" }); nachObenScrollen(); });
