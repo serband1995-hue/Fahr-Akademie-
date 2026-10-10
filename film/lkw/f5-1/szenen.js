@@ -40,7 +40,7 @@
     /* ---------- eine Fahrt: Fahrzeug + Spuren + Fläche + Band ---------- */
     function fahrt(st, W, id, opt) {
       const fz = FZ[id], s = sim(id), v = BK.fahrzeug(W.gFz, fz, W);
-      const fuss = BK.fussflaeche(W, s, { farbe: "#FAF6EC" });
+      const fuss = BK.fussflaeche(W, s, { farbe: "#F5F6F3" });
       const spurHinten = fz.anh ? (id === "sattelzug" ? F.auflieger : F.anhaenger) : F.hinten;
       const sV = BK.spur(W, s, (z) => z.F, F.vorn);
       const sA = BK.spur(W, s, (z) => z.A, F.hinten);
@@ -101,7 +101,7 @@
       // „?“ an der Hinterachse (Satz 2), Spuren der Hinterachse erscheinen mit Satz 3
       const fragez = BK.el("g", { opacity: 0 }, W.gUeber);
       BK.el("circle", { r: 26, fill: F.creme, stroke: F.gold, "stroke-width": 5 }, fragez);
-      const tq = BK.el("text", { "text-anchor": "middle", y: 14, "font-size": 40, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#2F4A34" }, fragez); tq.textContent = "?";
+      const tq = BK.el("text", { "text-anchor": "middle", y: 14, "font-size": 40, "font-weight": 700, "font-family": "Barlow, sans-serif", fill: "#1F5A41" }, fragez); tq.textContent = "?";
       const tA = 1.2, tB = 21.0, tFrage = ch.punkte[1].t, tReveal = ch.punkte[2].t;
       uhr(T0, ch.dauer, function (t) {
         const z = a.zeichne(fahrtS(t, tA, tB), t, bremstZeit(t, tB));
@@ -203,7 +203,7 @@
       });
       const sF = BK.spur(W, sim("solo"), (z) => z.F, F.vorn, { kopf: 9 });
       const bd = BK.band(W, sim("sattelzug"), (z) => z.F, sim("sattelzug"), (z) => z.T); bd.zeige(0);
-      const fuss = BK.fussflaeche(W, sim("sattelzug"), { farbe: "#FAF6EC" });
+      const fuss = BK.fussflaeche(W, sim("sattelzug"), { farbe: "#F5F6F3" });
       const tA = 1.0, tB = statisch ? 1.0 : 14.0;
       uhr(T0, ch.dauer, function (t) {
         const sNow = statisch ? S_ENDE : fahrtS(t, tA, tB), i2 = idxVon(sNow);
@@ -232,7 +232,7 @@
       const WINKEL = 19 * Math.PI / 6, bahnEcke = M.bahn([{ gerade: 40 }, { bogen: 12.5, winkel: WINKEL, rechts: true }]);
       const sS = 18, sE = 40 + 12.5 * WINKEL + 1;
       const sm = M.simuliere(fz, bahnEcke, sS, sE, DS, "ecke");
-      const v = BK.fahrzeug(W.gFz, fz, W), fuss = BK.fussflaeche(W, sm, { farbe: "#FAF6EC" });
+      const v = BK.fahrzeug(W.gFz, fz, W), fuss = BK.fussflaeche(W, sm, { farbe: "#F5F6F3" });
       const g = W.gBand, el = BK.el;
       // freie Innenfläche, erlaubter Ring (Umrisse), Gerade
       const ring = el("circle", { cx: CX, cy: CY, r: RA, fill: "rgba(250,246,236,.045)", stroke: F.creme, "stroke-width": 3, "stroke-dasharray": "14 10", opacity: 0 }, g);

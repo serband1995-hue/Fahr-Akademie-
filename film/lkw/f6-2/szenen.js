@@ -17,7 +17,7 @@
       const st = P.buehne(sc), p = P.standardPanel(sc, ch, i, T0, false), W = SE.szene(st, { S: 30, px0: 540, boden: 640 });
       const lk = SE.lkw(W, 6.6), an = SE.anhaenger(W), R = M.abrissFahrt({ v0: 10 }), z = R.zustaende, V0 = R.P.v0, TB = 12, FAKTOR = 0.3;
       if (!M.abreissen({ rot: true }).anhaengerBremst || !M.abreissen({ rot: true }).zugBremstWeiter) throw new Error("Abrissbeispiel passt nicht zum Modell");
-      const funke = el("g", { opacity: 0 }, W.gUeber); el("path", { d: "M0 -34 L8 -12 L30 -10 L12 4 L18 28 L0 14 L-18 28 L-12 4 L-30 -10 L-8 -12 Z", fill: WARN, stroke: "#FAF6EC", "stroke-width": 3 }, funke);
+      const funke = el("g", { opacity: 0 }, W.gUeber); el("path", { d: "M0 -34 L8 -12 L30 -10 L12 4 L18 28 L0 14 L-18 28 L-12 4 L-30 -10 L-8 -12 Z", fill: WARN, stroke: "#F5F6F3", "stroke-width": 3 }, funke);
       const pz = pille(st, tx("l_zeitlupe"), GOLD), pr = pille(st, tx("l_riss"), WARN), pa = pille(st, tx("l_anh_bremst"), WARN), pb = pille(st, tx("l_zug_bremst"), GRUEN);
       uhr(T0, ch.dauer, function (t) {
         const s = (t - TB) * FAKTOR, q = s < 0 ? { xA: V0 * s, xZ: V0 * s, bremstA: false, bremstZ: false } : z[Math.max(0, Math.min(z.length - 1, Math.round(s / R.P.dt)))];

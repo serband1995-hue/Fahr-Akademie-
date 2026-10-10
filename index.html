@@ -8262,10 +8262,10 @@ let ktBildZaehler = 0;
 const KT_FARBEN = {
   "Fahrzeug & Technik":{s1:"#CFE6F7",s2:"#F4F9FC",h1:"#BFD9C4",h2:"#A8CBB0"},
   "Stoppschild-Situationen":{s1:"#D4E8F7",s2:"#F5FAFD",h1:"#B5CBE0",h2:"#9FB9D1"},
-  "Fahrmanöver-Grundlagen":{s1:"#FBE4C8",s2:"#FFF8EE",h1:"#EBCFA6",h2:"#DDB985"},
+  "Fahrmanöver-Grundlagen":{s1:"#D5EEE6",s2:"#F3FAF7",h1:"#B9DDD0",h2:"#9ACDBB"},
   "Abbiegen, Vorfahrt & Verkehrszeichen":{s1:"#E4F1DA",s2:"#F8FCF4",h1:"#CDE5B8",h2:"#B7D79C"},
   "Autobahn":{s1:"#E4E6F7",s2:"#F7F8FD",h1:"#CDD3EC",h2:"#B6BEDF"},
-  "Prüfung":{s1:"#FBE4C8",s2:"#FFF8EE",h1:"#EBCFA6",h2:"#DDB985"},
+  "Prüfung":{s1:"#FCEFD3",s2:"#FFFAF0",h1:"#EFD9A8",h2:"#E4C47F"},
   "Prüfungsstrecken":{s1:"#CFE6F7",s2:"#F4F9FC",h1:"#C9E3C5",h2:"#9FD0A8"},
   "verkehr":{s1:"#E4E6F7",s2:"#F7F8FD",h1:"#CDD3EC",h2:"#B6BEDF"}
 };
@@ -8280,8 +8280,8 @@ const KT_MOTIV = {
 function ktBild(schluessel){
   const f = KT_FARBEN[schluessel] || KT_FARBEN["Fahrzeug & Technik"], id = "ktg" + (++ktBildZaehler);
   if(schluessel === "spiele"){
-    return '<svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="400" height="260" fill="#FCE6E3"/>' +
-      '<rect x="110" y="84" width="180" height="96" rx="46" fill="#E86A5A"/><rect x="146" y="112" width="12" height="40" rx="3" fill="#fff"/><rect x="132" y="126" width="40" height="12" rx="3" fill="#fff"/>' +
+    return '<svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="400" height="260" fill="#E3F0EA"/>' +
+      '<rect x="110" y="84" width="180" height="96" rx="46" fill="#2E7D5B"/><rect x="146" y="112" width="12" height="40" rx="3" fill="#fff"/><rect x="132" y="126" width="40" height="12" rx="3" fill="#fff"/>' +
       '<circle cx="236" cy="124" r="9" fill="#fff"/><circle cx="262" cy="148" r="9" fill="#fff"/></svg>';
   }
   return '<svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + f.s1 + '"/><stop offset="1" stop-color="' + f.s2 + '"/></linearGradient></defs>' +

@@ -38,7 +38,7 @@
       el("line", { x1: 0.05, y1: -0.2, x2: 0.66, y2: -0.28, stroke: "#59A8A0", "stroke-width": 0.1, "stroke-linecap": "round" }, g);      // Arme
       el("line", { x1: 0.05, y1: 0.2, x2: 0.66, y2: 0.28, stroke: "#59A8A0", "stroke-width": 0.1, "stroke-linecap": "round" }, g);
       el("ellipse", { cx: 0.02, cy: 0, rx: 0.17, ry: 0.3, fill: "#59A8A0", stroke: "#2E6B66", "stroke-width": 0.04 }, g);                 // Schultern
-      el("circle", { cx: 0.2, cy: 0, r: 0.15, fill: "#F2C16E", stroke: "#8F5A14", "stroke-width": 0.04 }, g);                              // Kopf mit Helm (ohne Gesicht)
+      el("circle", { cx: 0.2, cy: 0, r: 0.15, fill: "#F2C16E", stroke: "#845408", "stroke-width": 0.04 }, g);                              // Kopf mit Helm (ohne Gesicht)
       return { g: g, setze: function (x, y) { const p = W.px(x, y); g.setAttribute("transform", "translate(" + f(p[0]) + " " + f(p[1]) + ") scale(" + S + ")"); }, ring: ring };
     }
     // Sichtfelder (Spiegelkeile blau, Blick durch die Scheibe grün) in Fahrzeugkoordinaten; die Gruppe wird mit dem Lkw bewegt

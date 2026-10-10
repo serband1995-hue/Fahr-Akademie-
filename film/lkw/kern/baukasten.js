@@ -7,9 +7,9 @@
   const DEG = 180 / Math.PI;
   const FARBE = {
     asphalt: "#434B45", raster: "rgba(250,246,236,.075)", rasterFein: "rgba(250,246,236,.035)",
-    creme: "#FAF6EC", gold: "#EDAE4F", goldDunkel: "#8F5A14", gruen: "#2F4A34",
+    creme: "#F5F6F3", gold: "#EDAE4F", goldDunkel: "#845408", gruen: "#1F5A41",
     vorn: "#EDAE4F", hinten: "#8FD6A6", anhaenger: "#79C6EE", auflieger: "#C9A9F2",
-    kabine: "#5E7C8F", kabineD: "#3E566A", kasten: "#F3EDE0", kastenD: "#B9AE93", glas: "#1F2A30", reifen: "#1B1D1A",
+    kabine: "#5E7C8F", kabineD: "#3E566A", kasten: "#F2F4F0", kastenD: "#B3BCB1", glas: "#1F2A30", reifen: "#1B1D1A",
     blinkAn: "#FFA81F", blinkAus: "#8A5A18", ruecklicht: "#8E2B1E", scheinwerfer: "#FFF3C4"
   };
 
@@ -205,7 +205,7 @@
       bis: function (idx) {
         idx = Math.max(0, Math.min(sim.zustaende.length - 1, idx));
         if (idx < bis) { ctx.clearRect(0, 0, 1080, 1080); bis = -1; }
-        ctx.fillStyle = o.muster ? W.muster : (o.farbe || "#FAF6EC");
+        ctx.fillStyle = o.muster ? W.muster : (o.farbe || "#F5F6F3");
         for (let i = bis < 0 ? 0 : bis + schritt; i <= idx; i += schritt) { malen(i); bis = i; }
         if (idx > bis && idx === sim.zustaende.length - 1) { malen(idx); bis = idx; }
       },
@@ -287,7 +287,7 @@
   function pkwOben(layer, W, farbe) {
     const g = el("g", null, layer), S = W.S;
     g.style.filter = "drop-shadow(0 " + (5 / S).toFixed(3) + "px " + (5 / S).toFixed(3) + "px rgba(0,0,0,.4))";
-    const c = farbe || "#D9954C", d = "#8F5A14";
+    const c = farbe || "#E8A33D", d = "#845408";
     [[-1.35, 0.95], [-1.35, -0.95], [1.4, 0.95], [1.4, -0.95]].forEach((p) => rect(g, p[0] - 0.33, p[1] - 0.12, 0.66, 0.26, FARBE.reifen, "none", 0.08));
     rect(g, -2.2, -0.9, 4.4, 1.8, c, d, 0.45, 0.07);
     rect(g, -0.6, -0.72, 1.7, 1.44, "#E8B77F", d, 0.3, 0.05);

@@ -86,9 +86,9 @@
 
     /* ---------- Kapitel 2: Pyramide ---------- */
     function K2(sc, i, T0, ch) {
-      const st = stageBase(sc, { noRoad: true }); st.style.background = "#EFE8D5";
+      const st = stageBase(sc, { noRoad: true }); st.style.background = "#EBEFE8";
       const p = panel(sc, ch, i);
-      const widths = [300, 460, 620, 780, 940], fills = ["#2F4A34", "#3F6B4B", "#9CBF9F", "#D9954C"], cols = ["#FAF6EC", "#FAF6EC", "#2B2A22", "#2B2A22"];
+      const widths = [300, 460, 620, 780, 940], fills = ["#1F5A41", "#2E7D5B", "#9CBF9F", "#E8A33D"], cols = ["#F5F6F3", "#F5F6F3", "#1E241F", "#1E241F"];
       const icons = [
         `<div>${BK.policeSVG(92)}</div>`,
         `<div>${BK.ampelSVG(130)}</div>`,
@@ -109,7 +109,7 @@
         const start = stacked[k] ? 50 : 58; fits.push([nm, avail, start]); BK.fit(nm, avail, start, 44);
         // blasse Umrisse der ganzen Pyramide stehen von Anfang an da; jede Stufe füllt sich zu ihrer Zeit
         const g = el("div", "tier ghost"); g.style.top = y + "px";
-        g.innerHTML = `<div class="shape" style="background:#D9CFB3;clip-path:polygon(${poly})"></div>`;
+        g.innerHTML = `<div class="shape" style="background:#D3DBD2;clip-path:polygon(${poly})"></div>`;
         st.insertBefore(g, st.firstChild); tl.fromTo(g, { opacity: 0 }, { opacity: 0.7, duration: 0.8 }, T0 + 0.6 + (3 - k) * 0.2);
         tl.fromTo(t, { opacity: 0, y: -70 }, { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" }, T0 + ch.stufen[k].t);
       }
