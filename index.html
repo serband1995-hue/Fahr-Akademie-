@@ -8380,8 +8380,8 @@ const KT_ZEICHEN = { "Stoppschild-Situationen":"z206", "Abbiegen, Vorfahrt & Ver
 function ktSchild(nr, klein){
   // rechts neben der Fahrbahn und tief genug, dass die Marke oben rechts (Krone/Schloss) es nie verdeckt:
   // Start-Kachel ab 320 px Breite, Weg-Kachel (nur 54 px hoch) mit eigener, tieferer Lage. Pfahl steht ausserhalb der Fahrbahn.
-  if(!nr) return "";
-  const z = klein ? { x: 350, y: 150, g: 36 } : { x: 345, y: 144, g: 40 };
+  if(!nr || klein) return "";   // Weg-Kacheln sind nur 54 px hoch: dort waere das Zeichen kaum 10 px gross und stiesse an die Marke, also keins
+  const z = { x: 345, y: 144, g: 40 };
   const px = z.x + z.g / 2 - 2.5, py = z.y + z.g - 2;
   return '<rect x="' + px + '" y="' + py + '" width="5" height="30" fill="#7B847F"/><image href="verkehr/vorfahrt-zeichen/' + nr + '.svg" x="' + z.x + '" y="' + z.y + '" width="' + z.g + '" height="' + z.g + '" preserveAspectRatio="xMidYMid meet"/>';
 }
