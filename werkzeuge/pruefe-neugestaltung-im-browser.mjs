@@ -117,7 +117,7 @@ if (import.meta.url === "file://" + process.argv[1]) {
       const kacheln = await s.locator(".kachel-t").count();
       pruefe(tag + ": 9 Themen-Kacheln (7 Bereiche, Verkehr, Spiele), da " + kacheln, kacheln === 9);
       const kronen = await s.locator(".kt-marke.krone").count(), schloesser = await s.locator(".kt-marke.zu").count();
-      pruefe(tag + ": " + (voll ? "Kronen auf den Vollzugang-Kacheln (7)" : "Schloss mit Krone auf den gesperrten Kacheln (7)") + ", da " + kronen + "/" + schloesser, voll ? (kronen === 7 && schloesser === 0) : (schloesser === 7 && kronen === 0));
+      pruefe(tag + ": " + (voll ? "Kronen auf den Vollzugang-Kacheln (6, Verkehr erst bei geladener Liste)" : "Schloss mit Krone auf den gesperrten Kacheln (6)") + ", da " + kronen + "/" + schloesser, voll ? (kronen === 6 && schloesser === 0) : (schloesser === 6 && kronen === 0));
       const pille = await s.locator(".cd-pille").count();
       pruefe(tag + ": Termin-Pille " + (termin == null ? "fehlt ohne Termin" : "da"), termin == null ? pille === 0 : pille === 1);
       if (termin === 12) pruefe(tag + ": Pille nennt 12 Tage", /12/.test(await s.locator(".cd-pille").innerText()));
@@ -202,13 +202,17 @@ if (import.meta.url === "file://" + process.argv[1]) {
       pruefe(tag + ": keine Fehler in der Konsole", s.fehler.length === 0, s.fehler.join(" | "));
       await s.context().close();
     }
-    // Zurück-Knopf des Telefons: aus 3D (Wurzel) -> beendet nicht ins Leere, Szene -> zurück zu 3D
+    // Wurzeln: nur der Tab-Aufruf macht 3D zur Wurzel; Menü- und Kachel-Weg bleiben normale Seiten mit Zurück
     {
       const s = await neueSeite({ b: 390, h: 844, voll: true, termin: 7 }); await s.waitForTimeout(1300);
-      const w = await s.evaluate(() => { navAnwenden({ view: "start", bereich: null, hashtag: null, recht: null, drawer: "verkehr", szene: null, spiel: null }); return navIstWurzel(navJetzt()); });
-      const w2 = await s.evaluate(() => navIstWurzel({ view: "start", bereich: null, hashtag: null, recht: null, drawer: "verkehr", szene: "x", spiel: null }));
-      const w3 = await s.evaluate(() => navIstWurzel({ view: "start", bereich: null, hashtag: null, recht: null, drawer: "nuetzliches", szene: null, spiel: null }));
-      pruefe("E3: 3D-Hauptseite ist Wurzel, geöffnete Szene und andere Menüseiten nicht", w === true && w2 === false && w3 === false);
+      const r = await s.evaluate(() => {
+        go({ view: "weg" }); const a = navStapel.length;
+        go({ drawer: "verkehr" }); const b = navStapel.length;                     // aus dem Menü/der Kachel
+        go({ view: "start", drawer: "verkehr", tab: true }); const c = navStapel.length;   // vom Tab
+        go({ view: "start", drawer: "verkehr", szene: "x", tab: true }); const d = navStapel.length;   // Szene bleibt Seite mit Zurück
+        return { a, b, c, d, w1: navIstWurzel({ view: "start", bereich: null, hashtag: null, recht: null, drawer: "verkehr", szene: null, spiel: null }) };
+      });
+      pruefe("E3: Menü-/Kachel-Weg nach 3D behält den Zurück-Stapel, der Tab leert ihn, eine Szene legt ab", r.b === 1 && r.c === 0 && r.d === 1 && r.w1 === false, JSON.stringify(r));
       await s.context().close();
     }
     // alle 18 Sprachen: Leiste und Menü
@@ -270,12 +274,12 @@ if (import.meta.url === "file://" + process.argv[1]) {
     // Fahrt: die Figur faehrt von der letzten Position zur neuen, die Seite folgt, am Ende ist der Wert gemerkt
     {
       const s = await neueSeite({ b: 390, h: 844, voll: true, termin: 9 }); await s.waitForTimeout(1200);
-      await s.evaluate(() => { try { localStorage.setItem("academy_weg_t", "0"); } catch (e) {} for (let k = 0; k < 3; k++) for (let v = 0; v < 2; v++) seenVideoIds.add("v0" + k + v); });
+      await s.evaluate(() => { try { localStorage.setItem("academy_weg_t_0100", "0"); } catch (e) {} for (let k = 0; k < 3; k++) for (let v = 0; v < 2; v++) seenVideoIds.add("v0" + k + v); });
       await s.tap('.bottom-nav [data-view="weg"]'); await s.waitForSelector("#weg-figur"); await s.waitForTimeout(300);
       const a = await figY(s); await s.waitForTimeout(900); const m = await figY(s); await s.waitForTimeout(1800); const e = await figY(s);
       const k1 = (await knotenY(s))[0];
       pruefe("E4 Fahrt: Figur startet unten, ist nach 0,9 s unterwegs und kommt bei Station 1 an", a > m && m > e && Math.abs(e - k1) < 1.2, [a, m, e, k1].join(" > "));
-      pruefe("E4 Fahrt: Wert wurde gemerkt", (await s.evaluate(() => localStorage.getItem("academy_weg_t"))) === "1", await s.evaluate(() => localStorage.getItem("academy_weg_t")));
+      pruefe("E4 Fahrt: Wert wurde gemerkt (je Schüler)", (await s.evaluate(() => localStorage.getItem("academy_weg_t_0100"))) === "1", await s.evaluate(() => localStorage.getItem("academy_weg_t_0100")));
       const sichtbar = await s.evaluate(() => { const r = document.getElementById("weg-figur").getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight; });
       pruefe("E4 Fahrt: Figur bleibt im Bild (die Seite folgt)", sichtbar);
       // zweiter Besuch ohne Aenderung: keine Fahrt
@@ -300,6 +304,78 @@ if (import.meta.url === "file://" + process.argv[1]) {
       await s.tap('.drawer-item[data-view="lernpfad"]'); await s.waitForTimeout(1000);
       pruefe(tag + ": Übersicht aus dem Menü zeigt die Suche", (await s.locator("#such-input").count()) === 1 && (await s.locator(".drawer.open").count()) === 0);
       pruefe(tag + ": keine Fehler in der Konsole", s.fehler.length === 0, s.fehler.join(" | "));
+      await s.context().close();
+    }
+    // Doppeltipp und schnelles Hin und Her während der Fahrt: keine Geisterschleife, Seite springt nicht
+    {
+      const s = await neueSeite({ b: 390, h: 844, voll: true, termin: 9 }); await s.waitForTimeout(1200);
+      await s.evaluate(() => { try { localStorage.setItem("academy_weg_t_0100", "0"); } catch (e) {} for (let si = 0; si < 3; si++) for (let k = 0; k < 3; k++) for (let v = 0; v < 2; v++) seenVideoIds.add("v" + si + k + v); });
+      await s.evaluate(() => { const b = document.querySelector('.bottom-nav [data-view="weg"]'); b.click(); b.click(); setTimeout(() => b.click(), 60); setTimeout(() => document.querySelector('.bottom-nav [data-view="start"]').click(), 400); setTimeout(() => document.querySelector('.bottom-nav [data-view="weg"]').click(), 700); });
+      await s.waitForSelector("#weg-figur"); await s.waitForTimeout(4200);
+      const ziel3 = (await knotenY(s))[2], f = await figY(s);
+      const sichtbar = await s.evaluate(() => { const r = document.getElementById("weg-figur").getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight; });
+      pruefe("E4 Doppeltipp/Hin-und-Her: Figur steht am Ende auf Station 3 und im Bild", Math.abs(f - ziel3) < 1.2 && sichtbar, f + " vs " + ziel3 + " sichtbar=" + sichtbar);
+      pruefe("E4 Doppeltipp/Hin-und-Her: keine Fehler in der Konsole", s.fehler.length === 0, s.fehler.join(" | "));
+      await s.context().close();
+    }
+    // Klassensperre: einfaches Schloss, keine Krone, keine Zugangsanfrage dafür; Video ohne Dauer; Name mit Komma; Hinweis "kein Kauf"
+    for (const voll of [true, false]) {
+      const tag = "E4 Sonderfälle " + (voll ? "voll" : "start");
+      const s = await neueSeite({ b: 390, h: 844, voll, termin: 9, ruhig: true }); await s.waitForTimeout(1200);
+      await s.evaluate(() => { allTags.filter((x) => x.stufe === "Autobahn").forEach((x) => { x.nur_klasse = "C"; }); const vid = allVideos.find((v) => v.id === "v400"); vid.dauer_sekunden = null; session.name = "Müller, Max"; renderCatalog(); });
+      await s.waitForTimeout(1300);
+      const art = await s.evaluate(() => { const k = document.querySelector('.kachel-t[data-gotostufe="Autobahn"]'); return { krone: !!k.querySelector(".kt-marke.krone"), zuKrone: !!k.querySelector(".kt-marke.zu .krone-zeichen, .kt-marke.zu svg path[fill]"), einfach: !!k.querySelector(".kt-marke.zu") }; });
+      pruefe(tag + ": Klassensperre zeigt keine Krone und kein Schloss mit Krone", !art.krone && !art.zuKrone, JSON.stringify(art));
+      pruefe(tag + ": Klassensperre zeigt ein einfaches Schloss", art.einfach);
+      pruefe(tag + ": Vorname aus „Müller, Max“ ist Max", (await s.locator("h1.fa-hero").innerText()).includes("Max") && !(await s.locator("h1.fa-hero").innerText()).includes("Müller"));
+      pruefe(tag + ": Hinweis „kein Kauf“ " + (voll ? "fehlt mit Vollzugang" : "steht unter dem Knopf"), (await s.locator(".kt-cta + .siegel-klein").count()) === (voll ? 0 : 1));
+      if (!voll) { const ziel = await s.locator(".kt-cta").getAttribute("data-zugang-anfragen"); pruefe(tag + ": Zugangsanfrage zielt nicht auf den Klassensperre-Bereich", ziel !== "Autobahn", ziel); }
+      // Weg: Video ohne Dauer ungesehen -> Bereich nicht fertig
+      await s.evaluate(() => { for (const v of ["v400", "v401"]) { /* Autobahn */ } const ids = []; for (let k = 0; k < 3; k++) for (let v = 0; v < 2; v++) ids.push("v" + 4 + k + v); ids.filter((i) => i !== "v400").forEach((i) => seenVideoIds.add(i)); });
+      if (voll) {
+        await s.evaluate(() => { allTags.filter((x) => x.stufe === "Autobahn").forEach((x) => { x.nur_klasse = null; }); renderCatalog(); });
+        await s.tap('.bottom-nav [data-view="weg"]'); await s.waitForSelector("#weg-figur"); await s.waitForTimeout(500);
+        const fertig = await s.evaluate(() => { const k = document.querySelector('.wg-kachel[data-gotostufe="Autobahn"]'); return !!k.querySelector(".wg-marke.ok"); });
+        pruefe(tag + ": Bereich mit ungesehenem Video ohne Dauer gilt nicht als fertig", fertig === false);
+      }
+      await s.tap('.bottom-nav [data-view="start"]'); await s.waitForTimeout(900);
+      pruefe(tag + ": Zähler „0 / 6“ ist links-nach-rechts isoliert (RTL-sicher)", (await s.locator('.kt-zahl bdi[dir="ltr"]').count()) >= 1);
+      pruefe(tag + ": geschlossenes Menü ist nicht per Tastatur erreichbar (inert)", (await s.locator(".drawer[inert]").count()) === 1);
+      await s.tap("#drawer-open-btn"); await s.waitForTimeout(400);
+      pruefe(tag + ": offenes Menü ist ein Dialog, Fokus im Menü", (await s.locator('.drawer[role="dialog"]:not([inert])').count()) === 1 && (await s.evaluate(() => !!document.activeElement.closest(".drawer"))));
+      await s.touchscreen.tap(382, 300); await s.waitForTimeout(400);
+      pruefe(tag + ": Menü zu: wieder inert", (await s.locator(".drawer[inert]").count()) === 1);
+      pruefe(tag + ": 3D-Tab hat Vorlesenamen", (await s.locator('.bottom-nav [data-tab-drawer="verkehr"]').getAttribute("aria-label")).length > 3);
+      pruefe(tag + ": keine Fehler in der Konsole", s.fehler.length === 0, s.fehler.join(" | "));
+      await s.context().close();
+    }
+    // Video über die Weiter-Pille: Zurück führt auf den Weg, und die Figur fährt dort weiter
+    {
+      const s = await neueSeite({ b: 390, h: 844, voll: true, termin: 9 }); await s.waitForTimeout(1200);
+      await s.route("**/functions/v1/academy-video-token", (r) => r.fulfill({ status: 200, headers: { "access-control-allow-origin": "*", "content-type": "application/json" }, body: JSON.stringify({ ok: true, playlist: "https://x.invalid/a.m3u8", embed_url: "https://x.invalid/e", token: "t", expires: 9999999999, hinweise: [], kapitel: [] }) }));
+      await s.evaluate(() => { try { localStorage.setItem("academy_weg_t_0100", "0"); } catch (e) {} });
+      await s.tap('.bottom-nav [data-view="weg"]'); await s.waitForSelector(".wg-weiter"); await s.waitForTimeout(500);
+      await s.tap(".wg-weiter"); await s.waitForTimeout(1500);
+      const hatZurueck = (await s.locator("#back-btn").count()) === 1;
+      pruefe("E4 Video: Zurück-Knopf zeigt „Weg“", hatZurueck && (await s.locator("#back-btn").innerText()).trim() === (await s.evaluate(() => I18N[sprache].navWeg)));
+      if (hatZurueck) { await s.evaluate(() => { for (let k = 0; k < 3; k++) for (let v = 0; v < 2; v++) seenVideoIds.add("v0" + k + v); }); await s.tap("#back-btn"); await s.waitForSelector("#weg-figur"); await s.waitForTimeout(2600);
+        pruefe("E4 Video: Zurück landet auf dem Weg, die Figur fährt zu Station 1", (await s.locator('.bottom-nav-item.active[data-view="weg"]').count()) === 1 && Math.abs((await figY(s)) - (await knotenY(s))[0]) < 1.5); }
+      await s.context().close();
+    }
+    // Sprachwechsel-Text im Menü darf nicht sichtbar sein (nur Vorlesetext)
+    {
+      const s = await neueSeite({ b: 360, h: 640, voll: false, termin: 9 }); await s.waitForTimeout(1200);
+      const sichtbar = await s.evaluate(() => [...document.querySelectorAll(".unsichtbar")].filter((e) => { const r = e.getBoundingClientRect(); return r.width > 2 || r.height > 2; }).length);
+      pruefe("E4 Vorlesetexte (unsichtbar) sind wirklich unsichtbar", sichtbar === 0, String(sichtbar));
+      await s.context().close();
+    }
+    // Zahlformen und Beschriftungen
+    {
+      const s = await neueSeite({ b: 390, h: 844, voll: true, termin: 9 }); await s.waitForTimeout(800);
+      const r = await s.evaluate(() => { const o = {}; for (const [c, n] of [["ar", 2], ["ar", 5], ["ar", 12], ["sr", 21], ["sr", 22], ["sr", 11], ["de", 3]]) { sprache = c; o[c + n] = wannText(n); } sprache = "de"; return o; });
+      pruefe("E4 Zahlformen: ar 2 = Dual, ar 12 = Einzahl, sr 21 = dan, sr 22/11 = dana", r.ar2 === "بعد يومين" && r.ar12.endsWith("يوماً") && r.sr21 === "za 21 dan" && r.sr22 === "za 22 dana" && r.sr11 === "za 11 dana", JSON.stringify(r));
+      const kol = await s.evaluate(() => Object.keys(I18N).filter((c) => I18N[c].navWeg === I18N[c].navStrecken));
+      pruefe("E4 Beschriftungen: „Weg“ und „Strecken“ heißen in keiner Sprache gleich", kol.length === 0, kol.join(","));
       await s.context().close();
     }
     // alle 18 Sprachen: Beschriftung "Weg", nichts abgeschnitten

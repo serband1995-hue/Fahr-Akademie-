@@ -884,7 +884,7 @@
   .konto-btn{background:none;border:none;cursor:pointer;padding:0;
     min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:flex-end;}
   /* ---- Start als Dashboard (10.10.2026): Themen-Kacheln mit flacher Illustration, schweben leise ---- */
-  .cd-pille{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px 0 12px;margin:0 0 var(--sp-l);
+  .cd-pille{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding-block:0;padding-inline:12px 16px;margin:0 0 var(--sp-l);
     border-radius:var(--r-pill);background:var(--gold-schwach);color:var(--gold-text);border:1px solid var(--gold-rand);
     font:inherit;font-weight:600;font-size:15px;cursor:pointer;max-width:100%;text-align:start;}
   .cd-pille .ic{width:20px;height:20px;flex:none;}
@@ -917,14 +917,21 @@
   @media (prefers-color-scheme: dark){ .kt-bild svg{filter:brightness(.78) saturate(.9);} .kachel-t.zu .kt-bild svg{filter:brightness(.78) saturate(.2);} .kt-marke.krone{background:#2A2E28;} }
   /* ---- Weg (Karte, 10.10.2026): Strasse mit Stationen als Kacheln, eine Figur faehrt je gesehener Zeit weiter ---- */
   :root{--weg-himmel:#CFE6F7;--weg-mitte:#F1F7EE;--weg-wiese:#CDE5C6;--weg-boden:#B8D8B6;--weg-strasse:#8C9A94;--weg-hell:#BFDDBB;--weg-hell2:#AFD3AD;--weg-baum:#8FC59A;}
+  @media (prefers-color-scheme: dark){ .wg-marke.krone{background:#2A2E28;} }
   @media (prefers-color-scheme: dark){ :root{--weg-himmel:#1F2F3A;--weg-mitte:#1E2A24;--weg-wiese:#1C2B22;--weg-boden:#17231C;--weg-strasse:#4A5550;--weg-hell:#223326;--weg-hell2:#1C2D21;--weg-baum:#2F5A3C;} }
-  .wg-seite{margin:0 calc(-1 * var(--sp-l));}
+  [lang="ar"] :is(.kt-name,.wg-name,.nav-text,.cd-pille,.drawer-item > span),[lang="ckb"] :is(.kt-name,.wg-name,.nav-text,.cd-pille,.drawer-item > span),
+  [lang="fa"] :is(.kt-name,.wg-name,.nav-text,.cd-pille,.drawer-item > span),[lang="hi"] :is(.kt-name,.wg-name,.nav-text,.cd-pille,.drawer-item > span),
+  [lang="am"] :is(.kt-name,.wg-name,.nav-text,.cd-pille,.drawer-item > span),[lang="ti"] :is(.kt-name,.wg-name,.nav-text,.cd-pille,.drawer-item > span){line-height:1.45;}
+  [lang="ps"] :is(.kt-name,.wg-name,.nav-text,.cd-pille,.drawer-item > span){line-height:1.55;}
+  [lang="ur"] :is(.kt-name,.wg-name,.nav-text,.cd-pille,.drawer-item > span){line-height:1.7;}
+  .wg-seite{margin-inline:-20px;}
+  .wg-karte{max-width:560px;margin-inline:auto;}
   .wg-karte{position:relative;width:100%;overflow:hidden;background:linear-gradient(180deg,var(--weg-himmel) 0%,var(--weg-mitte) 22%,var(--weg-wiese) 60%,var(--weg-boden) 100%);}
   .wg-svg{position:absolute;inset:0;width:100%;height:100%;display:block;}
   .wg-knoten{position:absolute;z-index:2;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:var(--surface);border:3px solid var(--faint);box-sizing:border-box;}
   .wg-knoten.fertig{background:var(--gruen-hell);border-color:var(--gruen-hell);}
   .wg-knoten.jetzt{border-color:var(--gold);box-shadow:0 0 0 6px rgba(217,149,76,.25);}
-  .wg-kachel{position:absolute;z-index:3;width:30.3%;transform:translateY(-50%);padding:0;overflow:hidden;display:flex;flex-direction:column;
+  .wg-kachel{position:absolute;z-index:3;width:33.3%;transform:translateY(-50%);padding:0;overflow:hidden;display:flex;flex-direction:column;
     background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:16px;box-shadow:var(--schatten-2);cursor:pointer;font:inherit;text-align:start;
     animation:wg-schweb 7s ease-in-out infinite;}
   .wg-kachel.jetzt{box-shadow:0 0 0 3px var(--gold),var(--schatten-2);}
@@ -934,7 +941,7 @@
   .wg-bild svg{position:absolute;inset:0;width:100%;height:100%;display:block;}
   .wg-kachel.zu .wg-bild svg{filter:saturate(.2);}
   .wg-text{display:flex;flex-direction:column;gap:6px;padding:8px 9px 10px;min-width:0;}
-  .wg-name{font-weight:600;font-size:13px;line-height:1.22;overflow-wrap:break-word;-webkit-hyphens:manual;hyphens:manual;}
+  .wg-name{font-weight:600;font-size:12.5px;line-height:1.22;overflow-wrap:break-word;-webkit-hyphens:manual;hyphens:manual;}
   .wg-bar{display:block;height:4px;border-radius:9px;background:var(--surface-strong);overflow:hidden;}
   .wg-bar i{display:block;height:100%;background:var(--gruen-hell);}
   .wg-marke{position:absolute;top:5px;inset-inline-end:5px;z-index:2;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(43,40,30,.22);}
@@ -947,11 +954,12 @@
   .wg-ziel{position:absolute;z-index:3;transform:translate(-50%,-50%);min-width:56px;min-height:56px;padding:0 12px;border-radius:28px;border:0;cursor:pointer;
     background:var(--text);color:var(--bg);display:flex;align-items:center;justify-content:center;gap:6px;font:inherit;font-weight:700;box-shadow:0 6px 16px rgba(43,40,30,.3);}
   .wg-ziel .ic{width:24px;height:24px;} .wg-ziel b{font-size:20px;line-height:1;}
-  .wg-weiter{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom));z-index:39;max-width:calc(100% - 32px);min-height:50px;padding:0 22px 0 14px;
+  .wg-weiter{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom));z-index:39;max-width:calc(100% - 32px);min-height:50px;padding-block:0;padding-inline:14px 22px;
     display:flex;align-items:center;gap:10px;border-radius:999px;border:0;cursor:pointer;background:var(--text);color:var(--bg);font:inherit;font-weight:700;font-size:15.5px;box-shadow:0 8px 22px rgba(43,40,30,.35);}
   .wg-weiter .wg-play{width:0;height:0;border-inline-start:13px solid currentColor;border-block-start:8px solid transparent;border-block-end:8px solid transparent;flex:none;}
   [dir="rtl"] .wg-weiter .wg-play{transform:scaleX(-1);}
   .wg-weiter span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+  @media (max-height:500px){ .wg-weiter{display:none;} }
   @media (prefers-reduced-motion: reduce){ .wg-kachel{animation:none;} }
   .konto-kreis{position:relative;width:30px;height:30px;border-radius:50%;background:var(--surface-tint);
     color:var(--gruen-text);display:flex;align-items:center;justify-content:center;
@@ -1485,7 +1493,8 @@
   .bottom-nav-item{appearance:none;-webkit-appearance:none;border:none;background:none;margin:0;
     flex-direction:column;gap:3px;padding:7px 2px 6px;min-height:52px;font-size:12.5px;line-height:1.15;}
   .bottom-nav-item .nav-ic{width:22px;height:22px;flex-shrink:0;}
-  .bottom-nav-item .nav-text{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;max-width:100%;overflow:hidden;overflow-wrap:anywhere;font-size:12px;white-space:normal;}
+  .bottom-nav-item{padding-inline:1px;}
+  .bottom-nav-item .nav-text{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;max-width:100%;overflow:hidden;overflow-wrap:anywhere;font-size:11.5px;white-space:normal;}
   .bottom-nav-item:active{transform:translateY(1px);}
   button.drawer-item{appearance:none;-webkit-appearance:none;border:none;background:none;margin:0;
     width:100%;text-align:start;font-family:inherit;min-height:48px;}
@@ -7059,7 +7068,7 @@ NUETZLICH_UE.ti = {
     hi:"खेल", ur:"کھیل", vi:"Trò chơi", rif:"Lɛab", fa:"بازی‌ها", ps:"لوبې", el:"Παιχνίδια", am:"ጨዋታዎች", ti:"ጸወታታት" };
   Object.keys(M_SPIELE).forEach(function(c){ if(I18N[c]) I18N[c].mSpiele = M_SPIELE[c]; });
   // 10.10.2026: Beschriftung des Tabs "Weg" (Karte). Ein Wort je Sprache; Muttersprachler-Pruefung steht fuer tr, sr, rif, ti, ckb, kmr, ps, am, el noch aus.
-  const M_WEG = { de:"Weg", tr:"Yol", en:"Path", ar:"الطريق", es:"Camino", ru:"Путь", sr:"Put", ckb:"ڕێگا", kmr:"Rê", hi:"रास्ता", ur:"راستہ", vi:"Lộ trình", rif:"Abrid", fa:"مسیر", ps:"لاره", el:"Διαδρομή", am:"መንገድ", ti:"መንገዲ" };
+  const M_WEG = { de:"Weg", tr:"Yolculuk", en:"Path", ar:"الطريق", es:"Camino", ru:"Путь", sr:"Put", ckb:"گەشت", kmr:"Rêwîtî", hi:"रास्ता", ur:"راستہ", vi:"Lộ trình", rif:"Abrid", fa:"سفر", ps:"سفر", el:"Πορεία", am:"ጉዞ", ti:"ጉዕዞ" };
   Object.keys(M_WEG).forEach(function(c){ if(I18N[c]) I18N[c].navWeg = M_WEG[c]; });
 })();
 /* === HINWEIS-TEXTE (02.10.2026): §-Hinweise im Video, alle 18 Sprachen === */
@@ -7362,10 +7371,7 @@ function navGleich(a, b){
 // Ist die Ansicht eine Wurzel? Eine Drawer-Seite ist NIE eine Wurzel -- sie wird
 // immer aus einer anderen Ansicht heraus geoeffnet, also muss man dorthin zurueck.
 function navIstWurzel(z){
-  // 10.10.2026: die Hauptseiten von "3D" (Verkehr verstehen) und "Spiele" sind Tabs der unteren Leiste, also Wurzeln.
-  // Eine geoeffnete Szene oder ein laufendes Spiel ist es nicht.
-  const tabSeite = z.drawer === "verkehr" ? !z.szene : (z.drawer === "spiele" ? !z.spiel : false);
-  return (!z.drawer || tabSeite) && !z.bereich && !z.hashtag && !z.recht && WURZELN.indexOf(z.view) !== -1;
+  return !z.drawer && !z.bereich && !z.hashtag && !z.recht && WURZELN.indexOf(z.view) !== -1;
 }
 
 /* Anzeigename einer Ansicht -- steht spaeter auf der Zurueck-Pille ("Zurueck zu X").
@@ -7413,7 +7419,9 @@ function go(aenderung){
   // und wirkte kaputt.
   if(navGleich(ziel, vorher)){ seitenwechsel(renderCatalog); return; }
 
-  if(navIstWurzel(ziel)){
+  // 10.10.2026: Tabs der unteren Leiste (3D, Spiele) sind Menue-Seiten, aber Wurzeln. Nur der Tab-Aufruf (tab:true) leert den Stapel;
+  // dieselbe Seite aus dem Menue oder von einer Kachel bleibt eine normale Seite mit Zurueck.
+  if(navIstWurzel(ziel) || (aenderung.tab === true && !ziel.szene && !ziel.spiel)){
     navStapel = [];
   } else {
     // Nicht zweimal dasselbe ablegen (z.B. bei einem Doppeltipp) und den Stapel
@@ -7461,6 +7469,7 @@ function esc(s){
 }
 
 function init(){
+  try{ history.scrollRestoration = "manual"; }catch(e){}   // Zurueck-Taste des Browsers springt sonst auf alte Scrollstaende (Weg: weg von der Figur)
   try{ // 06.10.2026: Spiele-Vorschau auf diesem Gerät ein-/ausschalten (?spiele=1 / ?spiele=0)
     const sq = new URLSearchParams(location.search).get("spiele");
     if(sq === "1") localStorage.setItem("spiele_vorschau", "1");
@@ -8287,34 +8296,54 @@ function bereichStatus(g){
   const offen = g.videos.filter(function(x){ return !x.gesperrt; });
   const gesehen = offen.filter(function(x){ return seenVideoIds.has(x.video.id); }).length;
   const teilGesperrt = g.videos.some(function(x){ return x.gesperrt; });
+  const vollzugSperre = g.videos.some(function(x){ return x.sperrgrund === "vollzugang"; });
+  const klassenSperre = g.videos.some(function(x){ return x.sperrgrund === "klasse"; });
+  const komplettGesperrt = g.videos.length > 0 && offen.length === 0;
   const premium = g.videos.some(function(x){ return !(x.tag && x.tag.gratis); });
-  return { offen: offen.length, gesehen: gesehen, komplettGesperrt: g.videos.length > 0 && offen.length === 0,
-           teilGesperrt: teilGesperrt, premium: premium, krone: voll && premium, schloss: !voll && teilGesperrt };
+  // Marke: Krone = Vollzugang vorhanden (nur wenn der Bereich nicht komplett durch eine Klassensperre zu ist),
+  // Schloss mit Krone = Vollzugang wuerde die Sperre loesen, einfaches Schloss = Klassensperre (loest der Vollzugang nicht)
+  const art = (voll && premium && !(komplettGesperrt && klassenSperre)) ? "krone" : (!voll && vollzugSperre ? "schloss" : (klassenSperre && komplettGesperrt ? "klasse" : ""));
+  return { offen: offen.length, gesehen: gesehen, komplettGesperrt: komplettGesperrt, komplettVollzugSperre: komplettGesperrt && !klassenSperre,
+           teilGesperrt: teilGesperrt, premium: premium, krone: art === "krone", schloss: art === "schloss", klasse: art === "klasse", art: art };
 }
-// Marke auf der Kachel: Vollzugang = Krone, ohne Vollzugang = Schloss mit Krone, sonst nichts.
-function ktMarke(premium, gesperrt){
-  if(!premium) return "";
-  if(session && session.vollzugang) return '<span class="kt-marke krone">' + kroneZeichen() + "</span>";
-  return gesperrt ? '<span class="kt-marke zu">' + icon("schlossKrone") + "</span>" : "";
+// Marken-Symbol je Art (Kachel gross, Weg und Menue klein ueber die jeweilige CSS-Klasse); Schloss bekommt einen Vorlesetext
+function markeSymbol(art){
+  if(art === "krone") return kroneZeichen();
+  if(art === "schloss") return icon("schlossKrone") + '<span class="unsichtbar">' + esc(t("gesperrtVollzugang")) + "</span>";
+  if(art === "klasse") return icon("schloss");
+  return "";
+}
+// Marke auf der Kachel: Vollzugang = Krone, ohne Vollzugang = Schloss mit Krone, Klassensperre = einfaches Schloss
+function ktMarke(art){
+  if(!art) return "";
+  return '<span class="kt-marke ' + (art === "krone" ? "krone" : "zu") + '">' + markeSymbol(art) + "</span>";
 }
 function ktKachel(o){
   const zu = !!o.zu;
   return '<button type="button" class="kachel-t' + (zu ? " zu" : "") + '" ' + o.attr + ' style="animation-delay:-' + ((o.i * 1.3) % 7).toFixed(1) + 's">' +
-    ktMarke(o.premium, zu || o.teilGesperrt) +
+    ktMarke(o.art) +
     '<span class="kt-bild">' + ktBild(o.bild) + "</span>" +
     '<span class="kt-text"><span class="kt-name">' + esc(o.name) + "</span>" +
-    (o.bar != null ? '<span class="kt-bar"><i style="width:' + o.bar + '%;"></i></span>' + (o.zahl ? '<span class="kt-zahl">' + esc(o.zahl) + "</span>" : "") : "") +
+    (o.bar != null ? '<span class="kt-bar"><i style="width:' + o.bar + '%;"></i></span>' + (o.zahl ? '<span class="kt-zahl"><bdi dir="ltr">' + esc(o.zahl) + "</bdi></span>" : "") : "") +
     "</span></button>";
 }
 // Pruefungstermin als kleine Pille unter dem Willkommen (10.10.2026). Kommt session.pruefungstermin vom Server;
 // ohne Termin erscheint nichts. Zaehlt ab heute herunter, Vergangenes wird nicht gezeigt.
+// "in n Tagen" mit richtiger Zahlform: Arabisch (2 = Dual, ab 11 Einzahl) und Serbisch (21, 31 ... "dan")
+function wannText(tage){
+  if(tage === 0) return t("heute");
+  if(tage === 1) return t("morgen");
+  if(sprache === "ar"){ if(tage === 2) return "بعد يومين"; if(tage >= 11) return "بعد " + tage + " يوماً"; }
+  if(sprache === "sr" && tage % 10 === 1 && tage % 100 !== 11) return "za " + tage + " dan";
+  return t("inTagen", { n: tage });
+}
 function terminPilleHtml(){
   if(!(session && session.pruefungstermin)) return "";
   const termin = new Date(session.pruefungstermin + "T00:00:00");
   const heute = new Date(); heute.setHours(0,0,0,0);
   const tage = Math.round((termin - heute) / 86400000);
   if(isNaN(tage) || tage < 0) return "";
-  const wann = tage === 0 ? t("heute") : (tage === 1 ? t("morgen") : t("inTagen", { n: tage }));
+  const wann = wannText(tage);
   return '<button type="button" class="cd-pille' + (tage <= 5 ? " nah" : "") + '" data-view="pruefungsstrecken">' +
     icon("kalender") + "<span>" + esc(t("deinePruefung")) + ": " + esc(wann) + "</span></button>";
 }
@@ -8346,13 +8375,15 @@ function weiterInfo(pfad){
 const WEG_B = 390;
 function wegSekunden(g){
   const offen = g.videos.filter(function(x){ return !x.gesperrt; });
-  let ges = 0, gese = 0, n = 0, gn = 0;
+  // Videos ohne Dauer zaehlen mit dem Mittelwert der anderen (sonst 5 Min.), damit sie den Fortschritt nicht verfaelschen
+  const bekannt = offen.map(function(x){ const d = Number(x.video.dauer_sekunden); return (isFinite(d) && d > 0) ? d : 0; }).filter(Boolean);
+  const ersatz = bekannt.length ? bekannt.reduce(function(a, d){ return a + d; }, 0) / bekannt.length : 300;
+  let ges = 0, gese = 0;
   offen.forEach(function(x){
-    const d = Number(x.video.dauer_sekunden), dd = (isFinite(d) && d > 0) ? d : 0, ist = seenVideoIds.has(x.video.id);
-    ges += dd; n++; if(ist){ gese += dd; gn++; }
+    const d = Number(x.video.dauer_sekunden), dd = (isFinite(d) && d > 0) ? d : ersatz;
+    ges += dd; if(seenVideoIds.has(x.video.id)) gese += dd;
   });
-  // ohne Dauer-Angaben nach Anzahl rechnen
-  return ges > 0 ? gese / ges : (n ? gn / n : 0);
+  return ges > 0 ? gese / ges : 0;
 }
 function renderWegHtml(){
   const pfad = buildLernpfad();
@@ -8364,13 +8395,13 @@ function renderWegHtml(){
   for(let k = 0; k <= n + 1; k++) pt.push({ x: 195 + (k === 0 ? 0 : (k % 2 ? -42 : 42)), y: H - 80 - k * ((H - 200) / (n + 1)) });
   let d = "M" + pt[0].x + " " + pt[0].y;
   for(let k = 1; k < pt.length; k++){ const ym = (pt[k-1].y + pt[k].y) / 2; d += " C" + pt[k-1].x + " " + ym + " " + pt[k].x + " " + ym + " " + pt[k].x + " " + pt[k].y; }
-  let tpos = 0; const aktiv = (function(){ for(let i = 0; i < n; i++){ const b = bereichStatus(pfad[i]); if(!(b.offen && b.gesehen === b.offen && !b.teilGesperrt)) return i; } return n - 1; })();
+  let tpos = 0, gestoppt = false; const aktiv = (function(){ for(let i = 0; i < n; i++){ const b = bereichStatus(pfad[i]); if(!(b.offen && b.gesehen === b.offen && !b.teilGesperrt)) return i; } return n - 1; })();
   const kachelHtml = pfad.map(function(g, i){
-    const b = bereichStatus(g), frac = wegSekunden(g), fertig = b.offen > 0 && !b.teilGesperrt && frac >= 0.999;
-    if(!b.teilGesperrt) tpos += frac;                 // gesperrte Bereiche zaehlen nicht: die Figur bleibt vor der ersten Sperre stehen
+    const b = bereichStatus(g), frac = wegSekunden(g), fertig = b.offen > 0 && !b.teilGesperrt && b.gesehen === b.offen;
+    if(!gestoppt){ if(b.teilGesperrt) gestoppt = true; else tpos += fertig ? 1 : frac; }   // die Figur bleibt vor der ersten Sperre stehen
     const p = pt[i + 1], rechts = p.x < 195;
-    const links = rechts ? (p.x + 46) : (p.x - 46 - 118);
-    const marke = fertig ? '<span class="wg-marke ok">' + icon("check") + "</span>" : (b.krone ? '<span class="wg-marke krone">' + kroneZeichen() + "</span>" : (b.schloss ? '<span class="wg-marke zu">' + icon("schlossKrone") + "</span>" : ""));
+    const links = rechts ? (p.x + 44) : (p.x - 44 - 130);
+    const marke = fertig ? '<span class="wg-marke ok">' + icon("check") + "</span>" : (b.art ? '<span class="wg-marke ' + (b.krone ? "krone" : "zu") + '">' + markeSymbol(b.art) + "</span>" : "");
     const knoten = '<span class="wg-knoten' + (fertig ? " fertig" : (i === aktiv ? " jetzt" : "")) + '" style="left:' + (p.x / WEG_B * 100).toFixed(2) + "%;top:" + (p.y / H * 100).toFixed(2) + '%;"></span>';
     return knoten + '<button type="button" class="wg-kachel' + (i === aktiv && !fertig ? " jetzt" : "") + (b.komplettGesperrt ? " zu" : "") + '" data-gotostufe="' + esc(g.stufe) + '" style="left:' + (links / WEG_B * 100).toFixed(2) + "%;top:" + (p.y / H * 100).toFixed(2) + "%;animation-delay:-" + ((i * 1.4) % 7).toFixed(1) + 's">' + marke +
       '<span class="wg-bild">' + ktBild(g.stufe) + "</span>" +
@@ -8383,7 +8414,7 @@ function renderWegHtml(){
     const dd = Math.round((termin - heute) / 86400000); if(!isNaN(dd) && dd >= 0) tage = dd;
   }
   const z = pt[n + 1];
-  const ziel = '<button type="button" class="wg-ziel" data-view="pruefungsstrecken" style="left:' + (z.x / WEG_B * 100).toFixed(2) + "%;top:" + (z.y / H * 100).toFixed(2) + '%;" aria-label="' + esc(t("navStrecken")) + '">' + icon("flagge") + (tage !== null ? "<b>" + tage + "</b>" : "") + "</button>";
+  const ziel = '<button type="button" class="wg-ziel" data-view="pruefungsstrecken" style="left:' + (z.x / WEG_B * 100).toFixed(2) + "%;top:" + (z.y / H * 100).toFixed(2) + '%;" aria-label="' + esc(t("navStrecken") + (tage !== null ? ": " + wannText(tage) : "")) + '">' + icon("flagge") + (tage !== null && tage > 0 ? "<b>" + tage + "</b>" : "") + "</button>";
   const baeume = [[40,.28],[352,.4],[30,.55],[352,.68],[56,.82],[342,.14]].map(function(b){ return '<g transform="translate(' + b[0] + " " + Math.round(H * b[1]) + ')"><rect x="-3" y="14" width="6" height="14" fill="#8E7A5E"/><circle cx="0" cy="6" r="16" fill="var(--weg-baum)"/></g>'; }).join("");
   const svg = '<svg class="wg-svg" viewBox="0 0 ' + WEG_B + " " + H + '" preserveAspectRatio="none" aria-hidden="true">' +
     '<path d="M0 ' + Math.round(H * .3) + 'Q120 ' + Math.round(H * .26) + " 250 " + Math.round(H * .3) + "T400 " + Math.round(H * .29) + "V" + H + 'H0z" fill="var(--weg-hell)" opacity=".8"/>' +
@@ -8395,29 +8426,35 @@ function renderWegHtml(){
   const weiter = wi.x ? '<button type="button" class="wg-weiter" data-vid="' + esc(wi.x.video.id) + '"><span class="wg-play"></span><span>' + esc(wi.x.video.titel) + "</span></button>" : "";
   return '<div class="wg-seite"><div class="wg-karte" id="weg-karte" data-n="' + n + '" data-h="' + H + '" data-t="' + tpos.toFixed(4) + '" style="aspect-ratio:' + WEG_B + " / " + H + ';">' + svg + kachelHtml + ziel + figur + "</div></div>" + weiter;
 }
+let videoRueck = null;   // "weg", wenn das Video ueber die Weiter-Pille auf dem Weg geoeffnet wurde: Zurueck faehrt dann auf den Weg
+let wegLauf = 0;   // zaehlt die Zeichnungen: eine veraltete Fahrt bricht ab, wenn neu gezeichnet wurde
 function wegEinhaengen(){
   const karte = document.getElementById("weg-karte"); if(!karte) return;
   const pfadEl = document.getElementById("weg-pfad"), fig = document.getElementById("weg-figur");
   if(!pfadEl || !fig || !pfadEl.getTotalLength) return;
+  const lauf = ++wegLauf;
   const n = +karte.dataset.n, H = +karte.dataset.h, ziel = +karte.dataset.t, L = pfadEl.getTotalLength();
+  const SPEICHER = "academy_weg_t_" + String((session && session.telefon) || "");   // je Schueler, nicht je Geraet
   function setze(tt){
     const u = Math.max(0, Math.min(1, tt / (n + 1))), p = pfadEl.getPointAtLength(L * u);
     fig.style.left = (p.x / WEG_B * 100) + "%"; fig.style.top = (p.y / H * 100) + "%";
   }
   let von = ziel;
-  try{ const g = parseFloat(localStorage.getItem("academy_weg_t")); if(isFinite(g) && g >= 0 && g <= n) von = g; }catch(e){}
+  try{ const g = parseFloat(localStorage.getItem(SPEICHER)); if(isFinite(g) && g >= 0 && g <= n) von = g; }catch(e){}
   const ruhig = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   setze(ruhig ? ziel : von);
   // Die Seite folgt der Figur: erst auf ihre Startposition, waehrend der Fahrt laufend mit
-  const folgen = function(){ const r = fig.getBoundingClientRect(); window.scrollTo(0, Math.max(0, r.top + window.scrollY - window.innerHeight * 0.42)); };
+  let folgt = true; const aus = function(){ folgt = false; };
+  window.addEventListener("touchstart", aus, { once: true, passive: true }); window.addEventListener("wheel", aus, { once: true, passive: true });
+  const folgen = function(){ if(!folgt || !fig.isConnected) return; const r = fig.getBoundingClientRect(); window.scrollTo(0, Math.max(0, r.top + window.scrollY - window.innerHeight * 0.42)); };
   folgen();
-  const merken = function(){ try{ localStorage.setItem("academy_weg_t", String(ziel)); }catch(e){} };
+  const merken = function(){ try{ localStorage.setItem(SPEICHER, String(ziel)); }catch(e){} };
   if(ruhig || Math.abs(ziel - von) < 0.001){ setze(ziel); merken(); return; }
   // die Figur faehrt von ihrer letzten Position zur neuen (nur wenn sich seit dem letzten Besuch etwas getan hat)
   let t0 = null; const dauer = 1600;
   setTimeout(function(){
     function schritt(ts){
-      if(!document.getElementById("weg-figur")) return;      // Seite inzwischen gewechselt
+      if(lauf !== wegLauf || !fig.isConnected) return;      // Seite inzwischen gewechselt oder neu gezeichnet
       if(t0 === null) t0 = ts;
       const k = Math.min(1, (ts - t0) / dauer), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
       setze(von + (ziel - von) * e); folgen();
@@ -8431,7 +8468,8 @@ function renderStartHtml(){
   if(!DEMO_MODE) verkehrListeLaden();
   const pfad = buildLernpfad();
   const name = (session && session.name) ? session.name : "";
-  const vorname = String(name).trim().split(/\s+/)[0] || "";
+  // "Vorname Nachname" -> Vorname; bei "Nachname, Vorname" der Teil nach dem Komma
+  const vorname = (function(){ const n = String(name).trim(); const teil = n.indexOf(",") > 0 ? n.slice(n.indexOf(",") + 1).trim() : n; return teil.split(/\s+/)[0] || ""; })();
   const voll = !!(session && session.vollzugang);
 
   // "Weiter schauen": zuletzt Angesehenes hat Vorrang, sonst das naechste offene Video.
@@ -8483,20 +8521,23 @@ function renderStartHtml(){
   let ersteGesperrteGruppe = null;
   const kacheln = pfad.map(function(g, i){
     const b = bereichStatus(g);
-    if(b.komplettGesperrt && ersteGesperrteGruppe === null) ersteGesperrteGruppe = g.stufe;
+    if(b.komplettVollzugSperre && ersteGesperrteGruppe === null) ersteGesperrteGruppe = g.stufe;   // nur Sperren, die der Vollzugang loest
     return ktKachel({
       attr: 'data-gotostufe="' + esc(g.stufe) + '"', i: i, bild: g.stufe, name: bereichName(g.stufe),
-      premium: b.premium, zu: b.komplettGesperrt, teilGesperrt: b.teilGesperrt,
+      art: b.art, zu: b.komplettGesperrt,
       bar: b.offen ? Math.round(b.gesehen / b.offen * 100) : null,
       zahl: b.offen ? b.gesehen + " / " + b.offen : ""
     });
   });
-  if(!DEMO_MODE) kacheln.push(ktKachel({ attr: "data-vv-oeffnen", i: kacheln.length, bild: "verkehr", name: t("mVerkehr"), premium: true, zu: false, teilGesperrt: true, bar: null }));
-  if(spieleSichtbar()) kacheln.push(ktKachel({ attr: 'data-go-drawer="spiele"', i: kacheln.length, bild: "spiele", name: t("mSpiele"), premium: false, zu: false, bar: null }));
+  // Verkehr verstehen: Marke erst, wenn die Szenenliste geladen ist und wirklich etwas gesperrt ist
+  const vvMarkeArt = (vvListe && vvListe.length && vvListe.some(function(x){ return !x.frei; })) ? (voll ? "krone" : "schloss") : "";
+  if(!DEMO_MODE) kacheln.push(ktKachel({ attr: "data-vv-oeffnen", i: kacheln.length, bild: "verkehr", name: t("mVerkehr"), art: vvMarkeArt, zu: false, bar: null }));
+  if(spieleSichtbar()) kacheln.push(ktKachel({ attr: 'data-go-drawer="spiele"', i: kacheln.length, bild: "spiele", name: t("mSpiele"), art: "", zu: false, bar: null }));
 
   const anfrage = voll ? "" :
     '<button class="btn-gold druck-1 kt-cta" data-haptik data-zugang-anfragen="' + esc(ersteGesperrteGruppe || "Start") + '">' +
-      icon("schlossKrone") + "<span>" + esc(t("zugangAnfragen")) + "</span></button>";
+      icon("schlossKrone") + "<span>" + esc(t("zugangAnfragen")) + "</span></button>" +
+    '<div class="siegel-klein" style="margin:-8px 0 var(--sp-l);text-align:center;">' + esc(t("keinKauf")) + "</div>";
 
   return (
     '<h1 class="fa-hero" style="margin-bottom:var(--sp-m);">' + esc(t("willkommen")) + (vorname ? ", " + esc(vorname) : "") + "</h1>" +
@@ -8832,18 +8873,6 @@ function verkehrListeLaden(){
     vvListeLaedt = false;
     if(drawerView === "verkehr" || (!drawerView && mainView === "start")) renderCatalog();
   });
-}
-
-function verkehrKachelHtml(){
-  if(DEMO_MODE) return "";
-  verkehrListeLaden();
-  if(!vvListe || !vvListe.length) return "";
-  return '<div class="karte vv-kachel">' +
-    '<div class="vv-kachel-ic">' + icon("verkehr") + "</div>" +
-    '<div style="min-width:0;flex:1;"><div class="vv-kachel-titel">' + esc(t("mVerkehr")) + "</div>" +
-      '<div class="admin-sub" style="margin:2px 0 10px;">' + esc(t("vvKachel", { n: vvListe.length })) + "</div>" +
-      '<button type="button" class="btn-sekundaer vv-kachel-knopf" data-vv-oeffnen>' + esc(t("vvKachelKnopf")) + icon("weiter") + "</button></div>" +
-  "</div>";
 }
 
 // ---- Lkw und Zug verstehen (09.10.2026): Erklärfilme Klasse C/CE, Code-Animation wie der Film „Vorfahrt“ ----
@@ -9418,13 +9447,13 @@ function renderCatalog(){
   const tabs = [
     { text: t("start"), ic: "home", attr: 'data-view="start"', aktiv: !drawerView && mainView === "start" },
     { text: t("navWeg"), ic: "weg", attr: 'data-view="weg"', aktiv: !drawerView && mainView === "weg" },
-    { text: "3D", ic: "wuerfel", attr: 'data-tab-drawer="verkehr"', aktiv: drawerView === "verkehr" }
+    { text: "3D", label: t("mVerkehr"), ic: "wuerfel", attr: 'data-tab-drawer="verkehr"', aktiv: drawerView === "verkehr" }
   ].concat(spieleSichtbar() ? [{ text: t("mSpiele"), ic: "spiele", attr: 'data-tab-drawer="spiele"', aktiv: drawerView === "spiele" }] : []).concat([
     { text: t("navStrecken"), ic: "strecke", attr: 'data-view="pruefungsstrecken"', aktiv: !drawerView && mainView === "pruefungsstrecken" }
   ]);
   const bottomNav = '<nav class="bottom-nav" aria-label="' + esc(t("navLabel")) + '">' +
     tabs.map(function(tb){
-      return '<button type="button" class="bottom-nav-item' + (tb.aktiv ? " active" : "") + '" ' + tb.attr + (tb.aktiv ? ' aria-current="page"' : "") + ">" +
+      return '<button type="button" class="bottom-nav-item' + (tb.aktiv ? " active" : "") + '" ' + tb.attr + (tb.label ? ' aria-label="' + esc(tb.label) + '"' : "") + (tb.aktiv ? ' aria-current="page"' : "") + ">" +
         icon(tb.ic, "nav-ic") + '<span class="nav-text">' + esc(tb.text) + "</span></button>";
     }).join("") +
   "</nav>";
@@ -9444,7 +9473,7 @@ function renderCatalog(){
   ]);
   const drawerHtml =
     '<div class="drawer-backdrop' + (drawerOpen ? " open" : "") + '" id="drawer-backdrop"></div>' +
-    '<div class="drawer' + (drawerOpen ? " open" : "") + '">' +
+    '<div class="drawer' + (drawerOpen ? " open" : "") + '"' + (drawerOpen ? ' role="dialog" aria-modal="true"' : " inert") + ' aria-label="' + esc(t("navLabel")) + '">' +
       '<div class="drawer-head">' +
         '<div class="dh-name">' + esc((session && session.name) || "Fahr-Akademie") + (session && session.vollzugang ? kroneZeichen() : "") + "</div>" +
         (session && session.ablauf_am ? '<div class="dh-sub">' + esc(t("gueltigBis")) + " " + fmtDate(session.ablauf_am) + "</div>" : "") +
@@ -9454,7 +9483,7 @@ function renderCatalog(){
         buildLernpfad().map(function(g){
           const bs = bereichStatus(g);
           return '<button type="button" class="drawer-item" data-gotostufe="' + esc(g.stufe) + '">' + bereichIcon(g.stufe) + "<span>" + esc(bereichName(g.stufe)) + "</span>" +
-            (bs.krone ? '<span class="drawer-marke">' + kroneZeichen() + "</span>" : (bs.schloss ? '<span class="drawer-marke">' + icon("schlossKrone") + "</span>" : "")) + "</button>";
+            (bs.art ? '<span class="drawer-marke">' + markeSymbol(bs.art) + "</span>" : "") + "</button>";
         }).join("") +
         '<div class="drawer-trenner"></div>' +
         drawerLinks.map(function(d){
@@ -9473,10 +9502,10 @@ function renderCatalog(){
   document.getElementById("app").innerHTML =
     drawerHtml +
     '<div class="header">' +
-      '<button class="menu-btn" id="drawer-open-btn" aria-label="Menü">' + icon("menu") + "</button>" +
-      '<button class="fa-logo-btn" id="wortmarke-home-btn" aria-label="Fahr-Akademie – Zum Start">' +
+      '<button class="menu-btn" id="drawer-open-btn" aria-label="' + esc(t("navLabel")) + '">' + icon("menu") + "</button>" +
+      '<button class="fa-logo-btn" id="wortmarke-home-btn" aria-label="Fahr-Akademie – ' + esc(t("start")) + '">' +
         '<img class="logo-img" src="' + LOGO + '" alt="" width="40" height="40"></button>' +
-      '<button class="konto-btn" data-view="konto" aria-label="Konto">' +
+      '<button class="konto-btn" data-view="konto" aria-label="' + esc(t("konto")) + '">' +
         '<span class="konto-kreis">' + esc(initialen(session && session.name)) + (session && session.vollzugang ? kroneZeichen() : "") + "</span></button>" +
     "</div>" +
     (DEMO_MODE ? '<div class="demo-badge">Demo-Modus — Beispieldaten</div>' : "") +
@@ -9486,25 +9515,22 @@ function renderCatalog(){
   document.getElementById("wortmarke-home-btn").addEventListener("click", function(){
     go({ view: "start" }); // Wurzel -- leert den Stapel
   });
-  document.getElementById("drawer-open-btn").addEventListener("click", function(){
-    // Direktes Klassen-Umschalten statt Neu-Rendern -- nur so kann die Drawer-Öffnung
-    // per CSS-Transition sanft einfahren (ein frisch erzeugtes Element kann nicht "von
-    // sich selbst weg" transitionieren).
-    drawerOpen = true;
-    document.querySelector(".drawer").classList.add("open");
-    document.getElementById("drawer-backdrop").classList.add("open");
-  });
-  document.getElementById("drawer-backdrop").addEventListener("click", function(){
-    drawerOpen = false;
-    document.querySelector(".drawer").classList.remove("open");
-    document.getElementById("drawer-backdrop").classList.remove("open");
-  });
+  // Menue auf-/zuklappen: Klassen umschalten (damit die Bewegung sanft laeuft) und fuer Tastatur/Vorlesen mitziehen:
+  // zu = inert (nicht erreichbar), offen = Dialog mit Fokus im Menue.
+  function drawerSchalten(offen){
+    drawerOpen = offen;
+    const dr = document.querySelector(".drawer"), bg = document.getElementById("drawer-backdrop");
+    dr.classList.toggle("open", offen); bg.classList.toggle("open", offen);
+    if(offen){ dr.removeAttribute("inert"); dr.setAttribute("role", "dialog"); dr.setAttribute("aria-modal", "true"); const erst = dr.querySelector(".drawer-item"); if(erst) setTimeout(function(){ erst.focus({ preventScroll: true }); }, 60); }
+    else { dr.setAttribute("inert", ""); dr.removeAttribute("role"); dr.removeAttribute("aria-modal"); }
+  }
+  document.getElementById("drawer-open-btn").addEventListener("click", function(){ drawerSchalten(true); });
+  document.getElementById("drawer-backdrop").addEventListener("click", function(){ drawerSchalten(false); const b = document.getElementById("drawer-open-btn"); if(b) b.focus({ preventScroll: true }); });
   document.querySelectorAll("[data-drawer]").forEach(function(b){
     b.addEventListener("click", function(){
       // Erst sichtbar zuklappen, dann den Inhalt wechseln -- fühlt sich als ein
       // zusammenhängender Fluss an statt als zwei harte Sprünge.
-      document.querySelector(".drawer").classList.remove("open");
-      document.getElementById("drawer-backdrop").classList.remove("open");
+      drawerSchalten(false);
       setTimeout(function(){
         drawerOpen = false;
         go({ drawer: b.dataset.drawer });
@@ -9516,7 +9542,7 @@ function renderCatalog(){
   });
   // Tabs der unteren Leiste, die auf eine Menue-Seite fuehren (3D, Spiele): view "start" mitgeben, damit es eine Wurzel wird
   document.querySelectorAll("[data-tab-drawer]").forEach(function(b){
-    b.addEventListener("click", function(){ drawerOpen = false; vvListeFehler = false; go({ view: "start", drawer: b.dataset.tabDrawer }); nachObenScrollen(); });
+    b.addEventListener("click", function(){ drawerOpen = false; vvListeFehler = false; go({ view: "start", drawer: b.dataset.tabDrawer, tab: true }); nachObenScrollen(); });
   });
   document.querySelectorAll("[data-konto-sprache]").forEach(function(b){
     b.addEventListener("click", function(){
@@ -9644,7 +9670,7 @@ function renderCatalog(){
     });
   });
   document.querySelectorAll("[data-vid]").forEach(function(c){
-    c.addEventListener("click", function(){ openVideo(c.dataset.vid); });
+    c.addEventListener("click", function(){ videoRueck = c.classList.contains("wg-weiter") ? "weg" : null; openVideo(c.dataset.vid); });
   });
   // Antippen einer versiegelten Zeile: Interesse merken und Zugang anbieten.
   document.querySelectorAll("[data-sperr-vid]").forEach(function(c){
@@ -9849,7 +9875,7 @@ function renderVideoZeile(cfg){
       malKlasse = "vz-mal-klasse";
       metaTxt = [codeTeil, esc(hinweis)].filter(Boolean).join(" · ");
     } else {
-      malInhalt = icon("schlossKrone", "ic-s");
+      malInhalt = icon("schlossKrone", "ic-s") + '<span class="unsichtbar">' + esc(t("gesperrtVollzugang")) + "</span>";
       malKlasse = "vz-mal-siegel";
       metaTxt = codeTeil;   // 10.10.2026: kein Wort "versiegelt" mehr, das Schloss mit Krone sagt es
     }
@@ -10050,7 +10076,7 @@ async function openVideo(videoId){
     const kontext = findeVideoKontext(videoId);
     const naechstes = findeNaechstesOffenes(videoId);
     const krume = '<button id="back-btn" class="krumen">' + icon("zurueck") +
-      "<span>" + esc(kontext ? bereichName(kontext.stufe) : t("lernpfad")) + "</span></button>";
+      "<span>" + esc(videoRueck === "weg" ? t("navWeg") : (kontext ? bereichName(kontext.stufe) : t("lernpfad"))) + "</span></button>";
     const weiterBtn = naechstes
       ? '<button class="weiter-naechstes" data-weiter="' + esc(naechstes.video.id) + '">' +
           '<span><span class="wn-label">' + esc(t("weiter")) + '</span><br><span class="wn-titel">' + esc(naechstes.video.titel) + "</span></span>" +
@@ -10101,7 +10127,10 @@ async function openVideo(videoId){
       // beim Zurueck wieder in der Themensuche statt auf der Bereichsseite, genau
       // entgegen dem Versprechen im Kommentar darueber. navAnwenden() setzt alle
       // fuenf Felder gemeinsam, damit so etwas nicht mehr auseinanderlaufen kann.
-      if(kontext){
+      if(videoRueck === "weg"){
+        videoRueck = null;
+        navAnwenden({ view:"weg", bereich:null, hashtag:null, recht:null, drawer:null });
+      } else if(kontext){
         navAnwenden({ view:"bereichdetail", bereich:kontext.stufe,
                       hashtag:null, recht:null, drawer:null });
       }
