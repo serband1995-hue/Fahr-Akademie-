@@ -923,7 +923,7 @@
     animation:kt-schweb 7s ease-in-out infinite;}
   .kachel-t:active{animation:none;transform:scale(.97);}
   @keyframes kt-schweb{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-  .kt-bild{display:block;position:relative;height:92px;overflow:hidden;}
+  .kt-bild{display:block;position:relative;height:auto;aspect-ratio:400/240;max-height:130px;overflow:hidden;}   /* 10.10.2026: mitwachsend statt fest 92 px, sonst schneidet quer Schild und Auto ab */
   .kt-bild svg{position:absolute;inset:0;width:100%;height:100%;display:block;}
   .kt-text{display:flex;flex-direction:column;gap:6px;padding:11px 13px 13px;flex:1;min-width:0;}
   .kt-name{font-weight:600;font-size:15px;line-height:1.28;overflow-wrap:break-word;-webkit-hyphens:auto;hyphens:auto;}
@@ -1278,6 +1278,7 @@
     .drawer-gruppe-kopf .dg-pfeil,.drawer-gruppe-inhalt,.drawer-gruppe.offen > .drawer-gruppe-inhalt{transition:none;}
   }
   .drawer-foot{padding:var(--sp-m) var(--sp-l);border-top:1px solid var(--border);
+  @media (orientation:landscape) and (max-height:500px){ .drawer-foot{display:none;} }   /* quer: mehr Platz fuer die Liste */
     font-size:13px;color:var(--faint);}
 
   /* --- Dashboard: dichte Liste aller Bereiche --- */
@@ -2637,7 +2638,7 @@ Object.assign(I18N.ar, {
   regKlasse:"فئة رخصة القيادة",
   klB:"B (سيارة)", klBE:"BE (سيارة مع مقطورة)", klA:"A (دراجة نارية)", klAM:"AM (سكوتر)", klC:"C (شاحنة)", klCE:"CE (شاحنة مع مقطورة)",
   regCode:"تم التعرف على رمز الإحالة:", regBtn:"إنشاء وصول البداية", regLaeuft:"جارٍ الإنشاء …",
-  regRecht:"بالتسجيل فإنك توافق على شروط الاستخدام. أكاديمية القيادة خدمة تعليمية مكمّلة ولا تحل محل التدريب في مدرسة القيادة. عمرك أقل من 18 عامًا؟ إذن تحتاج إلى موافقة والديك.",
+  regRecht:"بالتسجيل فإنك توافق على شروط الاستخدام. Die Fahr-Akademie خدمة تعليمية مكمّلة ولا تحل محل التدريب في مدرسة القيادة. عمرك أقل من 18 عامًا؟ إذن تحتاج إلى موافقة والديك.",
   regSchonZugang:"لدي وصول بالفعل",
   regErrName:"يرجى إدخال اسمك.", regErrTel:"يرجى إدخال رقم جوالك.",
   regErrMail:"يبدو أن البريد الإلكتروني غير صحيح.", regErrAllg:"لم ينجح ذلك. يرجى المحاولة مرة أخرى.",
@@ -2777,7 +2778,7 @@ Object.assign(I18N.tr, {
 });
 Object.assign(I18N.en, {
   zTitel:"Before you start", zSub:"Please confirm once, then you can continue.",
-  zP1:"Die Fahr-Akademie’s videos are a <b>voluntary, supplementary learning aid</b> for your driving training and <b>do not replace</b> lessons at your driving school.",
+  zP1:"The videos from Die Fahr-Akademie are a <b>voluntary, supplementary learning aid</b> for your driving training and <b>do not replace</b> lessons at your driving school.",
   zP2:"There is <b>no guarantee</b> that you will pass your driving test with these videos — learning success depends on many factors outside our control.",
   zP3:"Your access (phone number + PIN) is <b>personal and non-transferable</b>. Passing it on to others violates the terms of use and can lead to your access being <b>blocked immediately</b> without notice and without a refund.",
   zCheck:"I have read this and agree.", zVerbindlich:"The German version is legally binding",
@@ -4125,7 +4126,7 @@ I18N.sr = Object.assign(I18N.sr || {}, {
   "loginFehlgeschlagen":"Prijava nije uspela. Pokušaj ponovo.",
   "zTitel":"Pre nego što počneš",
   "zSub":"Potvrdi jednom i možeš dalje.",
-  "zP1":"Video snimci Die Fahr-Akademie su <b>dobrovoljna, dodatna pomoć za učenje</b> uz tvoju obuku za vožnju i <b>ne zamenjuju</b> nastavu u tvojoj auto-školi.",
+  "zP1":"Video snimci aplikacije Die Fahr-Akademie su <b>dobrovoljna, dodatna pomoć za učenje</b> uz tvoju obuku za vožnju i <b>ne zamenjuju</b> nastavu u tvojoj auto-školi.",
   "zP2":"Nema <b>nikakve garancije</b> da ćeš sa ovim video snimcima položiti vozački ispit — uspeh u učenju zavisi od mnogo faktora na koje ne možemo da utičemo.",
   "zP3":"Tvoj pristup (broj telefona + PIN) je <b>lični i neprenosiv</b>. Davanje pristupa drugima krši uslove korišćenja i može bez najave dovesti do <b>trenutnog blokiranja</b> tvog pristupa, bez prava na povraćaj novca.",
   "zCheck":"Pročitao sam ovo i slažem se.",
@@ -4220,14 +4221,14 @@ I18N.sr = Object.assign(I18N.sr || {}, {
   "ueber2":"Tvoji podaci (ime, broj telefona, napredak) čuvaju se isključivo na serverima u Nemačkoj (Frankfurt na Majni).",
   "ueber3":"Ne daj nikome svoj PIN — tvoj pristup je lično izdat na tvoje ime.",
   "zugestimmtAm":"Prihvaćeno {datum}",
-  "rechtSub":"Sve pravne informacije o Die Fahr-Akademie.",
+  "rechtSub":"Sve pravne informacije o aplikaciji Die Fahr-Akademie.",
   "rechtNurDeutsch":"Pravni tekstovi postoje samo na nemačkom — obavezujuća je nemačka verzija.",
   "rImpressum":"Impressum",
   "rImpressumSub":"Podaci o pružaocu usluge prema § 5 DDG",
   "rDatenschutz":"Izjava o zaštiti podataka",
   "rDatenschutzSub":"Koje podatke čuvamo i zašto",
   "rAgb":"Opšti uslovi poslovanja",
-  "rAgbSub":"Uslovi korišćenja Die Fahr-Akademie",
+  "rAgbSub":"Uslovi korišćenja aplikacije Die Fahr-Akademie",
   "rWiderruf":"Pouka o pravu na odustanak",
   "rWiderrufSub":"Tvoje pravo na odustanak pri zaključenju ugovora",
   "drawerFuss":"Die Fahr-Akademie — dopuna zvaničnoj obuci za vožnju",
@@ -6447,7 +6448,7 @@ I18N.el = Object.assign(I18N.el || {}, {
   "regCode":"Αναγνωρίστηκε κωδικός σύστασης:",
   "regBtn":"Δημιουργία αρχικής πρόσβασης",
   "regLaeuft":"Δημιουργείται …",
-  "regRecht":"Με τη δημιουργία αποδέχεσαι τους όρους χρήσης. Η Die Fahr-Akademie είναι συμπληρωματικό εκπαιδευτικό εργαλείο και δεν αντικαθιστά την εκπαίδευση στη σχολή οδηγών. Είσαι κάτω από 18; Τότε χρειάζεσαι τη συγκατάθεση των γονιών σου.",
+  "regRecht":"Με τη δημιουργία αποδέχεσαι τους όρους χρήσης. Η εφαρμογή Die Fahr-Akademie είναι συμπληρωματικό εκπαιδευτικό εργαλείο και δεν αντικαθιστά την εκπαίδευση στη σχολή οδηγών. Είσαι κάτω από 18; Τότε χρειάζεσαι τη συγκατάθεση των γονιών σου.",
   "regSchonZugang":"Έχω ήδη πρόσβαση",
   "regErrName":"Γράψε το όνομά σου.",
   "regErrTel":"Γράψε τον αριθμό του κινητού σου.",
@@ -6477,7 +6478,7 @@ I18N.el = Object.assign(I18N.el || {}, {
   "loginFehlgeschlagen":"Η σύνδεση απέτυχε. Δοκίμασε ξανά.",
   "zTitel":"Πριν ξεκινήσουμε",
   "zSub":"Επιβεβαίωσε μία φορά και μετά συνεχίζουμε.",
-  "zP1":"Τα βίντεο της Die Fahr-Akademie είναι ένα <b>προαιρετικό, συμπληρωματικό βοήθημα μάθησης</b> για την εκπαίδευσή σου στην οδήγηση και <b>δεν αντικαθιστούν</b> τα μαθήματα στη σχολή οδηγών σου.",
+  "zP1":"Τα βίντεο της εφαρμογής Die Fahr-Akademie είναι ένα <b>προαιρετικό, συμπληρωματικό βοήθημα μάθησης</b> για την εκπαίδευσή σου στην οδήγηση και <b>δεν αντικαθιστούν</b> τα μαθήματα στη σχολή οδηγών σου.",
   "zP2":"Δεν υπάρχει <b>καμία εγγύηση</b> ότι με αυτά τα βίντεο θα περάσεις την εξέταση για το δίπλωμα — η επιτυχία στη μάθηση εξαρτάται από πολλούς παράγοντες που είναι εκτός του ελέγχου μας.",
   "zP3":"Η πρόσβασή σου (αριθμός τηλεφώνου + PIN) είναι <b>προσωπική και μη μεταβιβάσιμη</b>. Αν τη δώσεις σε τρίτους, παραβιάζεις τους όρους χρήσης, και αυτό μπορεί να οδηγήσει χωρίς προειδοποίηση σε <b>άμεσο μπλοκάρισμα</b> της πρόσβασής σου, χωρίς δικαίωμα επιστροφής χρημάτων.",
   "zCheck":"Το διάβασα και συμφωνώ.",
@@ -6546,7 +6547,7 @@ I18N.el = Object.assign(I18N.el || {}, {
   "werbeText":"Ξέρεις κάποιον που δίνει σύντομα εξετάσεις; Δώσε του τον κωδικό σου — παίρνετε και οι δύο έκπτωση.",
   "werbeKnopf":"Δείξε τον κωδικό μου",
   "werbeTeilen":"Κοινοποίηση συνδέσμου",
-  "werbeNachricht":"Μαθαίνω τις διαδρομές εξέτασης με τη Die Fahr-Akademie — τις πραγματικές διαδρομές που κάνει ο εξεταστής. Με τον κωδικό μου παίρνεις έκπτωση: {link}",
+  "werbeNachricht":"Μαθαίνω τις διαδρομές εξέτασης με την εφαρμογή Die Fahr-Akademie — τις πραγματικές διαδρομές που κάνει ο εξεταστής. Με τον κωδικό μου παίρνεις έκπτωση: {link}",
   "textKopiert":"Το κείμενο αντιγράφηκε — τώρα κάνε επικόλληση",
   "textZumKopieren":"Κείμενο για αντιγραφή",
   "abbrechen":"Ακύρωση",
@@ -6568,18 +6569,18 @@ I18N.el = Object.assign(I18N.el || {}, {
   "hilfeA2":"Η σχολή οδηγών σου μπορεί να σου ξαναστείλει το PIN.",
   "hilfeF3":"Το βίντεο δεν φορτώνει;",
   "hilfeA3":"Έλεγξε τη σύνδεσή σου στο ίντερνετ — τα βίντεο δεν κατεβαίνουν, παίζουν απευθείας μέσω ίντερνετ.",
-  "ueber1":"Η Die Fahr-Akademie είναι **συμπλήρωμα της επίσημης εκπαίδευσης οδηγών** — όχι υποκατάστατο των μαθημάτων στη σχολή οδηγών σου.",
+  "ueber1":"Η εφαρμογή Die Fahr-Akademie είναι **συμπλήρωμα της επίσημης εκπαίδευσης οδηγών** — όχι υποκατάστατο των μαθημάτων στη σχολή οδηγών σου.",
   "ueber2":"Τα δεδομένα σου (όνομα, αριθμός τηλεφώνου, πρόοδος) αποθηκεύονται αποκλειστικά σε διακομιστές στη Γερμανία (Frankfurt am Main).",
   "ueber3":"Μη δίνεις το PIN σου σε άλλους — η πρόσβασή σου έχει εκδοθεί προσωπικά για σένα.",
   "zugestimmtAm":"Συμφώνησες στις {datum}",
-  "rechtSub":"Όλες οι νομικές πληροφορίες για τη Die Fahr-Akademie.",
+  "rechtSub":"Όλες οι νομικές πληροφορίες για την εφαρμογή Die Fahr-Akademie.",
   "rechtNurDeutsch":"Τα νομικά κείμενα υπάρχουν μόνο στα γερμανικά — δεσμευτική είναι η γερμανική έκδοση.",
   "rImpressum":"Στοιχεία παρόχου (Impressum)",
   "rImpressumSub":"Στοιχεία ταυτότητας παρόχου κατά το § 5 DDG",
   "rDatenschutz":"Δήλωση απορρήτου",
   "rDatenschutzSub":"Ποια δεδομένα αποθηκεύουμε και γιατί",
   "rAgb":"Γενικοί όροι συναλλαγών",
-  "rAgbSub":"Όροι χρήσης της Die Fahr-Akademie",
+  "rAgbSub":"Όροι χρήσης της εφαρμογής Die Fahr-Akademie",
   "rWiderruf":"Ενημέρωση για το δικαίωμα υπαναχώρησης",
   "rWiderrufSub":"Το δικαίωμα υπαναχώρησής σου όταν κλείνεις σύμβαση",
   "drawerFuss":"Die Fahr-Akademie — συμπλήρωμα της επίσημης εκπαίδευσης οδηγών",
@@ -7148,9 +7149,9 @@ NUETZLICH_UE.ti = {
   Object.keys(M_WEG).forEach(function(c){ if(I18N[c]) I18N[c].navWeg = M_WEG[c]; });
   // 10.10.2026: aufklappbare Gruppen im Seitenmenue. Muttersprachler-Pruefung steht fuer rif, ckb, kmr, ps, am, ti noch aus.
   const M_GRUPPEN = {
-    mgLernen:        { de:"Lernen", tr:"Öğren", en:"Learn", ar:"التعلّم", es:"Aprender", ru:"Учёба", sr:"Učenje", ckb:"فێربوون", kmr:"Fêrbûn", hi:"सीखें", ur:"سیکھیں", vi:"Học", rif:"Aɣeṛ", fa:"یادگیری", ps:"زده کړه", el:"Μάθηση", am:"መማር", ti:"ምምሃር" },
+    mgLernen:        { de:"Lernen", tr:"Öğrenme", en:"Learn", ar:"التعلّم", es:"Aprender", ru:"Учёба", sr:"Učenje", ckb:"فێربوون", kmr:"Fêrbûn", hi:"सीखना", ur:"سیکھنا", vi:"Học", rif:"Aɣeṛ", fa:"یادگیری", ps:"زده کړه", el:"Μάθηση", am:"መማር", ti:"ምምሃር" },
     mgUeben:         { de:"Üben", tr:"Alıştırma", en:"Practice", ar:"التدريب", es:"Practicar", ru:"Практика", sr:"Vežbanje", ckb:"ڕاهێنان", kmr:"Rahênan", hi:"अभ्यास", ur:"مشق", vi:"Luyện tập", rif:"Ttemrin", fa:"تمرین", ps:"تمرین", el:"Εξάσκηση", am:"ልምምድ", ti:"ልምምድ" },
-    mgPruefung:      { de:"Prüfung & Tipps", tr:"Sınav ve ipuçları", en:"Test & tips", ar:"الامتحان ونصائح", es:"Examen y consejos", ru:"Экзамен и советы", sr:"Ispit i saveti", ckb:"تاقیکردنەوە و ئامۆژگاری", kmr:"Azmûn û şîret", hi:"टेस्ट और सुझाव", ur:"ٹیسٹ اور مشورے", vi:"Thi và mẹo", rif:"Imtiḥan d nnasayeḥ", fa:"آزمون و نکته‌ها", ps:"ازموینه او لارښوونې", el:"Εξέταση & συμβουλές", am:"ፈተና እና ምክሮች", ti:"ፈተና ከምኡ ምኽርታት" },
+    mgPruefung:      { de:"Prüfung & Tipps", tr:"Sınav ve ipuçları", en:"Test & tips", ar:"الامتحان والنصائح", es:"Examen y consejos", ru:"Экзамен и советы", sr:"Ispit i saveti", ckb:"تاقیکردنەوە و ئامۆژگاری", kmr:"Azmûn û şîret", hi:"टेस्ट और सुझाव", ur:"ٹیسٹ اور مشورے", vi:"Thi và mẹo", rif:"Imtiḥan d nnasayeḥ", fa:"آزمون و نکته‌ها", ps:"ازموینه او لارښوونې", el:"Εξέταση & συμβουλές", am:"ፈተና እና ምክሮች", ti:"ፈተና ከምኡ ምኽርታት" },
     mgEinstellungen: { de:"Einstellungen", tr:"Ayarlar", en:"Settings", ar:"الإعدادات", es:"Ajustes", ru:"Настройки", sr:"Podešavanja", ckb:"ڕێکخستنەکان", kmr:"Mîheng", hi:"सेटिंग्स", ur:"ترتیبات", vi:"Cài đặt", rif:"Iɣewwaṛen", fa:"تنظیمات", ps:"تنظیمات", el:"Ρυθμίσεις", am:"ቅንብሮች", ti:"ቅጥዕታት" }
   };
   Object.keys(M_GRUPPEN).forEach(function(k){ Object.keys(M_GRUPPEN[k]).forEach(function(c){ if(I18N[c]) I18N[c][k] = M_GRUPPEN[k][c]; }); });
@@ -8371,13 +8372,14 @@ const KT_FARBEN = {
 const KT_MOTIV = {
   "Fahrmanöver-Grundlagen":'<g fill="#F28C38"><path d="M70 150l8-24 8 24z"/><path d="M348 160l8-24 8 24z"/></g><g fill="#fff"><rect x="72" y="140" width="12" height="3"/><rect x="350" y="150" width="12" height="3"/></g>',
   "Prüfung":'<g transform="translate(86 86)"><path d="M0 62V0" stroke="#2B2A22" stroke-width="5" stroke-linecap="round"/><path d="M2 2h44l-9 13 9 13H2z" fill="#E8A33D"/></g>',
-  "Prüfungsstrecken":'<g transform="translate(84 82)"><path d="M0 66V0" stroke="#2B2A22" stroke-width="5" stroke-linecap="round"/><path d="M2 2h44l-9 13 9 13H2z" fill="#E8A33D"/></g><path d="M60 214Q110 170 150 190T250 150" fill="none" stroke="#fff" stroke-width="5" stroke-dasharray="3 12" stroke-linecap="round" opacity=".9"/>'
+  "Prüfungsstrecken":'<g transform="translate(84 82)"><path d="M0 66V0" stroke="#2B2A22" stroke-width="5" stroke-linecap="round"/><path d="M2 2h44l-9 13 9 13H2z" fill="#E8A33D"/></g><path d="M60 214Q110 170 150 190T205 140" fill="none" stroke="#fff" stroke-width="5" stroke-dasharray="3 12" stroke-linecap="round" opacity=".9"/>'
 };
 // 10.10.2026: echte amtliche Verkehrszeichen (verkehr/vorfahrt-zeichen, Quellen in QUELLEN.md), nichts nachgezeichnet.
 // Schild rechts am Fahrbahnrand (Rechtsverkehr), links der Kronen-/Schloss-Marke oben rechts. Ohne passendes Zeichen: keins.
 const KT_ZEICHEN = { "Stoppschild-Situationen":"z206", "Abbiegen, Vorfahrt & Verkehrszeichen":"z205", "Prüfungsstrecken":"z2741", "verkehr":"z301" };
 function ktSchild(nr){
-  return nr ? '<rect x="245.5" y="100" width="5" height="37" fill="#7B847F"/><image href="verkehr/vorfahrt-zeichen/' + nr + '.svg" x="218" y="52" width="60" height="60" preserveAspectRatio="xMidYMid meet"/>' : "";
+  // rechts neben der Fahrbahn, unterhalb der Marke oben rechts und im Bild, das quer sichtbar bleibt (y 73 bis 187)
+  return nr ? '<rect x="334.5" y="164" width="5" height="30" fill="#7B847F"/><image href="verkehr/vorfahrt-zeichen/' + nr + '.svg" x="315" y="122" width="44" height="44" preserveAspectRatio="xMidYMid meet"/>' : "";
 }
 function ktBild(schluessel){
   const f = KT_FARBEN[schluessel] || KT_FARBEN["Fahrzeug & Technik"], id = "ktg" + (++ktBildZaehler);
@@ -8391,8 +8393,8 @@ function ktBild(schluessel){
     '<path d="M0 128Q70 84 150 122T300 108T420 126V260H0z" fill="' + f.h1 + '"/><path d="M0 146Q90 112 180 140T420 138V260H0z" fill="' + f.h2 + '"/>' +
     '<path d="M172 128H228L440 262H-40z" fill="#8E9A94"/><path d="M200 130V262" stroke="#fff" stroke-width="5" stroke-dasharray="14 12" fill="none"/>' +
     (KT_MOTIV[schluessel] || "") + ktSchild(KT_ZEICHEN[schluessel]) +
-    // Auto auf der rechten Fahrspur (Rechtsverkehr): um 80 nach rechts, Raeder zwischen Mittellinie (200) und Fahrbahnrand (~370 auf Radhoehe)
-    '<g transform="translate(80 0)"><ellipse cx="200" cy="228" rx="64" ry="9" fill="rgba(0,0,0,.14)"/><rect x="150" y="172" width="100" height="40" rx="13" fill="#fff"/><path d="M165 172L176 146H224L235 172z" fill="#fff"/><path d="M174 170L182 151H218L226 170z" fill="#5C6B73" opacity=".85"/><rect x="154" y="182" width="17" height="9" rx="3.5" fill="#E5584B"/><rect x="229" y="182" width="17" height="9" rx="3.5" fill="#E5584B"/><rect x="185" y="192" width="30" height="10" rx="2.5" fill="#E4E8E5"/><rect x="157" y="208" width="17" height="11" rx="3" fill="#2B2F2D"/><rect x="226" y="208" width="17" height="11" rx="3" fill="#2B2F2D"/></g></svg>';
+    // Auto auf der rechten Fahrspur (Rechtsverkehr): um 60 nach rechts, Raeder zwischen Mittellinie (200) und Fahrbahnrand; rechts davon steht das Schild
+    '<g transform="translate(60 0)"><ellipse cx="200" cy="228" rx="64" ry="9" fill="rgba(0,0,0,.14)"/><rect x="150" y="172" width="100" height="40" rx="13" fill="#fff"/><path d="M165 172L176 146H224L235 172z" fill="#fff"/><path d="M174 170L182 151H218L226 170z" fill="#5C6B73" opacity=".85"/><rect x="154" y="182" width="17" height="9" rx="3.5" fill="#E5584B"/><rect x="229" y="182" width="17" height="9" rx="3.5" fill="#E5584B"/><rect x="185" y="192" width="30" height="10" rx="2.5" fill="#E4E8E5"/><rect x="157" y="208" width="17" height="11" rx="3" fill="#2B2F2D"/><rect x="226" y="208" width="17" height="11" rx="3" fill="#2B2F2D"/></g></svg>';
 }
 // Auswertung eines Bereichs fuer Kachel UND Seitenleiste: was ist offen, was ist Vollzugang-Inhalt, was ist gesperrt.
 function bereichStatus(g){
