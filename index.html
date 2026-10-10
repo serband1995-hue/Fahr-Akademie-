@@ -1255,6 +1255,28 @@
   .drawer-item .drawer-marke .ic{width:22px;height:22px;color:var(--gold-text);}
   .drawer-item .drawer-marke .krone-zeichen{width:22px;height:22px;}
   .drawer-item > span:not(.drawer-marke){min-width:0;overflow-wrap:anywhere;}
+  /* 10.10.2026: aufklappbare Gruppen im Seitenmenue. Kopf = echter Knopf (aria-expanded), Inhalt klappt
+     ueber grid-template-rows sanft auf; zu = visibility:hidden (nicht fokussierbar, nicht vorgelesen). */
+  .drawer-gruppe{border-bottom:1px solid var(--border);}
+  .drawer-gruppe:last-child{border-bottom:none;}
+  .drawer-gruppe-kopf{appearance:none;-webkit-appearance:none;border:none;background:none;margin:0;width:100%;
+    display:flex;align-items:center;gap:var(--sp-m);min-height:48px;padding:12px var(--sp-l);text-align:start;
+    font-family:inherit;font-size:var(--fs-body);font-weight:600;color:var(--text);cursor:pointer;}
+  .drawer-gruppe-kopf:active{background:var(--surface-tint);}
+  .drawer-gruppe-kopf:focus-visible{outline:3px solid var(--gold-text);outline-offset:-3px;}
+  .drawer-gruppe-kopf .ic{color:var(--gruen-text);flex-shrink:0;}
+  .drawer-gruppe-kopf .dg-titel{min-width:0;overflow-wrap:anywhere;}
+  .drawer-gruppe-kopf .dg-pfeil{margin-inline-start:auto;width:20px;height:20px;color:var(--muted);transition:transform .22s ease;}
+  .drawer-gruppe.offen .dg-pfeil{transform:rotate(180deg);}
+  .drawer-gruppe.hat-aktiv > .drawer-gruppe-kopf .dg-titel{color:var(--gruen-text);}
+  .drawer-gruppe-inhalt{display:grid;grid-template-rows:0fr;visibility:hidden;
+    transition:grid-template-rows .22s ease,visibility 0s linear .22s;}
+  .drawer-gruppe.offen > .drawer-gruppe-inhalt{grid-template-rows:1fr;visibility:visible;transition:grid-template-rows .22s ease,visibility 0s;}
+  .drawer-gruppe-inhalt > .dg-innen{min-height:0;overflow:hidden;}
+  .drawer-gruppe .drawer-item{padding-inline-start:calc(var(--sp-l) + 12px);}
+  @media (prefers-reduced-motion: reduce){
+    .drawer-gruppe-kopf .dg-pfeil,.drawer-gruppe-inhalt,.drawer-gruppe.offen > .drawer-gruppe-inhalt{transition:none;}
+  }
   .drawer-foot{padding:var(--sp-m) var(--sp-l);border-top:1px solid var(--border);
     font-size:13px;color:var(--faint);}
 
@@ -1817,6 +1839,7 @@ const ICONS = {
   /* 10.10.2026: Zeichen fuer den Vollzugang. Ohne Vollzugang: Schloss mit Krone in der Mitte. */
   schlossKrone:'<path d="M8 11V7a4 4 0 118 0v4"/><rect x="4" y="11" width="16" height="10" rx="2.4"/><path d="M8.3 19l-.7-3.6 2.2 1.6L12 13.6l2.2 3.4 2.2-1.6-.7 3.6z" fill="var(--gold)" stroke="var(--gold-text)" stroke-width="1" stroke-linejoin="round"/>',
   flagge:'<path d="M6 21V4M6 5h11l-2.5 3.5L17 12H6"/>',
+  zahnrad:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>',
   weg:'<path d="M6 20c0-5 12-4 12-9S9 8.5 9 5"/><circle cx="6" cy="20" r="1.8"/><circle cx="9" cy="4.6" r="1.8"/>',
   wuerfel:'<path d="M12 3l8 4.2v9.6L12 21l-8-4.2V7.2z"/><path d="M12 12l8-4.8M12 12v9M12 12L4 7.2"/>',
   person:'<circle cx="12" cy="8.3" r="3.8"/><path d="M4.5 20c.9-3.6 3.9-5.6 7.5-5.6s6.6 2 7.5 5.6"/>',
@@ -7123,6 +7146,14 @@ NUETZLICH_UE.ti = {
   // 10.10.2026: Beschriftung des Tabs "Weg" (Karte). Ein Wort je Sprache; Muttersprachler-Pruefung steht fuer tr, sr, rif, ti, ckb, kmr, ps, am, el noch aus.
   const M_WEG = { de:"Weg", tr:"Yolculuk", en:"Path", ar:"الطريق", es:"Camino", ru:"Путь", sr:"Put", ckb:"گەشت", kmr:"Rêwîtî", hi:"रास्ता", ur:"راستہ", vi:"Lộ trình", rif:"Abrid", fa:"سفر", ps:"سفر", el:"Πορεία", am:"ጉዞ", ti:"ጉዕዞ" };
   Object.keys(M_WEG).forEach(function(c){ if(I18N[c]) I18N[c].navWeg = M_WEG[c]; });
+  // 10.10.2026: aufklappbare Gruppen im Seitenmenue. Muttersprachler-Pruefung steht fuer rif, ckb, kmr, ps, am, ti noch aus.
+  const M_GRUPPEN = {
+    mgLernen:        { de:"Lernen", tr:"Öğren", en:"Learn", ar:"التعلّم", es:"Aprender", ru:"Учёба", sr:"Učenje", ckb:"فێربوون", kmr:"Fêrbûn", hi:"सीखें", ur:"سیکھیں", vi:"Học", rif:"Aɣeṛ", fa:"یادگیری", ps:"زده کړه", el:"Μάθηση", am:"መማር", ti:"ምምሃር" },
+    mgUeben:         { de:"Üben", tr:"Alıştırma", en:"Practice", ar:"التدريب", es:"Practicar", ru:"Практика", sr:"Vežbanje", ckb:"ڕاهێنان", kmr:"Rahênan", hi:"अभ्यास", ur:"مشق", vi:"Luyện tập", rif:"Ttemrin", fa:"تمرین", ps:"تمرین", el:"Εξάσκηση", am:"ልምምድ", ti:"ልምምድ" },
+    mgPruefung:      { de:"Prüfung & Tipps", tr:"Sınav ve ipuçları", en:"Test & tips", ar:"الامتحان ونصائح", es:"Examen y consejos", ru:"Экзамен и советы", sr:"Ispit i saveti", ckb:"تاقیکردنەوە و ئامۆژگاری", kmr:"Azmûn û şîret", hi:"टेस्ट और सुझाव", ur:"ٹیسٹ اور مشورے", vi:"Thi và mẹo", rif:"Imtiḥan d nnasayeḥ", fa:"آزمون و نکته‌ها", ps:"ازموینه او لارښوونې", el:"Εξέταση & συμβουλές", am:"ፈተና እና ምክሮች", ti:"ፈተና ከምኡ ምኽርታት" },
+    mgEinstellungen: { de:"Einstellungen", tr:"Ayarlar", en:"Settings", ar:"الإعدادات", es:"Ajustes", ru:"Настройки", sr:"Podešavanja", ckb:"ڕێکخستنەکان", kmr:"Mîheng", hi:"सेटिंग्स", ur:"ترتیبات", vi:"Cài đặt", rif:"Iɣewwaṛen", fa:"تنظیمات", ps:"تنظیمات", el:"Ρυθμίσεις", am:"ቅንብሮች", ti:"ቅጥዕታት" }
+  };
+  Object.keys(M_GRUPPEN).forEach(function(k){ Object.keys(M_GRUPPEN[k]).forEach(function(c){ if(I18N[c]) I18N[c][k] = M_GRUPPEN[k][c]; }); });
 })();
 /* === HINWEIS-TEXTE (02.10.2026): §-Hinweise im Video, alle 18 Sprachen === */
 Object.assign(I18N.de, { hwStellen:"Wichtige Stellen", hwZeigen:"Hinweise im Video einblenden", hwOeffnen:"Hinweis öffnen",
@@ -7380,6 +7411,22 @@ let suchBegriff = "";        // Bereich 1.4: Volltextsuche über Titel/Kategorie
 let statusFilter = "alle";   // Bereich 1.6: "alle" | "offen" | "fertig"
 let drawerOpen = false;      // neues Seitenmenü (☰)
 let drawerView = null;       // null | "dashboard" | "nuetzliches" | "hilfe" | "ueber"
+// 10.10.2026: welche Gruppen im Seitenmenue aufgeklappt sind (je Geraet gemerkt). Ohne gespeicherten Wert: nur "Lernen".
+// Die Gruppe mit der gerade offenen Seite klappt beim Zeichnen zusaetzlich auf (siehe menueGruppen).
+const MENUE_GRUPPEN_KEY = "academy_menue_gruppen";
+let menueGruppenStand = null;
+function menueGruppenOffen(){
+  if(menueGruppenStand) return menueGruppenStand;
+  menueGruppenStand = ["lernen"];
+  try { const w = JSON.parse(localStorage.getItem(MENUE_GRUPPEN_KEY)); if(Array.isArray(w)) menueGruppenStand = w.filter(function(x){ return typeof x === "string"; }); } catch(e){ /* privater Modus o. ae.: Standard */ }
+  return menueGruppenStand;
+}
+function menueGruppeMerken(id, offen){
+  const liste = menueGruppenOffen().filter(function(x){ return x !== id; });
+  if(offen) liste.push(id);
+  menueGruppenStand = liste;
+  try { localStorage.setItem(MENUE_GRUPPEN_KEY, JSON.stringify(liste)); } catch(e){ /* egal, gilt dann nur bis zum Neuladen */ }
+}
 let rechtDoc = null;         // Unterseite in "Rechtliches": null (Übersicht) | "impressum" | "datenschutz" | "agb" | "widerruf" (10.09.2026)
 let selectedBereich = null;  // welcher Bereich gerade als eigene "Netflix-Seite" offen ist
 let selectedHashtag = null;  // welches # gerade angetippt wurde (bereichsübergreifende Themensuche)
@@ -9520,19 +9567,50 @@ function renderCatalog(){
     }).join("") +
   "</nav>";
 
-  // Seitenmenü (☰): Dashboard, Nützliches, Hilfe, Über diese App -- Dinge, die man selten
-  // braucht, damit die Bottom-Nav nicht überladen wird.
-  const drawerLinks = [
-    ["dashboard","dashboard",t("mDashboard")],
-    ["themen","hashtag",t("mThemen")],
-    ["verkehr","verkehr",t("mVerkehr")],
-    ].concat(spieleSichtbar() ? [["spiele","spiele",t("mSpiele")]] : []).concat([
-    ["nuetzliches","buch",t("mNuetzliches")],
-    ["rechtliches","schild",t("mRechtliches")],
-    ["pruefungstag","kalender",t("mPruefungstag")],
-    ["hilfe","frage",t("mHilfe")],
-    ["ueber","info",t("mUeber")]
-  ]);
+  // Seitenmenü (☰). 10.10.2026: statt einer langen Liste oben "Dashboard" einzeln, darunter
+  // vier aufklappbare Gruppen (Lernen, Üben, Prüfung & Tipps, Einstellungen). Klick-Ziele unverändert
+  // (data-gotostufe, data-drawer, data-view, data-konto-sprache).
+  const drawerLink = function(d){
+    return '<button type="button" class="drawer-item' + (drawerView===d[0]?" aktiv":"") + '" data-drawer="' + d[0] + '"' + (drawerView===d[0] ? ' aria-current="page"' : "") + ">" +
+      icon(d[1]) + "<span>" + esc(d[2]) + "</span></button>";
+  };
+  const viewLink = function(v, ic, text){
+    const an = !drawerView && mainView === v;
+    return '<button type="button" class="drawer-item' + (an ? " aktiv" : "") + '" data-view="' + v + '"' + (an ? ' aria-current="page"' : "") + ">" + icon(ic) + "<span>" + esc(text) + "</span></button>";
+  };
+  const menueGruppen = [
+    { id: "lernen", ic: "buch", titel: t("mgLernen"),
+      aktiv: (!drawerView && ["lernpfad", "verlauf", "bereichdetail"].indexOf(mainView) !== -1) || drawerView === "themen",
+      html: viewLink("lernpfad", "liste", t("lernpfad")) +
+        // die Themen (Bereiche) mit Krone bzw. Schloss mit Krone
+        buildLernpfad().map(function(g){
+          const bs = bereichStatus(g), an = !drawerView && mainView === "bereichdetail" && selectedBereich === g.stufe;
+          return '<button type="button" class="drawer-item' + (an ? " aktiv" : "") + '" data-gotostufe="' + esc(g.stufe) + '"' + (an ? ' aria-current="page"' : "") + ">" + bereichIcon(g.stufe) + "<span>" + esc(bereichName(g.stufe)) + "</span>" +
+            (bs.art ? '<span class="drawer-marke">' + markeSymbol(bs.art) + "</span>" : "") + "</button>";
+        }).join("") +
+        drawerLink(["themen","hashtag",t("mThemen")]) +
+        viewLink("verlauf", "check", t("verlauf")) },
+    { id: "ueben", ic: "wuerfel", titel: t("mgUeben"),
+      aktiv: drawerView === "verkehr" || drawerView === "spiele",
+      html: [["verkehr","verkehr",t("mVerkehr")]].concat(spieleSichtbar() ? [["spiele","spiele",t("mSpiele")]] : []).map(drawerLink).join("") },
+    { id: "pruefung", ic: "flagge", titel: t("mgPruefung"),
+      aktiv: ["pruefungstag", "nuetzliches", "hilfe"].indexOf(drawerView) !== -1,
+      html: [["pruefungstag","kalender",t("mPruefungstag")], ["nuetzliches","buch",t("mNuetzliches")], ["hilfe","frage",t("mHilfe")]].map(drawerLink).join("") },
+    { id: "einstellungen", ic: "zahnrad", titel: t("mgEinstellungen"),
+      aktiv: drawerView === "rechtliches" || drawerView === "ueber" || (!drawerView && mainView === "konto"),
+      html: viewLink("konto", "person", t("konto")) +
+        '<button type="button" class="drawer-item" data-konto-sprache>' + icon("weltkugel") + "<span>" + esc(t("sprache")) + "</span></button>" +
+        [["rechtliches","schild",t("mRechtliches")], ["ueber","info",t("mUeber")]].map(drawerLink).join("") }
+  ];
+  const gruppenOffen = menueGruppenOffen();
+  const gruppenHtml = menueGruppen.map(function(g){
+    const offen = g.aktiv || gruppenOffen.indexOf(g.id) !== -1;
+    return '<div class="drawer-gruppe' + (offen ? " offen" : "") + (g.aktiv ? " hat-aktiv" : "") + '">' +
+      '<button type="button" class="drawer-gruppe-kopf" data-menue-gruppe="' + g.id + '" aria-expanded="' + (offen ? "true" : "false") + '" aria-controls="menue-gruppe-' + g.id + '">' +
+        icon(g.ic) + '<span class="dg-titel">' + esc(g.titel) + "</span>" + icon("runter", "dg-pfeil") + "</button>" +
+      '<div class="drawer-gruppe-inhalt" id="menue-gruppe-' + g.id + '"><div class="dg-innen">' + g.html + "</div></div>" +
+    "</div>";
+  }).join("");
   const drawerHtml =
     '<div class="drawer-backdrop' + (drawerOpen ? " open" : "") + '" id="drawer-backdrop"></div>' +
     '<div class="drawer' + (drawerOpen ? " open" : "") + '"' + (drawerOpen ? ' role="dialog" aria-modal="true"' : " inert") + ' aria-label="' + esc(t("navLabel")) + '">' +
@@ -9541,22 +9619,9 @@ function renderCatalog(){
         (session && session.ablauf_am ? '<div class="dh-sub">' + esc(t("gueltigBis")) + " " + fmtDate(session.ablauf_am) + "</div>" : "") +
       "</div>" +
       '<div class="drawer-items">' +
-        // oben: die Themen (Bereiche) mit Krone bzw. Schloss mit Krone
-        buildLernpfad().map(function(g){
-          const bs = bereichStatus(g);
-          return '<button type="button" class="drawer-item" data-gotostufe="' + esc(g.stufe) + '">' + bereichIcon(g.stufe) + "<span>" + esc(bereichName(g.stufe)) + "</span>" +
-            (bs.art ? '<span class="drawer-marke">' + markeSymbol(bs.art) + "</span>" : "") + "</button>";
-        }).join("") +
+        drawerLink(["dashboard","dashboard",t("mDashboard")]) +
         '<div class="drawer-trenner"></div>' +
-        drawerLinks.map(function(d){
-          return '<button type="button" class="drawer-item' + (drawerView===d[0]?" aktiv":"") + '" data-drawer="' + d[0] + '"' + (drawerView===d[0] ? ' aria-current="page"' : "") + ">" +
-            icon(d[1]) + "<span>" + esc(d[2]) + "</span></button>";
-        }).join("") +
-        '<div class="drawer-trenner"></div>' +
-        '<button type="button" class="drawer-item' + (!drawerView && mainView === "lernpfad" ? " aktiv" : "") + '" data-view="lernpfad">' + icon("liste") + "<span>" + esc(t("lernpfad")) + "</span></button>" +
-        '<button type="button" class="drawer-item' + (!drawerView && mainView === "verlauf" ? " aktiv" : "") + '" data-view="verlauf">' + icon("check") + "<span>" + esc(t("verlauf")) + "</span></button>" +
-        '<button type="button" class="drawer-item' + (!drawerView && mainView === "konto" ? " aktiv" : "") + '" data-view="konto">' + icon("person") + "<span>" + esc(t("konto")) + "</span></button>" +
-        '<button type="button" class="drawer-item" data-konto-sprache>' + icon("weltkugel") + "<span>" + esc(t("sprache")) + "</span></button>" +
+        gruppenHtml +
       "</div>" +
       '<div class="drawer-foot">' + esc(t("drawerFuss")) + '</div>' +
     "</div>";
@@ -9586,6 +9651,14 @@ function renderCatalog(){
     if(offen){ dr.removeAttribute("inert"); dr.setAttribute("role", "dialog"); dr.setAttribute("aria-modal", "true"); const erst = dr.querySelector(".drawer-item"); if(erst) setTimeout(function(){ erst.focus({ preventScroll: true }); }, 60); }
     else { dr.setAttribute("inert", ""); dr.removeAttribute("role"); dr.removeAttribute("aria-modal"); }
   }
+  // Gruppen im Menue auf-/zuklappen: nur Klasse und aria-expanded umschalten (kein Neuzeichnen), Zustand merken
+  document.querySelectorAll("[data-menue-gruppe]").forEach(function(k){
+    k.addEventListener("click", function(){
+      const gr = k.closest(".drawer-gruppe"), offen = !gr.classList.contains("offen");
+      gr.classList.toggle("offen", offen); k.setAttribute("aria-expanded", offen ? "true" : "false");
+      menueGruppeMerken(k.dataset.menueGruppe, offen);
+    });
+  });
   document.getElementById("drawer-open-btn").addEventListener("click", function(){ drawerSchalten(true); });
   document.getElementById("drawer-backdrop").addEventListener("click", function(){ drawerSchalten(false); const b = document.getElementById("drawer-open-btn"); if(b) b.focus({ preventScroll: true }); });
   document.querySelectorAll("[data-drawer]").forEach(function(b){
