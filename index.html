@@ -299,16 +299,16 @@
   /* ---------- START-ANIMATION (10.10.2026): bei jedem Kaltstart Logo + „Die Fahr-Akademie“ wie mit der Feder geschrieben ---------- */
   #intro{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;
     padding:24px;transition:opacity .3s ease;cursor:pointer;}
-  #intro.weg img,#intro.weg .intro-schrift{opacity:0;transition:opacity .15s ease;}
+  #intro.weg img,#intro.weg .intro-schrift{opacity:0;animation:none;transition:opacity .15s ease;}
   #intro.weg{opacity:0;pointer-events:none;}
   #intro img{width:clamp(112px,34vw,150px);height:auto;aspect-ratio:1;border-radius:23%;
     opacity:0;transform:scale(.86);animation:intro-logo .8s cubic-bezier(.2,.7,.1,1) .1s forwards;}
   @keyframes intro-logo{to{opacity:1;transform:none;}}
   #intro .intro-schrift{font-family:'Great Vibes',cursive;font-size:clamp(40px,12vw,58px);line-height:1.25;color:var(--gruen);white-space:nowrap;direction:ltr;
     padding-inline:.2em;min-height:1.3em;}
-  #intro .intro-schrift span{display:inline-block;clip-path:inset(-90% 145% -90% -45%);}
+  #intro .intro-schrift span{display:inline-block;clip-path:inset(-150% 145% -90% -45%);}
   #intro .intro-schrift span.da{animation:intro-feder .26s ease-out forwards;}
-  @keyframes intro-feder{to{clip-path:inset(-90% -45% -90% -45%);}}
+  @keyframes intro-feder{to{clip-path:inset(-150% -45% -90% -45%);}}
   #intro .intro-schrift.fertig span{clip-path:none;animation:none;}   /* am Ende nichts mehr beschneiden (Schnoerkel) */
   @media (prefers-reduced-motion: reduce){ #intro img{animation:none;opacity:1;transform:none;} #intro .intro-schrift span{clip-path:none;} }
 
@@ -1744,6 +1744,8 @@
   var ruhig = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if(ruhig){ setTimeout(weg, 1200); return; }
   function schreiben(){
+    // Schrift noch nicht da (sehr langsames Netz): nicht in Ersatzschrift schreiben, nur das Logo zeigen
+    try{ if(document.fonts && !document.fonts.check("48px 'Great Vibes'")){ box.style.visibility = "hidden"; setTimeout(weg, 900); return; } }catch(e){}
     var spans = box.querySelectorAll("span"), i = 0;
     (function naechster(){ if(!el) return; if(i < spans.length){ spans[i].classList.add("da"); i++; setTimeout(naechster, spans[i - 1].textContent === "\u00a0" ? 60 : 105); } else { box.classList.add("fertig"); setTimeout(weg, 900); } })();
   }
