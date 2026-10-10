@@ -21,6 +21,7 @@
 // v5 (05.10.2026): GSAP 3.14.2 (Erklärfilm „Vorfahrt“ in „Verkehr verstehen“) liegt in vendor/, Dateiname trägt die Version.
 // v6 (06.10.2026): neues Logo (transparentes PNG) + neue App-Icons.
 // v7 (07.10.2026): Android-/iPhone-Icons neu: Kachel auf Creme statt randlos beschnitten (kein Block auf dem Startbild, sauberer Ausschnitt im Launcher).
+// v23 (10.10.2026): Icons wieder randlos (-v2-Dateinamen), auf Wunsch von Serban: kein Creme-Ring, nur das Logo. Schriften selbst ausgeliefert.
 const CACHE_NAME = "fahr-akademie-shell-v23";
 const STATIC_ASSETS = [
   "./vendor/supabase-js-2.117.2.min.js",
