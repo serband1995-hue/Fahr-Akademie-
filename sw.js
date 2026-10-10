@@ -21,7 +21,7 @@
 // v5 (05.10.2026): GSAP 3.14.2 (Erklärfilm „Vorfahrt“ in „Verkehr verstehen“) liegt in vendor/, Dateiname trägt die Version.
 // v6 (06.10.2026): neues Logo (transparentes PNG) + neue App-Icons.
 // v7 (07.10.2026): Android-/iPhone-Icons neu: Kachel auf Creme statt randlos beschnitten (kein Block auf dem Startbild, sauberer Ausschnitt im Launcher).
-const CACHE_NAME = "fahr-akademie-shell-v16";
+const CACHE_NAME = "fahr-akademie-shell-v17";
 const STATIC_ASSETS = [
   "./vendor/supabase-js-2.117.2.min.js",
   "./vendor/gsap-3.14.2.min.js",
@@ -57,7 +57,8 @@ self.addEventListener("fetch", (event) => {
     event.request.mode === "navigate" ||
     url.pathname === "/" ||
     url.pathname.endsWith("/") ||
-    url.pathname.endsWith(".html");
+    url.pathname.endsWith(".html") ||
+    url.pathname.endsWith("/manifest.json");   // 10.10.2026: das Manifest immer frisch holen, sonst bleibt eine geaenderte App-Kennung (id) im Cache haengen
 
   if (istSeitenAufruf) {
     // NETWORK-FIRST: immer die aktuelle Version holen, Cache nur wenn offline.
