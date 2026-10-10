@@ -8,7 +8,13 @@ export function berlinHeute(jetzt = new Date()): string {
   return new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Berlin" }).format(jetzt);
 }
 
-export function termineBauen(pruefungen: Pruefung[], schueler: Schueler[], heute: string): { telefon: string; datum: string }[] {
+// Gleiche Nummer bei mehreren aktiven Schülern (Geschwister, Familie): nicht eindeutig, wird nicht ausgeliefert.
+export function mehrdeutigeNummern(schueler: Schueler[]): Set<string> {
+  const z = new Map<string, number>();
+  for (const s of schueler) { if (s && s.status === "aktiv" && s.telefon) { const t = String(s.telefon).replace(/\(0\)/g, "").replace(/[\s\-\/().]/g, ""); z.set(t, (z.get(t) || 0) + 1); } }
+  return new Set(Array.from(z.entries()).filter(([, n]) => n > 1).map(([t]) => t));
+}
+export function termineBauen(pruefungen: Pruefung[], schueler: Schueler[], heute: string, ausgeschlossen: Set<string> = new Set()): { telefon: string; datum: string }[] {
   const nachId = new Map<string, Schueler>();
   schueler.forEach((s) => { if (s && s.id) nachId.set(String(s.id), s); });
   const frueh = new Map<string, string>();
@@ -19,6 +25,7 @@ export function termineBauen(pruefungen: Pruefung[], schueler: Schueler[], heute
     if (!s || s.status !== "aktiv") continue;
     const tel = String(s.telefon || "").trim();
     if (!tel) continue;
+    if (ausgeschlossen.has(tel.replace(/\(0\)/g, "").replace(/[\s\-\/().]/g, ""))) continue;
     const alt = frueh.get(tel);
     if (!alt || p.datum < alt) frueh.set(tel, p.datum);
   }

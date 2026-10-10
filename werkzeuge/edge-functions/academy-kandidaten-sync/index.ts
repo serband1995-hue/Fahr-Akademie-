@@ -1,4 +1,4 @@
-// Fahr-Akademie — academy-kandidaten-sync (v3, 10.10.2026)
+// Fahr-Akademie — academy-kandidaten-sync (v3 = Version 7 im Projekt, 10.10.2026)
 // Holt die Schülerliste AKTIV bei Fahrlehrer-Kompass ab (Pull statt Push).
 // Vorteil gegenüber Push: Zeitplan, Wiederholung und Fehlerprotokoll liegen hier,
 // Kompass braucht nur Lese-Schnittstellen.
@@ -83,7 +83,7 @@ function json(body: unknown, status = 200) {
 // Holt die Termine beim Kompass und gleicht sie mit academy_schueler ab. Gibt nur Zaehler zurueck (keine Namen, keine Nummern).
 async function termineAbgleichen(supa: ReturnType<typeof createClient>, kompassUrl: string, bridgeSecret: string,
   schueler: { id: string; telefon: string | null; pruefungstermin: string | null }[]) {
-  const erg = { gesetzt: 0, entfernt: 0, gebremst: false, ungueltig: 0, fehler: null as string | null };
+  const erg = { gesetzt: 0, entfernt: 0, gebremst: false, ungueltig: 0, mehrdeutig: 0, fehler: null as string | null };
   const url = kompassUrl.replace("kompass-schueler-export", "kompass-termine-export");
   if (url === kompassUrl) { erg.fehler = "termine_adresse_nicht_ableitbar"; return erg; }
   const ctrl = new AbortController();
@@ -100,7 +100,7 @@ async function termineAbgleichen(supa: ReturnType<typeof createClient>, kompassU
   if (!Array.isArray(liste)) { erg.fehler = "termine_antwort_ohne_liste"; return erg; }
 
   const plan = planeAbgleich(schueler, liste, berlinHeute());
-  erg.gebremst = plan.entfernenGebremst; erg.ungueltig = plan.ungueltig;
+  erg.gebremst = plan.entfernenGebremst; erg.ungueltig = plan.ungueltig; erg.mehrdeutig = plan.mehrdeutig;
   for (const z of plan.setzen) {
     const { error } = await supa.from("academy_schueler").update({ pruefungstermin: z.datum, erinnerung_gesendet_am: null }).eq("id", z.id);
     if (error) { erg.fehler = "termine_schreiben"; } else erg.gesetzt++;
@@ -252,12 +252,13 @@ Deno.serve(async (req: Request) => {
     }
 
     // Prüfungstermine (v3): eigener Abruf, darf den Schüler-Abgleich nie verhindern.
-    let termine = { gesetzt: 0, entfernt: 0, gebremst: false, ungueltig: 0, fehler: null as string | null };
+    let termine = { gesetzt: 0, entfernt: 0, gebremst: false, ungueltig: 0, mehrdeutig: 0, fehler: null as string | null };
     try {
       termine = await termineAbgleichen(supa, kompassUrl, bridgeSecret, (schuelerAlle || []) as any);
     } catch (e) { termine.fehler = "termine_unerwartet"; }
     if (termine.fehler) probleme.push("Prüfungstermine: " + termine.fehler);
-    if (termine.gebremst) probleme.push("Prüfungstermine: Entfernen gebremst (mehr als die Hälfte der künftigen Termine fehlt im Export)");
+    if (termine.gebremst) probleme.push("Prüfungstermine: Entfernen gebremst (Export leer oder mehr als die Hälfte der künftigen Termine fehlt)");
+    if (termine.mehrdeutig) probleme.push("Prüfungstermine: " + termine.mehrdeutig + " Schüler mit gleicher Telefonnummer übersprungen");
 
     const dauer = Math.round((Date.now() - start) / 100) / 10;
     const zusammenfassung = `${liste.length} erhalten → ${neu} neu, ${aktualisiert} aktualisiert, ` +
