@@ -22,7 +22,7 @@
 // v6 (06.10.2026): neues Logo (transparentes PNG) + neue App-Icons.
 // v7 (07.10.2026): Android-/iPhone-Icons neu: Kachel auf Creme statt randlos beschnitten (kein Block auf dem Startbild, sauberer Ausschnitt im Launcher).
 // v23 (10.10.2026): Icons wieder randlos (-v2-Dateinamen), auf Wunsch von Serban: kein Creme-Ring, nur das Logo. Schriften selbst ausgeliefert.
-const CACHE_NAME = "fahr-akademie-shell-v24";
+const CACHE_NAME = "fahr-akademie-shell-v25";
 const STATIC_ASSETS = [
   "./vendor/supabase-js-2.117.2.min.js",
   "./vendor/gsap-3.14.2.min.js",
@@ -88,7 +88,7 @@ self.addEventListener("fetch", (event) => {
 
 // --- Push-Empfang ---
 self.addEventListener("push", (event) => {
-  let data = { title: "Fahr-Akademie", body: "Es gibt Neuigkeiten für dich.", url: "./" };
+  let data = { title: "Die Fahr-Akademie", body: "Es gibt Neuigkeiten für dich.", url: "./" };
   try {
     if (event.data) data = { ...data, ...event.data.json() };
   } catch (e) {}
