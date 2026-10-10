@@ -69,6 +69,9 @@ async function tippeKachel(s, sel) {
   await s.locator(sel).first().evaluate((e) => e.scrollIntoView({ block: "center" })); await s.waitForTimeout(350);
   const bb = await s.locator(sel).first().boundingBox(); await s.touchscreen.tap(bb.x + bb.width / 2, bb.y + bb.height / 2);
 }
+/* Seitenmenü (10.10.2026): Gruppen aufklappbar. Zustand einer Gruppe lesen bzw. sie öffnen. */
+const gruppeOffen = (s, id) => s.evaluate((i) => document.querySelector('[data-menue-gruppe="' + i + '"]').getAttribute("aria-expanded") === "true", id);
+async function gruppeAuf(s, id) { if (!(await gruppeOffen(s, id))) { await s.tap('[data-menue-gruppe="' + id + '"]'); await s.waitForTimeout(400); } }
 async function layout(s, name) {
   const r = await s.evaluate(() => {
     const p = []; const de = document.documentElement;
@@ -83,6 +86,9 @@ async function layout(s, name) {
   const hell = await s.evaluate(() => { const c = getComputedStyle(document.body).backgroundColor.match(/[\d.]+/g).map(Number); const L = 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; return { L: Math.round(L), cs: getComputedStyle(document.documentElement).colorScheme }; });
   const barlow = await s.evaluate(async () => { await document.fonts.ready; return document.fonts.check("600 15px Barlow") && [...document.fonts].some((f) => f.family.replace(/['"]/g, "") === "Barlow" && f.status === "loaded"); });
   pruefe(name + ": Schrift Barlow geladen (selbst ausgeliefert)", barlow);
+  /* 10.10.2026: Verkehrszeichen in Kacheln nie unter der Marke (Krone/Schloss) und nie abgeschnitten */
+  const schild = await s.evaluate(() => { const p = []; document.querySelectorAll(".kachel-t, .wg-kachel").forEach((k) => { const img = k.querySelector('image[href*="vorfahrt-zeichen"]'), m = k.querySelector(".kt-marke, .wg-marke"); if (!img) return; const a = img.getBoundingClientRect(), bild = img.closest(".kt-bild, .wg-bild").getBoundingClientRect(); if (a.top < bild.top - 0.5 || a.bottom > bild.bottom + 0.5 || a.left < bild.left - 0.5 || a.right > bild.right + 0.5) p.push("abgeschnitten"); if (m) { const r = m.getBoundingClientRect(); if (a.left < r.right + 1 && a.right > r.left - 1 && a.top < r.bottom + 1 && a.bottom > r.top - 1) p.push("unter Marke " + Math.round(r.bottom - a.top) + "px"); } }); return p; });
+  pruefe(name + ": Schilder frei (nicht unter der Marke, nicht abgeschnitten)", schild.length === 0, schild.slice(0, 3).join(" | "));
   pruefe(name + ": Hintergrund hell", hell.L > 200 && hell.cs === "light", "L=" + hell.L + " colorScheme=" + hell.cs);
 }
 export { layout };
@@ -196,16 +202,87 @@ if (import.meta.url === "file://" + process.argv[1]) {
       const kr = await s.locator(".drawer-item[data-gotostufe] .drawer-marke .krone-zeichen").count(), sk = await s.locator(".drawer-item[data-gotostufe] .drawer-marke .ic").count();
       pruefe(tag + ": Menü " + (voll ? "Kronen (6)" : "Schloss mit Krone (6)") + ", da " + kr + "/" + sk, voll ? (kr === 6 && sk === 0) : (sk === 6 && kr === 0));
       pruefe(tag + ": Menü hat Verlauf, Konto, Sprache", (await s.locator('.drawer-item[data-view="verlauf"], .drawer-item[data-view="konto"], .drawer-item[data-konto-sprache]').count()) === 3);
-      const ueber = await s.evaluate(() => [...document.querySelectorAll(".drawer-item")].filter((e) => { const r = e.getBoundingClientRect(); return r.right > innerWidth + 1; }).length);
+      // Gruppen: Dashboard einzeln oben, dann Lernen, Üben, Prüfung & Tipps, Einstellungen
+      const aufbau = await s.evaluate(() => {
+        const items = document.querySelector(".drawer-items");
+        const erst = items.firstElementChild;
+        const koepfe = [...items.querySelectorAll(".drawer-gruppe-kopf")];
+        const gr = (id) => [...document.querySelectorAll("#menue-gruppe-" + id + " .drawer-item")].map((e) => e.dataset.drawer || e.dataset.view || (e.dataset.gotostufe ? "stufe" : "") || (e.hasAttribute("data-konto-sprache") ? "sprache" : "?"));
+        return { erst: erst.dataset.drawer, koepfe: koepfe.map((k) => k.dataset.menueGruppe), knopf: koepfe.every((k) => k.tagName === "BUTTON" && k.hasAttribute("aria-expanded") && !!document.getElementById(k.getAttribute("aria-controls"))),
+          lernen: gr("lernen"), ueben: gr("ueben"), pruefung: gr("pruefung"), einstellungen: gr("einstellungen") };
+      });
+      pruefe(tag + ": Dashboard steht einzeln ganz oben", aufbau.erst === "dashboard", JSON.stringify(aufbau.erst));
+      pruefe(tag + ": 4 Gruppen in der Reihenfolge Lernen, Üben, Prüfung, Einstellungen", aufbau.koepfe.join() === "lernen,ueben,pruefung,einstellungen", aufbau.koepfe.join());
+      pruefe(tag + ": Gruppenköpfe sind Knöpfe mit aria-expanded und aria-controls", aufbau.knopf);
+      pruefe(tag + ": Lernen = Übersicht, 7 Bereiche, # Themen, Gesehen", aufbau.lernen.join() === "lernpfad,stufe,stufe,stufe,stufe,stufe,stufe,stufe,themen,verlauf", aufbau.lernen.join());
+      pruefe(tag + ": Üben = Verkehr verstehen, Spiele", aufbau.ueben.join() === "verkehr,spiele", aufbau.ueben.join());
+      pruefe(tag + ": Prüfung & Tipps = Prüfungstag, Nützliches, Hilfe", aufbau.pruefung.join() === "pruefungstag,nuetzliches,hilfe", aufbau.pruefung.join());
+      pruefe(tag + ": Einstellungen = Konto, Sprache, Rechtliches, Über", aufbau.einstellungen.join() === "konto,sprache,rechtliches,ueber", aufbau.einstellungen.join());
+      // Start-Zustand auf der 3D-Seite: Lernen (Standard) und Üben (enthält die offene Seite) offen, der Rest zu
+      const zu0 = { l: await gruppeOffen(s, "lernen"), u: await gruppeOffen(s, "ueben"), p: await gruppeOffen(s, "pruefung"), e: await gruppeOffen(s, "einstellungen") };
+      pruefe(tag + ": beim Öffnen: Lernen und Üben (aktuelle Seite) offen, Prüfung und Einstellungen zu", zu0.l && zu0.u && !zu0.p && !zu0.e, JSON.stringify(zu0));
+      const verborgen = await s.evaluate(() => { const els = [...document.querySelectorAll("#menue-gruppe-einstellungen .drawer-item")]; const b = els[0]; b.focus(); return els.every((e) => getComputedStyle(e).visibility === "hidden") && document.activeElement !== b && document.getElementById("menue-gruppe-einstellungen").getBoundingClientRect().height < 1; });
+      pruefe(tag + ": Punkte zugeklappter Gruppen sind unsichtbar, ohne Höhe und nicht fokussierbar", verborgen);
+      const kleinK = await s.evaluate(() => [...document.querySelectorAll(".drawer-gruppe-kopf, .drawer .drawer-item")].filter((e) => { const r = e.getBoundingClientRect(); return getComputedStyle(e).visibility === "visible" && r.height > 0 && (r.height < 43.5 || r.width < 43.5); }).length);
+      pruefe(tag + ": Menü-Tippflächen >= 44 px", kleinK === 0);
+      // Auf- und Zuklappen per Fingertipp; Pfeil dreht sich; Zustand wird gemerkt
+      await s.tap('[data-menue-gruppe="einstellungen"]'); await s.waitForTimeout(450);
+      const auf = await s.evaluate(() => { const k = document.querySelector('[data-menue-gruppe="einstellungen"]'); const sp = document.querySelector("#menue-gruppe-einstellungen [data-konto-sprache]"); const r = sp.getBoundingClientRect();
+        return { exp: k.getAttribute("aria-expanded"), pfeil: getComputedStyle(k.querySelector(".dg-pfeil")).transform, sichtbar: getComputedStyle(sp).visibility === "visible" && r.height >= 44, gemerkt: localStorage.getItem("academy_menue_gruppen") }; });
+      pruefe(tag + ": Antippen klappt Einstellungen auf (aria-expanded, Pfeil gedreht, Sprache sichtbar, gemerkt)", auf.exp === "true" && auf.pfeil !== "none" && auf.pfeil !== "matrix(1, 0, 0, 1, 0, 0)" && auf.sichtbar && /einstellungen/.test(auf.gemerkt || ""), JSON.stringify(auf));
+      await s.tap('[data-menue-gruppe="einstellungen"]'); await s.waitForTimeout(450);
+      const zu = await s.evaluate(() => { const k = document.querySelector('[data-menue-gruppe="einstellungen"]'); return { exp: k.getAttribute("aria-expanded"), pfeil: getComputedStyle(k.querySelector(".dg-pfeil")).transform, h: document.getElementById("menue-gruppe-einstellungen").getBoundingClientRect().height, gemerkt: localStorage.getItem("academy_menue_gruppen") }; });
+      pruefe(tag + ": nochmal Antippen klappt wieder zu (Höhe 0, Pfeil zurück)", zu.exp === "false" && zu.h < 1 && (zu.pfeil === "none" || zu.pfeil === "matrix(1, 0, 0, 1, 0, 0)") && !/einstellungen/.test(zu.gemerkt || ""), JSON.stringify(zu));
+      pruefe(tag + ": Menü bleibt beim Auf-/Zuklappen offen", (await s.locator(".drawer.open").count()) === 1);
+      await gruppeAuf(s, "pruefung"); await gruppeAuf(s, "einstellungen");
+      const ueber = await s.evaluate(() => [...document.querySelectorAll(".drawer-item, .drawer-gruppe-kopf")].filter((e) => { const r = e.getBoundingClientRect(); return r.right > innerWidth + 1; }).length);
       pruefe(tag + ": Menüzeilen ragen nicht raus", ueber === 0);
+      pruefe(tag + ": Menü seitlich nicht wischbar", await s.evaluate(() => { const d = document.querySelector(".drawer-items"); return d.scrollWidth <= d.clientWidth + 1; }));
+      if (gn === "360" && !dunkel) await s.screenshot({ path: join(bilder, "e3-menue-" + (voll ? "voll" : "start") + ".png") });
+      await s.tap('[data-menue-gruppe="pruefung"]'); await s.waitForTimeout(300); await s.tap('[data-menue-gruppe="einstellungen"]'); await s.waitForTimeout(400);
+      await s.locator('.drawer-item[data-gotostufe="Autobahn"]').scrollIntoViewIfNeeded();
       await s.tap('.drawer-item[data-gotostufe="Autobahn"]'); await s.waitForTimeout(900);
       pruefe(tag + ": Thema im Menü öffnet den Bereich und schließt das Menü", (await s.locator(".drawer.open").count()) === 0 && (await s.locator(".video-zeile").count()) >= 4);
       await s.tap("#drawer-open-btn"); await s.waitForTimeout(500); await s.tap('.drawer-item[data-view="verlauf"]'); await s.waitForTimeout(900);
       pruefe(tag + ": Verlauf aus dem Menü, Menü zu", (await ansicht(s)).includes('"v":"verlauf"') && (await s.locator(".drawer.open").count()) === 0);
-      await s.tap("#drawer-open-btn"); await s.waitForTimeout(500); await s.tap(".drawer-item[data-konto-sprache]"); await s.waitForTimeout(1100);
+      await s.tap("#drawer-open-btn"); await s.waitForTimeout(500);
+      pruefe(tag + ": auf der Gesehen-Seite ist Lernen offen", await gruppeOffen(s, "lernen"));
+      await gruppeAuf(s, "einstellungen"); await s.locator(".drawer-item[data-konto-sprache]").scrollIntoViewIfNeeded(); await s.tap(".drawer-item[data-konto-sprache]"); await s.waitForTimeout(1100);
       pruefe(tag + ": Sprache aus dem Menü öffnet die Sprachwahl auf der Konto-Seite", (await ansicht(s)).includes('"v":"konto"') && (await s.locator(".blatt-overlay.offen, .overlay.offen, [class*=blatt].offen").count()) >= 1);
       pruefe(tag + ": keine Fehler in der Konsole", s.fehler.length === 0, s.fehler.join(" | "));
       await s.context().close();
+    }
+    // Menü-Gruppen: Gedächtnis über Neuladen, aktive Gruppe klappt auf, Unterpunkt führt hin, ohne Bewegung bei reduzierter Bewegung
+    {
+      const tag = "E3 Menü-Gruppen";
+      const s = await neueSeite({ b: 360, h: 740, voll: true, termin: 7 }); await s.waitForTimeout(1300);
+      await s.tap("#drawer-open-btn"); await s.waitForTimeout(500);
+      pruefe(tag + ": ohne Gedächtnis auf Start: nur Lernen offen", (await gruppeOffen(s, "lernen")) && !(await gruppeOffen(s, "ueben")) && !(await gruppeOffen(s, "pruefung")) && !(await gruppeOffen(s, "einstellungen")));
+      pruefe(tag + ": Aufklappen ist sanft (Bewegung > 0 s)", await s.evaluate(() => parseFloat(getComputedStyle(document.querySelector(".drawer-gruppe-inhalt")).transitionDuration) > 0));
+      await s.tap('[data-menue-gruppe="lernen"]'); await s.waitForTimeout(300); await s.tap('[data-menue-gruppe="pruefung"]'); await s.waitForTimeout(400);
+      await s.tap('.drawer-item[data-drawer="hilfe"]'); await s.waitForTimeout(900);
+      pruefe(tag + ": Unterpunkt Hilfe führt zur Hilfe, Menü zu", (await s.evaluate(() => drawerView)) === "hilfe" && (await s.locator(".drawer.open").count()) === 0);
+      await s.reload(); await s.waitForSelector(".page-content"); await s.waitForTimeout(1000);
+      await s.evaluate(() => { drawerOpen = false; go({ view: "start" }); }); await s.waitForTimeout(400);
+      await s.tap("#drawer-open-btn"); await s.waitForTimeout(500);
+      pruefe(tag + ": nach Neuladen gemerkt: Lernen zu, Prüfung & Tipps offen", !(await gruppeOffen(s, "lernen")) && (await gruppeOffen(s, "pruefung")));
+      await s.evaluate(() => { drawerOpen = false; go({ drawer: "rechtliches" }); }); await s.waitForTimeout(500);
+      await s.tap("#drawer-open-btn"); await s.waitForTimeout(500);
+      pruefe(tag + ": auf „Rechtliches“ ist Einstellungen offen und der Punkt markiert", (await gruppeOffen(s, "einstellungen")) && (await s.locator('#menue-gruppe-einstellungen .drawer-item.aktiv[data-drawer="rechtliches"][aria-current="page"]').count()) === 1);
+      await s.evaluate(() => { drawerOpen = false; go({ view: "bereichdetail", bereich: "Autobahn" }); }); await s.waitForTimeout(500);
+      await s.tap("#drawer-open-btn"); await s.waitForTimeout(500);
+      pruefe(tag + ": im Bereich Autobahn ist Lernen offen und Autobahn markiert", (await gruppeOffen(s, "lernen")) && (await s.locator('.drawer-item.aktiv[data-gotostufe="Autobahn"]').count()) === 1);
+      // Tastatur: Enter auf dem Gruppenkopf klappt auf, Fokusring sichtbar
+      await s.locator('[data-menue-gruppe="ueben"]').focus(); await s.keyboard.press("Enter"); await s.waitForTimeout(400);
+      const ring = await s.evaluate(() => getComputedStyle(document.activeElement).outlineStyle);
+      pruefe(tag + ": Enter auf dem Kopf klappt auf, Fokusring sichtbar", (await gruppeOffen(s, "ueben")) && ring !== "none", ring);
+      pruefe(tag + ": keine Fehler in der Konsole", s.fehler.length === 0, s.fehler.join(" | "));
+      await s.context().close();
+      const r = await neueSeite({ b: 360, h: 740, voll: true, termin: 7, ruhig: true }); await r.waitForTimeout(1000);
+      await r.tap("#drawer-open-btn"); await r.waitForTimeout(500);
+      const dauer = await r.evaluate(() => [getComputedStyle(document.querySelector(".drawer-gruppe-inhalt")).transitionDuration, getComputedStyle(document.querySelector(".dg-pfeil")).transitionDuration]);
+      pruefe(tag + ": bei reduzierter Bewegung keine Animation", dauer.every((d) => d.split(",").every((x) => parseFloat(x) < 0.01)), dauer.join(" / "));
+      await r.context().close();
     }
     // Wurzeln: nur der Tab-Aufruf macht 3D zur Wurzel; Menü- und Kachel-Weg bleiben normale Seiten mit Zurück
     {
@@ -230,8 +307,17 @@ if (import.meta.url === "file://" + process.argv[1]) {
       const abg = await s.evaluate(() => [...document.querySelectorAll(".bottom-nav-item .nav-text")].filter((e) => e.scrollHeight > e.clientHeight + 1 || e.scrollWidth > e.clientWidth + 1).map((e) => e.textContent));
       pruefe(tag + ": Tab-Beschriftungen nicht abgeschnitten", abg.length === 0, abg.join(","));
       await s.tap("#drawer-open-btn"); await s.waitForTimeout(500);
-      const ab2 = await s.evaluate(() => [...document.querySelectorAll(".drawer-item")].filter((e) => { const r = e.getBoundingClientRect(); return r.right > innerWidth + 1 || r.left < -1; }).length);
+      if (voll && ["de", "tr", "ar"].includes(code)) await s.screenshot({ path: join(bilder, "e3-menue-" + code + ".png") });
+      for (const id of ["ueben", "pruefung", "einstellungen"]) await gruppeAuf(s, id);
+      const ab2 = await s.evaluate(() => [...document.querySelectorAll(".drawer-item, .drawer-gruppe-kopf")].filter((e) => { const r = e.getBoundingClientRect(); return r.right > innerWidth + 1 || r.left < -1; }).length);
       pruefe(tag + ": Menü nicht seitlich überstehend", ab2 === 0);
+      const gtexte = await s.evaluate(() => ["mgLernen", "mgUeben", "mgPruefung", "mgEinstellungen"].filter((k) => !(sprache === "de" || (I18N[sprache][k] && I18N[sprache][k] !== I18N.de[k]))));
+      pruefe(tag + ": Gruppennamen übersetzt", gtexte.length === 0, gtexte.join(","));
+      const abg3 = await s.evaluate(() => [...document.querySelectorAll(".drawer-gruppe-kopf .dg-titel, .drawer-item > span:not(.drawer-marke)")].filter((e) => e.scrollWidth > e.clientWidth + 2).map((e) => e.textContent.slice(0, 20)));
+      pruefe(tag + ": Menütexte nicht abgeschnitten", abg3.length === 0, abg3.join(","));
+      const rtl = await s.evaluate(() => { const k = document.querySelector('[data-menue-gruppe="lernen"]'); const t = k.querySelector(".dg-titel").getBoundingClientRect(), p = k.querySelector(".dg-pfeil").getBoundingClientRect(); return { rtl: document.documentElement.dir === "rtl", pfeilLinks: p.right <= t.left + 1, pfeilRechts: p.left >= t.right - 1 }; });
+      pruefe(tag + ": Pfeil steht am Zeilenende (" + (rtl.rtl ? "RTL links" : "rechts") + ")", rtl.rtl ? rtl.pfeilLinks : rtl.pfeilRechts, JSON.stringify(rtl));
+      if (voll && ["de", "tr", "ar"].includes(code)) { await s.evaluate(() => { document.querySelector(".drawer-items").scrollTop = 1e5; }); await s.waitForTimeout(200); await s.screenshot({ path: join(bilder, "e3-menue-" + code + "-alle-offen.png") }); }
       pruefe(tag + ": keine Fehler in der Konsole", s.fehler.length === 0, s.fehler.join(" | "));
       await s.context().close();
     }
