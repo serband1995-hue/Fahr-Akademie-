@@ -79,6 +79,9 @@ async function layout(s, name) {
     return p;
   });
   pruefe(name + ": Layout", r.length === 0, r.slice(0, 3).join(" | "));
+  /* 10.10.2026: die App ist immer hell, auch bei dunklem Systemdesign */
+  const hell = await s.evaluate(() => { const c = getComputedStyle(document.body).backgroundColor.match(/[\d.]+/g).map(Number); const L = 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; return { L: Math.round(L), cs: getComputedStyle(document.documentElement).colorScheme }; });
+  pruefe(name + ": Hintergrund hell", hell.L > 200 && hell.cs === "light", "L=" + hell.L + " colorScheme=" + hell.cs);
 }
 export { layout };
 
