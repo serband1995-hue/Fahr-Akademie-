@@ -21,19 +21,20 @@
 // v5 (05.10.2026): GSAP 3.14.2 (Erklärfilm „Vorfahrt“ in „Verkehr verstehen“) liegt in vendor/, Dateiname trägt die Version.
 // v6 (06.10.2026): neues Logo (transparentes PNG) + neue App-Icons.
 // v7 (07.10.2026): Android-/iPhone-Icons neu: Kachel auf Creme statt randlos beschnitten (kein Block auf dem Startbild, sauberer Ausschnitt im Launcher).
-const CACHE_NAME = "fahr-akademie-shell-v22";
+const CACHE_NAME = "fahr-akademie-shell-v23";
 const STATIC_ASSETS = [
   "./vendor/supabase-js-2.117.2.min.js",
   "./vendor/gsap-3.14.2.min.js",
   "./logo-264.png",
   "./manifest.json",
-  "./icon-192.png",
-  "./icon-512.png",
+  "./icon-192-v2.png",
+  "./icon-512-v2.png",
   "./apple-touch-icon.png",
   "./schrift/Barlow-400.ttf",
   "./schrift/Barlow-500.ttf",
   "./schrift/Barlow-600.ttf",
-  "./schrift/Barlow-700.ttf"
+  "./schrift/Barlow-700.ttf",
+  "./schrift/GreatVibes-latin.woff2"
 ];
 
 self.addEventListener("install", (event) => {
@@ -94,8 +95,8 @@ self.addEventListener("push", (event) => {
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
-      icon: "./icon-192.png",
-      badge: "./icon-192.png",
+      icon: "./icon-192-v2.png",
+      badge: "./icon-192-v2.png",
       data: { url: data.url || "./" }
     })
   );
