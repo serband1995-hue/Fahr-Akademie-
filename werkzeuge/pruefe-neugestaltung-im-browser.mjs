@@ -375,9 +375,10 @@ if (import.meta.url === "file://" + process.argv[1]) {
       if (dunkel || gn === "360") await s.screenshot({ path: join(bilder, "e4-" + (voll ? "voll" : "start") + "-" + gn + (dunkel ? "-dunkel" : "") + ".png") });
       await s.context().close();
     }
-    // Lkw-Klassen (C, CE) fahren auf dem Weg einen Lkw, alle anderen ein Auto (10.10.2026)
+    // 11.10.2026: Die Figur folgt dem aktiven Fahrzeug (Lkw-Bereich), nicht mehr der Klasse
     for (const [kl, soll] of [["CE", "lkw"], ["C", "lkw"], ["B", null], ["BE", null]]) {
-      const s = await neueSeite({ b: 390, h: 844, voll: true, termin: 9, klasse: kl, ruhig: true, dunkel: true }); await s.waitForTimeout(1000);
+      const lkw = soll === "lkw";
+      const s = await neueSeite({ b: 390, h: 844, voll: true, vollLkw: lkw, lkwKatalog: lkw, termin: 9, klasse: kl, ruhig: true, dunkel: true, zugang: { pkw: !lkw, lkw: lkw }, fahrzeug: lkw ? "lkw" : "pkw" }); await s.waitForTimeout(1000);
       await s.tap('.bottom-nav [data-view="weg"]'); await s.waitForSelector("#weg-figur");
       pruefe("E4 Figur Klasse " + kl + ": " + (soll || "Auto"), (await s.evaluate(() => document.querySelector("#weg-figur svg").getAttribute("data-figur"))) === soll);
       await layout(s, "E4 Figur Klasse " + kl);
