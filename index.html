@@ -1871,7 +1871,13 @@ const BEREICH_ICON = {
   "Abbiegen, Vorfahrt & Verkehrszeichen":'<path d="M12 3l9 16H3z"/><path d="M12 9v4"/><path d="M12 16.5h.01"/>',
   "Autobahn":'<path d="M4 20L9 4h6l5 16"/><path d="M12 8v2m0 3v2m0 3v1"/>',
   "Prüfung":'<path d="M9 11l3 3 6-6"/><rect x="3" y="4" width="18" height="16" rx="2"/>',
-  "Prüfungsstrecken":'<circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H16a3 3 0 0 0 0-6H8a3 3 0 0 1 0-6h7.5"/>'
+  "Prüfungsstrecken":'<circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H16a3 3 0 0 0 0-6H8a3 3 0 0 1 0-6h7.5"/>',
+  // 11.10.2026 Lkw-Bereich (docs/LKW-BEREICH-BAUPLAN.md): eigene Symbole im selben Strichstil
+  "Lkw: Fahrzeug & Technik":'<path d="M2.5 6.5h10.5v10H2.5z"/><path d="M13 9.5h4.2l3.3 3.6v3.4H13"/><circle cx="6.5" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>',
+  "Lkw: Kuppeln & Rangieren":'<path d="M5 18h9a4.5 4.5 0 0 0 0-9H6"/><path d="M9 5.5L5.5 9 9 12.5"/>',
+  "Lkw: Fahren im Verkehr":'<path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/>',
+  "Lkw: Lenk- und Ruhezeiten":'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  "Lkw: Prüfung":'<path d="M9 11l3 3 6-6"/><rect x="3" y="4" width="18" height="16" rx="2"/>'
 };
 function bereichIcon(stufe){
   return '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">' + (BEREICH_ICON[stufe] || BEREICH_ICON["Fahrzeug & Technik"]) + "</svg>";
@@ -1908,12 +1914,85 @@ function passtZurSuche(video, tag){
   return heuhaufen.indexOf(q) !== -1;
 }
 
-const STUFEN_ORDER = ["Fahrzeug & Technik","Stoppschild-Situationen","Fahrmanöver-Grundlagen","Abbiegen, Vorfahrt & Verkehrszeichen","Autobahn","Prüfung","Prüfungsstrecken"];
+// 11.10.2026 Lkw-Bereich: zwei getrennte Bereichslisten. STUFEN_ORDER = die Liste des aktiven
+// Fahrzeugs (wird von fahrzeugFilterAnwenden umgestellt). Die Verwaltung braucht alle: STUFEN_ALLE.
+const STUFEN_PKW = ["Fahrzeug & Technik","Stoppschild-Situationen","Fahrmanöver-Grundlagen","Abbiegen, Vorfahrt & Verkehrszeichen","Autobahn","Prüfung","Prüfungsstrecken"];
+const STUFEN_LKW = ["Lkw: Fahrzeug & Technik","Lkw: Kuppeln & Rangieren","Lkw: Fahren im Verkehr","Lkw: Lenk- und Ruhezeiten","Lkw: Prüfung"];
+const STUFEN_ALLE = STUFEN_PKW.concat(STUFEN_LKW);
+let STUFEN_ORDER = STUFEN_PKW.slice();
 const STUFE_PREFIX = {
   "Fahrzeug & Technik":"FT", "Stoppschild-Situationen":"ST", "Fahrmanöver-Grundlagen":"FM",
   "Abbiegen, Vorfahrt & Verkehrszeichen":"AV", "Autobahn":"AB",
-  "Prüfung":"P", "Prüfungsstrecken":"PS"
+  "Prüfung":"P", "Prüfungsstrecken":"PS",
+  "Lkw: Fahrzeug & Technik":"LT", "Lkw: Kuppeln & Rangieren":"LK", "Lkw: Fahren im Verkehr":"LV",
+  "Lkw: Lenk- und Ruhezeiten":"LR", "Lkw: Prüfung":"LP"
 };
+
+/* ---- Fahrzeug Pkw/Lkw (11.10.2026, docs/LKW-BEREICH-BAUPLAN.md "App-Grundidee") ----
+   Erlaubt = was der Server freigibt (zugang_pkw/zugang_lkw; fehlt das Feld: Pkw ja, Lkw nein).
+   Demo-Modus und Vorschau der Verwaltung: beide. Aktiv = gemerkte Wahl, sonst das erste erlaubte. */
+function erlaubteFahrzeuge(){
+  if(!session || session.demo || session.vorschau || DEMO_MODE) return ["pkw", "lkw"];
+  const e = [];
+  if(session.zugang_pkw !== false) e.push("pkw");
+  if(session.zugang_lkw === true) e.push("lkw");
+  return e.length ? e : ["pkw"];
+}
+function fahrzeugGemerkt(){
+  try{ const f = localStorage.getItem("academy_fahrzeug"); return (f === "pkw" || f === "lkw") ? f : null; }catch(e){ return null; }
+}
+function fahrzeugMerken(f){
+  try{ localStorage.setItem("academy_fahrzeug", f); }catch(e){}
+}
+function aktivesFahrzeug(){
+  const e = erlaubteFahrzeuge(), g = fahrzeugGemerkt();
+  return (g && e.indexOf(g) !== -1) ? g : e[0];
+}
+// Thema -> Fahrzeug ('pkw' | 'lkw' | 'alle'); altes Thema ohne Feld = pkw
+function themaFahrzeug(tag){
+  const f = tag && tag.fahrzeug;
+  return (f === "lkw" || f === "alle") ? f : "pkw";
+}
+function istLkwStufe(stufe){ return String(stufe || "").indexOf("Lkw: ") === 0; }
+// Vollzugang fuer das aktive Fahrzeug (Krone, Werbekarte, "Zugang anfragen" ...)
+function hatVollzugang(){
+  if(!session) return false;
+  return aktivesFahrzeug() === "lkw" ? !!session.vollzugang_lkw : !!session.vollzugang;
+}
+// Ungefilterte Listen aus loadCatalog (fuer die Freigabe-Rechnung) und Filter auf das aktive Fahrzeug
+let katalogRoh = null;
+function fahrzeugFilterAnwenden(){
+  const fz = aktivesFahrzeug();
+  STUFEN_ORDER = (fz === "lkw" ? STUFEN_LKW : STUFEN_PKW).slice();
+  if(!katalogRoh) return;
+  const passt = function(tg){ const f = themaFahrzeug(tg); return f === fz || f === "alle"; };
+  const tagIds = {};
+  katalogRoh.tags.forEach(function(tg){ tagIds[tg.id] = tg; });
+  const themenJeVideo = {};
+  katalogRoh.videoTags.forEach(function(vt){ if(tagIds[vt.tag_id]) (themenJeVideo[vt.video_id] = themenJeVideo[vt.video_id] || []).push(tagIds[vt.tag_id]); });
+  allTags = katalogRoh.tags.filter(passt);
+  allVideos = katalogRoh.videos.filter(function(v){
+    const th = themenJeVideo[v.id] || [];
+    return th.length ? th.some(passt) : fz === "pkw";
+  });
+  const sichtbar = {};
+  allVideos.forEach(function(v){ sichtbar[v.id] = true; });
+  videoTags = katalogRoh.videoTags.filter(function(vt){ return sichtbar[vt.video_id] && tagIds[vt.tag_id] && passt(tagIds[vt.tag_id]); });
+}
+// Umschalter: merken, neu filtern, neu zeichnen, nach oben
+function fahrzeugWechseln(f){
+  if(erlaubteFahrzeuge().indexOf(f) === -1) return;
+  fahrzeugMerken(f);
+  fahrzeugFilterAnwenden();
+  // Seiten, die es im anderen Fahrzeug nicht gibt, auf Start zurueck (Bereich, Thema, Szene)
+  // (der Zurueck-Stapel kann auf Seiten des anderen Fahrzeugs zeigen, darum leeren)
+  if(selectedBereich || selectedHashtag || vvSzene || mainView === "bereichdetail" || mainView === "pruefungsstrecken"){
+    navAnwenden({ view: "start", bereich: null, hashtag: null, recht: null, drawer: drawerView === "verkehr" ? "verkehr" : null, szene: null, spiel: null });
+  }
+  navStapel = [];
+  renderCatalog();
+  nachObenScrollen();
+}
 // Große Umstrukturierung (23.08.2026): Videobibliothek wächst von 6 auf 15 laienverständliche
 // Bereiche. Bereich für Bereich umgebaut, alte Stufen/Tags bleiben in der DB bestehen (Kompass
 // verlinkt darauf) -- diese Tabelle fängt alte Tag-IDs unsichtbar ab und leitet sie auf die neue
@@ -1941,7 +2020,8 @@ function parseDeepLinkStufe(){
   let raw = (params.get("stufe") || "").trim().toLowerCase();
   if(!raw) return null;
   if(LEGACY_STUFE_REDIRECT[raw]) return LEGACY_STUFE_REDIRECT[raw];
-  return STUFEN_ORDER.find(function(s){ return s.toLowerCase() === raw; }) || null;
+  // 11.10.2026: kennt Pkw- und Lkw-Bereiche; ob der Schueler hinein darf, prueft showApp (deepLinkFahrzeug)
+  return STUFEN_ALLE.find(function(s){ return s.toLowerCase() === raw; }) || null;
 }
 
 function parseDeepLinkTag(){
@@ -1951,7 +2031,15 @@ function parseDeepLinkTag(){
   // Falls dieser Tag im Zuge der Umstrukturierung "leergezogen" wurde, unsichtbar
   // auf die neue Kategorie umleiten -- Kompass-Links bleiben dadurch funktionsfähig.
   if(LEGACY_TAG_REDIRECT[raw]) raw = LEGACY_TAG_REDIRECT[raw];
-  return allTags.find(function(t){ return t.id === raw; }) || null;
+  // 11.10.2026: im ungefilterten Katalog suchen (das Thema kann zum anderen Fahrzeug gehoeren)
+  const quelle = katalogRoh ? katalogRoh.tags : allTags;
+  return quelle.find(function(t){ return t.id === raw; }) || null;
+}
+// Deep-Link auf das passende Fahrzeug umstellen. Liefert false, wenn der Schueler dort keinen Zugang hat.
+function deepLinkFahrzeug(fz){
+  if(erlaubteFahrzeuge().indexOf(fz) === -1) return false;
+  if(fz !== aktivesFahrzeug()){ fahrzeugMerken(fz); fahrzeugFilterAnwenden(); }
+  return true;
 }
 
 // Baut den Lernpfad: pro Stufe alle Videos in Ausbildungsplan-Reihenfolge,
@@ -2020,38 +2108,69 @@ async function gesperrtesVideoAngetippt(videoId, stufe, el){
 // zeigt die App ein Schloss, wo der Server durchlaesst (oder schlimmer: umgekehrt).
 function videoSperrgrund(tag, video){
   if(tagGesperrt(tag)) return "klasse";
-  if(session && session.vollzugang) return null;
-  if(video && video.gratis) return null;   // Kostprobe: einzelnes Video frei
-  // 26.09.2026: Der Server prueft ALLE Themen eines Videos, nicht nur das, unter dem es
-  // gerade angezeigt wird. Frueher rechnete z.B. die #Themen-Ansicht mit dem angetippten
-  // Thema -- ein Paketkaeufer sah dort Schloesser auf Videos, die ihm gehoeren.
-  if(video && videoFreiUeberThemen(video)) return null;
-  if(tag && tag.gratis) return null;       // ganzes Thema frei
-  // 18.09.2026: persoenlich freigeschaltet -- geschenktes Einzelvideo oder gekauftes
-  // Paket. Muss mit academy-video-token uebereinstimmen, sonst zeigt die App ein
-  // Schloss, wo der Server durchlaesst.
-  if(video && session && Array.isArray(session.freigabe_videos)
-     && session.freigabe_videos.indexOf(video.id) !== -1) return null;
-  if(tag && tag.stufe && session && Array.isArray(session.freigabe_stufen)
-     && session.freigabe_stufen.indexOf(tag.stufe) !== -1) return null;
-  return "vollzugang";
+  // 11.10.2026 Lkw-Bereich: "Die eine Regel" aus docs/LKW-BEREICH-BAUPLAN.md, gerechnet mit den
+  // UNGEFILTERTEN Themen des Videos (katalogRoh) -- genau wie academy-video-token.
+  const E = erlaubteFahrzeuge();
+  const inE = function(f){ return f === "alle" || E.indexOf(f) !== -1; };
+  const stufen = (session && Array.isArray(session.freigabe_stufen)) ? session.freigabe_stufen : [];
+  if(video){
+    const alle = videoThemenAlle(video.id);
+    const erlaubt = alle.filter(function(tg){ return inE(themaFahrzeug(tg)); });
+    // 1. ueberhaupt sichtbar? (ohne Themen nur bei Pkw)
+    if(alle.length ? !erlaubt.length : E.indexOf("pkw") === -1) return "fahrzeug";
+    // 2. Vollzugang je Fahrzeug
+    const hatPkw = !alle.length || erlaubt.some(function(tg){ const f = themaFahrzeug(tg); return f === "pkw" || f === "alle"; });
+    const hatLkw = erlaubt.some(function(tg){ const f = themaFahrzeug(tg); return f === "lkw" || f === "alle"; });
+    if(session && session.vollzugang && hatPkw && E.indexOf("pkw") !== -1) return null;
+    if(session && session.vollzugang_lkw && hatLkw && E.indexOf("lkw") !== -1) return null;
+    if(video.gratis) return null;   // Kostprobe: einzelnes Video frei
+    // 26.09.2026: Der Server prueft ALLE (erlaubten) Themen eines Videos, nicht nur das, unter dem es
+    // gerade angezeigt wird -- sonst saehe ein Paketkaeufer Schloesser auf Videos, die ihm gehoeren.
+    if(videoFreiUeberThemen(video)) return null;
+    // 18.09.2026: persoenlich freigeschaltet -- geschenktes Einzelvideo
+    if(session && Array.isArray(session.freigabe_videos) && session.freigabe_videos.indexOf(video.id) !== -1) return null;
+    return "vollzugang";
+  }
+  // Ohne Video: nur nach dem Thema
+  if(tag){
+    const f = themaFahrzeug(tag);
+    if(!inE(f)) return "fahrzeug";
+    if(session && session.vollzugang && (f === "pkw" || f === "alle") && E.indexOf("pkw") !== -1) return null;
+    if(session && session.vollzugang_lkw && (f === "lkw" || f === "alle") && E.indexOf("lkw") !== -1) return null;
+    if(tag.gratis) return null;       // ganzes Thema frei
+    if(tag.stufe && stufen.indexOf(tag.stufe) !== -1) return null;   // gekauftes Paket
+    return "vollzugang";
+  }
+  return hatVollzugang() ? null : "vollzugang";
 }
 
-// Gleiche Regel wie academy-video-token: frei, wenn irgendein (nicht archiviertes) Thema
-// des Videos gratis ist oder in einem gekauften Paket steckt. allTags enthaelt bereits nur
-// nicht archivierte Themen -- genau wie der Server sie zaehlt.
-function videoFreiUeberThemen(video){
-  if(!video || !Array.isArray(videoTags)) return false;
-  const stufen = (session && Array.isArray(session.freigabe_stufen)) ? session.freigabe_stufen : [];
-  for(let i = 0; i < videoTags.length; i++){
-    const vt = videoTags[i];
-    if(vt.video_id !== video.id) continue;
-    const tg = tagNachId(vt.tag_id);
-    if(!tg) continue;
-    if(tg.gratis) return true;
-    if(tg.stufe && stufen.indexOf(tg.stufe) !== -1) return true;
+// Alle (nicht archivierten) Themen eines Videos aus dem UNGEFILTERTEN Katalog. Nachschlage-Tabelle
+// wird neu gebaut, sobald sich eine der Listen aendert (neues Laden, Demo, Vorschau).
+let _vtIdx = null, _vtIdxT = null, _vtIdxVT = null;
+function videoThemenAlle(videoId){
+  const tags = katalogRoh ? katalogRoh.tags : (allTags || []);
+  const vts = katalogRoh ? katalogRoh.videoTags : (videoTags || []);
+  if(_vtIdxT !== tags || _vtIdxVT !== vts){
+    const nachId = {};
+    tags.forEach(function(tg){ nachId[tg.id] = tg; });
+    _vtIdx = {};
+    vts.forEach(function(vt){ const tg = nachId[vt.tag_id]; if(tg) (_vtIdx[vt.video_id] = _vtIdx[vt.video_id] || []).push(tg); });
+    _vtIdxT = tags; _vtIdxVT = vts;
   }
-  return false;
+  return _vtIdx[videoId] || [];
+}
+
+// Gleiche Regel wie academy-video-token: frei, wenn eines der ERLAUBTEN Themen (fahrzeug in E
+// oder 'alle') des Videos gratis ist oder sein Bereich in einem gekauften Paket steckt.
+function videoFreiUeberThemen(video){
+  if(!video) return false;
+  const E = erlaubteFahrzeuge();
+  const stufen = (session && Array.isArray(session.freigabe_stufen)) ? session.freigabe_stufen : [];
+  return videoThemenAlle(video.id).some(function(tg){
+    const f = themaFahrzeug(tg);
+    if(f !== "alle" && E.indexOf(f) === -1) return false;
+    return !!tg.gratis || (!!tg.stufe && stufen.indexOf(tg.stufe) !== -1);
+  });
 }
 let _tagIndex = null, _tagIndexQuelle = null;
 function tagNachId(id){
@@ -2075,7 +2194,9 @@ function tagNachId(id){
 // weil es der breiteste Bereich ist und sonst alles andere an sich ziehen würde.
 const BEREICH_PRIORITAET = [
   "Prüfungsstrecken", "Prüfung", "Stoppschild-Situationen", "Fahrzeug & Technik",
-  "Fahrmanöver-Grundlagen", "Autobahn", "Abbiegen, Vorfahrt & Verkehrszeichen"
+  "Fahrmanöver-Grundlagen", "Autobahn", "Abbiegen, Vorfahrt & Verkehrszeichen",
+  // 11.10.2026 Lkw-Bereich: eigene Reihenfolge, der breiteste Bereich ("Fahren im Verkehr") zuletzt
+  "Lkw: Prüfung", "Lkw: Fahrzeug & Technik", "Lkw: Kuppeln & Rangieren", "Lkw: Lenk- und Ruhezeiten", "Lkw: Fahren im Verkehr"
 ];
 
 let suchTimer = null;
@@ -7948,7 +8069,8 @@ async function showApp(){
         // eine fehlende Angabe darf einem Zahler nie etwas wegnehmen. Neu dabei: geschenkte
         // Videos, gekaufte Pakete und Pruefgebiete -- vorher erst nach neuem Login sichtbar.
         ["vollzugang","agb_akzeptiert_am","ablauf_am","klassen_freigabe","gebiete",
-         "freigabe_videos","freigabe_stufen","schule_id","klasse","pruefungstermin"].forEach(function(k){
+         "freigabe_videos","freigabe_stufen","schule_id","klasse","pruefungstermin",
+         "zugang_pkw","zugang_lkw","vollzugang_lkw"].forEach(function(k){   // 11.10.2026 Lkw-Bereich
           if(Object.prototype.hasOwnProperty.call(data, k)) session[k] = data[k];
         });
         if(data.telefon) session.telefon = data.telefon; // 07.09.2026: fuers Wasserzeichen im Player
@@ -7973,8 +8095,13 @@ async function showApp(){
   try{
     // Katalog und "Bereits gesehen" gleichzeitig laden (vorher nacheinander)
     await Promise.all([loadCatalog(), loadVerlauf()]);
-    const deepLinkTag = parseDeepLinkTag();
-    const deepLinkStufe = parseDeepLinkStufe();
+    let deepLinkTag = parseDeepLinkTag();
+    let deepLinkStufe = parseDeepLinkStufe();
+    // 11.10.2026 Lkw-Bereich: Link in den anderen Bereich nur mit Zugang -- dann dorthin umschalten,
+    // sonst den Link still ignorieren (Start wie gewohnt).
+    if(deepLinkTag && themaFahrzeug(deepLinkTag) !== "alle" && !deepLinkFahrzeug(themaFahrzeug(deepLinkTag))) deepLinkTag = null;
+    if(deepLinkTag && !allTags.some(function(tg){ return tg.id === deepLinkTag.id; })) deepLinkTag = null;
+    if(!deepLinkTag && deepLinkStufe && !deepLinkFahrzeug(istLkwStufe(deepLinkStufe) ? "lkw" : "pkw")) deepLinkStufe = null;
     if(deepLinkTag){
       // Kompass-Link mit Tag: direkt auf die Bereichsseite, das passende Video markiert
       mainView = "bereichdetail";
@@ -8133,6 +8260,8 @@ async function loadCatalog(){
     videoTags = DEMO_VIDEO_TAGS;
     allPruefer = DEMO_PRUEFER;
     videoPruefer = [];
+    katalogRoh = { tags: allTags, videos: allVideos, videoTags: videoTags };   // 11.10.2026 Lkw-Bereich
+    fahrzeugFilterAnwenden();
     return;
   }
   // 26.09.2026 (S1): Katalog kommt ueber die Server-Funktion academy-katalog, die nur
@@ -8209,9 +8338,14 @@ async function loadCatalog(){
     if(v.beschreibung) v.beschreibung = inhalt("video", v.id, "beschreibung", v.beschreibung);
   });
   // 26.09.2026: Teilfehler ueberschreiben vorhandene Listen nicht mehr mit [].
+  if(vtagsRes.error && katalogRoh) videoTags = katalogRoh.videoTags;   // 11.10.2026: der ungefilterte alte Stand
   if(!vtagsRes.error || !videoTags.length) videoTags = vtagsRes.data || videoTags || [];
   if(!prRes.error || !allPruefer.length) allPruefer = prRes.data || allPruefer || [];
   if(!vprRes.error || !videoPruefer.length) videoPruefer = vprRes.data || videoPruefer || [];
+  // 11.10.2026 Lkw-Bereich: ungefilterte Listen fuer die Freigabe-Rechnung merken, dann auf das
+  // aktive Fahrzeug filtern. Ein zweites Laden geht wieder vom Server-Stand aus.
+  katalogRoh = { tags: allTags, videos: allVideos, videoTags: videoTags };
+  fahrzeugFilterAnwenden();
 }
 
 function buildPruefungsstrecken(){
@@ -12223,11 +12357,69 @@ function schuelerInaktiv(s){
   if(!s.letzter_login_am) return true;
   return (new Date() - new Date(s.letzter_login_am)) / 86400000 > 14;
 }
+/* ---- Lkw-Bereich (11.10.2026): Art des Schuelers = Pkw, Lkw oder beides ----
+   zugang_pkw / zugang_lkw entscheiden, in welchen Bereich der Schueler darf; die
+   Zugangsdaten gelten nur dafuer. vollzugang = Pkw-Vollzugang, vollzugang_lkw = eigener
+   Lkw-Verkauf (110 EUR). Fehlen die Felder (alter Datensatz), gilt: Pkw ja, Lkw nein.
+   Die DB erzwingt: mindestens ein Bereich, Vollzugang -> Zugang zu dessen Bereich. */
+const ADMIN_LKW_KLASSEN = ["C", "CE", "C1", "C1E"];
+const ADMIN_ART_TEXT = { pkw: "Pkw", lkw: "Lkw", beide: "Pkw + Lkw" };
+const ADMIN_STUFEN_PKW = ["Fahrzeug & Technik","Stoppschild-Situationen","Fahrmanöver-Grundlagen","Abbiegen, Vorfahrt & Verkehrszeichen","Autobahn","Prüfung","Prüfungsstrecken"];
+const ADMIN_STUFEN_LKW = ["Lkw: Fahrzeug & Technik","Lkw: Kuppeln & Rangieren","Lkw: Fahren im Verkehr","Lkw: Lenk- und Ruhezeiten","Lkw: Prüfung"];
+let adminLkwPreisStandard = 110;       // wird beim Freischalten aus academy_einstellungen.preis_lkw nachgeladen
+let adminLkwEntzugLaeuft = {};         // id -> Timer der 10-Sekunden-Rueckgaengig-Frist (Lkw)
+let adminArtAenderungLaeuft = {};      // id -> true, solange eine Art-Aenderung gespeichert wird
+function adminArtVonKlasse(klasse){
+  return ADMIN_LKW_KLASSEN.indexOf(String(klasse || "B").trim().toUpperCase()) !== -1 ? "lkw" : "pkw";
+}
+function adminHatPkw(s){ return !!s && s.zugang_pkw !== false; }
+function adminHatLkw(s){ return !!s && s.zugang_lkw === true; }
+function adminSchuelerArt(s){
+  const p = adminHatPkw(s), l = adminHatLkw(s);
+  return p && l ? "beide" : (l ? "lkw" : "pkw");
+}
+function adminArtFelder(art){ return { zugang_pkw: art !== "lkw", zugang_lkw: art !== "pkw" }; }
+// Drei Auswahlknoepfe statt zweier loser Haken (Wunsch Serban 11.10.2026).
+function adminArtWahlHtml(name, art){
+  return '<div class="art-wahl" role="radiogroup" aria-label="Art des Schülers" data-artwahl="' + esc(name) + '">' +
+    ["pkw", "lkw", "beide"].map(function(a){
+      return '<label><input type="radio" name="' + esc(name) + '" value="' + a + '"' + (a === art ? " checked" : "") + ">" +
+        "<span>" + ADMIN_ART_TEXT[a] + "</span></label>";
+    }).join("") + "</div>";
+}
+function adminArtWahlLesen(root, name){
+  const c = root.querySelector('input[name="' + name + '"]:checked');
+  return c ? c.value : "pkw";
+}
+function adminArtWahlSetzen(root, name, art){
+  const c = root.querySelector('input[name="' + name + '"][value="' + art + '"]');
+  if(c) c.checked = true;
+}
+// Bereichsliste der Verwaltung: Pkw- und Lkw-Bereiche, unabhaengig vom gerade aktiven
+// Fahrzeug der Schuelerseite (STUFEN_ORDER zeigt dort nur ein Fahrzeug).
+function adminStufenListe(){
+  const pkw = (typeof STUFEN_PKW !== "undefined" && Array.isArray(STUFEN_PKW)) ? STUFEN_PKW : ADMIN_STUFEN_PKW;
+  const lkw = (typeof STUFEN_LKW !== "undefined" && Array.isArray(STUFEN_LKW)) ? STUFEN_LKW : ADMIN_STUFEN_LKW;
+  const liste = pkw.concat(lkw);
+  allTags.forEach(function(t){ if(t.stufe && liste.indexOf(t.stufe) === -1) liste.push(t.stufe); });
+  return liste;
+}
+function adminIstLkwStufe(stufe){ return /^Lkw: /.test(stufe || ""); }
+// Bereich eines Themas fuer die Verwaltung, mit Fahrzeug, wenn es nicht schon im Namen steht.
+function adminThemaBereichText(t){
+  const st = t.stufe || "";
+  if(t.fahrzeug === "alle") return st + " · Pkw + Lkw";
+  if(t.fahrzeug === "lkw" && !adminIstLkwStufe(st)) return "Lkw · " + st;
+  return st;
+}
+
 const SCHUELER_FILTER = [
   ["alle", "Alle", function(){ return true; }],
   ["todo", "Zu erledigen", function(s){ return !!schuelerAufgabe(s); }],
-  ["voll", "Vollzugang", function(s){ return !!s.vollzugang; }],
-  ["start", "Startzugang", function(s){ return !s.vollzugang; }],
+  ["pkw", "Pkw", adminHatPkw],
+  ["lkw", "Lkw", adminHatLkw],
+  ["voll", "Vollzugang", function(s){ return !!(s.vollzugang || s.vollzugang_lkw); }],
+  ["start", "Startzugang", function(s){ return !(s.vollzugang || s.vollzugang_lkw); }],
   ["bald", "Läuft bald ab", function(s){ return schuelerStatus(s) === "aktiv" && (new Date(s.ablauf_am) - new Date()) / 86400000 <= 14; }],
   ["inaktiv", "Nicht angemeldet", schuelerInaktiv],
   ["gesperrt", "Gesperrt/abgelaufen", function(s){ return schuelerStatus(s) !== "aktiv"; }]
@@ -12349,8 +12541,15 @@ function renderAdminSchueler(){
     // Details, mit Rueckfrage und 10 s Rueckgaengig). Hier steht bei Vollzugang nur der Status.
     // 26.09.2026 (Admin-Struktur): Freischalten ist eine Aktion in den Details, der
     // Zugang selbst steht als Kennzeichen im Kopf ("Voll"/"Start").
-    const zugangKnopf = (s.archiviert_am || s.vollzugang) ? "" :
-      '<button class="btn-still druck-2 ak-freischalten" data-vollzugang="' + esc(s.id) + '">' + icon("schlossOffen") + "<span>Vollzugang freischalten</span></button>";
+    // 11.10.2026 (Lkw-Bereich): Pkw-Vollzugang nur fuer Schueler mit Pkw-Bereich,
+    // Lkw-Vollzugang (eigener Verkauf) nur fuer Schueler mit Lkw-Bereich.
+    const hatPkw = adminHatPkw(s), hatLkw = adminHatLkw(s), art = adminSchuelerArt(s);
+    const zugangKnopf = ((s.archiviert_am || s.vollzugang || !hatPkw) ? "" :
+      '<button class="btn-still druck-2 ak-freischalten" data-vollzugang="' + esc(s.id) + '">' + icon("schlossOffen") +
+        "<span>" + (hatLkw ? "Pkw-Vollzugang freischalten" : "Vollzugang freischalten") + "</span></button>") +
+      ((s.archiviert_am || s.vollzugang_lkw || !hatLkw) ? "" :
+      '<button class="btn-still druck-2 ak-freischalten" data-lkwvoll="' + esc(s.id) + '">' + icon("schlossOffen") +
+        "<span>Lkw-Vollzugang freischalten (" + esc(fmtEuro(s.verkaufspreis_lkw != null ? Number(s.verkaufspreis_lkw) : adminLkwPreisStandard)) + ")</span></button>");
 
     // ---- Dreistufige Karte (13.09.2026) ----
     // Vorher standen hier zehn Textzeilen untereinander. Bei 70+ Schuelern ist das
@@ -12381,9 +12580,15 @@ function renderAdminSchueler(){
     // der Knopf waere fuer ihn nur eine leere Weiterleitung ins Nichts.
     const abrOffen = offeneAbrechnungKarten.has(s.id);
     const kontaktZeile = '<div class="admin-sub">Tel. ' + esc(s.telefon) + (s.email ? " · " + esc(s.email) : "") + "</div>";
-    const zugangStatus = s.vollzugang
-      ? '<div class="admin-sub ak-voll">' + icon("krone", "ic-s") + " Vollzugang aktiv</div>"
-      : '<div class="admin-sub">Startzugang (Fahrzeug &amp; Technik)</div>';
+    const zugangStatus =
+      '<div class="admin-sub"><span class="ak-art ' + art + '">' + ADMIN_ART_TEXT[art] + "</span> " +
+        (art === "beide" ? "Pkw- und Lkw-Schüler" : art === "lkw" ? "Lkw-Schüler" : "Pkw-Schüler") + "</div>" +
+      (hatPkw ? (s.vollzugang
+        ? '<div class="admin-sub ak-voll">' + icon("krone", "ic-s") + (hatLkw ? " Pkw-Vollzugang aktiv" : " Vollzugang aktiv") + "</div>"
+        : '<div class="admin-sub">' + (hatLkw ? "Pkw: " : "") + "Startzugang (Fahrzeug &amp; Technik)</div>") : "") +
+      (hatLkw ? (s.vollzugang_lkw
+        ? '<div class="admin-sub ak-voll">' + icon("krone", "ic-s") + " Lkw-Vollzugang aktiv</div>"
+        : '<div class="admin-sub">Lkw: Startzugang (Lkw: Fahrzeug &amp; Technik)</div>') : "");
     const nutzung = loginZeile || '<div class="admin-sub">Noch nie angemeldet</div>';
     const detailHtml = offen
       ? '<div class="ak-details">' +
@@ -12403,19 +12608,21 @@ function renderAdminSchueler(){
                 zugangKnopf +
                 (zeigeKlartext ? '<button class="btn-still druck-2" data-mail="' + esc(s.id) + '">Zugangsdaten senden</button>' : "") +
                 '<button class="btn-still druck-2" data-verl="' + esc(s.id) + '">Verlängern</button>' +
-                (s.vollzugang ? '<button class="btn-still druck-2" data-abrbtn="' + esc(s.id) + '">Abrechnung' + (abrOffen ? " ▾" : " ▸") + '</button>' : "") +
+                '<button class="btn-still druck-2" data-artaendern="' + esc(s.id) + '">Pkw/Lkw ändern</button>' +
+                ((s.vollzugang || s.vollzugang_lkw) ? '<button class="btn-still druck-2" data-abrbtn="' + esc(s.id) + '">Abrechnung' + (abrOffen ? " ▾" : " ▸") + '</button>' : "") +
               "</div>" +
               '<details class="ak-mehr"><summary>Weitere Aktionen</summary><div class="ak-aktionen">' +
                 '<button class="btn-still druck-2" data-toggle="' + esc(s.id) + '">' + (s.aktiv ? "Login sperren" : "Login entsperren") + "</button>" +
-                (s.vollzugang ? '<button class="btn-still druck-2 ak-loeschen" data-entziehen="' + esc(s.id) + '">Vollzugang entziehen</button>' : "") +
+                (s.vollzugang ? '<button class="btn-still druck-2 ak-loeschen" data-entziehen="' + esc(s.id) + '">' + (hatLkw ? "Pkw-Vollzugang entziehen" : "Vollzugang entziehen") + "</button>" : "") +
+                (s.vollzugang_lkw ? '<button class="btn-still druck-2 ak-loeschen" data-lkwentziehen="' + esc(s.id) + '">Lkw-Vollzugang entziehen</button>' : "") +
                 '<button class="btn-still druck-2 ak-loeschen" data-archiv="' + esc(s.id) + '">Archivieren</button>' +
               "</div></details>") +
-          (s.vollzugang && abrOffen ? schuelerAbrechnungHtml(s) : "") +
+          ((s.vollzugang || s.vollzugang_lkw) && abrOffen ? schuelerAbrechnungHtml(s) : "") +
         "</div>"
       : "";
     const letzterLogin = s.letzter_login_am ? "zuletzt " + fmtDate(s.letzter_login_am) : "nie angemeldet";
 
-    return '<div class="admin-card glass sch-karte ' + (s.vollzugang ? "bezahlt" : "gratis") + (offen ? " ist-offen" : "") + '">' +
+    return '<div class="admin-card glass sch-karte ' + ((s.vollzugang || s.vollzugang_lkw) ? "bezahlt" : "gratis") + (offen ? " ist-offen" : "") + '" data-art="' + art + '">' +
       ((bulkModus || bulkAuswahl.size > 0)
         ? '<label class="bulk-pick"><input type="checkbox" class="bulk-cb" value="' + esc(s.id) + '"' +
             (bulkAuswahl.has(s.id) ? " checked" : "") + "> auswählen</label>" : "") +
@@ -12427,7 +12634,15 @@ function renderAdminSchueler(){
           '<span class="ak-sub">Klasse ' + esc(s.klasse) + " · " + esc(fl ? fl.name : "—") + " · " + letzterLogin + "</span>" +
         "</span>" +
         '<span class="ak-rechts">' +
-          '<span class="ak-zugang ' + (s.vollzugang ? "voll" : "start") + '">' + (s.vollzugang ? "Voll" : "Start") + "</span>" +
+          // 11.10.2026: Art deutlich als Schild (Pkw / Lkw / Pkw + Lkw), darunter der
+          // Zugang je Fahrzeug. Bei beiden Bereichen zwei Zeilen, damit nichts verwechselt wird.
+          '<span class="ak-art ' + art + '">' + ADMIN_ART_TEXT[art] + "</span>" +
+          (art === "beide"
+            ? '<span class="ak-zugang ' + (s.vollzugang ? "voll" : "start") + '">Pkw ' + (s.vollzugang ? "Voll" : "Start") + "</span>" +
+              '<span class="ak-zugang ' + (s.vollzugang_lkw ? "voll" : "start") + '">Lkw ' + (s.vollzugang_lkw ? "Voll" : "Start") + "</span>"
+            : (art === "lkw"
+              ? '<span class="ak-zugang ' + (s.vollzugang_lkw ? "voll" : "start") + '">' + (s.vollzugang_lkw ? "Voll" : "Start") + "</span>"
+              : '<span class="ak-zugang ' + (s.vollzugang ? "voll" : "start") + '">' + (s.vollzugang ? "Voll" : "Start") + "</span>")) +
           '<span class="ak-restzeit' + (tageBisAblauf <= 14 ? " knapp" : "") + '">' +
             (status === "aktiv" ? tageBisAblauf + " Tage" : badgeText) + "</span>" +
         "</span>" +
@@ -12492,10 +12707,17 @@ function renderAdminSchueler(){
         feld("Zugangsdauer", '<select id="ns-dauer"><option value="1">1 Monat</option><option value="3">3 Monate</option><option value="6" selected>6 Monate (Standard)</option><option value="12">12 Monate</option><option value="24">24 Monate</option></select>') +
         feld("Zugang vergeben über", '<select id="ns-fl">' + flOptions + "</select>") +
       "</div>" +
-      '<label class="ns-haken">' +
+      // 11.10.2026 (Lkw-Bereich): Art des Schuelers, vorbelegt aus der Klasse (C/CE -> Lkw).
+      '<div class="ns-feld" style="margin-top:10px;"><label>Was für ein Schüler?</label>' + adminArtWahlHtml("ns-art", "pkw") +
+        '<div class="admin-sub">Die Zugangsdaten gelten nur für diesen Bereich.</div></div>' +
+      '<div id="ns-voll-pkw-zeile"><label class="ns-haken">' +
         '<input type="checkbox" id="ns-vollzugang">' +
-        '<span>Hat bereits bezahlt — Vollzugang sofort freischalten</span>' +
-      "</label>" +
+        '<span>Hat bereits bezahlt — <span id="ns-voll-pkw-text">Vollzugang</span> sofort freischalten</span>' +
+      "</label></div>" +
+      '<div id="ns-voll-lkw-zeile" hidden><label class="ns-haken">' +
+        '<input type="checkbox" id="ns-vollzugang-lkw">' +
+        '<span>Hat bereits bezahlt — Lkw-Vollzugang (' + esc(fmtEuro(adminLkwPreisStandard)) + ") sofort freischalten</span>" +
+      "</label></div>" +
       '<div class="admin-sub" style="margin-top:-4px;">Ohne Haken startet der Schüler im Startzugang (Fahrzeug &amp; Technik). Den Rest schaltest du später in seinen Details frei.</div>' +
       '<button class="btn-primary" id="ns-btn" style="margin-top:6px;">Zugang anlegen &amp; PIN senden</button>' +
     "</div>" : "";
@@ -12557,6 +12779,30 @@ function renderAdminSchueler(){
 
   const nsBtn = el.querySelector("#ns-btn");
   if(nsBtn) nsBtn.addEventListener("click", createSchueler);
+  // 11.10.2026 (Lkw-Bereich): Klasse belegt die Art vor, die Art zeigt die passenden Haken.
+  const nsKlasse = el.querySelector("#ns-klasse");
+  const nsArtAnpassen = function(){
+    const a = adminArtWahlLesen(el, "ns-art");
+    const pz = el.querySelector("#ns-voll-pkw-zeile"), lz = el.querySelector("#ns-voll-lkw-zeile");
+    if(pz) pz.hidden = a === "lkw";
+    if(lz) lz.hidden = a === "pkw";
+    const pt = el.querySelector("#ns-voll-pkw-text"); if(pt) pt.textContent = a === "beide" ? "Pkw-Vollzugang" : "Vollzugang";
+  };
+  if(nsKlasse){
+    adminArtWahlSetzen(el, "ns-art", adminArtVonKlasse(nsKlasse.value));
+    nsKlasse.addEventListener("change", function(){ adminArtWahlSetzen(el, "ns-art", adminArtVonKlasse(nsKlasse.value)); nsArtAnpassen(); });
+    el.querySelectorAll('input[name="ns-art"]').forEach(function(r){ r.addEventListener("change", nsArtAnpassen); });
+    nsArtAnpassen();
+  }
+  el.querySelectorAll("[data-lkwvoll]").forEach(function(b){
+    b.addEventListener("click", function(){ lkwVollzugangFreischalten(b.dataset.lkwvoll); });
+  });
+  el.querySelectorAll("[data-lkwentziehen]").forEach(function(b){
+    b.addEventListener("click", function(){ lkwVollzugangEntziehen(b.dataset.lkwentziehen); });
+  });
+  el.querySelectorAll("[data-artaendern]").forEach(function(b){
+    b.addEventListener("click", function(){ schuelerArtAendern(b.dataset.artaendern); });
+  });
   const neuToggle = el.querySelector("#sch-neu-toggle");
   if(neuToggle) neuToggle.addEventListener("click", function(){ neuSchuelerOffen = !neuSchuelerOffen; renderAdminSchueler(); });
   const archAuf = el.querySelector("#sch-archiv-auf");
@@ -12627,7 +12873,11 @@ async function createSchueler(){
   const klasse = document.getElementById("ns-klasse").value;
   const dauerMonate = parseInt(document.getElementById("ns-dauer").value, 10) || 6;
   const flId = document.getElementById("ns-fl").value;
-  const vollzugangSofort = document.getElementById("ns-vollzugang").checked;
+  // 11.10.2026 (Lkw-Bereich): Art aus den drei Knoepfen; Vollzugang nur fuer gewaehlte Bereiche.
+  const nsArt = adminArtWahlLesen(document, "ns-art");
+  const vollzugangSofort = nsArt !== "lkw" && document.getElementById("ns-vollzugang").checked;
+  const lkwHaken = document.getElementById("ns-vollzugang-lkw");
+  const vollzugangLkwSofort = nsArt !== "pkw" && !!(lkwHaken && lkwHaken.checked);
   const geburtsdatum = document.getElementById("ns-geburtsdatum").value;
   const schuelernummer = document.getElementById("ns-schuelernummer").value.trim();
   if(!name || !tel){ showToast("Name und Telefonnummer sind Pflicht"); return; }
@@ -12654,6 +12904,10 @@ async function createSchueler(){
     ablauf_am: addMonthsISO(jetzt, dauerMonate),
     aktiv: true,
     vollzugang: vollzugangSofort,
+    // Immer echte true/false senden, nie null (null hebelt Defaults aus, siehe Fehlerquellen).
+    zugang_pkw: adminArtFelder(nsArt).zugang_pkw,
+    zugang_lkw: adminArtFelder(nsArt).zugang_lkw,
+    vollzugang_lkw: vollzugangLkwSofort,
     geburtsdatum: geburtsdatum || null,
     schuelernummer: schuelernummer || null
   };
@@ -12680,7 +12934,10 @@ async function createSchueler(){
       "zugang_von_partner", "schueler", neu.id, neu.name,
       "Angelegt von: " + (adminSession && adminSession.email ? adminSession.email : "Partner") +
       " · Klasse " + klasse +
-      " · " + (vollzugangSofort ? "Vollzugang" : "nur Startzugang") +
+      " · " + ADMIN_ART_TEXT[nsArt] +
+      " · " + (vollzugangSofort || vollzugangLkwSofort
+        ? [vollzugangSofort ? (nsArt === "beide" ? "Pkw-Vollzugang" : "Vollzugang") : null, vollzugangLkwSofort ? "Lkw-Vollzugang" : null].filter(Boolean).join(" + ")
+        : "nur Startzugang") +
       (schuelernummer ? " · Schüler-Nr. " + schuelernummer : "")
     );
   }
@@ -13087,6 +13344,164 @@ async function vollzugangEntziehen(id){
     protokolliere("vollzugang_entzogen", "schueler", id, aktuell.name, null);
     renderAdminSchueler();
     showToast("Vollzugang entzogen");
+  }, 10000);
+}
+
+/* ---- Lkw-Bereich (11.10.2026) ----
+   Art aendern (Pkw / Lkw / Pkw + Lkw), Lkw-Vollzugang freischalten und entziehen.
+   Gleiches Muster wie beim Pkw: Bestaetigungsblatt, Pruefung gegen den Live-Zustand
+   (kein Doppelklick-Schaden), Protokoll ueber protokolliere() in academy_aenderungen.
+   Den Lkw-Verkauf bucht ein Datenbank-Trigger (academy_lkw_verkauf_buchen). */
+async function schuelerArtAendern(id){
+  const s = allSchueler.find(function(x){ return x.id === id; });
+  if(!s || adminArtAenderungLaeuft[id]) return;
+  const artVorher = adminSchuelerArt(s);
+  const neueArt = await blattFormular({
+    titel: "Was für ein Schüler ist " + s.name + "?",
+    html:
+      '<div class="admin-sub" style="margin-bottom:10px;">Die Zugangsdaten gelten nur für den gewählten Bereich. ' +
+        "Klasse " + esc(s.klasse || "B") + " passt normalerweise zu „" + ADMIN_ART_TEXT[adminArtVonKlasse(s.klasse)] + "“.</div>" +
+      adminArtWahlHtml("ae-art", artVorher),
+    okText: "Speichern",
+    lesen: function(o){ return adminArtWahlLesen(o, "ae-art"); }
+  });
+  if(!neueArt || neueArt === artVorher) return;
+  const felder = adminArtFelder(neueArt);
+  // Ein bezahlter Vollzugang haelt seinen Bereich offen (die DB erzwingt das ohnehin).
+  if(!felder.zugang_pkw && s.vollzugang){
+    await blattHinweis({ titel: "Pkw-Vollzugang ist aktiv", text: s.name + " hat einen bezahlten Pkw-Vollzugang. Entziehe ihn zuerst, wenn der Pkw-Bereich wirklich wegfallen soll." });
+    return;
+  }
+  if(!felder.zugang_lkw && s.vollzugang_lkw){
+    await blattHinweis({ titel: "Lkw-Vollzugang ist aktiv", text: s.name + " hat einen bezahlten Lkw-Vollzugang. Entziehe ihn zuerst, wenn der Lkw-Bereich wirklich wegfallen soll." });
+    return;
+  }
+  const aktuell = allSchueler.find(function(x){ return x.id === id; });
+  if(!aktuell || adminSchuelerArt(aktuell) !== artVorher){
+    renderAdminSchueler();
+    showToast("Der Schüler wurde inzwischen schon geändert — nichts gespeichert.");
+    return;
+  }
+  if(DEMO_MODE){ Object.assign(aktuell, felder); renderAdminSchueler(); showToast("Gespeichert: " + ADMIN_ART_TEXT[neueArt]); return; }
+  adminArtAenderungLaeuft[id] = true;
+  try{
+    const res = await supa.from("academy_schueler").update(felder).eq("id", id).select("id");
+    if(!aenderungOk(res)){ showToast("Konnte nicht gespeichert werden — " + ((res && res.error && res.error.message) || "keine Berechtigung oder keine Verbindung")); return; }
+    Object.assign(aktuell, felder);
+    protokolliere("schueler_art_geaendert", "schueler", id, aktuell.name, ADMIN_ART_TEXT[artVorher] + " → " + ADMIN_ART_TEXT[neueArt]);
+    renderAdminSchueler();
+    showToast(aktuell.name + " ist jetzt " + ADMIN_ART_TEXT[neueArt] + "-Schüler");
+  } finally {
+    delete adminArtAenderungLaeuft[id];
+  }
+}
+
+async function adminLkwPreisLaden(){
+  if(DEMO_MODE) return adminLkwPreisStandard;
+  try{
+    const { data } = await supa.from("academy_einstellungen").select("wert").eq("schluessel", "preis_lkw").maybeSingle();
+    const n = Number(data && data.wert);
+    if(n > 0) adminLkwPreisStandard = n;
+  } catch(e){ /* dann bleibt der bekannte Standard */ }
+  return adminLkwPreisStandard;
+}
+
+async function lkwVollzugangFreischalten(id){
+  const s = allSchueler.find(function(x){ return x.id === id; });
+  if(!s || s.vollzugang_lkw) return;
+  const standVorher = !!s.vollzugang_lkw;
+  const standard = s.verkaufspreis_lkw != null ? Number(s.verkaufspreis_lkw) : await adminLkwPreisLaden();
+  const schule = allSchulen.find(function(sc){ return sc.id === s.schule_id; });
+  const istPartner = myRole !== "super_admin";
+  const meinAnteil = schule && schule.provision_serband != null ? Math.min(Number(schule.provision_serband), standard) : null;
+
+  const eingabe = await blattEingabe({
+    titel: "Lkw-Vollzugang für " + s.name,
+    text: "Welchen Preis hast du dem Schüler für den Lkw-Bereich berechnet? (in Euro)" +
+      "\nLeer lassen = Standardpreis " + standard + " €" +
+      (istPartner && meinAnteil != null ? "\n\nDein Anteil an die Fahr-Akademie: höchstens " + meinAnteil + " € pro Zugang." : ""),
+    wert: String(standard),
+    eingabeTyp: "text",
+    platzhalter: "z. B. 110",
+    okText: "Weiter"
+  });
+  if(eingabe === null) return;
+  let preisEingabe = null;
+  const roh = String(eingabe).trim();
+  if(roh !== ""){
+    const zahl = parseEuro(roh);
+    if(zahl === null || zahl < 0){ showToast("Bitte einen gültigen Betrag eingeben"); return; }
+    preisEingabe = Math.round(zahl * 100) / 100;
+  }
+  const anzeigePreis = preisEingabe != null ? preisEingabe : standard;
+  if(!await blattBestaetigen({
+    titel: "Lkw-Vollzugang freischalten?",
+    text: "Abrechnungsbetrag: " + anzeigePreis + " €\n\n" +
+      (adminHatLkw(s) ? "" : "Der Lkw-Bereich wird dabei für " + s.name + " geöffnet.\n\n") +
+      "Das erstellt sofort eine eigene Lkw-Abrechnung und lässt sich nicht rückgängig machen.",
+    okText: "Jetzt freischalten"
+  })) return;
+
+  // Gegen den LIVE-Zustand pruefen (zweiter Klick, Neuladen der Liste dazwischen).
+  const aktuell = allSchueler.find(function(x){ return x.id === id; });
+  if(!aktuell){ showToast("Dieser Schüler ist nicht mehr in der Liste."); return; }
+  if(!!aktuell.vollzugang_lkw !== standVorher){
+    renderAdminSchueler();
+    showToast("Der Lkw-Zugang wurde inzwischen schon geändert — nichts gebucht.");
+    return;
+  }
+  const lkwVorher = aktuell.zugang_lkw;
+  aktuell.vollzugang_lkw = true;
+  aktuell.zugang_lkw = true;
+  if(DEMO_MODE){ renderAdminSchueler(); return; }
+  // Preis und Umschalten in EINEM Update: der Trigger liest verkaufspreis_lkw im selben Moment.
+  const felder = { vollzugang_lkw: true };
+  if(preisEingabe != null) felder.verkaufspreis_lkw = preisEingabe;
+  const res = await supa.from("academy_schueler").update(felder).eq("id", id).select("id");
+  if(!aenderungOk(res)){
+    aktuell.vollzugang_lkw = standVorher;
+    aktuell.zugang_lkw = lkwVorher;
+    showToast("Fehler: " + ((res && res.error && res.error.message) || "keine Berechtigung für diese Änderung"));
+    renderAdminSchueler();
+    return;
+  }
+  if(preisEingabe != null) aktuell.verkaufspreis_lkw = preisEingabe;
+  protokolliere("lkw_vollzugang_freigeschaltet", "schueler", id, aktuell.name, "Preis: " + anzeigePreis + " EUR");
+  renderAdminSchueler();
+  showToast("Lkw-Vollzugang freigeschaltet — Abrechnung erstellt");
+}
+
+// Wie vollzugangEntziehen: gespeichert wird erst nach 10 Sekunden Rueckgaengig-Frist.
+async function lkwVollzugangEntziehen(id){
+  const s = allSchueler.find(function(x){ return x.id === id; });
+  if(!s || !s.vollzugang_lkw || adminLkwEntzugLaeuft[id]) return;
+  if(!await blattBestaetigen({
+    titel: "Lkw-Vollzugang von " + s.name + " entziehen?",
+    text: s.name + " sieht im Lkw-Bereich danach nur noch den Startzugang.\n\nEine bereits erstellte Abrechnung bleibt bestehen. Du hast danach 10 Sekunden zum Rückgängigmachen.",
+    okText: "Entziehen", gefaehrlich: true
+  })) return;
+  if(adminLkwEntzugLaeuft[id]) return;
+  const leiste = document.createElement("div");
+  leiste.className = "rueckgaengig-leiste";
+  leiste.setAttribute("role", "status");
+  leiste.innerHTML = '<span>Lkw-Vollzugang von ' + esc(s.name) + ' wird in <b class="rg-sek-lkw">10</b> s entzogen</span>' +
+    '<button type="button" class="btn-still rg-knopf-lkw">Rückgängig</button>';
+  document.body.appendChild(leiste);
+  let sek = 10;
+  const tick = setInterval(function(){ sek--; const e = leiste.querySelector(".rg-sek-lkw"); if(e) e.textContent = String(Math.max(sek, 0)); }, 1000);
+  function aufraeumen(){ clearInterval(tick); clearTimeout(adminLkwEntzugLaeuft[id]); delete adminLkwEntzugLaeuft[id]; leiste.remove(); }
+  leiste.querySelector(".rg-knopf-lkw").addEventListener("click", function(){ aufraeumen(); showToast("Nichts geändert — Lkw-Vollzugang bleibt"); });
+  adminLkwEntzugLaeuft[id] = setTimeout(async function(){
+    aufraeumen();
+    const aktuell = allSchueler.find(function(x){ return x.id === id; });
+    if(!aktuell || !aktuell.vollzugang_lkw) return;
+    if(DEMO_MODE){ aktuell.vollzugang_lkw = false; renderAdminSchueler(); return; }
+    const res = await supa.from("academy_schueler").update({ vollzugang_lkw: false }).eq("id", id).select("id");
+    if(!aenderungOk(res)){ showToast("Konnte nicht entzogen werden — keine Berechtigung oder keine Verbindung"); return; }
+    aktuell.vollzugang_lkw = false;
+    protokolliere("lkw_vollzugang_entzogen", "schueler", id, aktuell.name, null);
+    renderAdminSchueler();
+    showToast("Lkw-Vollzugang entzogen");
   }, 10000);
 }
 
