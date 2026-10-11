@@ -13,6 +13,11 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 // 02.10.2026: Hinweise im Video (academy_videos.hinweise) -- nur freigegebene (aktiv: true)
 // gehen hinaus; Entwuerfe bleiben auf dem Server. Aeltere App-Staende (ohne body.sprache)
 // kennen keine Hinweise und bekommen deren Uebersetzungen nicht (sonst > 1000 Zeilen).
+// 11.10.2026, LKW-BEREICH (docs/LKW-BEREICH-BAUPLAN.md, "Die eine Regel"): Schueler bekommen
+// nur Themen mit fahrzeug in ihren erlaubten Fahrzeugen E oder 'alle' und nur Videos, die
+// mindestens ein solches (nicht archiviertes) Thema haben -- ohne Themen nur bei pkw in E.
+// video_tags/video_pruefer passend gefiltert, Uebersetzungen bleiben vollstaendig (klein).
+// Verwaltung (Admin-JWT) bekommt weiter alles. Neu im Ergebnis: erlaubte_fahrzeuge.
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -34,16 +39,23 @@ Deno.serve(async (req) => {
 
     // --- Wer fragt? ---
     let erlaubt = false;
+    let fahrzeuge = null; // 11.10.2026: null = Verwaltung, sieht alles
     if (body && body.session_token) {
       const { data: session, error: sErr } = await supa.from("academy_sessions")
         .select("schueler_id, expires_at").eq("session_token", body.session_token).maybeSingle();
       if (sErr) return json({ error: "datenbankfehler", code: "voruebergehend" }, 503);
       if (!session) return json({ error: "session_ungueltig", code: "session_ungueltig" }, 401);
       if (new Date(session.expires_at) < new Date()) return json({ error: "session_abgelaufen", code: "session_abgelaufen" }, 401);
-      const { data: s } = await supa.from("academy_schueler").select("aktiv, ablauf_am").eq("id", session.schueler_id).maybeSingle();
+      const { data: s, error: e2 } = await supa.from("academy_schueler").select("aktiv, ablauf_am, zugang_pkw, zugang_lkw").eq("id", session.schueler_id).maybeSingle();
+      // 11.10.2026: Datenbankfehler ist kein Grund zum Abmelden.
+      if (e2) return json({ error: "datenbankfehler", code: "voruebergehend" }, 503);
       if (!s || !s.aktiv) return json({ error: "zugang_gesperrt", code: "zugang_gesperrt" }, 403);
       if (new Date(s.ablauf_am) < new Date()) return json({ error: "zugang_abgelaufen", code: "zugang_abgelaufen" }, 403);
       erlaubt = true;
+      // 11.10.2026: fehlt ein Feld (alter Datensatz), gilt zugang_pkw = true, zugang_lkw = false.
+      fahrzeuge = [];
+      if (s.zugang_pkw !== false) fahrzeuge.push("pkw");
+      if (s.zugang_lkw === true) fahrzeuge.push("lkw");
     } else {
       const jwt = (req.headers.get("Authorization") || "").replace("Bearer ", "").trim();
       if (jwt) {
@@ -85,17 +97,41 @@ Deno.serve(async (req) => {
       k.thumb = bildBasis + encodeURIComponent(v.id);
       return k;
     });
-    const erlaubteIds = new Set(videoListe.map((v) => v.id));
+    // --- Fahrzeug-Filter (11.10.2026), nur fuer Schueler ---
+    let tagListe = tags.data || [];
+    let sichtbareVideos = videoListe;
+    let fremdeThemen = new Set();
+    if (fahrzeuge) {
+      // Ohne Zuordnungen laesst sich nicht filtern: lieber kurz Fehler als fremde Videos.
+      if (vtags.error) return json({ error: "datenbankfehler", code: "voruebergehend" }, 503);
+      const passt = (t) => { const fz = t.fahrzeug || "pkw"; return fz === "alle" || fahrzeuge.indexOf(fz) !== -1; };
+      const themaNachId = new Map(tagListe.map((t) => [t.id, t])); // nur nicht archivierte
+      fremdeThemen = new Set(tagListe.filter((t) => !passt(t)).map((t) => t.id));
+      const themenJeVideo = new Map();
+      (vtags.data || []).forEach((x) => {
+        const t = themaNachId.get(x.tag_id);
+        if (!t) return;
+        if (!themenJeVideo.has(x.video_id)) themenJeVideo.set(x.video_id, []);
+        themenJeVideo.get(x.video_id).push(t);
+      });
+      sichtbareVideos = videoListe.filter((v) => {
+        const th = themenJeVideo.get(v.id) || [];
+        return th.length === 0 ? fahrzeuge.indexOf("pkw") !== -1 : th.some(passt);
+      });
+      tagListe = tagListe.filter(passt);
+    }
+    const erlaubteIds = new Set(sichtbareVideos.map((v) => v.id));
 
     return json({
       ok: true,
-      tags: tags.data || [],
-      videos: videoListe,
-      video_tags: (vtags.data || []).filter((x) => erlaubteIds.has(x.video_id)),
+      tags: tagListe,
+      videos: sichtbareVideos,
+      video_tags: (vtags.data || []).filter((x) => erlaubteIds.has(x.video_id) && !fremdeThemen.has(x.tag_id)),
       pruefer: pruefer.data || [],
       video_pruefer: (vpr.data || []).filter((x) => erlaubteIds.has(x.video_id)),
       gebiete: gebiete.error ? null : (gebiete.data || []),
       uebersetzungen: ueb.error ? [] : (ueb.data || []),
+      erlaubte_fahrzeuge: fahrzeuge || ["pkw", "lkw"],
     });
   } catch (e) {
     return json({ error: String(e), code: "voruebergehend" }, 500);

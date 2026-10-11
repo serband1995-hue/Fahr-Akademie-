@@ -80,6 +80,11 @@ Deno.serve(async (req: Request) => {
     const body = await req.json();
     const { kandidat_id, email_override, fahrlehrer_id, klasse_override } = body || {};
     const mitVollzugang = (body || {}).vollzugang === true;
+    // 11.10.2026, Lkw-Bereich: Art des Schuelers (Pkw / Lkw / beides) und Lkw-Vollzugang.
+    // Nur echte true/false uebernehmen -- fehlt etwas, setzt der DB-Trigger den Bereich aus der
+    // Klasse (C, CE, C1, C1E -> Lkw). vollzugang bleibt der Pkw-Vollzugang.
+    const art = (body || {}).art;
+    const mitVollzugangLkw = (body || {}).vollzugang_lkw === true;
     if (!kandidat_id) return json({ error: "kandidat_id ist Pflichtfeld" }, 400);
 
     const { data: kand } = await supa
@@ -131,6 +136,11 @@ Deno.serve(async (req: Request) => {
     const klasse = (klasse_override || kand.klasse || "").trim();
     if (klasse) datensatz.klasse = klasse.toUpperCase();
     if (fahrlehrer_id) datensatz.fahrlehrer_id = fahrlehrer_id;
+    if (art === "pkw" || art === "lkw" || art === "beide") {
+      datensatz.zugang_pkw = art !== "lkw";
+      datensatz.zugang_lkw = art !== "pkw";
+    }
+    datensatz.vollzugang_lkw = mitVollzugangLkw;
 
     const { error: insErr } = await supa.from("academy_schueler").insert(datensatz);
     if (insErr) return json({ error: "Zugang konnte nicht angelegt werden: " + insErr.message }, 500);
@@ -145,7 +155,7 @@ Deno.serve(async (req: Request) => {
       objekt_typ: "schueler",
       objekt_id: neueId,
       objekt_name: kand.name,
-      details: "Freischaltung aus Kandidatenliste (" + (mitVollzugang ? "Vollzugang" : "Startzugang") + "), gültig bis " + ablauf.toISOString().slice(0, 10),
+      details: "Freischaltung aus Kandidatenliste (" + (mitVollzugang ? "Vollzugang" : "Startzugang") + (mitVollzugangLkw ? ", Lkw-Vollzugang" : "") + (art ? ", Bereich " + art : "") + "), gültig bis " + ablauf.toISOString().slice(0, 10),
     });
 
     let mailStatus = "keine_email_hinterlegt";
@@ -231,6 +241,7 @@ Deno.serve(async (req: Request) => {
       telefon: telefonNorm,
       pin: pin,
       vollzugang: mitVollzugang,
+      vollzugang_lkw: mitVollzugangLkw,
       ablauf_am: ablauf.toISOString(),
       mail: mailStatus,
       empfehlung: empfehlungStatus,

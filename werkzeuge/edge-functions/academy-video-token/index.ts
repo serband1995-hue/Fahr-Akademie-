@@ -9,7 +9,7 @@ const BUNNY_TOKEN_AUTH_KEY = Deno.env.get("BUNNY_TOKEN_AUTH_KEY");
 // Frontend liesse sich umgehen. Ohne Token kein Bunny-Stream-Zugriff.
 //
 // Freigabe-Ebenen, in dieser Reihenfolge geprueft (jede einzelne genuegt):
-//   1. vollzugang am Schueler          -> alles
+//   1. vollzugang am Schueler          -> alles (seit 11.10.2026: nur Pkw, siehe unten)
 //   2. academy_videos.gratis           -> Kostprobe, einzelnes Video frei
 //   3. academy_tags.gratis             -> ganzes Thema frei
 //   4. academy_freischaltungen (NEU 18.09.2026):
@@ -24,6 +24,17 @@ const BUNNY_TOKEN_AUTH_KEY = Deno.env.get("BUNNY_TOKEN_AUTH_KEY");
 // 26.09.2026: Jede Ablehnung traegt einen "code". Die App meldet nur bei
 // session_ungueltig / session_abgelaufen / zugang_gesperrt / zugang_abgelaufen /
 // schule_pausiert ab -- alles andere (Gebiet, Vollzugang, Serverfehler) zeigt nur eine Meldung.
+//
+// 11.10.2026, LKW-BEREICH (docs/LKW-BEREICH-BAUPLAN.md, "Die eine Regel"): Pkw und Lkw sind
+// streng getrennt. Fahrzeuge eines Videos = fahrzeug-Werte seiner NICHT archivierten Themen
+// (ohne Themen: 'pkw'; 'alle' passt zu beiden). Erlaubt E = {pkw falls zugang_pkw} +
+// {lkw falls zugang_lkw} (alter Datensatz ohne Felder: nur pkw). Passt kein Fahrzeug,
+// gibt es fahrzeug_nicht_freigegeben (403, KEIN Abmelden) -- vor der Freemium-Pruefung.
+// Danach frei, wenn eines gilt:
+//   - vollzugang (= Pkw-Vollzugang), pkw in E, Video hat ein Pkw-/Alle-Thema oder keine Themen
+//   - vollzugang_lkw, lkw in E, Video hat ein Lkw-/Alle-Thema
+//   - video.gratis / ein ERLAUBTES Thema ist gratis / persoenliche Freischaltung
+//     (Einzelvideo, oder Paket mit dem Bereich eines ERLAUBTEN Themas)
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -35,6 +46,15 @@ function json(body, status = 200) {
     status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
+}
+
+// 11.10.2026: Erlaubte Fahrzeuge des Schuelers. Fehlt ein Feld (alter Datensatz):
+// zugang_pkw gilt als true, zugang_lkw als false.
+function erlaubteFahrzeuge(s) {
+  const e = [];
+  if (s.zugang_pkw !== false) e.push("pkw");
+  if (s.zugang_lkw === true) e.push("lkw");
+  return e;
 }
 
 async function sha256Hex(input) {
@@ -66,7 +86,7 @@ Deno.serve(async (req) => {
 
     const { data: schueler, error: schuelerError } = await supa
       .from("academy_schueler")
-      .select("aktiv, ablauf_am, schule_id, vollzugang")
+      .select("aktiv, ablauf_am, schule_id, vollzugang, zugang_pkw, zugang_lkw, vollzugang_lkw")
       .eq("id", session.schueler_id)
       .maybeSingle();
 
@@ -96,6 +116,27 @@ Deno.serve(async (req) => {
       return json({ error: "Video nicht gefunden oder noch nicht mit Bunny verknüpft", code: "video_fehlt" }, 404);
     }
 
+    // --- Fahrzeug-Pruefung (11.10.2026, Lkw-Bereich) ---
+    // Themen IMMER laden (auch bei Vollzugang): ohne sie laesst sich das Fahrzeug nicht pruefen.
+    // Bei einem Datenbankfehler bewusst SPERREN statt durchlassen.
+    const { data: tagZeilen, error: tagError } = await supa
+      .from("academy_video_tags")
+      .select("academy_tags(fahrzeug, gratis, archiviert, stufe)")
+      .eq("video_id", video_id);
+    if (tagError) return json({ error: "Zugriff konnte nicht geprüft werden", code: "voruebergehend" }, 503);
+
+    const erlaubt = erlaubteFahrzeuge(schueler);
+    const passt = (fz) => fz === "alle" || erlaubt.indexOf(fz) !== -1;
+    const themen = (tagZeilen || [])
+      .map((t) => t.academy_tags)
+      .filter((t) => t && t.archiviert !== true)
+      .map((t) => ({ ...t, fahrzeug: t.fahrzeug || "pkw" }));
+    const erlaubteThemen = themen.filter((t) => passt(t.fahrzeug));
+    const sichtbar = themen.length === 0 ? erlaubt.indexOf("pkw") !== -1 : erlaubteThemen.length > 0;
+    if (!sichtbar) {
+      return json({ error: "Dieses Video gehört nicht zu deinem Bereich.", code: "fahrzeug_nicht_freigegeben" }, 403);
+    }
+
     // --- Gebietspruefung (15.09.2026) ---
     if (video.gebiet_id && schueler.schule_id) {
       const { data: freigabe, error: freigabeError } = await supa
@@ -113,28 +154,16 @@ Deno.serve(async (req) => {
     }
 
     // --- Freemium-Pruefung ---
-    if (!schueler.vollzugang) {
-      let istFrei = video.gratis === true;
-      let stufenDesVideos = [];
+    // 11.10.2026: Vollzugang gilt je Fahrzeug (vollzugang = Pkw, vollzugang_lkw = Lkw).
+    const pkwFrei = schueler.vollzugang === true && erlaubt.indexOf("pkw") !== -1 &&
+      (themen.length === 0 || themen.some((t) => t.fahrzeug === "pkw" || t.fahrzeug === "alle"));
+    const lkwFrei = schueler.vollzugang_lkw === true && erlaubt.indexOf("lkw") !== -1 &&
+      themen.some((t) => t.fahrzeug === "lkw" || t.fahrzeug === "alle");
 
-      if (!istFrei) {
-        const { data: tags, error: tagError } = await supa
-          .from("academy_video_tags")
-          .select("academy_tags(gratis, archiviert, stufe)")
-          .eq("video_id", video_id);
-
-        // Bei einem Datenbankfehler bewusst SPERREN statt durchlassen -- lieber ein
-        // faelschlich gesperrtes Video als verschenkter Bezahl-Inhalt.
-        if (tagError) return json({ error: "Zugriff konnte nicht geprüft werden", code: "voruebergehend" }, 503);
-
-        istFrei = (tags || []).some(
-          (t) => t.academy_tags?.gratis === true && t.academy_tags?.archiviert !== true
-        );
-        stufenDesVideos = (tags || [])
-          .filter((t) => t.academy_tags?.archiviert !== true)
-          .map((t) => t.academy_tags?.stufe)
-          .filter(Boolean);
-      }
+    if (!pkwFrei && !lkwFrei) {
+      // 11.10.2026: Gratis-Themen und Paket-Bereiche zaehlen nur aus ERLAUBTEN Themen.
+      let istFrei = video.gratis === true || erlaubteThemen.some((t) => t.gratis === true);
+      const stufenDesVideos = erlaubteThemen.map((t) => t.stufe).filter(Boolean);
 
       // --- Persoenliche Freischaltungen (18.09.2026): Einzelvideo oder Paket ---
       if (!istFrei) {

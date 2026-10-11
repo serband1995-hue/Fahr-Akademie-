@@ -11,6 +11,10 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 // 29.09.2026: Spanisch (es) dazu.
 // 01.10.2026: ru, sr, ckb (Sorani), kmr (Kurmancî), hi, ur, vi, rif (Tarifit) dazu.
 // 02.10.2026: fa (Farsi), ps (Paschtu), el (Griechisch), am (Amharisch), ti (Tigrinya) dazu.
+// 11.10.2026, LKW-BEREICH: Die 3D-Szenen sind Pkw-Inhalt. Schueler ohne zugang_pkw bekommen
+// bei "liste" eine leere Liste und bei "szene" 403 fahrzeug_nicht_freigegeben (kein Abmelden).
+// "vollzugang" heisst hier Pkw-Vollzugang. Gratis-Themen zaehlen nur mit fahrzeug pkw oder alle.
+// Alter Datensatz ohne Feld: zugang_pkw gilt als true.
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -58,13 +62,13 @@ Deno.serve(async (req) => {
     const sprache = SPRACHEN.indexOf(body.sprache) !== -1 ? body.sprache : "de";
 
     // --- Wer fragt? ---
-    let vollzugang = false, admin = false;
+    let vollzugang = false, admin = false, pkwErlaubt = true;
     if (body.session_token) {
       const { data: session, error: sErr } = await supa.from("academy_sessions").select("schueler_id, expires_at").eq("session_token", body.session_token).maybeSingle();
       if (sErr) return json({ error: "datenbankfehler", code: "voruebergehend" }, 503);
       if (!session) return json({ error: "session_ungueltig", code: "session_ungueltig" }, 401);
       if (new Date(session.expires_at) < new Date()) return json({ error: "session_abgelaufen", code: "session_abgelaufen" }, 401);
-      const { data: s, error: e2 } = await supa.from("academy_schueler").select("aktiv, ablauf_am, schule_id, vollzugang").eq("id", session.schueler_id).maybeSingle();
+      const { data: s, error: e2 } = await supa.from("academy_schueler").select("aktiv, ablauf_am, schule_id, vollzugang, zugang_pkw").eq("id", session.schueler_id).maybeSingle();
       if (e2) return json({ error: "datenbankfehler", code: "voruebergehend" }, 503);
       if (!s) return json({ error: "schueler_nicht_gefunden", code: "schueler_nicht_gefunden" }, 403);
       if (!s.aktiv) return json({ error: "zugang_gesperrt", code: "zugang_gesperrt" }, 403);
@@ -73,7 +77,8 @@ Deno.serve(async (req) => {
         const { data: schule } = await supa.from("academy_schulen").select("aktiv").eq("id", s.schule_id).maybeSingle();
         if (schule && !schule.aktiv) return json({ error: "schule_pausiert", code: "schule_pausiert" }, 403);
       }
-      vollzugang = s.vollzugang === true;
+      pkwErlaubt = s.zugang_pkw !== false;
+      vollzugang = s.vollzugang === true && pkwErlaubt;
     } else {
       const jwt = (req.headers.get("Authorization") || "").replace("Bearer ", "").trim();
       if (jwt) {
@@ -87,12 +92,14 @@ Deno.serve(async (req) => {
     }
 
     // Gratis-Themen (wie bei den Videos): eine Szene zu einem freien Thema ist frei
-    const { data: tags, error: tErr } = await supa.from("academy_tags").select("id, gratis, archiviert");
+    const { data: tags, error: tErr } = await supa.from("academy_tags").select("id, gratis, archiviert, fahrzeug");
     if (tErr) return json({ error: "datenbankfehler", code: "voruebergehend" }, 503);
-    const freieThemen = new Set((tags || []).filter((t) => t.gratis === true && t.archiviert !== true).map((t) => t.id));
+    const freieThemen = new Set((tags || []).filter((t) => t.gratis === true && t.archiviert !== true &&
+      ((t.fahrzeug || "pkw") === "pkw" || t.fahrzeug === "alle")).map((t) => t.id));
     const istFrei = (z) => admin || vollzugang || z.kostprobe === true || (z.themen || []).some((t) => freieThemen.has(t));
 
     if (body.aktion === "liste") {
+      if (!admin && !pkwErlaubt) return json({ ok: true, szenen: [] });
       const { data, error } = await supa.from("academy_szenen")
         .select("id, kategorie, reihenfolge, titel, kurz, themen, kostprobe, dauer:daten->varianten->0->dauer, kapitel:daten->varianten->0->kapitel, texte:daten->texte")
         .eq("aktiv", true).order("reihenfolge");
@@ -106,6 +113,7 @@ Deno.serve(async (req) => {
 
     if (body.aktion === "szene") {
       if (typeof body.id !== "string" || !/^[a-z0-9_]{1,40}$/.test(body.id)) return json({ error: "id fehlt", code: "eingabe_fehlt" }, 400);
+      if (!admin && !pkwErlaubt) return json({ error: "Diese Szene gehört nicht zu deinem Bereich.", code: "fahrzeug_nicht_freigegeben" }, 403);
       const { data: z, error } = await supa.from("academy_szenen").select("id, themen, kostprobe, aktiv, daten").eq("id", body.id).maybeSingle();
       if (error) return json({ error: "datenbankfehler", code: "voruebergehend" }, 503);
       if (!z || !z.aktiv) return json({ error: "szene_fehlt", code: "szene_fehlt" }, 404);

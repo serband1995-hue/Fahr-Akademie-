@@ -90,6 +90,22 @@ Deno.serve(async (req) => {
       } catch (_e) { /* Feld fehlt -> App behaelt alten Stand */ }
     }
 
+    // 11.10.2026, LKW-BEREICH: Fahrzeug-Zugaenge wie bei academy-login. Eigene Abfrage, damit
+    // ein Fehler nur diese Felder weglaesst (App behaelt alten Stand). Alter Datensatz ohne
+    // Felder: zugang_pkw = true, zugang_lkw = false.
+    try {
+      const { data: fz, error: fzError } = await supa
+        .from("academy_schueler")
+        .select("zugang_pkw, zugang_lkw, vollzugang_lkw")
+        .eq("id", session.schueler_id)
+        .maybeSingle();
+      if (!fzError && fz) {
+        antwort.zugang_pkw = fz.zugang_pkw !== false;
+        antwort.zugang_lkw = fz.zugang_lkw === true;
+        antwort.vollzugang_lkw = fz.vollzugang_lkw === true;
+      }
+    } catch (_e) { /* Feld fehlt -> App behaelt alten Stand */ }
+
     // Persoenliche Freischaltungen -- gleiche Logik wie academy-login.
     try {
       const { data: fr, error: frError } = await supa

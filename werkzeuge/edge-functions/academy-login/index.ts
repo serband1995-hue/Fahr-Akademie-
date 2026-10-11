@@ -14,6 +14,12 @@ const SPERR_MINUTEN = 15;
 const RESET_FENSTER_MINUTEN = 15;
 // 09.09.2026, Betrugsschutz Punkt 1: Sperrfrist nach einem Geraetewechsel.
 const GERAETEWECHSEL_COOLDOWN_MINUTEN = 10;
+// 11.10.2026, LKW-BEREICH: Die App schickt body.fahrzeug ("pkw" | "lkw") vom Login-Schalter.
+// Fehlt der Zugang fuer das gewaehlte Fahrzeug -> 403 fahrzeug_falsch. Geprueft NACH der PIN
+// (verraet sonst, ob eine Nummer existiert) und VOR dem Loeschen alter Sessions / dem
+// Geraetewechsel (ein falscher Schalter darf kein anderes Geraet abmelden). Ohne body.fahrzeug
+// (alte App) wie bisher. Antwort liefert zugang_pkw / zugang_lkw / vollzugang_lkw mit
+// (alter Datensatz ohne Felder: zugang_pkw = true, zugang_lkw = false).
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -32,7 +38,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const { telefon, pin, geraete_id } = await req.json();
+    const { telefon, pin, geraete_id, fahrzeug } = await req.json();
     if (!telefon || !pin) return json({ error: "Telefonnummer und PIN erforderlich" }, 400);
 
     const supa = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
@@ -74,7 +80,7 @@ Deno.serve(async (req) => {
 
     const { data: treffer, error } = await supa
       .from("academy_schueler")
-      .select("id, name, telefon, pin, aktiv, ablauf_am, schule_id, agb_akzeptiert_am, klasse, pruefungstermin, vollzugang, login_anzahl, letzte_geraete_id, letzter_geraetewechsel_am, geraetewechsel_anzahl")
+      .select("id, name, telefon, pin, aktiv, ablauf_am, schule_id, agb_akzeptiert_am, klasse, pruefungstermin, vollzugang, zugang_pkw, zugang_lkw, vollzugang_lkw, login_anzahl, letzte_geraete_id, letzter_geraetewechsel_am, geraetewechsel_anzahl")
       .in("telefon", tel.alle);
 
     if (error) return json({ error: "Datenbankfehler" }, 500);
@@ -104,6 +110,16 @@ Deno.serve(async (req) => {
       if (schule && !schule.aktiv) {
         return json({ error: "Der Zugang deiner Fahrschule ist derzeit pausiert. Bitte wende dich an deine Fahrschule.", code: "schule_pausiert" }, 403);
       }
+    }
+
+    // --- Fahrzeug-Schalter (11.10.2026) ---
+    const zugangPkw = schueler.zugang_pkw !== false;
+    const zugangLkw = schueler.zugang_lkw === true;
+    if (fahrzeug === "lkw" && !zugangLkw) {
+      return json({ error: "Diese Zugangsdaten gelten nicht für den Lkw-Bereich.", code: "fahrzeug_falsch" }, 403);
+    }
+    if (fahrzeug === "pkw" && !zugangPkw) {
+      return json({ error: "Diese Zugangsdaten gelten nicht für den Pkw-Bereich.", code: "fahrzeug_falsch" }, 403);
     }
 
     // --- Betrugsschutz Punkt 1: Cool-down bei Geraetewechsel ---
@@ -221,6 +237,9 @@ Deno.serve(async (req) => {
       empfehlung: empfehlung,
       klassen_freigabe: klassenFreigabe,
       vollzugang: schueler.vollzugang,
+      zugang_pkw: zugangPkw,
+      zugang_lkw: zugangLkw,
+      vollzugang_lkw: schueler.vollzugang_lkw === true,
       schule_id: schueler.schule_id || null,
       gebiete: gebiete,
       freigabe_videos: freigabeVideos,

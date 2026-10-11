@@ -15,6 +15,11 @@ import md5 from "https://esm.sh/md5@2.3.0";
 // Funktion erzeugt das Token serverseitig -- der Schluessel dafuer bleibt in einer
 // Umgebungsvariable und verlaesst den Server nie. Ohne BUNNY_TOKEN_AUTH_KEY (z.B. bevor
 // die Bunny-Einstellung eingeschaltet ist) laeuft die Anfrage unsigniert wie bisher.
+//
+// 11.10.2026, LKW-BEREICH: Vorschau nur fuer Videos, deren Fahrzeug der Schueler sehen darf
+// (gleiche Regel wie academy-video-token, Teil 1): Fahrzeuge = fahrzeug-Werte der nicht
+// archivierten Themen (ohne Themen 'pkw', 'alle' passt immer). Sonst 403
+// fahrzeug_nicht_freigegeben. Bei Datenbankfehler gesperrt (503 voruebergehend).
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -113,11 +118,21 @@ Deno.serve(async (req) => {
       const { data: session } = await supa.from("academy_sessions").select("schueler_id, expires_at").eq("session_token", session_token).maybeSingle();
       if (!session) return json({ error: "session_ungueltig", code: "session_ungueltig" }, 401);
       if (new Date(session.expires_at) < new Date()) return json({ error: "session_abgelaufen", code: "session_abgelaufen" }, 401);
-      const { data: s } = await supa.from("academy_schueler").select("aktiv, ablauf_am").eq("id", session.schueler_id).maybeSingle();
+      const { data: s, error: sErr } = await supa.from("academy_schueler").select("aktiv, ablauf_am, zugang_pkw, zugang_lkw").eq("id", session.schueler_id).maybeSingle();
+      if (sErr) return json({ error: "datenbankfehler", code: "voruebergehend" }, 503);
       if (!s || !s.aktiv) return json({ error: "zugang_gesperrt", code: "zugang_gesperrt" }, 403);
       if (new Date(s.ablauf_am) < new Date()) return json({ error: "zugang_abgelaufen", code: "zugang_abgelaufen" }, 403);
       const { data: v } = await supa.from("academy_videos").select("id, bunny_video_id, ausgeblendet, status").eq("id", video_id).maybeSingle();
       if (!v || !v.bunny_video_id || v.ausgeblendet || v.status !== "live") return json({ error: "Video nicht gefunden", code: "video_fehlt" }, 404);
+      // --- Fahrzeug-Pruefung (11.10.2026). Alter Datensatz: zugang_pkw = true, zugang_lkw = false.
+      const erlaubt: string[] = [];
+      if (s.zugang_pkw !== false) erlaubt.push("pkw");
+      if (s.zugang_lkw === true) erlaubt.push("lkw");
+      const { data: vt, error: vtErr } = await supa.from("academy_video_tags").select("academy_tags(fahrzeug, archiviert)").eq("video_id", v.id);
+      if (vtErr) return json({ error: "datenbankfehler", code: "voruebergehend" }, 503);
+      const fzListe = (vt || []).map((x: any) => x.academy_tags).filter((t: any) => t && t.archiviert !== true).map((t: any) => t.fahrzeug || "pkw");
+      const sichtbar = fzListe.length === 0 ? erlaubt.indexOf("pkw") !== -1 : fzListe.some((fz: string) => fz === "alle" || erlaubt.indexOf(fz) !== -1);
+      if (!sichtbar) return json({ error: "Dieses Video gehört nicht zu deinem Bereich.", code: "fahrzeug_nicht_freigegeben" }, 403);
       const { data: einst } = await supa.from("academy_einstellungen").select("wert").eq("schluessel", "vorschau_sekunden").maybeSingle();
       const sekunden = Math.min(30, Math.max(5, parseInt(einst?.wert || "10", 10) || 10));
       const daten = b64urlText(JSON.stringify({ v: v.id, e: Math.floor(Date.now() / 1000) + 15 * 60, n: sekunden }));
