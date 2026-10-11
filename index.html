@@ -1976,7 +1976,9 @@ const STUFE_PREFIX = {
    Erlaubt = was der Server freigibt (zugang_pkw/zugang_lkw; fehlt das Feld: Pkw ja, Lkw nein).
    Demo-Modus und Vorschau der Verwaltung: beide. Aktiv = gemerkte Wahl, sonst das erste erlaubte. */
 function erlaubteFahrzeuge(){
-  if(!session || session.demo || session.vorschau || DEMO_MODE) return ["pkw", "lkw"];
+  if(!session || session.demo || DEMO_MODE) return ["pkw", "lkw"];
+  // Vorschau der Verwaltung: setzt zugang_pkw/zugang_lkw selbst; fehlen beide (alter Stand), dann beide
+  if(session.vorschau && session.zugang_pkw === undefined && session.zugang_lkw === undefined) return ["pkw", "lkw"];
   const e = [];
   if(session.zugang_pkw !== false) e.push("pkw");
   if(session.zugang_lkw === true) e.push("lkw");
