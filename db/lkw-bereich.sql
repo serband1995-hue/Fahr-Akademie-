@@ -236,3 +236,8 @@ insert into public.academy_tags (id, label, stufe, reihenfolge, gratis, archivie
   ('lkw_fahrtenschreiber', 'Fahrtenschreiber bedienen',          'Lkw: Lenk- und Ruhezeiten', 1032, false, false, 'lkw'),
   ('lkw_pruefungsfahrt',   'Prüfungsfahrt Lkw',                  'Lkw: Prüfung',              1041, false, false, 'lkw')
 on conflict (id) do nothing;
+
+-- Nachtrag (11.10.2026, get_advisors): Trigger-Funktionen nicht per API aufrufbar.
+revoke execute on function public.academy_lkw_verkauf_buchen() from public, anon, authenticated;
+revoke execute on function public.academy_schueler_fahrzeug_zugang() from public, anon, authenticated;
+revoke execute on function public.academy_tags_lkw_technik_gratis() from public, anon, authenticated;

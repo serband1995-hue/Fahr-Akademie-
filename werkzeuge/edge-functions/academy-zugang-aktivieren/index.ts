@@ -83,7 +83,7 @@ Deno.serve(async (req: Request) => {
     // 11.10.2026, Lkw-Bereich: Art des Schuelers (Pkw / Lkw / beides) und Lkw-Vollzugang.
     // Nur echte true/false uebernehmen -- fehlt etwas, setzt der DB-Trigger den Bereich aus der
     // Klasse (C, CE, C1, C1E -> Lkw). vollzugang bleibt der Pkw-Vollzugang.
-    const art = (body || {}).art;
+    const art = ["pkw", "lkw", "beide"].indexOf((body || {}).art) !== -1 ? (body || {}).art : null;
     const mitVollzugangLkw = (body || {}).vollzugang_lkw === true;
     if (!kandidat_id) return json({ error: "kandidat_id ist Pflichtfeld" }, 400);
 
@@ -136,7 +136,7 @@ Deno.serve(async (req: Request) => {
     const klasse = (klasse_override || kand.klasse || "").trim();
     if (klasse) datensatz.klasse = klasse.toUpperCase();
     if (fahrlehrer_id) datensatz.fahrlehrer_id = fahrlehrer_id;
-    if (art === "pkw" || art === "lkw" || art === "beide") {
+    if (art) {
       datensatz.zugang_pkw = art !== "lkw";
       datensatz.zugang_lkw = art !== "pkw";
     }
