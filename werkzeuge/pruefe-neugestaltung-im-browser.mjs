@@ -20,6 +20,14 @@ STUFEN.forEach((st, si) => { for (let k = 0; k < 3; k++) {
   const tid = "t" + si + k; tags.push({ id: tid, label: st + " " + (k + 1), stufe: st, reihenfolge: si * 10 + k, gratis: si === 0, archiviert: false, nur_klasse: null });
   for (let v = 0; v < 2; v++) { const vid = "v" + si + k + v; videos.push({ id: vid, titel: "Video " + st.slice(0, 8) + " " + (k + 1) + "." + (v + 1), hat_video: true, status: "live", ausgeblendet: false, dauer_sekunden: 240 + v * 60, reihenfolge: si * 100 + k * 10 + v, gratis: si === 6 && k === 0 && v === 0 }); video_tags.push({ video_id: vid, tag_id: tid }); }
 } });
+// Lkw-Bereich (11.10.2026): eigener Zusatz-Katalog, nur mit opt.lkwKatalog. Je Lkw-Bereich 2 Themen
+// (fahrzeug "lkw") mit je 2 Videos; "Lkw: Fahrzeug & Technik" ist gratis (wie in db/lkw-bereich.sql).
+const STUFEN_LKW = ["Lkw: Fahrzeug & Technik", "Lkw: Kuppeln & Rangieren", "Lkw: Fahren im Verkehr", "Lkw: Lenk- und Ruhezeiten", "Lkw: Prüfung"];
+const lkwTags = [], lkwVideos = [], lkwVideoTags = [];
+STUFEN_LKW.forEach((st, si) => { for (let k = 0; k < 2; k++) {
+  const tid = "lt" + si + k; lkwTags.push({ id: tid, label: st.slice(5) + " " + (k + 1), stufe: st, reihenfolge: 1000 + si * 10 + k, gratis: si === 0, archiviert: false, nur_klasse: null, fahrzeug: "lkw" });
+  for (let v = 0; v < 2; v++) { const vid = "lv" + si + k + v; lkwVideos.push({ id: vid, titel: "Lkw-Video " + (si + 1) + "." + (k + 1) + "." + (v + 1), hat_video: true, status: "live", ausgeblendet: false, dauer_sekunden: 300, reihenfolge: 5000 + si * 100 + k * 10 + v, gratis: false }); lkwVideoTags.push({ video_id: vid, tag_id: tid }); }
+} });
 
 const TYPEN = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".mjs": "text/javascript", ".css": "text/css", ".json": "application/json", ".png": "image/png", ".webp": "image/webp", ".svg": "image/svg+xml" };
 const server = http.createServer((req, res) => {
@@ -36,11 +44,14 @@ const CORS = { "access-control-allow-origin": "*", "access-control-allow-headers
 const inEinemJahr = new Date(Date.now() + 365 * 86_400_000).toISOString();
 const tageVon = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
 
-/* opt: b, h, voll, termin (Tage oder null), sprache, dunkel, klasse */
+/* opt: b, h, voll, termin (Tage oder null), sprache, dunkel, klasse
+   Lkw-Bereich (11.10.2026): zugang ({pkw, lkw}), vollLkw, lkwKatalog (Lkw-Themen dazu), fahrzeug (gemerkte Wahl),
+   ohneSession (Anmeldeseite statt App) */
 export async function neueSeite(opt) {
   const ctx = await browser.newContext({ viewport: { width: opt.b, height: opt.h }, hasTouch: true, isMobile: true, deviceScaleFactor: 2, colorScheme: opt.dunkel ? "dark" : "light", reducedMotion: opt.ruhig ? "reduce" : "no-preference" });
   const sess = { name: "Lena Beispiel", session_token: "tok", vollzugang: !!opt.voll, agb_akzeptiert_am: "2026-01-01T00:00:00Z", ablauf_am: inEinemJahr, klasse: opt.klasse || "B", telefon: "0100", pruefungstermin: opt.termin == null ? null : tageVon(opt.termin) };
-  await ctx.addInitScript((d) => { try { localStorage.setItem("academy_session", JSON.stringify(d.s)); localStorage.setItem("academy_sprache", d.sprache); } catch (e) {} }, { s: sess, sprache: opt.sprache || "de" });
+  if (opt.zugang) { sess.zugang_pkw = !!opt.zugang.pkw; sess.zugang_lkw = !!opt.zugang.lkw; sess.vollzugang_lkw = !!opt.vollLkw; }
+  await ctx.addInitScript((d) => { try { if (d.s) localStorage.setItem("academy_session", JSON.stringify(d.s)); localStorage.setItem("academy_sprache", d.sprache); if (d.fz) localStorage.setItem("academy_fahrzeug", d.fz); } catch (e) {} }, { s: opt.ohneSession ? null : sess, sprache: opt.sprache || "de", fz: opt.fahrzeug || null });
   const seite = await ctx.newPage(); seite.fehler = [];
   seite.on("pageerror", (e) => seite.fehler.push("pageerror: " + e.message));
   seite.on("console", (m) => { if (m.type() === "error" && !/Failed to load resource|net::ERR|fonts\.g/.test(m.text())) seite.fehler.push("console: " + m.text()); });
@@ -52,13 +63,15 @@ export async function neueSeite(opt) {
     if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers: CORS });
     const antwort = (status, body) => route.fulfill({ status, headers: { ...CORS, "content-type": "application/json" }, body: JSON.stringify(body) });
     const f = m[1];
-    if (f === "academy-session-refresh") return antwort(200, { ok: true, vollzugang: !!opt.voll, pruefungstermin: sess.pruefungstermin, klasse: sess.klasse, ablauf_am: inEinemJahr, name: sess.name });
-    if (f === "academy-katalog") return antwort(200, { ok: true, tags, videos, video_tags, pruefer: [], video_pruefer: [], gebiete: [], uebersetzungen: [] });
+    if (f === "academy-session-refresh") return antwort(200, { ok: true, vollzugang: !!opt.voll, pruefungstermin: sess.pruefungstermin, klasse: sess.klasse, ablauf_am: inEinemJahr, name: sess.name,
+      ...(opt.zugang ? { zugang_pkw: sess.zugang_pkw, zugang_lkw: sess.zugang_lkw, vollzugang_lkw: sess.vollzugang_lkw } : {}) });
+    if (f === "academy-katalog") return antwort(200, { ok: true, tags: opt.lkwKatalog ? tags.concat(lkwTags) : tags, videos: opt.lkwKatalog ? videos.concat(lkwVideos) : videos,
+      video_tags: opt.lkwKatalog ? video_tags.concat(lkwVideoTags) : video_tags, pruefer: [], video_pruefer: [], gebiete: [], uebersetzungen: [] });
     if (f === "academy-szene") return antwort(200, { ok: true, szenen: [] });
     return antwort(503, { error: "nicht nachgebaut", code: "voruebergehend" });
   });
   await seite.goto(basis + "/index.html");
-  await seite.waitForSelector(".page-content", { timeout: 15000 });
+  await seite.waitForSelector(opt.ohneSession ? ".login-card" : ".page-content", { timeout: 15000 });
   return seite;
 }
 export const schliessen = async () => { await browser.close(); server.close(); };
@@ -95,7 +108,7 @@ export { layout };
 
 if (import.meta.url === "file://" + process.argv[1]) {
   const GROESSEN = [[360, 740, "360"], [412, 915, "412"], [812, 375, "quer"]];
-  const nur = process.env.NUR || "e1,e2,e3,e4";
+  const nur = process.env.NUR || "e1,e2,e3,e4,e5";
   /* ---------- Etappe 1: Krone und Schloss mit Krone ---------- */
   if (nur.includes("e1")) for (const dunkel of [false, true]) for (const [b, h, gn] of GROESSEN) for (const voll of [true, false]) {
     const tag = "E1 " + (voll ? "voll" : "start") + " " + gn + (dunkel ? " dunkel" : "");
@@ -493,6 +506,82 @@ if (import.meta.url === "file://" + process.argv[1]) {
       pruefe(tag + ": alle Stationen im Bild", ueber === 0);
       pruefe(tag + ": keine Fehler in der Konsole", s.fehler.length === 0, s.fehler.join(" | "));
       await s.context().close();
+    }
+  }
+  /* ---------- Etappe 5: Lkw-Bereich (11.10.2026, docs/LKW-BEREICH-BAUPLAN.md) ----------
+     Selektoren: Schalter in der Kopfleiste #kopf-fz (.fz-schalter, role=switch, data-wert), sonst festes
+     Schild .fz-schild; Schalter auf der Anmeldeseite #lo-fz; Lkw-Bereiche = Kacheln mit data-gotostufe "Lkw: …";
+     Weg-Figur #weg-figur svg[data-figur="lkw"]; Lkw-Filme in „Verkehr verstehen“ = .lkw-zeile[data-vv-szene^="lkw:"]. */
+  if (nur.includes("e5")) {
+    const lkwKacheln = (s) => s.locator('.kachel-t[data-gotostufe^="Lkw: "]').count();
+    const pkwKacheln = (s) => s.evaluate(() => [...document.querySelectorAll(".kachel-t[data-gotostufe]")].filter((k) => !k.dataset.gotostufe.startsWith("Lkw: ")).length);
+    const zumStart = async (s) => { await s.tap('.bottom-nav [data-view="start"]'); await s.waitForTimeout(900); };
+    const zuVerkehr = async (s) => { await s.tap('.bottom-nav [data-tab-drawer="verkehr"]'); await s.waitForTimeout(1200); };
+    const verkehrStand = (s) => s.evaluate(() => { const z = [...document.querySelectorAll(".lkw-zeile")]; return { lkw: z.length, nurLkw: z.every((e) => (e.dataset.vvSzene || "").startsWith("lkw:")), soll: typeof LKW_FILME !== "undefined" ? LKW_FILME.length : -1, szenen: document.querySelectorAll(".vk-karte").length }; });
+    const quer = (s) => s.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1);
+    for (const [b, h, gn] of GROESSEN) {
+      // a) beide Zugänge: Umschalter sichtbar, Pkw zuerst, nach dem Umschalten nur Lkw
+      {
+        const tag = "E5 beide " + gn;
+        const s = await neueSeite({ b, h, voll: false, termin: 9, zugang: { pkw: true, lkw: true }, lkwKatalog: true, fahrzeug: "pkw", ruhig: true }); await s.waitForTimeout(1300);
+        const schalter = await s.evaluate(() => { const e = document.getElementById("kopf-fz"); if (!e) return null; const r = e.getBoundingClientRect(); return { w: r.width, h: r.height, rolle: e.getAttribute("role"), wert: e.dataset.wert, rechts: r.right <= innerWidth + 1 }; });
+        pruefe(tag + ": Umschalter in der Kopfleiste sichtbar (role=switch, Pkw)", !!schalter && schalter.w > 0 && schalter.rolle === "switch" && schalter.wert === "pkw" && schalter.rechts, JSON.stringify(schalter));
+        pruefe(tag + ": kein festes Schild bei zwei Zugängen", (await s.locator(".header .fz-schild").count()) === 0);
+        pruefe(tag + ": Pkw-Ansicht ohne Lkw-Kacheln", (await lkwKacheln(s)) === 0 && (await pkwKacheln(s)) === 7, (await lkwKacheln(s)) + "/" + (await pkwKacheln(s)));
+        await layout(s, tag + " Pkw Start");
+        await zuVerkehr(s);
+        const vp = await verkehrStand(s);
+        pruefe(tag + ": Verkehr verstehen in Pkw zeigt keine Lkw-Filme", vp.lkw === 0, JSON.stringify(vp));
+        pruefe(tag + ": Pkw Verkehr: nicht seitlich wischbar", await quer(s));
+        await zumStart(s);
+        await s.tap("#kopf-fz"); await s.waitForTimeout(1100);
+        pruefe(tag + ": nach Umschalten ist Lkw aktiv und gemerkt", (await s.evaluate(() => aktivesFahrzeug() + "/" + localStorage.getItem("academy_fahrzeug"))) === "lkw/lkw");
+        pruefe(tag + ": Schalter steht auf Lkw", (await s.evaluate(() => { const e = document.getElementById("kopf-fz"); return e && e.dataset.wert === "lkw" && e.getAttribute("aria-checked") === "true"; })));
+        pruefe(tag + ": Lkw-Ansicht zeigt die 5 Lkw-Bereiche und keinen Pkw-Bereich", (await lkwKacheln(s)) === 5 && (await pkwKacheln(s)) === 0, (await lkwKacheln(s)) + "/" + (await pkwKacheln(s)));
+        await layout(s, tag + " Lkw Start");
+        if (gn === "360") await s.screenshot({ path: join(bilder, "e5-lkw-start.png") });
+        await s.tap('.bottom-nav [data-view="weg"]'); await s.waitForSelector("#weg-figur", { timeout: 8000 }); await s.waitForTimeout(500);
+        pruefe(tag + ": Weg fährt einen Lkw (data-figur=lkw)", (await s.locator('#weg-figur svg[data-figur="lkw"]').count()) === 1);
+        pruefe(tag + ": Weg hat 5 Lkw-Stationen", (await s.locator('.wg-kachel[data-gotostufe^="Lkw: "]').count()) === 5 && (await s.locator(".wg-kachel").count()) === 5);
+        await layout(s, tag + " Lkw Weg");
+        await zuVerkehr(s);
+        const vl = await verkehrStand(s);
+        pruefe(tag + ": Verkehr verstehen in Lkw zeigt nur die Lkw-Filme", vl.lkw > 0 && vl.lkw === vl.soll && vl.nurLkw && vl.szenen === 0, JSON.stringify(vl));
+        pruefe(tag + ": Lkw Verkehr: nicht seitlich wischbar", await quer(s));
+        if (gn === "360") await s.screenshot({ path: join(bilder, "e5-lkw-verkehr.png") });
+        // zurück auf Pkw
+        await zumStart(s); await s.tap("#kopf-fz"); await s.waitForTimeout(1100);
+        pruefe(tag + ": zurück auf Pkw: wieder 7 Pkw-Bereiche, keine Lkw-Kachel", (await lkwKacheln(s)) === 0 && (await pkwKacheln(s)) === 7);
+        pruefe(tag + ": keine Fehler in der Konsole", s.fehler.length === 0, s.fehler.join(" | "));
+        await s.context().close();
+      }
+      // b) nur Pkw / c) nur Lkw: festes Schild, kein Umschalter, nichts vom anderen Fahrzeug
+      for (const nurFz of ["pkw", "lkw"]) {
+        const tag = "E5 nur " + nurFz + " " + gn;
+        const s = await neueSeite({ b, h, voll: false, termin: 9, zugang: { pkw: nurFz === "pkw", lkw: nurFz === "lkw" }, lkwKatalog: true, fahrzeug: nurFz === "pkw" ? "lkw" : "pkw", ruhig: true }); await s.waitForTimeout(1300);
+        pruefe(tag + ": kein Umschalter, festes Schild", (await s.locator("#kopf-fz").count()) === 0 && (await s.locator(".header .fz-schild").count()) === 1);
+        pruefe(tag + ": aktives Fahrzeug ist " + nurFz + " (gemerkte andere Wahl zählt nicht)", (await s.evaluate(() => aktivesFahrzeug())) === nurFz);
+        pruefe(tag + ": nur Kacheln des eigenen Fahrzeugs", nurFz === "pkw" ? ((await lkwKacheln(s)) === 0 && (await pkwKacheln(s)) === 7) : ((await lkwKacheln(s)) === 5 && (await pkwKacheln(s)) === 0));
+        await layout(s, tag + " Start");
+        await zuVerkehr(s);
+        const v = await verkehrStand(s);
+        pruefe(tag + ": Verkehr verstehen " + (nurFz === "lkw" ? "nur Lkw-Filme" : "ohne Lkw-Filme"), nurFz === "lkw" ? (v.lkw === v.soll && v.nurLkw && v.szenen === 0) : v.lkw === 0, JSON.stringify(v));
+        pruefe(tag + ": Verkehr nicht seitlich wischbar", await quer(s));
+        pruefe(tag + ": keine Fehler in der Konsole", s.fehler.length === 0, s.fehler.join(" | "));
+        await s.context().close();
+      }
+      // d) Anmeldeseite: Pkw/Lkw-Schalter vor Telefon/PIN, umschaltbar, nichts wischbar
+      {
+        const tag = "E5 Anmeldung " + gn;
+        const s = await neueSeite({ b, h, ohneSession: true, ruhig: true }); await s.waitForTimeout(800);
+        const lo = await s.evaluate(() => { const e = document.getElementById("lo-fz"); if (!e) return null; const r = e.getBoundingClientRect(); return { w: r.width, h: r.height, rolle: e.getAttribute("role"), wert: e.dataset.wert, drin: r.left >= -1 && r.right <= innerWidth + 1 }; });
+        pruefe(tag + ": Schalter Pkw/Lkw auf der Anmeldeseite sichtbar", !!lo && lo.w > 0 && lo.h >= 43.5 && lo.rolle === "switch" && lo.drin, JSON.stringify(lo));
+        if (lo) { await s.tap("#lo-fz"); await s.waitForTimeout(500); pruefe(tag + ": Antippen stellt auf Lkw", (await s.evaluate(() => document.getElementById("lo-fz").dataset.wert)) === "lkw"); }
+        pruefe(tag + ": Anmeldeseite nicht seitlich wischbar", await quer(s));
+        if (gn === "360") await s.screenshot({ path: join(bilder, "e5-anmeldung.png") });
+        pruefe(tag + ": keine Fehler in der Konsole", s.fehler.length === 0, s.fehler.join(" | "));
+        await s.context().close();
+      }
     }
   }
   console.log("\n" + bestanden + " bestanden, " + befunde.length + " Befunde"); await schliessen();
